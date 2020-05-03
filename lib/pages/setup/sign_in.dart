@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:idom/pages/setup/accounts.dart';
 
-import '../home.dart';
 
 class SignIn extends StatefulWidget{
   @override
@@ -104,7 +104,7 @@ class _SignInState extends State<SignIn>{
       formState.save();
       try{
         //user = await database login
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Accounts()));
       }
       catch(e){
         print(e.toString());

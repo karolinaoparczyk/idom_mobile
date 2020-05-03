@@ -1,18 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:idom/pages/setup/accounts.dart';
 
-import 'package:idom/pages/setup/sign_in.dart';
-
-class SignUp extends StatefulWidget {
+class NewAccount extends StatefulWidget {
   @override
-  _SignUpState createState() => _SignUpState();
+  _NewAccountState createState() => _NewAccountState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _NewAccountState extends State<NewAccount> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   String _login, _password, _confirmPassword, _email, _phoneNumber;
   Map<String, bool> _permissions = {
@@ -114,7 +112,7 @@ class _SignUpState extends State<SignUp> {
             return 'Email jest wymagany';
           }
           if (!RegExp(
-                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
               .hasMatch(value)) {
             return 'Podaj poprawny adres email';
           }
@@ -147,7 +145,7 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Zarejestruj się'),
+        title: Text('Dodaj nowe konto'),
       ),
       body: SingleChildScrollView(
         child: Row(
@@ -170,11 +168,12 @@ class _SignUpState extends State<SignUp> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SizedBox(
-                              width: 190,
+                              width: 250,
                               child: RaisedButton(
-                                  onPressed: signUp,
+                                  onPressed: addAccount,
                                   child: Text(
-                                    'Zarejestruj się',
+                                    'Dodaj nowe konto',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 26,
@@ -185,7 +184,7 @@ class _SignUpState extends State<SignUp> {
                                   elevation: 10,
                                   shape: new RoundedRectangleBorder(
                                       borderRadius:
-                                          new BorderRadius.circular(30.0))),
+                                      new BorderRadius.circular(30.0))),
                             ),
                           ],
                         ),
@@ -198,7 +197,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Future<void> signUp() async {
+  Future<void> addAccount() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       formState.save();
@@ -207,7 +206,7 @@ class _SignUpState extends State<SignUp> {
         //user send email notification
         // display that we sent email notification to user
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SignIn()));
+            context, MaterialPageRoute(builder: (context) => Accounts()));
       } catch (e) {
         print(e.toString());
       }
