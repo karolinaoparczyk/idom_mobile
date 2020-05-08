@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-import 'package:idom/pages/setup/sign_in.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -13,15 +15,30 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _telephoneController = TextEditingController();
 
-  String _login, _password, _confirmPassword, _email, _phoneNumber;
-  Map<String, bool> _permissions = {
-    'Dodaj nowego użytkownika': false,
-    'Usuń użytkownika': false,
-  };
+  Future<Map<String, String>> attemptSignUp(String username, String password1,
+      String password2, String email, String telephone) async {
+    var res = await http.post('http://10.0.2.2:8000/register/', body: {
+      "username": username,
+      "password1": password1,
+      "password2": password2,
+      "email": email,
+      "telephone": telephone,
+    });
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    print(res.body);
+    return resDict;
+  }
 
   Widget _buildLogin() {
     return TextFormField(
+        controller: _usernameController,
         decoration: InputDecoration(
           labelText: 'Login',
           labelStyle: TextStyle(color: Colors.black, fontSize: 18),
@@ -38,9 +55,6 @@ class _SignUpState extends State<SignUp> {
           if (value.contains(' ')) {
             return 'Login nie może zawierać spacji';
           }
-        },
-        onSaved: (String value) {
-          _login = value;
         });
   }
 
@@ -63,9 +77,6 @@ class _SignUpState extends State<SignUp> {
         if (value.length < 8) {
           return 'Hasło musi zawierać przynajmniej 8 znaków';
         }
-      },
-      onSaved: (String value) {
-        _password = value;
       },
       obscureText: true,
     );
@@ -91,15 +102,13 @@ class _SignUpState extends State<SignUp> {
           return 'Hasła nie mogą się różnić';
         }
       },
-      onSaved: (String value) {
-        _confirmPassword = value;
-      },
       obscureText: true,
     );
   }
 
   Widget _buildEmail() {
     return TextFormField(
+        controller: _emailController,
         decoration: InputDecoration(
           labelText: 'Email',
           labelStyle: TextStyle(color: Colors.black, fontSize: 18),
@@ -119,14 +128,12 @@ class _SignUpState extends State<SignUp> {
             return 'Podaj poprawny adres email';
           }
           return null;
-        },
-        onSaved: (String value) {
-          _email = value;
         });
   }
 
   Widget _buildPhoneNumber() {
     return TextFormField(
+        controller: _telephoneController,
         decoration: InputDecoration(
             labelText: 'Nr telefonu komórkowego',
             labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
@@ -137,9 +144,6 @@ class _SignUpState extends State<SignUp> {
             return 'Podaj poprawny numer telefonu';
           }
           return null;
-        },
-        onSaved: (String value) {
-          _phoneNumber = value;
         });
   }
 
@@ -198,20 +202,41 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  void displayDialog(BuildContext context, String title, String text) =>
+      showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(title: Text(title), content: Text(text)),
+      );
+
   Future<void> signUp() async {
+    var username = _usernameController.text;
+    var password1 = _passwordController.text;
+    var password2 = _confirmPasswordController.text;
+    var email = _emailController.text;
+    var telephone = _telephoneController.text;
+
     final formState = _formKey.currentState;
     if (formState.validate()) {
       formState.save();
       try {
-        //user = await database create user
-        //user send email notification
-        // display that we sent email notification to user
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SignIn()));
+        var res = await attemptSignUp(
+            username, password1, password2, email, telephone);
+        if (res['statusCode'] == "201")
+          displayDialog(context, "Sukces",
+              "Konto zostało utworzone. Możesz się zalogować.");
+        else if (res['body'].contains(
+            "Duplicate entry 'test' for key 'register_customuser.username'")) {
+          displayDialog(
+              context, "Błąd", "Konto dla podanego loginu już istnieje.");
+        } else if (res['body'].contains(
+            "Duplicate entry 'test@test.pl' for key 'register_customuser.email'")) {
+          displayDialog(
+              context, "Błąd", "Konto dla podanego adresu email już istnieje.");
+        }
       } catch (e) {
         print(e.toString());
       }
-      //sign in to database
     }
   }
 }
