@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:idom/models.dart';
+import 'package:idom/pages/account_detail.dart';
 import 'package:idom/pages/new_account.dart';
 
 class Accounts extends StatefulWidget {
@@ -7,51 +12,66 @@ class Accounts extends StatefulWidget {
 }
 
 class _AccountsState extends State<Accounts> {
+  final String accountsUrl = "http://10.0.2.2:8000/register/";
   List<Map<String, String>> _users = [
     {'login': 'abcd', 'is_superuser': '1'},
     {'login': 'xyz', 'is_superuser': '0'}
   ];
 
+  Future<List<Account>> getAccounts() async {
+    Response res = await get(accountsUrl);
+
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+      print(body);
+
+      List<Account> accounts =
+          body.map((dynamic item) => Account.fromJson(item)).toList();
+      return accounts;
+    } else {
+      throw "Can't get posts";
+    }
+  }
+
+  _onSelected(dynamic val) {
+    //delete from database
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('IDOM Konta w systemie')),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: _users.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_users[index]['login']),
-                  subtitle: Text(isSuperUser(index)),
-                );
-              },
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  width: 250,
-                  child: RaisedButton(
-                      onPressed: navigateToNewAccount,
-                      child: Text(
-                        'Dodaj nowe konto',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      color: Colors.black,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      elevation: 10,
-                      shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0))),
-                ),
-              ],
-            ),
-          ],
+        body: FutureBuilder(
+          future: getAccounts(),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Account>> snapshot) {
+            if (snapshot.hasData) {
+              List<Account> accounts = snapshot.data;
+              return ListView(
+                children: accounts
+                    .map((Account account) => ListTile(
+                          title: Text(account.username),
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AccountDetail(account: account))),
+                          trailing: PopupMenuButton(
+                            onSelected: _onSelected,
+                            icon: Icon(Icons.menu),
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: account,
+                                child: Text("Usuń"),
+                              ),
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              );
+            }
+
+            return Center(child: CircularProgressIndicator());
+          },
         ));
   }
 
@@ -60,12 +80,5 @@ class _AccountsState extends State<Accounts> {
         context,
         MaterialPageRoute(
             builder: (context) => NewAccount(), fullscreenDialog: true));
-  }
-
-  String isSuperUser(int user_index) {
-    if (_users[user_index]['is_superuser'] == '1')
-      return 'SuperUser';
-    else
-      return '';
   }
 }
