@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:idom/pages/setup/accounts.dart';
+import 'package:idom/utils/validators.dart';
 import 'package:path_provider/path_provider.dart';
 
 final storage = FlutterSecureStorage();
@@ -138,11 +139,7 @@ class _SignInState extends State<SignIn> {
         decoration: InputDecoration(
             labelText: 'Login',
             labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-        validator: (String value) {
-          if (value.isEmpty) {
-            return 'Podaj login';
-          }
-        });
+        validator: EmailFieldValidator.validate);
   }
 
   Widget _buildPassword() {
@@ -152,11 +149,7 @@ class _SignInState extends State<SignIn> {
         labelText: 'Hasło',
         labelStyle: TextStyle(color: Colors.black, fontSize: 18),
       ),
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Podaj hasło';
-        }
-      },
+      validator: PasswordFieldValidator.validate,
       obscureText: true,
     );
   }
