@@ -21,7 +21,8 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Widget _buildLogin() {
+  /// builds username text field for the form
+  Widget _buildUsername() {
     return TextFormField(
         key: Key('email'),
         controller: _usernameController,
@@ -31,6 +32,7 @@ class _SignInState extends State<SignIn> {
         validator: EmailFieldValidator.validate);
   }
 
+  /// builds password text field for the form
   Widget _buildPassword() {
     return TextFormField(
       key: Key('password'),
@@ -44,6 +46,7 @@ class _SignInState extends State<SignIn> {
     );
   }
 
+  /// tries to sign in the user with provided credentials
   signIn() async {
     try {
       final formState = _formKey.currentState;
@@ -82,7 +85,7 @@ class _SignInState extends State<SignIn> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _buildLogin(),
+                      _buildUsername(),
                       _buildPassword(),
                       SizedBox(height: 20),
                       Row(

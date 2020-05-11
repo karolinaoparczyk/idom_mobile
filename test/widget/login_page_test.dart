@@ -13,6 +13,7 @@ void main() {
     );
   }
 
+  /// tests if signs in with empty email or password
   testWidgets('email or password is empty, does not sign in',
       (WidgetTester tester) async {
     MockApiLogIn mockApiLogIn = MockApiLogIn();
@@ -27,6 +28,7 @@ void main() {
     expect(isSignedIn, false);
   });
 
+  /// tests if signed in with valid email and password
   testWidgets('email and password non-empty, success sign in',
       (WidgetTester tester) async {
     MockApiLogIn mockApiLogIn = MockApiLogIn();
@@ -51,7 +53,8 @@ void main() {
     expect(isSignedIn, true);
   });
 
-  testWidgets('email and password non-empty, success sign in',
+  /// tests if does not sign in with invalid email or password
+  testWidgets('email and password non-empty, error sign in',
           (WidgetTester tester) async {
         MockApiLogIn mockApiLogIn = MockApiLogIn();
         bool isSignedIn = false;

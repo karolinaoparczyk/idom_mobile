@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 class ApiLogIn {
   final dio.Dio _dio = dio.Dio();
   PersistCookieJar persistentCookies;
+  /// API URL
   final String URL = "http://10.0.2.2:8000/";
 
   Future<String> get _localPath async {
@@ -14,6 +15,7 @@ class ApiLogIn {
     return directory.path;
   }
 
+  /// creates directory for cookies
   Future<Directory> get _localCoookieDirectory async {
     final path = await _localPath;
     final Directory dir = new Directory('$path/cookies');
@@ -21,6 +23,7 @@ class ApiLogIn {
     return dir;
   }
 
+  /// gets CSRF token to safely and successfully login
   Future<String> getCsrftoken() async {
     try {
       String csrfTokenValue;
@@ -63,6 +66,7 @@ class ApiLogIn {
     }
   }
 
+  /// attempts to sign in to database through API
   attemptToSignIn(String username, String password) async {
     try {
       final csrf = await getCsrftoken();
