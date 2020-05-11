@@ -13,10 +13,6 @@ class Accounts extends StatefulWidget {
 
 class _AccountsState extends State<Accounts> {
   final String accountsUrl = "http://10.0.2.2:8000/register/";
-  List<Map<String, String>> _users = [
-    {'login': 'abcd', 'is_superuser': '1'},
-    {'login': 'xyz', 'is_superuser': '0'}
-  ];
 
   Future<List<Account>> getAccounts() async {
     Response res = await get(accountsUrl);

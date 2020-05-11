@@ -12,12 +12,6 @@ class _NewAccountState extends State<NewAccount> {
   final TextEditingController _confirmPasswordController =
   TextEditingController();
 
-  String _login, _password, _confirmPassword, _email, _phoneNumber;
-  Map<String, bool> _permissions = {
-    'Dodaj nowego użytkownika': false,
-    'Usuń użytkownika': false,
-  };
-
   Widget _buildLogin() {
     return TextFormField(
         decoration: InputDecoration(
@@ -36,9 +30,6 @@ class _NewAccountState extends State<NewAccount> {
           if (value.contains(' ')) {
             return 'Login nie może zawierać spacji';
           }
-        },
-        onSaved: (String value) {
-          _login = value;
         });
   }
 
@@ -61,9 +52,6 @@ class _NewAccountState extends State<NewAccount> {
         if (value.length < 8) {
           return 'Hasło musi zawierać przynajmniej 8 znaków';
         }
-      },
-      onSaved: (String value) {
-        _password = value;
       },
       obscureText: true,
     );
@@ -88,9 +76,6 @@ class _NewAccountState extends State<NewAccount> {
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić';
         }
-      },
-      onSaved: (String value) {
-        _confirmPassword = value;
       },
       obscureText: true,
     );
@@ -117,9 +102,6 @@ class _NewAccountState extends State<NewAccount> {
             return 'Podaj poprawny adres email';
           }
           return null;
-        },
-        onSaved: (String value) {
-          _email = value;
         });
   }
 
@@ -135,9 +117,6 @@ class _NewAccountState extends State<NewAccount> {
             return 'Podaj poprawny numer telefonu';
           }
           return null;
-        },
-        onSaved: (String value) {
-          _phoneNumber = value;
         });
   }
 
