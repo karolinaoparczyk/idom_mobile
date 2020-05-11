@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:idom/pages/setup/accounts.dart';
+import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/utils/validators.dart';
 
 final storage = FlutterSecureStorage();
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key key, @required this.apiLogIn, this.onSignedIn}) : super(key: key);
+  const SignIn({Key key, @required this.apiLogIn, this.onSignedIn})
+      : super(key: key);
   final VoidCallback onSignedIn;
   final apiLogIn;
 
@@ -49,9 +51,8 @@ class _SignInState extends State<SignIn> {
   /// tries to sign in the user with provided credentials
   signIn() async {
     try {
-      final formState = _formKey.currentState;
-      if (formState.validate()) {
-        formState.save();
+        final formState = _formKey.currentState;
+        if (formState.validate()) {
         var result = await widget.apiLogIn.attemptToSignIn(
             _usernameController.value.text, _passwordController.value.text);
         print('result: $result');
@@ -88,6 +89,10 @@ class _SignInState extends State<SignIn> {
                       _buildUsername(),
                       _buildPassword(),
                       SizedBox(height: 20),
+                      FlatButton(
+                        child: Text('Zapomniałeś/aś hasła?'),
+                        onPressed: navigateToEnterEmail,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -108,16 +113,22 @@ class _SignInState extends State<SignIn> {
                                 elevation: 10,
                                 shape: new RoundedRectangleBorder(
                                     borderRadius:
-                                        new BorderRadius.circular(30.0))),
+                                    new BorderRadius.circular(30.0))),
                           ),
                         ],
                       ),
+
                     ],
                   ))),
           Expanded(child: SizedBox(width: 1))
         ],
       ),
     );
+  }
+
+  navigateToEnterEmail(){
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => EnterEmail()));
   }
 
   void displayDialog(BuildContext context, String title, String text) =>
