@@ -14,6 +14,7 @@ class Accounts extends StatefulWidget {
 class _AccountsState extends State<Accounts> {
   final String accountsUrl = "http://10.0.2.2:8000/register/";
 
+  /// gets accounts from API
   Future<List<Account>> getAccounts() async {
     Response res = await get(accountsUrl);
 
@@ -23,12 +24,14 @@ class _AccountsState extends State<Accounts> {
 
       List<Account> accounts =
           body.map((dynamic item) => Account.fromJson(item)).toList();
+      // TODO: show only active users
       return accounts;
     } else {
-      throw "Can't get posts";
+      throw "Can't get accounts";
     }
   }
 
+  /// deactivates user when pressed delete
   _onSelected(dynamic val) {
     //delete from database
   }
