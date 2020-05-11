@@ -1,14 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:io';
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio/dio.dart' as dio;
+
+import 'package:idom/api/api_login.dart';
 import 'package:idom/pages/setup/accounts.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:path_provider/path_provider.dart';
 
 final storage = FlutterSecureStorage();
 
@@ -22,115 +18,11 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final dio.Dio _dio = dio.Dio();
-  PersistCookieJar persistentCookies;
-  final String URL = "http://10.0.2.2:8000/";
+  ApiLogIn _apiLogIn;
 
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  Future<Directory> get _localCoookieDirectory async {
-    final path = await _localPath;
-    final Directory dir = new Directory('$path/cookies');
-    await dir.create();
-    return dir;
-  }
-
-  Future<String> getCsrftoken() async {
-    try {
-      String csrfTokenValue;
-      final Directory dir = await _localCoookieDirectory;
-      final cookiePath = dir.path;
-      persistentCookies = new PersistCookieJar(dir: '$cookiePath');
-      persistentCookies
-          .deleteAll(); //clearing any existing cookies for a fresh start
-      _dio.interceptors.add(dio.CookieManager(
-              persistentCookies) //this sets up _dio to persist cookies throughout subsequent requests
-          );
-      _dio.options = new dio.BaseOptions(
-        baseUrl: URL,
-        contentType: ContentType.json,
-        responseType: dio.ResponseType.plain,
-        connectTimeout: 5000,
-        receiveTimeout: 100000,
-        headers: {
-          HttpHeaders.userAgentHeader: "dio",
-          "Connection": "keep-alive",
-        },
-      ); //BaseOptions will be persisted throughout subsequent requests made with _dio
-      _dio.interceptors
-          .add(dio.InterceptorsWrapper(onResponse: (dio.Response response) {
-        List<Cookie> cookies = persistentCookies.loadForRequest(Uri.parse(URL));
-        csrfTokenValue = cookies
-            .firstWhere((c) => c.name == 'csrftoken', orElse: () => null)
-            ?.value;
-        if (csrfTokenValue != null) {
-          _dio.options.headers['X-CSRF-TOKEN'] =
-              csrfTokenValue; //setting the csrftoken from the response in the headers
-        }
-        return response;
-      }));
-      await _dio.get("login/");
-      return csrfTokenValue;
-    } catch (error, stacktrace) {
-      print("Exception occured: $error stackTrace: $stacktrace");
-      return null;
-    }
-  }
-
-  attemptToSignIn() async {
-    try {
-      final formState = _formKey.currentState;
-      if (formState.validate()) {
-        formState.save();
-        try {
-          final csrf = await getCsrftoken();
-          dio.FormData formData = new dio.FormData.from({
-            "username": _usernameController.value.text,
-            "password": _passwordController.value.text,
-            "csrfmiddlewaretoken": '$csrf'
-          });
-          dio.Options optionData = new dio.Options(
-            followRedirects: false,
-            validateStatus: (status) {
-              return status < 500;
-            },
-            contentType: ContentType.parse("application/x-www-form-urlencoded"),
-          );
-          dio.Response response =
-              await _dio.post("login/", data: formData, options: optionData);
-          if (response.statusCode == 200 &&
-              response.data
-                  .toString()
-                  .contains("Please enter a correct username and password")) {
-            displayDialog(context, "Błąd logowania",
-                "Błędne hasło lub konto z podanym loginem nie istnieje");
-          } else if (response.statusCode == 200 || response.statusCode == 302) {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Accounts()));
-          }
-        } on dio.DioError catch (e) {
-          if (e.response != null) {
-            print(e.response.statusCode.toString() +
-                " " +
-                e.response.statusMessage);
-            print(e.response.data);
-            print(e.response.headers);
-            print(e.response.request);
-          } else {
-            print(e.request);
-            print(e.message);
-          }
-        } catch (error, stacktrace) {
-          print("Exception occured: $error stackTrace: $stacktrace");
-          return null;
-        }
-      }
-    } catch (e) {
-      print(e.toString());
-    }
+  @override
+  void initState() {
+    _apiLogIn = new ApiLogIn();
   }
 
   Widget _buildLogin() {
@@ -152,6 +44,26 @@ class _SignInState extends State<SignIn> {
       validator: PasswordFieldValidator.validate,
       obscureText: true,
     );
+  }
+
+  signIn() async {
+    try {
+      final formState = _formKey.currentState;
+      if (formState.validate()) {
+        formState.save();
+        var result = await _apiLogIn.attemptToSignIn(
+            _usernameController.value.text, _passwordController.value.text);
+        if (result == 'ok') {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Accounts()));
+        } else if (result == 'wrong credentials') {
+          displayDialog(context, "Błąd logowania",
+              "Błędne hasło lub konto z podanym loginem nie istnieje");
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -179,7 +91,7 @@ class _SignInState extends State<SignIn> {
                           SizedBox(
                             width: 190,
                             child: RaisedButton(
-                                onPressed: attemptToSignIn,
+                                onPressed: signIn,
                                 child: Text(
                                   'Zaloguj się',
                                   style: TextStyle(
