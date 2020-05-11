@@ -2,13 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:idom/api/api_login.dart';
 import 'package:idom/pages/setup/accounts.dart';
 import 'package:idom/utils/validators.dart';
 
 final storage = FlutterSecureStorage();
 
 class SignIn extends StatefulWidget {
+  const SignIn({Key key, @required this.apiLogIn, this.onSignedIn}) : super(key: key);
+  final VoidCallback onSignedIn;
+  final apiLogIn;
+
   @override
   _SignInState createState() => new _SignInState();
 }
@@ -18,15 +21,9 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  ApiLogIn _apiLogIn;
-
-  @override
-  void initState() {
-    _apiLogIn = new ApiLogIn();
-  }
-
   Widget _buildLogin() {
     return TextFormField(
+        key: Key('email'),
         controller: _usernameController,
         decoration: InputDecoration(
             labelText: 'Login',
@@ -36,6 +33,7 @@ class _SignInState extends State<SignIn> {
 
   Widget _buildPassword() {
     return TextFormField(
+      key: Key('password'),
       controller: _passwordController,
       decoration: InputDecoration(
         labelText: 'Hasło',
@@ -51,9 +49,11 @@ class _SignInState extends State<SignIn> {
       final formState = _formKey.currentState;
       if (formState.validate()) {
         formState.save();
-        var result = await _apiLogIn.attemptToSignIn(
+        var result = await widget.apiLogIn.attemptToSignIn(
             _usernameController.value.text, _passwordController.value.text);
+        print('result: $result');
         if (result == 'ok') {
+          widget.onSignedIn();
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Accounts()));
         } else if (result == 'wrong credentials') {
@@ -91,6 +91,7 @@ class _SignInState extends State<SignIn> {
                           SizedBox(
                             width: 190,
                             child: RaisedButton(
+                                key: Key('signIn'),
                                 onPressed: signIn,
                                 child: Text(
                                   'Zaloguj się',

@@ -1,7 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:idom/api/api_login.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
+
+enum AuthStatus {
+  notDetermined,
+  notSignedIn,
+  signedIn,
+}
 
 class Front extends StatefulWidget {
   @override
@@ -9,6 +16,14 @@ class Front extends StatefulWidget {
 }
 
 class _FrontState extends State<Front> {
+  AuthStatus authStatus = AuthStatus.notDetermined;
+
+  void _signedIn() {
+    setState(() {
+      authStatus = AuthStatus.signedIn;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,10 +90,15 @@ class _FrontState extends State<Front> {
   }
 
   void navigateToSignIn() {
+    ApiLogIn apiLogIn = ApiLogIn();
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SignIn(), fullscreenDialog: true));
+            builder: (context) => SignIn(
+                  apiLogIn: apiLogIn,
+                  onSignedIn: _signedIn,
+                ),
+            fullscreenDialog: true));
   }
 
   void navigateToSignUp() {
