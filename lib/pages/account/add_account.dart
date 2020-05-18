@@ -142,8 +142,8 @@ class _AddAccountState extends State<AddAccount> {
           labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
       validator: (String value) {
         if (value.isNotEmpty &&
-            !RegExp(r"^(?:[[+]|0]9)?[0-9]{9,12}$").hasMatch(value)) {
-          return 'Podaj poprawny numer telefonu';
+            !RegExp(r"^\+\d{11}$").hasMatch(value)) {
+          return 'Numer telefonu musi zawierać kierunkowy postaci +XX';
         }
       },
     );
