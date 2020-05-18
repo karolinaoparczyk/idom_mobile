@@ -49,7 +49,7 @@ class _AddAccountState extends State<AddAccount> {
             color: Colors.red,
           ),
         ),
-        maxLength: 30,
+        maxLength: 25,
         validator: (String value) {
           if (value.isEmpty) {
             return 'Login jest wymagany';
