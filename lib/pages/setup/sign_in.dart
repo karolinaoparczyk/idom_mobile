@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:io';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart' as dio;
-import 'package:idom/pages/setup/accounts.dart';
+import 'package:idom/pages/account/accounts.dart';
 import 'package:path_provider/path_provider.dart';
 
 final storage = FlutterSecureStorage();
