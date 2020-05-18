@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account_detail.dart';
 import 'package:idom/pages/new_account.dart';
+import 'package:idom/pages/setup/front.dart';
 
 class Accounts extends StatefulWidget {
   @override
@@ -39,7 +40,18 @@ class _AccountsState extends State<Accounts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('IDOM Konta w systemie')),
+        appBar: AppBar(title: Text('IDOM Konta w systemie'), actions: <Widget>[
+          // action button
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Front(), fullscreenDialog: true));
+            },
+          ),
+        ]),
         body: FutureBuilder(
           future: getAccounts(),
           builder:

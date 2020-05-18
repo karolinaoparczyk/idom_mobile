@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:idom/models.dart';
+import 'package:idom/pages/setup/front.dart';
 
 class AccountDetail extends StatelessWidget {
   const AccountDetail({@required this.account});
@@ -9,7 +10,17 @@ class AccountDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(account.username)),
+        appBar: AppBar(title: Text(account.username), actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Front(), fullscreenDialog: true));
+            },
+          ),
+        ]),
         body: SingleChildScrollView(
             child: Padding(
                 padding: const EdgeInsets.all(12.0),
