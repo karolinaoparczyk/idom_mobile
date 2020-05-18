@@ -48,6 +48,7 @@ class _AccountsState extends State<Accounts> {
               List<Account> accounts = snapshot.data;
               return ListView(
                 children: accounts
+                .where((account) => account.isActive == true)
                     .map((Account account) => ListTile(
                           title: Text(account.username),
                           onTap: () => Navigator.of(context).push(
