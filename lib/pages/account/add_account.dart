@@ -241,11 +241,8 @@ class _AddAccountState extends State<AddAccount> {
             .contains("for key 'register_customuser.email'")) {
           displayDialog(
               context, "Błąd", "Konto dla podanego adresu email już istnieje.");
-        }
-        else if (res['body']
-            .contains("Enter a valid phone number")) {
-          displayDialog(
-              context, "Błąd", "Numer telefonu jest niepoprawny.");
+        } else if (res['body'].contains("Enter a valid phone number")) {
+          displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
         }
       } catch (e) {
         print(e.toString());

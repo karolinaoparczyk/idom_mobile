@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:idom/pages/setup/sign_in.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -32,11 +32,10 @@ class _SignUpState extends State<SignUp> {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
     };
-    print(res.body);
     return resDict;
   }
 
-  Widget _buildLogin() {
+  Widget _buildUsername() {
     return TextFormField(
         controller: _usernameController,
         decoration: InputDecoration(
@@ -47,7 +46,7 @@ class _SignUpState extends State<SignUp> {
             color: Colors.red,
           ),
         ),
-        maxLength: 30,
+        maxLength: 25,
         validator: (String value) {
           if (value.isEmpty) {
             return 'Login jest wymagany';
@@ -131,7 +130,7 @@ class _SignUpState extends State<SignUp> {
         });
   }
 
-  Widget _buildPhoneNumber() {
+  Widget _buildTelephone() {
     return TextFormField(
         controller: _telephoneController,
         decoration: InputDecoration(
@@ -139,9 +138,9 @@ class _SignUpState extends State<SignUp> {
             labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
         keyboardType: TextInputType.phone,
         validator: (String value) {
-          if (value.isNotEmpty &&
-              !RegExp(r"^(?:[[+]|0]9)?[0-9]{9,12}$").hasMatch(value)) {
-            return 'Podaj poprawny numer telefonu';
+          value = value.replaceAll(' ', '');
+          if (value.isNotEmpty && !RegExp(r"^\+\d{11}$").hasMatch(value)) {
+            return 'Numer telefonu musi zawierać kierunkowy postaci +XX';
           }
           return null;
         });
@@ -164,9 +163,9 @@ class _SignUpState extends State<SignUp> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        _buildLogin(),
+                        _buildUsername(),
                         _buildEmail(),
-                        _buildPhoneNumber(),
+                        _buildTelephone(),
                         _buildPassword(),
                         _buildConfirmPassword(),
                         SizedBox(height: 20),
@@ -222,17 +221,21 @@ class _SignUpState extends State<SignUp> {
       try {
         var res = await attemptSignUp(
             username, password1, password2, email, telephone);
-        if (res['statusCode'] == "201")
-          displayDialog(context, "Sukces",
+        if (res['statusCode'] == "201") {
+          await displayDialog(context, "Sukces",
               "Konto zostało utworzone. Możesz się zalogować.");
-        else if (res['body'].contains(
-            "Duplicate entry 'test' for key 'register_customuser.username'")) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => SignIn()));
+        } else if (res['body']
+            .contains("for key 'register_customuser.username'")) {
           displayDialog(
               context, "Błąd", "Konto dla podanego loginu już istnieje.");
-        } else if (res['body'].contains(
-            "Duplicate entry 'test@test.pl' for key 'register_customuser.email'")) {
+        } else if (res['body']
+            .contains("for key 'register_customuser.email'")) {
           displayDialog(
               context, "Błąd", "Konto dla podanego adresu email już istnieje.");
+        } else if (res['body'].contains("Enter a valid phone number")) {
+          displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
         }
       } catch (e) {
         print(e.toString());
