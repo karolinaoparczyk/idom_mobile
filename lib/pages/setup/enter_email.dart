@@ -103,7 +103,7 @@ class _EnterEmailState extends State<EnterEmail> {
         if (res == 200){
           Navigator.of(context).pop(true);
         }
-        else{
+        else if (res == 400){
           displayDialog(
               context, "Błąd", "Konto dla podanego adresu email nie istnieje.");
         }
