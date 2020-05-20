@@ -8,6 +8,14 @@ import 'package:idom/pages/account/add_account.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
+  const Accounts(
+      {Key key,
+      @required this.currentLoggedInToken,
+      @required this.currentLoggedInUsername})
+      : super(key: key);
+  final String currentLoggedInToken;
+  final String currentLoggedInUsername;
+
   @override
   _AccountsState createState() => _AccountsState();
 }
@@ -49,9 +57,9 @@ class _AccountsState extends State<Accounts> {
               List<Account> accounts = snapshot.data;
               return Column(children: <Widget>[
                 Expanded(
-                  flex: 1,
-                  child: Text("Liczba wszytskich kont: ${accounts.length}")
-                ),
+                    flex: 1,
+                    child: Text("Liczba wszystkich kont: ${accounts.length}")),
+
                 /// A widget with the list of accounts
                 Expanded(
                     flex: 16,
@@ -65,6 +73,7 @@ class _AccountsState extends State<Accounts> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             AccountDetail(account: account))),
+
                                 /// delete account button
                                 trailing: PopupMenuButton(
                                   onSelected: _onSelected,
@@ -79,7 +88,8 @@ class _AccountsState extends State<Accounts> {
                               ))
                           .toList(),
                     ))),
-                Expanded( flex:1, child: Divider()),
+                Expanded(flex: 1, child: Divider()),
+
                 /// add new account button
                 Expanded(
                     flex: 4,
@@ -107,6 +117,7 @@ class _AccountsState extends State<Accounts> {
                         ]))
               ]);
             }
+
             /// shows progress indicator while fetching data
             return Center(child: CircularProgressIndicator());
           }),
@@ -119,6 +130,7 @@ class _AccountsState extends State<Accounts> {
         context,
         MaterialPageRoute(
             builder: (context) => AddAccount(), fullscreenDialog: true));
+
     /// displays success message when the account is successfuly created
     if (result != null && result == true) {
       final snackBar =
