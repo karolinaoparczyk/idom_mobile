@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:idom/api/api_setup.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/add_account.dart';
+import 'package:idom/pages/setup/front.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
@@ -23,6 +25,7 @@ class Accounts extends StatefulWidget {
 class _AccountsState extends State<Accounts> {
   final String accountsUrl = "http://10.0.2.2:8000/register/";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  ApiSetup apiSetup = ApiSetup();
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
@@ -44,84 +47,122 @@ class _AccountsState extends State<Accounts> {
     //TODO: delete from database
   }
 
+  _logOut() async {
+    try {
+      var statusCode = await apiSetup.logOut(widget.currentLoggedInToken);
+      if (statusCode == 200) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Front(), fullscreenDialog: true));
+      } else {
+        displayDialog(
+            context, "Błąd", "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void displayDialog(BuildContext context, String title, String text) =>
+      showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(title: Text(title), content: Text(text)),
+      );
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(title: Text('IDOM Konta w systemie')),
-      body: FutureBuilder(
-          future: getAccounts(),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Account>> snapshot) {
-            if (snapshot.hasData) {
-              List<Account> accounts = snapshot.data;
-              return Column(children: <Widget>[
-                Expanded(
-                    flex: 1,
-                    child: Text("Liczba wszystkich kont: ${accounts.length}")),
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            leading: Container(),
+            title: Text('IDOM Konta w systemie'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.exit_to_app),
+                onPressed: _logOut,
+              ),
+            ],
+          ),
+          body: FutureBuilder(
+              future: getAccounts(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Account>> snapshot) {
+                if (snapshot.hasData) {
+                  List<Account> accounts = snapshot.data;
+                  return Column(children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child:
+                            Text("Liczba wszystkich kont: ${accounts.length}")),
 
-                /// A widget with the list of accounts
-                Expanded(
-                    flex: 16,
-                    child: Scrollbar(
-                        child: ListView(
-                      shrinkWrap: true,
-                      children: accounts
-                          .map((Account account) => ListTile(
-                                title: Text(account.username),
-                                onTap: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            AccountDetail(account: account))),
+                    /// A widget with the list of accounts
+                    Expanded(
+                        flex: 16,
+                        child: Scrollbar(
+                            child: ListView(
+                          shrinkWrap: true,
+                          children: accounts
+                              .map((Account account) => ListTile(
+                                    title: Text(account.username),
+                                    onTap: () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) => AccountDetail(
+                                                currentLoggedInToken:
+                                                    widget.currentLoggedInToken,
+                                                account: account))),
 
-                                /// delete account button
-                                trailing: PopupMenuButton(
-                                  onSelected: _onSelected,
-                                  icon: Icon(Icons.menu),
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      value: account,
-                                      child: Text("Usuń"),
+                                    /// delete account button
+                                    trailing: PopupMenuButton(
+                                      onSelected: _onSelected,
+                                      icon: Icon(Icons.menu),
+                                      itemBuilder: (context) => [
+                                        PopupMenuItem(
+                                          value: account,
+                                          child: Text("Usuń"),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                    ))),
-                Expanded(flex: 1, child: Divider()),
+                                  ))
+                              .toList(),
+                        ))),
+                    Expanded(flex: 1, child: Divider()),
 
-                /// add new account button
-                Expanded(
-                    flex: 4,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            width: 250,
-                            child: RaisedButton(
-                                onPressed: navigateToNewAccount,
-                                child: Text(
-                                  'Dodaj nowe konto',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                color: Colors.black,
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                elevation: 10,
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(30.0))),
-                          ),
-                        ]))
-              ]);
-            }
+                    /// add new account button
+                    Expanded(
+                        flex: 4,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 250,
+                                child: RaisedButton(
+                                    onPressed: navigateToNewAccount,
+                                    child: Text(
+                                      'Dodaj nowe konto',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    color: Colors.black,
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    elevation: 10,
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(30.0))),
+                              ),
+                            ]))
+                  ]);
+                }
 
-            /// shows progress indicator while fetching data
-            return Center(child: CircularProgressIndicator());
-          }),
-    );
+                /// shows progress indicator while fetching data
+                return Center(child: CircularProgressIndicator());
+              }),
+        ));
   }
 
   /// goes to adding new account page
@@ -129,7 +170,10 @@ class _AccountsState extends State<Accounts> {
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => AddAccount(), fullscreenDialog: true));
+            builder: (context) => AddAccount(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                ),
+            fullscreenDialog: true));
 
     /// displays success message when the account is successfuly created
     if (result != null && result == true) {

@@ -26,67 +26,71 @@ class _FrontState extends State<Front> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text('IDOM')),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text(
-              'IDOM',
-              style: TextStyle(fontSize: 90, color: Colors.black),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
-              style: TextStyle(fontSize: 15, color: Colors.black),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 54),
-            Row(
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+            appBar: AppBar(leading: Container(), title: Text('IDOM')),
+            body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                SizedBox(
-                  width: 190,
-                  child: RaisedButton(
-                      onPressed: navigateToSignIn,
-                      child: Text(
-                        'Zaloguj się',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      color: Colors.black,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      elevation: 10,
-                      shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0))),
+                Text(
+                  'IDOM',
+                  style: TextStyle(fontSize: 90, color: Colors.black),
+                  textAlign: TextAlign.center,
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              SizedBox(
-                width: 190,
-                child: RaisedButton(
-                    onPressed: navigateToSignUp,
-                    child: Text(
-                      'Zarejestruj się',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.normal),
+                Text(
+                  'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
+                  style: TextStyle(fontSize: 15, color: Colors.black),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 54),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 190,
+                      child: RaisedButton(
+                          onPressed: navigateToSignIn,
+                          child: Text(
+                            'Zaloguj się',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          color: Colors.black,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          elevation: 10,
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0))),
                     ),
-                    color: Colors.black,
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    elevation: 10,
-                    shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(30.0))),
-              ),
-            ]),
-          ],
-        ));
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 190,
+                        child: RaisedButton(
+                            onPressed: navigateToSignUp,
+                            child: Text(
+                              'Zarejestruj się',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            color: Colors.black,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            elevation: 10,
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0))),
+                      ),
+                    ]),
+              ],
+            )));
   }
 
   void navigateToSignIn() {
@@ -95,7 +99,7 @@ class _FrontState extends State<Front> {
         context,
         MaterialPageRoute(
             builder: (context) => SignIn(
-              apiSetup: apiSetup,
+                  apiSetup: apiSetup,
                   onSignedIn: _signedIn,
                 ),
             fullscreenDialog: true));

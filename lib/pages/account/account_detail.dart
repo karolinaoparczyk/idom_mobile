@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:idom/api/api_setup.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/front.dart';
 
 class AccountDetail extends StatelessWidget {
-  const AccountDetail({@required this.account});
-
+  AccountDetail(
+      {Key key, @required this.currentLoggedInToken, @required this.account})
+      : super(key: key);
+  final String currentLoggedInToken;
   final Account account;
+  final ApiSetup apiSetup = ApiSetup();
+
+  void displayDialog(BuildContext context, String title, String text) =>
+      showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(title: Text(title), content: Text(text)),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +24,21 @@ class AccountDetail extends StatelessWidget {
         appBar: AppBar(title: Text(account.username), actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Front(), fullscreenDialog: true));
+            onPressed: () async {
+              try {
+                var statusCode = await apiSetup.logOut(currentLoggedInToken);
+                if (statusCode == 200) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Front(), fullscreenDialog: true));
+                } else {
+                  displayDialog(
+                      context, "Błąd", "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+                }
+              } catch (e) {
+                print(e);
+              }
             },
           ),
         ]),

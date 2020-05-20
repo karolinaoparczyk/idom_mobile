@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:idom/api/api_setup.dart';
+import 'package:idom/pages/setup/front.dart';
 
 /// adds a new account
 class AddAccount extends StatefulWidget {
+  const AddAccount({Key key, @required this.currentLoggedInToken})
+      : super(key: key);
+  final String currentLoggedInToken;
+
   @override
   _AddAccountState createState() => _AddAccountState();
 }
@@ -16,6 +22,7 @@ class _AddAccountState extends State<AddAccount> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
+  final ApiSetup apiSetup = ApiSetup();
 
   /// adds a new account to database through API
   Future<Map<String, String>> attemptAddAccount(
@@ -36,6 +43,23 @@ class _AddAccountState extends State<AddAccount> {
       "statusCode": res.statusCode.toString(),
     };
     return resDict;
+  }
+
+  _logOut() async {
+    try {
+      var statusCode = await apiSetup.logOut(widget.currentLoggedInToken);
+      if (statusCode == 200) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Front(), fullscreenDialog: true));
+      } else {
+        displayDialog(
+            context, "Błąd", "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Widget _buildUsername() {
@@ -125,7 +149,7 @@ class _AddAccountState extends State<AddAccount> {
             return 'Email jest wymagany';
           }
           if (!RegExp(
-              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
               .hasMatch(value)) {
             return 'Podaj poprawny adres email';
           }
@@ -152,9 +176,12 @@ class _AddAccountState extends State<AddAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dodaj nowe konto'),
-      ),
+      appBar: AppBar(title: Text('Dodaj nowe konto'), actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.exit_to_app),
+          onPressed: _logOut,
+        ),
+      ]),
 
       /// new account form
       body: SingleChildScrollView(

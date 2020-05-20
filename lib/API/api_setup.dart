@@ -8,4 +8,14 @@ class ApiSetup {
     });
     return [result.body, result.statusCode];
   }
+
+  Future<int> logOut(String token) async {
+    try {
+      var res = await http.post('http://10.0.2.2:8000/api-logout/$token');
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }
