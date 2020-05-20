@@ -18,4 +18,12 @@ class ApiSetup {
     }
     return null;
   }
+
+  Future<int> resetPassword(String email) async {
+    var res = await http
+        .post('http://10.0.2.2:8000/password-reset/', body: {"email": email});
+    print(res.statusCode);
+    print(res.body);
+    return res.statusCode;
+  }
 }
