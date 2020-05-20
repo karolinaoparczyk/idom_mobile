@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:idom/API/api_setup.dart';
+import 'package:idom/pages/account/accounts.dart';
 
-import 'package:idom/pages/setup/accounts.dart';
 import 'package:idom/utils/validators.dart';
 
 final storage = FlutterSecureStorage();
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key key, @required this.apiLogIn, this.onSignedIn}) : super(key: key);
+  const SignIn({Key key, this.apiSetup, this.onSignedIn})
+      : super(key: key);
   final VoidCallback onSignedIn;
-  final apiLogIn;
+  final ApiSetup apiSetup;
 
   @override
   _SignInState createState() => new _SignInState();
@@ -51,15 +53,18 @@ class _SignInState extends State<SignIn> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
-        formState.save();
-        var result = await widget.apiLogIn.attemptToSignIn(
-            _usernameController.value.text, _passwordController.value.text);
-        print('result: $result');
-        if (result == 'ok') {
+        var result = await widget.apiSetup.signIn(_usernameController.value.text, _passwordController.value.text);
+        if (result[1] == 200 &&
+            result[0].toString().contains('token')) {
           widget.onSignedIn();
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Accounts()));
-        } else if (result == 'wrong credentials') {
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Accounts(
+                      currentLoggedInToken: result[0].split(':')[1].substring(1,41),
+                      currentLoggedInUsername:
+                          _usernameController.value.text)));
+        } else if (result[1] == 400) {
           displayDialog(context, "Błąd logowania",
               "Błędne hasło lub konto z podanym loginem nie istnieje");
         }

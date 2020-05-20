@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:idom/api/api_login.dart';
+import 'package:idom/API/api_setup.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
 
@@ -90,12 +90,12 @@ class _FrontState extends State<Front> {
   }
 
   void navigateToSignIn() {
-    ApiLogIn apiLogIn = ApiLogIn();
+    ApiSetup apiSetup = ApiSetup();
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => SignIn(
-                  apiLogIn: apiLogIn,
+              apiSetup: apiSetup,
                   onSignedIn: _signedIn,
                 ),
             fullscreenDialog: true));

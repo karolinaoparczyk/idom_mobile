@@ -1,19 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:idom/pages/setup/accounts.dart';
+import 'package:http/http.dart' as http;
 
-class NewAccount extends StatefulWidget {
+/// adds a new account
+class AddAccount extends StatefulWidget {
   @override
-  _NewAccountState createState() => _NewAccountState();
+  _AddAccountState createState() => _AddAccountState();
 }
 
-class _NewAccountState extends State<NewAccount> {
+class _AddAccountState extends State<AddAccount> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _telephoneController = TextEditingController();
 
-  Widget _buildLogin() {
+  /// adds a new account to database through API
+  Future<Map<String, String>> attemptAddAccount(
+      String username,
+      String password1,
+      String password2,
+      String email,
+      String telephone) async {
+    var res = await http.post('http://10.0.2.2:8000/register/', body: {
+      "username": username,
+      "password1": password1,
+      "password2": password2,
+      "email": email,
+      "telephone": telephone,
+    });
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  Widget _buildUsername() {
     return TextFormField(
+        controller: _usernameController,
         decoration: InputDecoration(
           labelText: 'Login',
           labelStyle: TextStyle(color: Colors.black, fontSize: 18),
@@ -22,7 +49,7 @@ class _NewAccountState extends State<NewAccount> {
             color: Colors.red,
           ),
         ),
-        maxLength: 30,
+        maxLength: 25,
         validator: (String value) {
           if (value.isEmpty) {
             return 'Login jest wymagany';
@@ -83,6 +110,7 @@ class _NewAccountState extends State<NewAccount> {
 
   Widget _buildEmail() {
     return TextFormField(
+        controller: _emailController,
         decoration: InputDecoration(
           labelText: 'Email',
           labelStyle: TextStyle(color: Colors.black, fontSize: 18),
@@ -105,19 +133,20 @@ class _NewAccountState extends State<NewAccount> {
         });
   }
 
-  Widget _buildPhoneNumber() {
+  Widget _buildTelephone() {
     return TextFormField(
-        decoration: InputDecoration(
-            labelText: 'Nr telefonu komórkowego',
-            labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-        keyboardType: TextInputType.phone,
-        validator: (String value) {
-          if (value.isNotEmpty &&
-              !RegExp(r"^(?:[[+]|0]9)?[0-9]{9,12}$").hasMatch(value)) {
-            return 'Podaj poprawny numer telefonu';
-          }
-          return null;
-        });
+      controller: _telephoneController,
+      decoration: InputDecoration(
+          labelText: 'Nr telefonu komórkowego',
+          labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
+      validator: (String value) {
+        value = value.replaceAll(' ', '');
+        if (value.isNotEmpty && !RegExp(r"^\+\d{11}$").hasMatch(value)) {
+          return 'Numer telefonu musi zawierać kierunkowy postaci +XX';
+        }
+        return null;
+      },
+    );
   }
 
   @override
@@ -126,6 +155,8 @@ class _NewAccountState extends State<NewAccount> {
       appBar: AppBar(
         title: Text('Dodaj nowe konto'),
       ),
+
+      /// new account form
       body: SingleChildScrollView(
         child: Row(
           children: <Widget>[
@@ -137,12 +168,14 @@ class _NewAccountState extends State<NewAccount> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        _buildLogin(),
+                        _buildUsername(),
                         _buildEmail(),
-                        _buildPhoneNumber(),
+                        _buildTelephone(),
                         _buildPassword(),
                         _buildConfirmPassword(),
                         SizedBox(height: 20),
+
+                        /// confirm adding new account button
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -163,7 +196,7 @@ class _NewAccountState extends State<NewAccount> {
                                   elevation: 10,
                                   shape: new RoundedRectangleBorder(
                                       borderRadius:
-                                      new BorderRadius.circular(30.0))),
+                                          new BorderRadius.circular(30.0))),
                             ),
                           ],
                         ),
@@ -176,20 +209,43 @@ class _NewAccountState extends State<NewAccount> {
     );
   }
 
+  /// displays message for the user
+  void displayDialog(BuildContext context, String title, String text) =>
+      showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(title: Text(title), content: Text(text)),
+      );
+
+  /// checks http status code
   Future<void> addAccount() async {
+    var username = _usernameController.text;
+    var password1 = _passwordController.text;
+    var password2 = _confirmPasswordController.text;
+    var email = _emailController.text;
+    var telephone = _telephoneController.text;
+
     final formState = _formKey.currentState;
     if (formState.validate()) {
-      formState.save();
       try {
-        //user = await database create user
-        //user send email notification
-        // display that we sent email notification to user
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Accounts()));
+        var res = await attemptAddAccount(
+            username, password1, password2, email, telephone);
+        if (res['statusCode'] == "201") {
+          Navigator.of(context).pop(true);
+        } else if (res['body']
+            .contains("for key 'register_customuser.username'")) {
+          displayDialog(
+              context, "Błąd", "Konto dla podanego loginu już istnieje.");
+        } else if (res['body']
+            .contains("for key 'register_customuser.email'")) {
+          displayDialog(
+              context, "Błąd", "Konto dla podanego adresu email już istnieje.");
+        } else if (res['body'].contains("Enter a valid phone number")) {
+          displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
+        }
       } catch (e) {
         print(e.toString());
       }
-      //sign in to database
     }
   }
 }
