@@ -110,28 +110,27 @@ class _AddAccountState extends State<AddAccount> {
 
   Widget _buildEmail() {
     return TextFormField(
-      controller: _emailController,
-      decoration: InputDecoration(
-        labelText: 'Email',
-        labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-        suffixText: '*',
-        suffixStyle: TextStyle(
-          color: Colors.red,
+        controller: _emailController,
+        decoration: InputDecoration(
+          labelText: 'Email',
+          labelStyle: TextStyle(color: Colors.black, fontSize: 18),
+          suffixText: '*',
+          suffixStyle: TextStyle(
+            color: Colors.red,
+          ),
         ),
-      ),
-      keyboardType: TextInputType.emailAddress,
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Email jest wymagany';
-        }
-        if (!RegExp(
-                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-            .hasMatch(value)) {
-          return 'Podaj poprawny adres email';
-        }
-        return null;
-      },
-    );
+        keyboardType: TextInputType.emailAddress,
+        validator: (String value) {
+          if (value.isEmpty) {
+            return 'Email jest wymagany';
+          }
+          if (!RegExp(
+              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+              .hasMatch(value)) {
+            return 'Podaj poprawny adres email';
+          }
+          return null;
+        });
   }
 
   Widget _buildTelephone() {
