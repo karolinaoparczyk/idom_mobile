@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account_detail.dart';
 import 'package:idom/pages/new_account.dart';
+import 'package:http/http.dart' as http;
 
 class Accounts extends StatefulWidget {
   @override
@@ -31,11 +32,6 @@ class _AccountsState extends State<Accounts> {
     }
   }
 
-  /// deactivates user when pressed delete
-  _onSelected(dynamic val) {
-    //delete from database
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,22 +44,21 @@ class _AccountsState extends State<Accounts> {
               List<Account> accounts = snapshot.data;
               return ListView(
                 children: accounts
-                .where((account) => account.isActive == true)
+                    .where((account) => account.isActive == true)
                     .map((Account account) => ListTile(
                           title: Text(account.username),
                           onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
                                   builder: (context) =>
                                       AccountDetail(account: account))),
-                          trailing: PopupMenuButton(
-                            onSelected: _onSelected,
-                            icon: Icon(Icons.menu),
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: account,
-                                child: Text("Usuń"),
-                              ),
-                            ],
+                          trailing: FlatButton(
+                            /// deactivates user when pressed delete
+                            onPressed: () async {
+                              var res = await http.delete('http://10.0.2.2:8000/register/${account.username})');
+                              print(res.statusCode);
+                              print(res.body.toString());
+                            },
+                            child: Icon(Icons.delete)
                           ),
                         ))
                     .toList(),
