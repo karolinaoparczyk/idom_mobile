@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:idom/api/api_setup.dart';
 
 class EnterEmail extends StatefulWidget {
   @override
@@ -8,6 +9,7 @@ class EnterEmail extends StatefulWidget {
 class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final ApiSetup apiSetup = ApiSetup();
 
   Widget _buildEmail() {
     return TextFormField(
@@ -85,16 +87,26 @@ class _EnterEmailState extends State<EnterEmail> {
     );
   }
 
+  void displayDialog(BuildContext context, String title, String text) =>
+      showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(title: Text(title), content: Text(text)),
+      );
+
   /// sends request to API to reset password if form is validated
-  sendResetPasswordRequest() {
+  sendResetPasswordRequest() async {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
-        print('reset password');
-        // TODO: send API request to reset password
-        // TODO: error if wrong email
-        // TODO: navigate to login page if success
-        // TODO: show success message after sending email to the user
+        var res = await apiSetup.resetPassword(_emailController.value.text);
+        if (res == 200){
+          Navigator.of(context).pop(true);
+        }
+        else{
+          displayDialog(
+              context, "Błąd", "Konto dla podanego adresu email nie istnieje.");
+        }
       }
     } catch (e) {
       print(e.toString());

@@ -9,8 +9,7 @@ import 'package:idom/utils/validators.dart';
 final storage = FlutterSecureStorage();
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key key, this.apiSetup, this.onSignedIn})
-      : super(key: key);
+  const SignIn({Key key, this.apiSetup, this.onSignedIn}) : super(key: key);
   final VoidCallback onSignedIn;
   final ApiSetup apiSetup;
 
@@ -20,6 +19,7 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -53,15 +53,16 @@ class _SignInState extends State<SignIn> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
-        var result = await widget.apiSetup.signIn(_usernameController.value.text, _passwordController.value.text);
-        if (result[1] == 200 &&
-            result[0].toString().contains('token')) {
+        var result = await widget.apiSetup.signIn(
+            _usernameController.value.text, _passwordController.value.text);
+        if (result[1] == 200 && result[0].toString().contains('token')) {
           widget.onSignedIn();
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => Accounts(
-                      currentLoggedInToken: result[0].split(':')[1].substring(1,41),
+                      currentLoggedInToken:
+                          result[0].split(':')[1].substring(1, 41),
                       currentLoggedInUsername:
                           _usernameController.value.text)));
         } else if (result[1] == 400) {
@@ -77,6 +78,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Zaloguj się'),
       ),
@@ -117,7 +119,7 @@ class _SignInState extends State<SignIn> {
                                 elevation: 10,
                                 shape: new RoundedRectangleBorder(
                                     borderRadius:
-                                    new BorderRadius.circular(30.0))),
+                                        new BorderRadius.circular(30.0))),
                           ),
                         ],
                       ),
@@ -129,9 +131,19 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  navigateToEnterEmail(){
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => EnterEmail()));
+  navigateToEnterEmail() async {
+    bool result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EnterEmail(), fullscreenDialog: true));
+
+    /// displays success message when the email is successfuly sent
+    if (result != null && result == true) {
+      final snackBar = new SnackBar(
+          content: new Text("Email został wysłany. Sprawdź pocztę."));
+
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
   }
 
   void displayDialog(BuildContext context, String title, String text) =>
