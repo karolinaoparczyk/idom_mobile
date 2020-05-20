@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:idom/API/api_setup.dart';
+import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
 
@@ -17,6 +18,7 @@ class Front extends StatefulWidget {
 
 class _FrontState extends State<Front> {
   AuthStatus authStatus = AuthStatus.notDetermined;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _signedIn() {
     setState(() {
@@ -29,6 +31,7 @@ class _FrontState extends State<Front> {
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
+          key: _scaffoldKey,
             appBar: AppBar(leading: Container(), title: Text('IDOM')),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -89,8 +92,26 @@ class _FrontState extends State<Front> {
                                 borderRadius: new BorderRadius.circular(30.0))),
                       ),
                     ]),
-              ],
+                FlatButton(
+                  child: Text('Zapomniałeś/aś hasła?'),
+                  onPressed: navigateToEnterEmail,
+                ),],
             )));
+  }
+
+  navigateToEnterEmail() async {
+    bool result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EnterEmail(), fullscreenDialog: true));
+
+    /// displays success message when the email is successfuly sent
+    if (result != null && result == true) {
+      final snackBar = new SnackBar(
+          content: new Text("Email został wysłany. Sprawdź pocztę."));
+
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
   }
 
   void navigateToSignIn() {
