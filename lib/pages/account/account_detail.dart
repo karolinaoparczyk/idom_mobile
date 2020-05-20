@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:idom/api/api_setup.dart';
+import 'package:idom/API/api_setup.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/front.dart';
 
