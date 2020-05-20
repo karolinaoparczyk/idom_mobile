@@ -141,10 +141,11 @@ class _AddAccountState extends State<AddAccount> {
           labelText: 'Nr telefonu komórkowego',
           labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
       validator: (String value) {
-        if (value.isNotEmpty &&
-            !RegExp(r"^\+\d{11}$").hasMatch(value)) {
+        value = value.replaceAll(' ', '');
+        if (value.isNotEmpty && !RegExp(r"^\+\d{11}$").hasMatch(value)) {
           return 'Numer telefonu musi zawierać kierunkowy postaci +XX';
         }
+        return null;
       },
     );
   }
@@ -155,6 +156,7 @@ class _AddAccountState extends State<AddAccount> {
       appBar: AppBar(
         title: Text('Dodaj nowe konto'),
       ),
+
       /// new account form
       body: SingleChildScrollView(
         child: Row(
@@ -173,6 +175,7 @@ class _AddAccountState extends State<AddAccount> {
                         _buildPassword(),
                         _buildConfirmPassword(),
                         SizedBox(height: 20),
+
                         /// confirm adding new account button
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -238,6 +241,11 @@ class _AddAccountState extends State<AddAccount> {
             .contains("for key 'register_customuser.email'")) {
           displayDialog(
               context, "Błąd", "Konto dla podanego adresu email już istnieje.");
+        }
+        else if (res['body']
+            .contains("Enter a valid phone number")) {
+          displayDialog(
+              context, "Błąd", "Numer telefonu jest niepoprawny.");
         }
       } catch (e) {
         print(e.toString());
