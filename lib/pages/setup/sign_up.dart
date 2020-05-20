@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:idom/API/api_setup.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 
 class SignUp extends StatefulWidget {
@@ -209,6 +210,7 @@ class _SignUpState extends State<SignUp> {
       );
 
   Future<void> signUp() async {
+    ApiSetup apiSetup = ApiSetup();
     var username = _usernameController.text;
     var password1 = _passwordController.text;
     var password2 = _confirmPasswordController.text;
@@ -225,7 +227,9 @@ class _SignUpState extends State<SignUp> {
           await displayDialog(context, "Sukces",
               "Konto zostało utworzone. Możesz się zalogować.");
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SignIn()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SignIn(apiSetup: apiSetup)));
         } else if (res['body']
             .contains("for key 'register_customuser.username'")) {
           displayDialog(

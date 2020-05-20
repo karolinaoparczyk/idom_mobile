@@ -9,7 +9,7 @@ import 'package:idom/utils/validators.dart';
 final storage = FlutterSecureStorage();
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key key, this.apiSetup, this.onSignedIn}) : super(key: key);
+  const SignIn({Key key, @required this.apiSetup, this.onSignedIn}) : super(key: key);
   final VoidCallback onSignedIn;
   final ApiSetup apiSetup;
 
