@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:idom/api/api_login.dart';
+import 'package:idom/API/api_setup.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:mockito/mockito.dart';
 
-class MockApiLogIn extends Mock implements ApiLogIn {}
+class MockApiSetup extends Mock implements ApiSetup {}
 
 void main() {
   Widget makeTestableWidget({Widget child}) {
@@ -16,27 +16,28 @@ void main() {
   /// tests if signs in with empty email or password
   testWidgets('email or password is empty, does not sign in',
       (WidgetTester tester) async {
-    MockApiLogIn mockApiLogIn = MockApiLogIn();
+        MockApiSetup mockApiSetup = MockApiSetup();
     bool isSignedIn = false;
-    SignIn page = SignIn(apiLogIn: mockApiLogIn, onSignedIn: () => isSignedIn = true);
+    SignIn page = SignIn(apiSetup: mockApiSetup, onSignedIn: () => isSignedIn = true);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
     await tester.tap(find.byKey(Key('signIn')));
 
-    verifyNever(mockApiLogIn.attemptToSignIn('', ''));
+    verifyNever(mockApiSetup.signIn('', ''));
     expect(isSignedIn, false);
   });
 
   /// tests if signed in with valid email and password
   testWidgets('email and password non-empty, success sign in',
       (WidgetTester tester) async {
-    MockApiLogIn mockApiLogIn = MockApiLogIn();
+        MockApiSetup mockApiSetup = MockApiSetup();
     bool isSignedIn = false;
-    when(mockApiLogIn
-        .attemptToSignIn('email@mail.com', 'password'))
-        .thenAnswer((_) => Future.value('ok'));
-    SignIn page = SignIn(apiLogIn: mockApiLogIn, onSignedIn: () => isSignedIn = true);
+    List<dynamic> res = ['"token": "wertyuiopasdfghjklzxcvbnmwertyuiopasdf"', 200];
+    when(mockApiSetup
+        .signIn('email@mail.com', 'password'))
+        .thenAnswer((_)async => Future.value(res));
+    SignIn page = SignIn(apiSetup: mockApiSetup, onSignedIn: () => isSignedIn = true);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -48,7 +49,7 @@ void main() {
 
     await tester.tap(find.byKey(Key('signIn')));
 
-    verify(mockApiLogIn.attemptToSignIn('email@mail.com', 'password'))
+    verify(await mockApiSetup.signIn('email@mail.com', 'password'))
         .called(1);
     expect(isSignedIn, true);
   });
@@ -56,12 +57,13 @@ void main() {
   /// tests if does not sign in with invalid email or password
   testWidgets('email and password non-empty, error sign in',
           (WidgetTester tester) async {
-        MockApiLogIn mockApiLogIn = MockApiLogIn();
+            MockApiSetup mockApiSetup = MockApiSetup();
         bool isSignedIn = false;
-        when(mockApiLogIn
-            .attemptToSignIn('email@mail.com', 'password'))
-            .thenAnswer((_) => Future.value('wrong credentials'));
-        SignIn page = SignIn(apiLogIn: mockApiLogIn, onSignedIn: () => isSignedIn = true);
+        List<dynamic> res = ['Wrong credentials', 400];
+        when(mockApiSetup
+            .signIn('email@mail.com', 'password'))
+            .thenAnswer((_) => Future.value(res));
+        SignIn page = SignIn(apiSetup: mockApiSetup, onSignedIn: () => isSignedIn = true);
 
         await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -73,7 +75,7 @@ void main() {
 
         await tester.tap(find.byKey(Key('signIn')));
 
-        verify(mockApiLogIn.attemptToSignIn('email@mail.com', 'password'))
+        verify(mockApiSetup.signIn('email@mail.com', 'password'))
             .called(1);
         expect(isSignedIn, false);
       });
