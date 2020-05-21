@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:idom/API/api_setup.dart';
+import 'package:idom/api.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:mockito/mockito.dart';
 
-class MockApiSetup extends Mock implements ApiSetup {}
+class MockApiSetup extends Mock implements Api {}
 
 void main() {
   Widget makeTestableWidget({Widget child}) {

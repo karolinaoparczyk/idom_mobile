@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:idom/api/api_setup.dart';
+import 'package:idom/api.dart';
 import 'package:idom/pages/setup/front.dart';
 
 /// adds a new account
@@ -22,7 +22,7 @@ class _AddAccountState extends State<AddAccount> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
-  final ApiSetup apiSetup = ApiSetup();
+  final Api apiSetup = Api();
 
   /// adds a new account to database through API
   Future<Map<String, String>> attemptAddAccount(

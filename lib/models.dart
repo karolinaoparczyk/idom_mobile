@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class Account {
+  final int id;
   final String username;
   final String email;
   final String telephone;
@@ -10,6 +11,7 @@ class Account {
   final bool isActive;
 
   Account({
+    @required this.id,
     @required this.username,
     @required this.email,
     @required this.telephone,
@@ -21,6 +23,7 @@ class Account {
 
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
+        id: json['id'] as int,
         username: json['username'] as String,
         email: json['email'] as String,
         telephone: json['telephone'] as String,

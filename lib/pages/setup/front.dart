@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:idom/API/api_setup.dart';
+import 'package:idom/api.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
 
@@ -94,7 +94,7 @@ class _FrontState extends State<Front> {
   }
 
   void navigateToSignIn() {
-    ApiSetup apiSetup = ApiSetup();
+    Api apiSetup = Api();
     Navigator.push(
         context,
         MaterialPageRoute(

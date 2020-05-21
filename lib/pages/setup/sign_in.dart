@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:idom/API/api_setup.dart';
+import 'package:idom/api.dart';
 import 'package:idom/pages/account/accounts.dart';
 
 import 'package:idom/utils/validators.dart';
@@ -12,7 +12,7 @@ class SignIn extends StatefulWidget {
   const SignIn({Key key, this.apiSetup, this.onSignedIn})
       : super(key: key);
   final VoidCallback onSignedIn;
-  final ApiSetup apiSetup;
+  final Api apiSetup;
 
   @override
   _SignInState createState() => new _SignInState();
