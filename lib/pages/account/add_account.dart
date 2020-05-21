@@ -5,9 +5,11 @@ import 'package:idom/utils/validators.dart';
 
 /// adds a new account
 class AddAccount extends StatefulWidget {
-  const AddAccount({Key key, @required this.currentLoggedInToken})
+  const AddAccount(
+      {Key key, @required this.currentLoggedInToken, @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
+  final Api api;
 
   @override
   _AddAccountState createState() => _AddAccountState();
@@ -22,11 +24,10 @@ class _AddAccountState extends State<AddAccount> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
-  final Api api = Api();
 
   _logOut() async {
     try {
-      var statusCode = await api.logOut(widget.currentLoggedInToken);
+      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
       if (statusCode == 200) {
         Navigator.push(
             context,
@@ -43,6 +44,7 @@ class _AddAccountState extends State<AddAccount> {
 
   Widget _buildUsername() {
     return TextFormField(
+        key: Key("username"),
         controller: _usernameController,
         decoration: InputDecoration(
           labelText: 'Login',
@@ -58,6 +60,7 @@ class _AddAccountState extends State<AddAccount> {
 
   Widget _buildPassword() {
     return TextFormField(
+      key: Key("password1"),
       controller: _passwordController,
       decoration: InputDecoration(
         labelText: 'Hasło',
@@ -75,6 +78,7 @@ class _AddAccountState extends State<AddAccount> {
 
   Widget _buildConfirmPassword() {
     return TextFormField(
+      key: Key("password2"),
       controller: _confirmPasswordController,
       decoration: InputDecoration(
         labelText: 'Powtórz hasło',
@@ -96,6 +100,7 @@ class _AddAccountState extends State<AddAccount> {
 
   Widget _buildEmail() {
     return TextFormField(
+        key: Key("email"),
         controller: _emailController,
         decoration: InputDecoration(
           labelText: 'Email',
@@ -111,12 +116,12 @@ class _AddAccountState extends State<AddAccount> {
 
   Widget _buildTelephone() {
     return TextFormField(
-      controller: _telephoneController,
-      decoration: InputDecoration(
-          labelText: 'Nr telefonu komórkowego',
-          labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-      validator: TelephoneFieldValidator.validate
-    );
+        key: Key("telephone"),
+        controller: _telephoneController,
+        decoration: InputDecoration(
+            labelText: 'Nr telefonu komórkowego',
+            labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
+        validator: TelephoneFieldValidator.validate);
   }
 
   @override
@@ -155,6 +160,7 @@ class _AddAccountState extends State<AddAccount> {
                             SizedBox(
                               width: 250,
                               child: RaisedButton(
+                                  key: Key("addAccount"),
                                   onPressed: addAccount,
                                   child: Text(
                                     'Dodaj nowe konto',
@@ -187,7 +193,13 @@ class _AddAccountState extends State<AddAccount> {
       showDialog(
         context: context,
         builder: (context) =>
-            AlertDialog(title: Text(title), content: Text(text)),
+            AlertDialog(title: Text(title), content: Text(text), actions: [
+              FlatButton(
+                key: Key("ok button"),
+                onPressed: () => Navigator.pop(context, false), // passing false
+                child: Text('OK'),
+              ),
+            ],),
       );
 
   /// checks http status code
@@ -201,8 +213,8 @@ class _AddAccountState extends State<AddAccount> {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       try {
-        var res = await api.signUp(
-            username, password1, password2, email, telephone);
+        var res =
+            await widget.api.signUp(username, password1, password2, email, telephone);
         if (res['statusCode'] == "201") {
           Navigator.of(context).pop(true);
         } else if (res['body']

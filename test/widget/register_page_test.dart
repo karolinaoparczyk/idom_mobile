@@ -7,8 +7,6 @@ import 'package:mockito/mockito.dart';
 
 class MockApi extends Mock implements Api {}
 
-class MockNavigatorObserver extends Mock implements NavigatorObserver {}
-
 void main() {
   Widget makeTestableWidget({Widget child}) {
     return MaterialApp(home: child);

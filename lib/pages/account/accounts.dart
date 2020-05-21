@@ -80,7 +80,7 @@ class _AccountsState extends State<Accounts> {
   }
 
   /// logs the user out of the app
-   _logOut() async {
+  _logOut() async {
     try {
       var statusCode = await api.logOut(widget.currentLoggedInToken);
       if (statusCode == 200) {
@@ -203,8 +203,7 @@ class _AccountsState extends State<Accounts> {
         context,
         MaterialPageRoute(
             builder: (context) => AddAccount(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                ),
+                currentLoggedInToken: widget.currentLoggedInToken, api: api),
             fullscreenDialog: true));
 
     /// displays success message when the account is successfuly created
