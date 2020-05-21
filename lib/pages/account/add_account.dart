@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/front.dart';
+import 'package:idom/utils/validators.dart';
 
 /// adds a new account
 class AddAccount extends StatefulWidget {
@@ -74,14 +75,7 @@ class _AddAccountState extends State<AddAccount> {
           ),
         ),
         maxLength: 25,
-        validator: (String value) {
-          if (value.isEmpty) {
-            return 'Login jest wymagany';
-          }
-          if (value.contains(' ')) {
-            return 'Login nie może zawierać spacji';
-          }
-        });
+        validator: UsernameFieldValidator.validate);
   }
 
   Widget _buildPassword() {
@@ -96,14 +90,7 @@ class _AddAccountState extends State<AddAccount> {
         ),
       ),
       maxLength: 20,
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Hasło jest wymagane';
-        }
-        if (value.length < 8) {
-          return 'Hasło musi zawierać przynajmniej 8 znaków';
-        }
-      },
+      validator: PasswordFieldValidator.validate,
       obscureText: true,
     );
   }
@@ -121,9 +108,6 @@ class _AddAccountState extends State<AddAccount> {
       ),
       maxLength: 20,
       validator: (String value) {
-        if (value.isEmpty) {
-          return 'Hasło jest wymagane';
-        }
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić';
         }
@@ -144,17 +128,7 @@ class _AddAccountState extends State<AddAccount> {
           ),
         ),
         keyboardType: TextInputType.emailAddress,
-        validator: (String value) {
-          if (value.isEmpty) {
-            return 'Email jest wymagany';
-          }
-          if (!RegExp(
-                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-              .hasMatch(value)) {
-            return 'Podaj poprawny adres email';
-          }
-          return null;
-        });
+        validator: EmailFieldValidator.validate);
   }
 
   Widget _buildTelephone() {
@@ -163,13 +137,7 @@ class _AddAccountState extends State<AddAccount> {
       decoration: InputDecoration(
           labelText: 'Nr telefonu komórkowego',
           labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-      validator: (String value) {
-        value = value.replaceAll(' ', '');
-        if (value.isNotEmpty && !RegExp(r"^\+\d{11}$").hasMatch(value)) {
-          return 'Numer telefonu musi zawierać kierunkowy postaci +XX';
-        }
-        return null;
-      },
+      validator: TelephoneFieldValidator.validate
     );
   }
 
