@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:idom/API/api_setup.dart';
+import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/front.dart';
 
@@ -9,7 +9,7 @@ class AccountDetail extends StatelessWidget {
       : super(key: key);
   final String currentLoggedInToken;
   final Account account;
-  final ApiSetup apiSetup = ApiSetup();
+  final Api api = Api();
 
   void displayDialog(BuildContext context, String title, String text) =>
       showDialog(
@@ -26,7 +26,7 @@ class AccountDetail extends StatelessWidget {
             icon: Icon(Icons.exit_to_app),
             onPressed: () async {
               try {
-                var statusCode = await apiSetup.logOut(currentLoggedInToken);
+                var statusCode = await api.logOut(currentLoggedInToken);
                 if (statusCode == 200) {
                   Navigator.push(
                       context,

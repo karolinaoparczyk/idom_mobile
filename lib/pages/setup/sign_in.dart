@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:idom/API/api_setup.dart';
+import 'package:idom/api.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/utils/validators.dart';
@@ -9,9 +9,9 @@ import 'package:idom/utils/validators.dart';
 final storage = FlutterSecureStorage();
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key key, @required this.apiSetup, this.onSignedIn}) : super(key: key);
+  const SignIn({Key key, @required this.api, this.onSignedIn}) : super(key: key);
   final VoidCallback onSignedIn;
-  final ApiSetup apiSetup;
+  final Api api;
 
   @override
   _SignInState createState() => new _SignInState();
@@ -53,7 +53,7 @@ class _SignInState extends State<SignIn> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
-        var result = await widget.apiSetup.signIn(
+        var result = await widget.api.signIn(
             _usernameController.value.text, _passwordController.value.text);
         if (result[1] == 200 && result[0].toString().contains('token')) {
           widget.onSignedIn();

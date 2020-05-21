@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:idom/API/api_setup.dart';
+import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/add_account.dart';
@@ -25,7 +25,7 @@ class Accounts extends StatefulWidget {
 class _AccountsState extends State<Accounts> {
   final String accountsUrl = "http://10.0.2.2:8000/register/";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  ApiSetup apiSetup = ApiSetup();
+  Api api = Api();
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
@@ -34,22 +34,55 @@ class _AccountsState extends State<Accounts> {
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
-      List<Account> accounts =
-          body.map((dynamic item) => Account.fromJson(item)).toList();
+      List<Account> accounts = body
+          .map((dynamic item) => Account.fromJson(item))
+          .where((account) => account.isActive == true)
+          .toList();
       return accounts;
     } else {
       throw "Can't get posts";
     }
   }
 
-  /// deletes from database
-  _onSelected(dynamic val) {
-    //TODO: delete from database
+  /// deactivates user after confirmation
+  _deactivateAccount(Account account) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Text("Usuwanie konta"),
+          content:
+              Text("Czy na pewno chcesz usunąć konto ${account.username}?"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: Text("Tak"),
+              onPressed: () async {
+                var statusCode = await api.deactivateAccount(account.id);
+                if (statusCode == 204) print("deleted from db");
+                setState(() {
+                  getAccounts();
+                });
+                Navigator.of(context).pop(true);
+              },
+            ),
+            FlatButton(
+              child: Text("Nie"),
+              onPressed: () async {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  _logOut() async {
+  /// logs the user out of the app
+   _logOut() async {
     try {
-      var statusCode = await apiSetup.logOut(widget.currentLoggedInToken);
+      var statusCode = await api.logOut(widget.currentLoggedInToken);
       if (statusCode == 200) {
         Navigator.push(
             context,
@@ -106,7 +139,8 @@ class _AccountsState extends State<Accounts> {
                             child: ListView(
                           shrinkWrap: true,
                           children: accounts
-                              .map((Account account) => ListTile(
+                              .map(
+                                (Account account) => ListTile(
                                     title: Text(account.username),
                                     onTap: () => Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -116,17 +150,15 @@ class _AccountsState extends State<Accounts> {
                                                 account: account))),
 
                                     /// delete account button
-                                    trailing: PopupMenuButton(
-                                      onSelected: _onSelected,
-                                      icon: Icon(Icons.menu),
-                                      itemBuilder: (context) => [
-                                        PopupMenuItem(
-                                          value: account,
-                                          child: Text("Usuń"),
-                                        ),
-                                      ],
-                                    ),
-                                  ))
+                                    trailing: FlatButton(
+                                      child: Icon(Icons.delete),
+                                      onPressed: () {
+                                        setState(() {
+                                          _deactivateAccount(account);
+                                        });
+                                      },
+                                    )),
+                              )
                               .toList(),
                         ))),
                     Expanded(flex: 1, child: Divider()),

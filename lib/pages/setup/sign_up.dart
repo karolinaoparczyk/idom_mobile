@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:idom/API/api_setup.dart';
+import 'package:idom/api.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 
 class SignUp extends StatefulWidget {
@@ -210,7 +210,7 @@ class _SignUpState extends State<SignUp> {
       );
 
   Future<void> signUp() async {
-    ApiSetup apiSetup = ApiSetup();
+    Api api = Api();
     var username = _usernameController.text;
     var password1 = _passwordController.text;
     var password2 = _confirmPasswordController.text;
@@ -229,7 +229,7 @@ class _SignUpState extends State<SignUp> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SignIn(apiSetup: apiSetup)));
+                  builder: (context) => SignIn(api: api)));
         } else if (res['body']
             .contains("for key 'register_customuser.username'")) {
           displayDialog(

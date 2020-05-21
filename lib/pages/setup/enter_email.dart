@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:idom/api/api_setup.dart';
-
+import 'package:idom/api.dart';
 class EnterEmail extends StatefulWidget {
   @override
   _EnterEmailState createState() => _EnterEmailState();
@@ -9,7 +8,7 @@ class EnterEmail extends StatefulWidget {
 class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  final ApiSetup apiSetup = ApiSetup();
+  final Api api = Api();
 
   Widget _buildEmail() {
     return TextFormField(
@@ -99,7 +98,7 @@ class _EnterEmailState extends State<EnterEmail> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
-        var res = await apiSetup.resetPassword(_emailController.value.text);
+        var res = await api.resetPassword(_emailController.value.text);
         if (res == 200){
           Navigator.of(context).pop(true);
         }
