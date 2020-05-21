@@ -10,6 +10,21 @@ class Api {
     return [result.body, result.statusCode];
   }
 
+  Future<Map<String, String>> signUp(username, password1, password2, email, telephone) async{
+    var res = await http.post('http://10.0.2.2:8000/register/', body: {
+      "username": username,
+      "password1": password1,
+      "password2": password2,
+      "email": email,
+      "telephone": telephone,
+    });
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
   /// requests logging out
   Future<int> logOut(String token) async {
     try {

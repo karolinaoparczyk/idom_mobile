@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/validators.dart';
@@ -23,32 +22,11 @@ class _AddAccountState extends State<AddAccount> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
-  final Api apiSetup = Api();
-
-  /// adds a new account to database through API
-  Future<Map<String, String>> attemptAddAccount(
-      String username,
-      String password1,
-      String password2,
-      String email,
-      String telephone) async {
-    var res = await http.post('http://10.0.2.2:8000/register/', body: {
-      "username": username,
-      "password1": password1,
-      "password2": password2,
-      "email": email,
-      "telephone": telephone,
-    });
-    var resDict = {
-      "body": res.body.toString(),
-      "statusCode": res.statusCode.toString(),
-    };
-    return resDict;
-  }
+  final Api api = Api();
 
   _logOut() async {
     try {
-      var statusCode = await apiSetup.logOut(widget.currentLoggedInToken);
+      var statusCode = await api.logOut(widget.currentLoggedInToken);
       if (statusCode == 200) {
         Navigator.push(
             context,
@@ -223,7 +201,7 @@ class _AddAccountState extends State<AddAccount> {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       try {
-        var res = await attemptAddAccount(
+        var res = await api.signUp(
             username, password1, password2, email, telephone);
         if (res['statusCode'] == "201") {
           Navigator.of(context).pop(true);

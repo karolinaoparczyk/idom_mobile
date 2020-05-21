@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/utils/validators.dart';
 
 class SignUp extends StatefulWidget {
+  const SignUp({Key key, @required this.api}) : super(key: key);
+  final Api api;
+
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -21,24 +23,9 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
 
-  Future<Map<String, String>> attemptSignUp(String username, String password1,
-      String password2, String email, String telephone) async {
-    var res = await http.post('http://10.0.2.2:8000/register/', body: {
-      "username": username,
-      "password1": password1,
-      "password2": password2,
-      "email": email,
-      "telephone": telephone,
-    });
-    var resDict = {
-      "body": res.body.toString(),
-      "statusCode": res.statusCode.toString(),
-    };
-    return resDict;
-  }
-
   Widget _buildUsername() {
     return TextFormField(
+        key: Key('username'),
         controller: _usernameController,
         decoration: InputDecoration(
           labelText: 'Login',
@@ -54,6 +41,7 @@ class _SignUpState extends State<SignUp> {
 
   Widget _buildPassword() {
     return TextFormField(
+      key: Key('password1'),
       controller: _passwordController,
       decoration: InputDecoration(
         labelText: 'Hasło',
@@ -71,6 +59,7 @@ class _SignUpState extends State<SignUp> {
 
   Widget _buildConfirmPassword() {
     return TextFormField(
+      key: Key('password2'),
       controller: _confirmPasswordController,
       decoration: InputDecoration(
         labelText: 'Powtórz hasło',
@@ -92,6 +81,7 @@ class _SignUpState extends State<SignUp> {
 
   Widget _buildEmail() {
     return TextFormField(
+        key: Key('email'),
         controller: _emailController,
         decoration: InputDecoration(
           labelText: 'Email',
@@ -107,6 +97,7 @@ class _SignUpState extends State<SignUp> {
 
   Widget _buildTelephone() {
     return TextFormField(
+        key: Key('telephone'),
         controller: _telephoneController,
         decoration: InputDecoration(
             labelText: 'Nr telefonu komórkowego',
@@ -144,6 +135,7 @@ class _SignUpState extends State<SignUp> {
                             SizedBox(
                               width: 190,
                               child: RaisedButton(
+                                  key: Key('signUp'),
                                   onPressed: signUp,
                                   child: Text(
                                     'Zarejestruj się',
@@ -174,11 +166,16 @@ class _SignUpState extends State<SignUp> {
       showDialog(
         context: context,
         builder: (context) =>
-            AlertDialog(title: Text(title), content: Text(text)),
+            AlertDialog(title: Text(title), content: Text(text), actions: [
+              FlatButton(
+                key: Key("ok button"),
+                onPressed: () => Navigator.pop(context, false), // passing false
+                child: Text('OK'),
+              ),
+            ],),
       );
 
   Future<void> signUp() async {
-    Api api = Api();
     var username = _usernameController.text;
     var password1 = _passwordController.text;
     var password2 = _confirmPasswordController.text;
@@ -189,15 +186,13 @@ class _SignUpState extends State<SignUp> {
     if (formState.validate()) {
       formState.save();
       try {
-        var res = await attemptSignUp(
-            username, password1, password2, email, telephone);
+        var res = await widget.api
+            .signUp(username, password1, password2, email, telephone);
         if (res['statusCode'] == "201") {
           await displayDialog(context, "Sukces",
               "Konto zostało utworzone. Możesz się zalogować.");
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SignIn(api: api)));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SignIn(api: widget.api)));
         } else if (res['body']
             .contains("for key 'register_customuser.username'")) {
           displayDialog(
