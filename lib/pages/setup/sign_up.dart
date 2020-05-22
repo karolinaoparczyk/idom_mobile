@@ -169,7 +169,7 @@ class _SignUpState extends State<SignUp> {
             AlertDialog(title: Text(title), content: Text(text), actions: [
               FlatButton(
                 key: Key("ok button"),
-                onPressed: () => Navigator.pop(context, false), // passing false
+                onPressed: () => Navigator.pop(context, false),
                 child: Text('OK'),
               ),
             ],),

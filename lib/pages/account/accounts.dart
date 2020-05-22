@@ -13,10 +13,12 @@ class Accounts extends StatefulWidget {
   const Accounts(
       {Key key,
       @required this.currentLoggedInToken,
-      @required this.currentLoggedInUsername})
+      @required this.currentLoggedInUsername,
+      @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final String currentLoggedInUsername;
+  final Api api;
 
   @override
   _AccountsState createState() => _AccountsState();
@@ -25,7 +27,6 @@ class Accounts extends StatefulWidget {
 class _AccountsState extends State<Accounts> {
   final String accountsUrl = "http://10.0.2.2:8000/register/";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Api api = Api();
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
@@ -59,7 +60,7 @@ class _AccountsState extends State<Accounts> {
             FlatButton(
               child: Text("Tak"),
               onPressed: () async {
-                var statusCode = await api.deactivateAccount(account.id);
+                var statusCode = await widget.api.deactivateAccount(account.id);
                 if (statusCode == 204) print("deleted from db");
                 setState(() {
                   getAccounts();
@@ -82,13 +83,15 @@ class _AccountsState extends State<Accounts> {
   /// logs the user out of the app
   _logOut() async {
     try {
-      var statusCode = await api.logOut(widget.currentLoggedInToken);
+      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      print(statusCode);
       if (statusCode == 200) {
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => Front(), fullscreenDialog: true));
       } else {
+        print("display dialog");
         displayDialog(
             context, "Błąd", "Wylogowanie nie powiodło się. Spróbuj ponownie.");
       }
@@ -101,7 +104,13 @@ class _AccountsState extends State<Accounts> {
       showDialog(
         context: context,
         builder: (context) =>
-            AlertDialog(title: Text(title), content: Text(text)),
+            AlertDialog(title: Text(title), content: Text(text), actions: [
+          FlatButton(
+            key: Key("ok button"),
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('OK'),
+          ),
+        ]),
       );
 
   @override
@@ -115,6 +124,7 @@ class _AccountsState extends State<Accounts> {
             title: Text('IDOM Konta w systemie'),
             actions: <Widget>[
               IconButton(
+                key: Key("logOut"),
                 icon: Icon(Icons.exit_to_app),
                 onPressed: _logOut,
               ),
@@ -147,7 +157,8 @@ class _AccountsState extends State<Accounts> {
                                             builder: (context) => AccountDetail(
                                                 currentLoggedInToken:
                                                     widget.currentLoggedInToken,
-                                                account: account))),
+                                                account: account,
+                                                api: widget.api))),
 
                                     /// delete account button
                                     trailing: FlatButton(
@@ -203,7 +214,8 @@ class _AccountsState extends State<Accounts> {
         context,
         MaterialPageRoute(
             builder: (context) => AddAccount(
-                currentLoggedInToken: widget.currentLoggedInToken, api: api),
+                currentLoggedInToken: widget.currentLoggedInToken,
+                api: widget.api),
             fullscreenDialog: true));
 
     /// displays success message when the account is successfuly created

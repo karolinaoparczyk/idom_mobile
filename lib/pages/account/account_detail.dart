@@ -5,11 +5,11 @@ import 'package:idom/pages/setup/front.dart';
 
 class AccountDetail extends StatelessWidget {
   AccountDetail(
-      {Key key, @required this.currentLoggedInToken, @required this.account})
+      {Key key, @required this.currentLoggedInToken, @required this.account, @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final Account account;
-  final Api api = Api();
+  final Api api;
 
   void displayDialog(BuildContext context, String title, String text) =>
       showDialog(
@@ -23,6 +23,7 @@ class AccountDetail extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: Text(account.username), actions: <Widget>[
           IconButton(
+            key: Key("logOut"),
             icon: Icon(Icons.exit_to_app),
             onPressed: () async {
               try {

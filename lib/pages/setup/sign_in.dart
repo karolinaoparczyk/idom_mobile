@@ -9,7 +9,8 @@ import 'package:idom/utils/validators.dart';
 final storage = FlutterSecureStorage();
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key key, @required this.api, this.onSignedIn}) : super(key: key);
+  const SignIn({Key key, @required this.api, this.onSignedIn})
+      : super(key: key);
   final VoidCallback onSignedIn;
   final Api api;
 
@@ -63,8 +64,8 @@ class _SignInState extends State<SignIn> {
                   builder: (context) => Accounts(
                       currentLoggedInToken:
                           result[0].split(':')[1].substring(1, 41),
-                      currentLoggedInUsername:
-                          _usernameController.value.text)));
+                      currentLoggedInUsername: _usernameController.value.text,
+                      api: widget.api)));
         } else if (result[1] == 400) {
           displayDialog(context, "Błąd logowania",
               "Błędne hasło lub konto z podanym loginem nie istnieje");

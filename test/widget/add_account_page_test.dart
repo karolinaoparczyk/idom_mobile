@@ -18,7 +18,7 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
-    await tester.tap(find.byKey(Key("add account")));
+    await tester.tap(find.byKey(Key("addAccount")));
 
     verifyNever(await mockApi.signUp('', '', '', '', ''));
     expect(find.byType(AddAccount), findsOneWidget);
@@ -64,8 +64,8 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  /// tests if not signed up when username or email already in database
-  /// user gets error message and stays at sign up page
+  /// tests if not added account when username or email already in database
+  /// user gets error message and stays at add account page
   testWidgets('username or email already in database, does not sign up',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
