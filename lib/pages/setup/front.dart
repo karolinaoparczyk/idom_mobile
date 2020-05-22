@@ -12,6 +12,10 @@ enum AuthStatus {
 }
 
 class Front extends StatefulWidget {
+  Front({this.api});
+
+  Api api;
+
   @override
   _FrontState createState() => _FrontState();
 }
@@ -31,7 +35,7 @@ class _FrontState extends State<Front> {
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
-          key: _scaffoldKey,
+            key: _scaffoldKey,
             appBar: AppBar(leading: Container(), title: Text('IDOM')),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -93,17 +97,21 @@ class _FrontState extends State<Front> {
                       ),
                     ]),
                 FlatButton(
+                  key: Key('passwordReset'),
                   child: Text('Zapomniałeś/aś hasła?'),
                   onPressed: navigateToEnterEmail,
-                ),],
+                ),
+              ],
             )));
   }
 
   navigateToEnterEmail() async {
+    if (widget.api == null) widget.api = Api();
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EnterEmail(), fullscreenDialog: true));
+            builder: (context) => EnterEmail(api: widget.api),
+            fullscreenDialog: true));
 
     /// displays success message when the email is successfuly sent
     if (result != null && result == true) {
@@ -115,22 +123,23 @@ class _FrontState extends State<Front> {
   }
 
   void navigateToSignIn() {
-    Api api = Api();
+    if (widget.api == null) widget.api = Api();
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => SignIn(
-                  api: api,
+                  api: widget.api,
                   onSignedIn: _signedIn,
                 ),
             fullscreenDialog: true));
   }
 
   void navigateToSignUp() {
-    Api api = Api();
+    if (widget.api == null) widget.api = Api();
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SignUp(api: api), fullscreenDialog: true));
+            builder: (context) => SignUp(api: widget.api),
+            fullscreenDialog: true));
   }
 }

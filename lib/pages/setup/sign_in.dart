@@ -9,8 +9,7 @@ import 'package:idom/utils/validators.dart';
 final storage = FlutterSecureStorage();
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key key, @required this.api, this.onSignedIn})
-      : super(key: key);
+  const SignIn({@required this.api, this.onSignedIn});
   final VoidCallback onSignedIn;
   final Api api;
 
@@ -97,6 +96,7 @@ class _SignInState extends State<SignIn> {
                       _buildPassword(),
                       SizedBox(height: 20),
                       FlatButton(
+                        key: Key("passwordReset"),
                         child: Text('Zapomniałeś/aś hasła?'),
                         onPressed: navigateToEnterEmail,
                       ),
@@ -136,7 +136,7 @@ class _SignInState extends State<SignIn> {
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EnterEmail(), fullscreenDialog: true));
+            builder: (context) => EnterEmail(api: widget.api), fullscreenDialog: true));
 
     /// displays success message when the email is successfuly sent
     if (result != null && result == true) {

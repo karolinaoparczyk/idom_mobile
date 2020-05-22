@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
+
 class EnterEmail extends StatefulWidget {
+  const EnterEmail({@required this.api});
+  final Api api;
+
   @override
   _EnterEmailState createState() => _EnterEmailState();
 }
@@ -8,10 +12,10 @@ class EnterEmail extends StatefulWidget {
 class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  final Api api = Api();
 
   Widget _buildEmail() {
     return TextFormField(
+        key: Key("email"),
         controller: _emailController,
         decoration: InputDecoration(
           labelText: 'Email',
@@ -98,11 +102,10 @@ class _EnterEmailState extends State<EnterEmail> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
-        var res = await api.resetPassword(_emailController.value.text);
-        if (res == 200){
+        var res = await widget.api.resetPassword(_emailController.value.text);
+        if (res == 200) {
           Navigator.of(context).pop(true);
-        }
-        else if (res == 400){
+        } else if (res == 400) {
           displayDialog(
               context, "Błąd", "Konto dla podanego adresu email nie istnieje.");
         }
