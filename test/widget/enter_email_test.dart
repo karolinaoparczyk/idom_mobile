@@ -29,7 +29,7 @@ void main() {
     await tester.enterText(emailField, "email@email.com");
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(Key('sendResetPasswordRequest')));
+    await tester.tap(find.byKey(Key('Resetuj hasło')));
     await tester.pumpAndSettle();
 
     verify(await mockApi.resetPassword("email@email.com")).called(1);
@@ -50,7 +50,7 @@ void main() {
     await tester.tap(find.byKey(Key('passwordReset')));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(Key('sendResetPasswordRequest')));
+    await tester.tap(find.byKey(Key('Resetuj hasło')));
     await tester.pumpAndSettle();
 
     verifyNever(await mockApi.resetPassword(""));
@@ -75,7 +75,7 @@ void main() {
     await tester.enterText(emailField, "email@email.com");
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(Key('sendResetPasswordRequest')));
+    await tester.tap(find.byKey(Key('Resetuj hasło')));
     await tester.pumpAndSettle();
 
     verify(await mockApi.resetPassword("email@email.com")).called(1);

@@ -22,7 +22,7 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
-    await tester.tap(find.byKey(Key('signIn')));
+    await tester.tap(find.byKey(Key('Zaloguj się')));
 
     verifyNever(mockApi.signIn('', ''));
     expect(isSignedIn, false);
@@ -47,7 +47,7 @@ void main() {
     Finder passwordField = find.byKey(Key('password'));
     await tester.enterText(passwordField, 'password');
 
-    await tester.tap(find.byKey(Key('signIn')));
+    await tester.tap(find.byKey(Key('Zaloguj się')));
 
     verify(await mockApi.signIn('email@mail.com', 'password'))
         .called(1);
@@ -73,7 +73,7 @@ void main() {
         Finder passwordField = find.byKey(Key('password'));
         await tester.enterText(passwordField, 'password');
 
-        await tester.tap(find.byKey(Key('signIn')));
+        await tester.tap(find.byKey(Key('Zaloguj się')));
 
         verify(mockApi.signIn('email@mail.com', 'password'))
             .called(1);

@@ -19,7 +19,7 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
-    await tester.tap(find.byKey(Key('signUp')));
+    await tester.tap(find.byKey(Key('Zarejestruj się')));
 
     verifyNever(await mockApi.signUp('', '', '', '', ''));
     expect(find.byType(SignUp), findsOneWidget);
@@ -55,7 +55,7 @@ void main() {
     Finder telephoneField = find.byKey(Key('telephone'));
     await tester.enterText(telephoneField, "+48765678789");
 
-    await tester.tap(find.byKey(Key('signUp')));
+    await tester.tap(find.byKey(Key('Zarejestruj się')));
     await tester.pumpAndSettle();
 
     verify(await mockApi.signUp("username", "password", "password",
@@ -98,7 +98,7 @@ void main() {
     Finder telephoneField = find.byKey(Key('telephone'));
     await tester.enterText(telephoneField, "+48765678789");
 
-    await tester.tap(find.byKey(Key('signUp')));
+    await tester.tap(find.byKey(Key('Zarejestruj się')));
 
     verify(await mockApi.signUp("username", "password", "password",
             "email@email.com", "+48765678789"))
