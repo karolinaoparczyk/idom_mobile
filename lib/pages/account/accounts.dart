@@ -5,7 +5,6 @@ import 'package:http/http.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
-import 'package:idom/pages/account/add_account.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/widgets/dialog.dart';
 
@@ -29,7 +28,6 @@ class Accounts extends StatefulWidget {
 
 class _AccountsState extends State<Accounts> {
   final String accountsUrl = "http://10.0.2.2:8000/register/";
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
@@ -117,7 +115,6 @@ class _AccountsState extends State<Accounts> {
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
-          key: _scaffoldKey,
           appBar: AppBar(
             leading: Container(),
             title: Text('IDOM Konta w systemie'),
@@ -173,32 +170,6 @@ class _AccountsState extends State<Accounts> {
                               .toList(),
                         ))),
                     Expanded(flex: 1, child: Divider()),
-
-                    /// add new account button
-                    Expanded(
-                        flex: 4,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                width: 250,
-                                child: RaisedButton(
-                                    onPressed: navigateToNewAccount,
-                                    child: Text(
-                                      'Dodaj nowe konto',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    color: Colors.black,
-                                    padding: EdgeInsets.symmetric(vertical: 12),
-                                    elevation: 10,
-                                    shape: new RoundedRectangleBorder(
-                                        borderRadius:
-                                            new BorderRadius.circular(30.0))),
-                              ),
-                            ]))
                   ]);
                 }
 
@@ -206,24 +177,5 @@ class _AccountsState extends State<Accounts> {
                 return Center(child: CircularProgressIndicator());
               }),
         ));
-  }
-
-  /// goes to adding new account page
-  Future navigateToNewAccount() async {
-    bool result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AddAccount(
-                currentLoggedInToken: widget.currentLoggedInToken,
-                api: widget.api),
-            fullscreenDialog: true));
-
-    /// displays success message when the account is successfuly created
-    if (result != null && result == true) {
-      final snackBar =
-          new SnackBar(content: new Text("Konto zostało utworzone"));
-
-      _scaffoldKey.currentState.showSnackBar((snackBar));
-    }
   }
 }

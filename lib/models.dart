@@ -2,13 +2,13 @@ import 'package:flutter/foundation.dart';
 
 class Account {
   final int id;
-  final String username;
-  final String email;
-  final String telephone;
-  final String smsNotifications;
-  final String appNotifications;
+  String username;
+  String email;
+  String telephone;
+  String smsNotifications;
+  String appNotifications;
   final bool isStaff;
-  final bool isActive;
+  bool isActive;
 
   Account({
     @required this.id,
@@ -31,5 +31,16 @@ class Account {
         appNotifications: json['app_notiications'] as String,
         isStaff: json['is_staff'] as bool,
         isActive: json['is_active'] as bool);
+  }
+
+  Account copy(){
+    return new Account(id: this.id,
+        username: this.username,
+        email: this.email,
+        telephone: this.telephone,
+        smsNotifications: this.smsNotifications,
+        appNotifications: this.appNotifications,
+        isStaff: this.isStaff,
+        isActive: this.isActive);
   }
 }
