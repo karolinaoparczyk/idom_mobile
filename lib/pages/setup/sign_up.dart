@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/utils/validators.dart';

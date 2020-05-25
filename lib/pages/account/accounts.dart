@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
@@ -94,14 +94,12 @@ class _AccountsState extends State<Accounts> {
   _logOut() async {
     try {
       var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
-      print(statusCode);
       if (statusCode == 200) {
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => Front(), fullscreenDialog: true));
       } else {
-        print("display dialog");
         displayDialog(
             context, "Błąd", "Wylogowanie nie powiodło się. Spróbuj ponownie.");
       }
