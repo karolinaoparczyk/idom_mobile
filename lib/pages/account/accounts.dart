@@ -14,11 +14,13 @@ class Accounts extends StatefulWidget {
       {Key key,
       @required this.currentLoggedInToken,
       @required this.currentLoggedInUsername,
-      @required this.api})
+      @required this.api,
+      this.testAccounts})
       : super(key: key);
   final String currentLoggedInToken;
   final String currentLoggedInUsername;
   final Api api;
+  final List<Account> testAccounts;
 
   @override
   _AccountsState createState() => _AccountsState();
@@ -32,6 +34,8 @@ class _AccountsState extends State<Accounts> {
   Future<List<Account>> getAccounts() async {
     Response res = await get(accountsUrl);
 
+    if (widget.testAccounts != null)
+      return widget.testAccounts;
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
@@ -58,17 +62,24 @@ class _AccountsState extends State<Accounts> {
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
+              key: Key("yesButton"),
               child: Text("Tak"),
               onPressed: () async {
                 var statusCode = await widget.api.deactivateAccount(account.id);
-                if (statusCode == 204) print("deleted from db");
-                setState(() {
-                  getAccounts();
-                });
-                Navigator.of(context).pop(true);
+                if (statusCode == 204) {
+                  setState(() {
+                    getAccounts();
+                  });
+                  Navigator.of(context).pop(true);
+                }
+                else{
+                  displayDialog(
+                      context, "Błąd", "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
+                }
               },
             ),
             FlatButton(
+              key: Key("noButton"),
               child: Text("Nie"),
               onPressed: () async {
                 Navigator.of(context).pop(true);
@@ -162,6 +173,7 @@ class _AccountsState extends State<Accounts> {
 
                                     /// delete account button
                                     trailing: FlatButton(
+                                      key: Key("deleteButton"),
                                       child: Icon(Icons.delete),
                                       onPressed: () {
                                         setState(() {
