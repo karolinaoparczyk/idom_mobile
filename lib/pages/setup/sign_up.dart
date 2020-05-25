@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/utils/validators.dart';
+import 'package:idom/widgets/button.dart';
+import 'package:idom/widgets/dialog.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key key, @required this.api}) : super(key: key);
@@ -129,30 +131,7 @@ class _SignUpState extends State<SignUp> {
                         _buildPassword(),
                         _buildConfirmPassword(),
                         SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SizedBox(
-                              width: 190,
-                              child: RaisedButton(
-                                  key: Key('signUp'),
-                                  onPressed: signUp,
-                                  child: Text(
-                                    'Zarejestruj się',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  color: Colors.black,
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  elevation: 10,
-                                  shape: new RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(30.0))),
-                            ),
-                          ],
-                        ),
+                        buttonWidget(context, "Zarejestruj się", signUp),
                       ],
                     ))),
             Expanded(child: SizedBox(width: 1))
@@ -161,19 +140,6 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-
-  void displayDialog(BuildContext context, String title, String text) =>
-      showDialog(
-        context: context,
-        builder: (context) =>
-            AlertDialog(title: Text(title), content: Text(text), actions: [
-              FlatButton(
-                key: Key("ok button"),
-                onPressed: () => Navigator.pop(context, false),
-                child: Text('OK'),
-              ),
-            ],),
-      );
 
   Future<void> signUp() async {
     var username = _usernameController.text;

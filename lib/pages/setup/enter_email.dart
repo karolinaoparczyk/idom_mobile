@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
+import 'package:idom/utils/validators.dart';
+import 'package:idom/widgets/button.dart';
+import 'package:idom/widgets/dialog.dart';
 
 class EnterEmail extends StatefulWidget {
   const EnterEmail({@required this.api});
@@ -58,30 +61,7 @@ class _EnterEmailState extends State<EnterEmail> {
                       Text("Wprowadź email połączony z Twoim kontem"),
                       _buildEmail(),
                       SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            width: 190,
-                            child: RaisedButton(
-                                key: Key('sendResetPasswordRequest'),
-                                onPressed: sendResetPasswordRequest,
-                                child: Text(
-                                  'Resetuj hasło',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                color: Colors.black,
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                elevation: 10,
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(30.0))),
-                          ),
-                        ],
-                      ),
+                      buttonWidget(context, "Resetuj hasło", sendResetPasswordRequest)
                     ],
                   ))),
           Expanded(child: SizedBox(width: 1)),
@@ -89,13 +69,6 @@ class _EnterEmailState extends State<EnterEmail> {
       ),
     );
   }
-
-  void displayDialog(BuildContext context, String title, String text) =>
-      showDialog(
-        context: context,
-        builder: (context) =>
-            AlertDialog(title: Text(title), content: Text(text)),
-      );
 
   /// sends request to API to reset password if form is validated
   sendResetPasswordRequest() async {

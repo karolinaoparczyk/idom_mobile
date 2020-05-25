@@ -7,6 +7,7 @@ import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/add_account.dart';
 import 'package:idom/pages/setup/front.dart';
+import 'package:idom/widgets/dialog.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
@@ -110,19 +111,6 @@ class _AccountsState extends State<Accounts> {
       print(e);
     }
   }
-
-  void displayDialog(BuildContext context, String title, String text) =>
-      showDialog(
-        context: context,
-        builder: (context) =>
-            AlertDialog(title: Text(title), content: Text(text), actions: [
-          FlatButton(
-            key: Key("ok button"),
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('OK'),
-          ),
-        ]),
-      );
 
   @override
   Widget build(BuildContext context) {

@@ -5,6 +5,8 @@ import 'package:idom/api.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/utils/validators.dart';
+import 'package:idom/widgets/button.dart';
+import 'package:idom/widgets/dialog.dart';
 
 final storage = FlutterSecureStorage();
 
@@ -100,30 +102,7 @@ class _SignInState extends State<SignIn> {
                         child: Text('Zapomniałeś/aś hasła?'),
                         onPressed: navigateToEnterEmail,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            width: 190,
-                            child: RaisedButton(
-                                key: Key('signIn'),
-                                onPressed: signIn,
-                                child: Text(
-                                  'Zaloguj się',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                color: Colors.black,
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                elevation: 10,
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(30.0))),
-                          ),
-                        ],
-                      ),
+                      buttonWidget(context, "Zaloguj się", signIn)
                     ],
                   ))),
           Expanded(child: SizedBox(width: 1))
@@ -146,11 +125,4 @@ class _SignInState extends State<SignIn> {
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
-
-  void displayDialog(BuildContext context, String title, String text) =>
-      showDialog(
-        context: context,
-        builder: (context) =>
-            AlertDialog(title: Text(title), content: Text(text)),
-      );
 }

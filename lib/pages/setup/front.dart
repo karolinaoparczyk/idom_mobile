@@ -4,6 +4,7 @@ import 'package:idom/api.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
+import 'package:idom/widgets/button.dart';
 
 enum AuthStatus {
   notDetermined,
@@ -52,50 +53,9 @@ class _FrontState extends State<Front> {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 54),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 190,
-                      child: RaisedButton(
-                          onPressed: navigateToSignIn,
-                          child: Text(
-                            'Zaloguj się',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 26,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          color: Colors.black,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          elevation: 10,
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0))),
-                    ),
-                  ],
-                ),
+                buttonWidget(context, "Zaloguj się", navigateToSignIn),
                 SizedBox(height: 10),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 190,
-                        child: RaisedButton(
-                            onPressed: navigateToSignUp,
-                            child: Text(
-                              'Zarejestruj się',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            color: Colors.black,
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            elevation: 10,
-                            shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(30.0))),
-                      ),
-                    ]),
+                buttonWidget(context, "Zarejestruj się", navigateToSignUp),
                 FlatButton(
                   key: Key('passwordReset'),
                   child: Text('Zapomniałeś/aś hasła?'),
