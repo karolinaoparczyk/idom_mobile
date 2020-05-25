@@ -56,4 +56,9 @@ class Api {
     print(res.body);
     return res.statusCode;
   }
+
+  Future<int> editAccount(id, username, email, telephone) async{
+   // TODO: send request
+    return 200;
+  }
 }
