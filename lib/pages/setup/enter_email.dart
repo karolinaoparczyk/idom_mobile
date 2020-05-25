@@ -30,17 +30,7 @@ class _EnterEmailState extends State<EnterEmail> {
           ),
         ),
         keyboardType: TextInputType.emailAddress,
-        validator: (String value) {
-          if (value.isEmpty) {
-            return 'Email jest wymagany';
-          }
-          if (!RegExp(
-                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-              .hasMatch(value)) {
-            return 'Podaj poprawny adres email';
-          }
-          return null;
-        });
+        validator: EmailFieldValidator.validate);
   }
 
   @override
