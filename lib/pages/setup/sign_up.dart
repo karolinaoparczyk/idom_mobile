@@ -7,7 +7,9 @@ import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/utils/validators.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key key, @required this.api}) : super(key: key);
+  const SignUp({Key key, @required this.onSignedIn, @required this.api})
+      : super(key: key);
+  final VoidCallback onSignedIn;
   final Api api;
 
   @override
@@ -165,14 +167,17 @@ class _SignUpState extends State<SignUp> {
   void displayDialog(BuildContext context, String title, String text) =>
       showDialog(
         context: context,
-        builder: (context) =>
-            AlertDialog(title: Text(title), content: Text(text), actions: [
-              FlatButton(
-                key: Key("ok button"),
-                onPressed: () => Navigator.pop(context, false),
-                child: Text('OK'),
-              ),
-            ],),
+        builder: (context) => AlertDialog(
+          title: Text(title),
+          content: Text(text),
+          actions: [
+            FlatButton(
+              key: Key("ok button"),
+              onPressed: () => Navigator.pop(context, false),
+              child: Text('OK'),
+            ),
+          ],
+        ),
       );
 
   Future<void> signUp() async {
@@ -191,8 +196,11 @@ class _SignUpState extends State<SignUp> {
         if (res['statusCode'] == "201") {
           await displayDialog(context, "Sukces",
               "Konto zostało utworzone. Możesz się zalogować.");
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SignIn(api: widget.api)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SignIn(api: widget.api, onSignedIn: widget.onSignedIn)));
         } else if (res['body']
             .contains("for key 'register_customuser.username'")) {
           displayDialog(

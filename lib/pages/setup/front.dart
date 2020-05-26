@@ -139,7 +139,7 @@ class _FrontState extends State<Front> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SignUp(api: widget.api),
+            builder: (context) => SignUp(api: widget.api, onSignedIn: _signedIn),
             fullscreenDialog: true));
   }
 }
