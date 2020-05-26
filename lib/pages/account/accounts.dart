@@ -10,12 +10,11 @@ import 'package:idom/pages/setup/front.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
-  const Accounts(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentLoggedInUsername,
-      @required this.api,
-      this.testAccounts})
+  const Accounts({Key key,
+    @required this.currentLoggedInToken,
+    @required this.currentLoggedInUsername,
+    @required this.api,
+    this.testAccounts})
       : super(key: key);
   final String currentLoggedInToken;
   final String currentLoggedInUsername;
@@ -29,13 +28,13 @@ class Accounts extends StatefulWidget {
 class _AccountsState extends State<Accounts> {
   final String accountsUrl = "http://10.0.2.2:8000/register/";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Account currentUser;
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
     Response res = await get(accountsUrl);
 
-    if (widget.testAccounts != null)
-      return widget.testAccounts;
+    if (widget.testAccounts != null) return widget.testAccounts;
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
@@ -43,6 +42,10 @@ class _AccountsState extends State<Accounts> {
           .map((dynamic item) => Account.fromJson(item))
           .where((account) => account.isActive == true)
           .toList();
+      currentUser = accounts
+          .where(
+              (account) => account.username == widget.currentLoggedInUsername)
+          .toList()[0];
       return accounts;
     } else {
       throw "Can't get posts";
@@ -58,7 +61,7 @@ class _AccountsState extends State<Accounts> {
         return AlertDialog(
           title: Text("Usuwanie konta"),
           content:
-              Text("Czy na pewno chcesz usunąć konto ${account.username}?"),
+          Text("Czy na pewno chcesz usunąć konto ${account.username}?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
@@ -71,10 +74,9 @@ class _AccountsState extends State<Accounts> {
                     getAccounts();
                   });
                   Navigator.of(context).pop(true);
-                }
-                else{
-                  displayDialog(
-                      context, "Błąd", "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
+                } else {
+                  displayDialog(context, "Błąd",
+                      "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
                 }
               },
             ),
@@ -116,12 +118,12 @@ class _AccountsState extends State<Accounts> {
         context: context,
         builder: (context) =>
             AlertDialog(title: Text(title), content: Text(text), actions: [
-          FlatButton(
-            key: Key("ok button"),
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('OK'),
-          ),
-        ]),
+              FlatButton(
+                key: Key("ok button"),
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('OK'),
+              ),
+            ]),
       );
 
   @override
@@ -151,39 +153,35 @@ class _AccountsState extends State<Accounts> {
                     Expanded(
                         flex: 1,
                         child:
-                            Text("Liczba wszystkich kont: ${accounts.length}")),
+                        Text("Liczba wszystkich kont: ${accounts.length}")),
 
                     /// A widget with the list of accounts
                     Expanded(
                         flex: 16,
                         child: Scrollbar(
                             child: ListView(
-                          shrinkWrap: true,
-                          children: accounts
-                              .map(
-                                (Account account) => ListTile(
-                                    title: Text(account.username),
-                                    onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => AccountDetail(
-                                                currentLoggedInToken:
-                                                    widget.currentLoggedInToken,
-                                                account: account,
-                                                api: widget.api))),
+                              shrinkWrap: true,
+                              children: accounts
+                                  .map(
+                                    (Account account) =>
+                                    ListTile(
+                                        title: Text(account.username),
+                                        onTap: () =>
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AccountDetail(
+                                                            currentLoggedInToken:
+                                                            widget
+                                                                .currentLoggedInToken,
+                                                            account: account,
+                                                            api: widget.api))),
 
-                                    /// delete account button
-                                    trailing: FlatButton(
-                                      key: Key("deleteButton"),
-                                      child: Icon(Icons.delete),
-                                      onPressed: () {
-                                        setState(() {
-                                          _deactivateAccount(account);
-                                        });
-                                      },
-                                    )),
+                                        /// delete account button
+                                        trailing: deleteButtonTrailing(account)),
                               )
-                              .toList(),
-                        ))),
+                                  .toList(),
+                            ))),
                     Expanded(flex: 1, child: Divider()),
 
                     /// add new account button
@@ -208,7 +206,7 @@ class _AccountsState extends State<Accounts> {
                                     elevation: 10,
                                     shape: new RoundedRectangleBorder(
                                         borderRadius:
-                                            new BorderRadius.circular(30.0))),
+                                        new BorderRadius.circular(30.0))),
                               ),
                             ]))
                   ]);
@@ -220,20 +218,37 @@ class _AccountsState extends State<Accounts> {
         ));
   }
 
+  deleteButtonTrailing(Account account) {
+    if (currentUser.isStaff) {
+      return FlatButton(
+        key: Key("deleteButton"),
+        child: Icon(Icons.delete),
+        onPressed: () {
+          setState(() {
+            _deactivateAccount(account);
+          });
+        },
+      );
+    }
+    else
+      return null;
+  }
+
   /// goes to adding new account page
   Future navigateToNewAccount() async {
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => AddAccount(
-                currentLoggedInToken: widget.currentLoggedInToken,
-                api: widget.api),
+            builder: (context) =>
+                AddAccount(
+                    currentLoggedInToken: widget.currentLoggedInToken,
+                    api: widget.api),
             fullscreenDialog: true));
 
     /// displays success message when the account is successfuly created
     if (result != null && result == true) {
       final snackBar =
-          new SnackBar(content: new Text("Konto zostało utworzone"));
+      new SnackBar(content: new Text("Konto zostało utworzone"));
 
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
