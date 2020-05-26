@@ -25,7 +25,7 @@ void main() {
         telephone: "",
         smsNotifications: "true",
         appNotifications: "true",
-        isStaff: false,
+        isStaff: true,
         isActive: false));
     accounts.add(Account(
         id: 2,
@@ -39,7 +39,7 @@ void main() {
 
     Accounts page = Accounts(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentLoggedInUsername: "user1",
       api: mockApi,
       testAccounts: accounts,
     );
@@ -70,7 +70,7 @@ void main() {
         telephone: "",
         smsNotifications: "true",
         appNotifications: "true",
-        isStaff: false,
+        isStaff: true,
         isActive: false));
     accounts.add(Account(
         id: 2,
@@ -84,7 +84,7 @@ void main() {
 
     Accounts page = Accounts(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentLoggedInUsername: "user1",
       api: mockApi,
       testAccounts: accounts,
     );
@@ -98,6 +98,46 @@ void main() {
 
     await tester.tap(find.byKey(Key('noButton')));
     await tester.pumpAndSettle();
+
+    verifyNever(await mockApi.deactivateAccount(1));
+  });
+
+  /// tests if no delete button when user is not super user
+  testWidgets('no delete button', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.deactivateAccount(1))
+        .thenAnswer((_) async => Future.value(204));
+    List<Account> accounts = List();
+    accounts.add(Account(
+        id: 1,
+        username: "user1",
+        email: "user@email.com",
+        telephone: "",
+        smsNotifications: "true",
+        appNotifications: "true",
+        isStaff: true,
+        isActive: false));
+    accounts.add(Account(
+        id: 2,
+        username: "user2",
+        email: "user2@email.com",
+        telephone: "",
+        smsNotifications: "true",
+        appNotifications: "true",
+        isStaff: false,
+        isActive: false));
+
+    Accounts page = Accounts(
+      currentLoggedInToken: "token",
+      currentLoggedInUsername: "user2",
+      api: mockApi,
+      testAccounts: accounts,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FlatButton).evaluate().length, 0);
 
     verifyNever(await mockApi.deactivateAccount(1));
   });

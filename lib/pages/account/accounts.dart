@@ -34,7 +34,15 @@ class _AccountsState extends State<Accounts> {
   Future<List<Account>> getAccounts() async {
     Response res = await get(accountsUrl);
 
-    if (widget.testAccounts != null) return widget.testAccounts;
+    /// if statement for testing
+    if (widget.testAccounts != null) {
+      currentUser = widget.testAccounts
+          .where(
+              (account) => account.username == widget.currentLoggedInUsername)
+          .toList()[0];
+      return widget.testAccounts;
+    }
+
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
