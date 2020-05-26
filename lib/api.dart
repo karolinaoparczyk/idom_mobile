@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 
 class Api {
@@ -10,7 +12,8 @@ class Api {
     return [result.body, result.statusCode];
   }
 
-  Future<Map<String, String>> signUp(username, password1, password2, email, telephone) async{
+  Future<Map<String, String>> signUp(
+      username, password1, password2, email, telephone) async {
     var res = await http.post('http://10.0.2.2:8000/register/', body: {
       "username": username,
       "password1": password1,
@@ -37,11 +40,10 @@ class Api {
   }
 
   /// requests deactivating user
-  Future<int> deactivateAccount(int id) async{
+  Future<int> deactivateAccount(int id, String userToken) async {
     try {
-      var res = await http.delete('http://10.0.2.2:8000/register/$id');
-      print(res.statusCode);
-      print(res.body);
+      var res = await http.delete('http://10.0.2.2:8000/users/delete/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
       return res.statusCode;
     } catch (e) {
       print(e);
