@@ -10,7 +10,8 @@ class Api {
     return [result.body, result.statusCode];
   }
 
-  Future<Map<String, String>> signUp(username, password1, password2, email, telephone) async{
+  Future<Map<String, String>> signUp(
+      username, password1, password2, email, telephone) async {
     var res = await http.post('http://10.0.2.2:8000/register/', body: {
       "username": username,
       "password1": password1,
@@ -37,7 +38,7 @@ class Api {
   }
 
   /// requests deactivating user
-  Future<int> deactivateAccount(int id) async{
+  Future<int> deactivateAccount(int id) async {
     try {
       var res = await http.delete('http://10.0.2.2:8000/register/$id');
       print(res.statusCode);
@@ -57,8 +58,11 @@ class Api {
     return res.statusCode;
   }
 
-  Future<int> editAccount(id, username, email, telephone) async{
-   // TODO: send request
-    return 200;
+  Future<int> editAccount(id, username, email, telephone) async {
+    var res = await http.put('http://10.0.2.2:8000/register/$id',
+        body: {"username": username, "email": email, "telephone": telephone});
+    print(res.statusCode);
+    print(res.body);
+    return res.statusCode;
   }
 }
