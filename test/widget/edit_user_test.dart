@@ -28,18 +28,13 @@ void main() {
     AccountDetail page = AccountDetail(currentLoggedInToken: "token", account: user ,api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
-    Finder usernameField = find.byKey(Key('username'));
-    await tester.enterText(usernameField, '');
 
     Finder emailField = find.byKey(Key('email'));
     await tester.enterText(emailField, '');
 
-    Finder telephoneField = find.byKey(Key('username'));
-    await tester.enterText(telephoneField, '');
-
     await tester.tap(find.byKey(Key('Zapisz zmiany')));
 
-    verifyNever(await mockApi.editAccount('', '', '', ''));
+    verifyNever(await mockApi.editAccount('', '', ''));
   });
 
   /// tests if does not save with no change
@@ -62,13 +57,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SnackBar), findsOneWidget);
 
-    verifyNever(await mockApi.editAccount(1, 'user1', 'user@email.com', ''));
+    verifyNever(await mockApi.editAccount(1, 'user@email.com', ''));
   });
 
   /// tests if saves with data change
   testWidgets('changed data, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editAccount(1,'username', 'user@email.com', ''))
+    when(mockApi.editAccount(1, 'user@email.pl', ''))
         .thenAnswer((_) async => Future.value(200));
     Account user = Account(
         id: 1,
@@ -83,8 +78,8 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
-    Finder usernameField = find.byKey(Key('username'));
-    await tester.enterText(usernameField, 'username');
+    Finder usernameField = find.byKey(Key('email'));
+    await tester.enterText(usernameField, 'user@email.pl');
 
     await tester.tap(find.byKey(Key('Zapisz zmiany')));
     await tester.pumpAndSettle();
@@ -92,13 +87,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SnackBar), findsOneWidget);
 
-    verify(await mockApi.editAccount(1, 'username', 'user@email.com', '')).called(1);
+    verify(await mockApi.editAccount(1, 'user@email.pl', '')).called(1);
   });
 
   /// tests if does not save with data change but no confirmation
   testWidgets('changed data, no confirmation, does not save', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editAccount(1,'username', 'user@email.com', ''))
+    when(mockApi.editAccount(1, 'user@email.pl', ''))
         .thenAnswer((_) async => Future.value(200));
     Account user = Account(
         id: 1,
@@ -113,14 +108,14 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
-    Finder usernameField = find.byKey(Key('username'));
-    await tester.enterText(usernameField, 'username');
+    Finder usernameField = find.byKey(Key('email'));
+    await tester.enterText(usernameField, 'user@email.pl');
 
     await tester.tap(find.byKey(Key('Zapisz zmiany')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key('noButton')));
 
-    verifyNever(await mockApi.editAccount(1, 'username', 'user@email.com', ''));
+    verifyNever(await mockApi.editAccount(1, 'user@email.pl', ''));
   });
 
   /// tests if does not save with error in data
@@ -144,13 +139,13 @@ void main() {
 
     await tester.tap(find.byKey(Key('Zapisz zmiany')));
 
-    verifyNever(await mockApi.editAccount(1, 'username', 'user@email', ''));
+    verifyNever(await mockApi.editAccount(1, 'user@email', ''));
   });
 
   /// tests if does not save with error from API
   testWidgets('changed data, error in API, does not save', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editAccount(1,'user1', 'user@email.pl', ''))
+    when(mockApi.editAccount(1, 'user@email.pl', ''))
         .thenAnswer((_) async => Future.value(400));
     Account user = Account(
         id: 1,
@@ -174,6 +169,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SnackBar), findsOneWidget);
 
-    verify(await mockApi.editAccount(1, 'user1', 'user@email.pl', '')).called(1);
+    verify(await mockApi.editAccount(1, 'user@email.pl', '')).called(1);
   });
 }

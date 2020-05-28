@@ -41,8 +41,6 @@ class Api {
   Future<int> deactivateAccount(int id) async {
     try {
       var res = await http.delete('http://10.0.2.2:8000/register/$id');
-      print(res.statusCode);
-      print(res.body);
       return res.statusCode;
     } catch (e) {
       print(e);
@@ -53,16 +51,12 @@ class Api {
   Future<int> resetPassword(String email) async {
     var res = await http
         .post('http://10.0.2.2:8000/password-reset/', body: {"email": email});
-    print(res.statusCode);
-    print(res.body);
     return res.statusCode;
   }
 
-  Future<int> editAccount(id, username, email, telephone) async {
+  Future<int> editAccount(id, email, telephone) async {
     var res = await http.put('http://10.0.2.2:8000/register/$id',
-        body: {"username": username, "email": email, "telephone": telephone});
-    print(res.statusCode);
-    print(res.body);
+        body: {"email": email, "telephone": telephone});
     return res.statusCode;
   }
 }

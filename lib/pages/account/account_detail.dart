@@ -26,50 +26,39 @@ class _AccountDetailState extends State<AccountDetail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  TextEditingController _editingUsernameController;
   TextEditingController _editingEmailController;
   TextEditingController _editingTelephoneController;
 
-  Widget _buildUsername() {
-    return TextFormField(
-        key: Key('username'),
-        controller: _editingUsernameController,
-        decoration: InputDecoration(
-          labelText: 'Login',
-          labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-        ),
-        maxLength: 25,
-        validator: UsernameFieldValidator.validate);
-  }
-
   Widget _buildEmail() {
-    return TextFormField(
-        key: Key('email'),
-        controller: _editingEmailController,
-        decoration: InputDecoration(
-          labelText: 'Email',
-          labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-        ),
-        keyboardType: TextInputType.emailAddress,
-        validator: EmailFieldValidator.validate);
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+        child: TextFormField(
+            key: Key('email'),
+            controller: _editingEmailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              labelStyle: TextStyle(color: Colors.black, fontSize: 18),
+            ),
+            keyboardType: TextInputType.emailAddress,
+            validator: EmailFieldValidator.validate));
   }
 
   Widget _buildTelephone() {
-    return TextFormField(
-        key: Key('telephone'),
-        controller: _editingTelephoneController,
-        decoration: InputDecoration(
-            labelText: 'Nr telefonu komórkowego',
-            labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-        keyboardType: TextInputType.phone,
-        validator: TelephoneFieldValidator.validate);
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+        child: TextFormField(
+            key: Key('telephone'),
+            controller: _editingTelephoneController,
+            decoration: InputDecoration(
+                labelText: 'Nr telefonu komórkowego',
+                labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
+            keyboardType: TextInputType.phone,
+            validator: TelephoneFieldValidator.validate));
   }
 
   @override
   void initState() {
     super.initState();
-    _editingUsernameController =
-        TextEditingController(text: widget.account.username);
     _editingEmailController = TextEditingController(text: widget.account.email);
     _editingTelephoneController =
         TextEditingController(text: widget.account.telephone);
@@ -77,7 +66,6 @@ class _AccountDetailState extends State<AccountDetail> {
 
   @override
   void dispose() {
-    _editingUsernameController.dispose();
     _editingEmailController.dispose();
     _editingTelephoneController.dispose();
     super.dispose();
@@ -112,39 +100,35 @@ class _AccountDetailState extends State<AccountDetail> {
           ),
         ]),
         body: SingleChildScrollView(
-            child: Row(children: <Widget>[
-          Expanded(child: SizedBox(width: 1)),
-          Expanded(
-              flex: 7,
               child: Form(
                   key: _formKey,
                   child: Column(children: <Widget>[
-                    _buildUsername(),
+                    Padding(
+                        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+                        child: ListTile(
+                      title: Text("Login", style: TextStyle(fontSize: 13.5)),
+                      subtitle: Text(widget.account.username,style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    )),
                     _buildEmail(),
                     _buildTelephone(),
-                    SizedBox(height: 20),
+                    Divider(),
                     buttonWidget(context, "Zapisz zmiany", _verifyChanges)
-                  ]))),
-          Expanded(child: SizedBox(width: 1))
-        ])));
+                  ])))
+        );
   }
 
   _saveChanges() async {
     try {
-      var res = await widget.api.editAccount(
-          widget.account.id,
-          _editingUsernameController.text,
-          _editingEmailController.text,
-          _editingTelephoneController.text);
-      if (res == 200){
+      var res = await widget.api.editAccount(widget.account.id,
+          _editingEmailController.text, _editingTelephoneController.text);
+      if (res == 200) {
         var snackBar = SnackBar(content: Text("Zapisano dane konta."));
         _scaffoldKey.currentState.showSnackBar(snackBar);
-      }
-      else{
-        var snackBar = SnackBar(content: Text("Wystąpił błąd podczas próby zapisu."));
+      } else {
+        var snackBar =
+            SnackBar(content: Text("Wystąpił błąd podczas próby zapisu."));
         _scaffoldKey.currentState.showSnackBar(snackBar);
       }
-
     } catch (e) {
       print(e);
     }
@@ -184,15 +168,13 @@ class _AccountDetailState extends State<AccountDetail> {
 
   /// verifies data changes
   _verifyChanges() async {
-    var username = _editingUsernameController.text;
     var email = _editingEmailController.text;
     var telephone = _editingTelephoneController.text;
 
     final formState = _formKey.currentState;
     if (formState.validate()) {
       /// sends request only if data changed
-      if (username != widget.account.username ||
-          email != widget.account.email ||
+      if (email != widget.account.email ||
           telephone != widget.account.telephone) {
         await _confirmSavingChanges();
       } else {
