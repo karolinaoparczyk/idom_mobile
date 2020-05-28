@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -28,13 +29,22 @@ class Accounts extends StatefulWidget {
 
 class _AccountsState extends State<Accounts> {
   final String accountsUrl = "http://10.0.2.2:8000/register/";
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Account currentUser;
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
     Response res = await get(accountsUrl);
 
-    if (widget.testAccounts != null)
+    /// if statement for testing
+    if (widget.testAccounts != null) {
+      currentUser = widget.testAccounts
+          .where(
+              (account) => account.username == widget.currentLoggedInUsername)
+          .toList()[0];
       return widget.testAccounts;
+    }
+
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
@@ -42,6 +52,10 @@ class _AccountsState extends State<Accounts> {
           .map((dynamic item) => Account.fromJson(item))
           .where((account) => account.isActive == true)
           .toList();
+      currentUser = accounts
+          .where(
+              (account) => account.username == widget.currentLoggedInUsername)
+          .toList()[0];
       return accounts;
     } else {
       throw "Can't get posts";
@@ -64,16 +78,16 @@ class _AccountsState extends State<Accounts> {
               key: Key("yesButton"),
               child: Text("Tak"),
               onPressed: () async {
-                var statusCode = await widget.api.deactivateAccount(account.id);
-                if (statusCode == 204) {
+                var statusCode = await widget.api
+                    .deactivateAccount(account.id, widget.currentLoggedInToken);
+                if (statusCode == 200) {
                   setState(() {
                     getAccounts();
                   });
                   Navigator.of(context).pop(true);
-                }
-                else{
-                  displayDialog(
-                      context, "Błąd", "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
+                } else {
+                  displayDialog(context, "Błąd",
+                      "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
                 }
               },
             ),
@@ -155,15 +169,7 @@ class _AccountsState extends State<Accounts> {
                                                 api: widget.api))),
 
                                     /// delete account button
-                                    trailing: FlatButton(
-                                      key: Key("deleteButton"),
-                                      child: Icon(Icons.delete),
-                                      onPressed: () {
-                                        setState(() {
-                                          _deactivateAccount(account);
-                                        });
-                                      },
-                                    )),
+                                    trailing: deleteButtonTrailing(account)),
                               )
                               .toList(),
                         ))),
@@ -175,5 +181,20 @@ class _AccountsState extends State<Accounts> {
                 return Center(child: CircularProgressIndicator());
               }),
         ));
+  }
+
+  deleteButtonTrailing(Account account) {
+    if (currentUser.isStaff) {
+      return FlatButton(
+        key: Key("deleteButton"),
+        child: Icon(Icons.delete),
+        onPressed: () {
+          setState(() {
+            _deactivateAccount(account);
+          });
+        },
+      );
+    } else
+      return null;
   }
 }

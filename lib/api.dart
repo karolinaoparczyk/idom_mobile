@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 
 class Api {
@@ -38,9 +40,10 @@ class Api {
   }
 
   /// requests deactivating user
-  Future<int> deactivateAccount(int id) async {
+  Future<int> deactivateAccount(int id, String userToken) async {
     try {
-      var res = await http.delete('http://10.0.2.2:8000/register/$id');
+      var res = await http.delete('http://10.0.2.2:8000/users/delete/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
       return res.statusCode;
     } catch (e) {
       print(e);

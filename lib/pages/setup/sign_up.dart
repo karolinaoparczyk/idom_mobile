@@ -9,7 +9,9 @@ import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key key, @required this.api}) : super(key: key);
+  const SignUp({Key key, @required this.onSignedIn, @required this.api})
+      : super(key: key);
+  final VoidCallback onSignedIn;
   final Api api;
 
   @override
@@ -157,8 +159,11 @@ class _SignUpState extends State<SignUp> {
         if (res['statusCode'] == "201") {
           await displayDialog(context, "Sukces",
               "Konto zostało utworzone. Możesz się zalogować.");
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SignIn(api: widget.api)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SignIn(api: widget.api, onSignedIn: widget.onSignedIn)));
         } else if (res['body']
             .contains("for key 'register_customuser.username'")) {
           displayDialog(
