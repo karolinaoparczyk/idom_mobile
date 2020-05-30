@@ -14,7 +14,7 @@ class Api {
 
   Future<Map<String, String>> signUp(
       username, password1, password2, email, telephone) async {
-    var res = await http.post('http://10.0.2.2:8000/register/', body: {
+    var res = await http.post('http://10.0.2.2:8000/users/add', body: {
       "username": username,
       "password1": password1,
       "password2": password2,
@@ -58,7 +58,7 @@ class Api {
   }
 
   Future<int> editAccount(id, email, telephone) async {
-    var res = await http.put('http://10.0.2.2:8000/register/$id',
+    var res = await http.put('http://10.0.2.2:8000/users/update/$id',
         body: {"email": email, "telephone": telephone});
     return res.statusCode;
   }
