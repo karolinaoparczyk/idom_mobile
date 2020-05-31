@@ -7,6 +7,7 @@ import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/setup/front.dart';
+import 'package:idom/utils/menu_items.dart';
 import 'package:idom/widgets/dialog.dart';
 
 /// displays all accounts
@@ -77,8 +78,15 @@ class _AccountsState extends State<Accounts> {
               key: Key("yesButton"),
               child: Text("Tak"),
               onPressed: () async {
-                var statusCode = await widget.api
-                    .deactivateAccount(account.id, widget.currentLoggedInToken);
+                var statusCode;
+                if (widget.api != null)
+                  statusCode = await widget.api.deactivateAccount(
+                      account.id, widget.currentLoggedInToken);
+                else {
+                  Api api = Api();
+                  statusCode = await api.deactivateAccount(
+                      account.id, widget.currentLoggedInToken);
+                }
                 if (statusCode == 200) {
                   setState(() {
                     getAccounts();
@@ -121,65 +129,70 @@ class _AccountsState extends State<Accounts> {
     }
   }
 
+  void _choiceAction(String choice) {
+    if (choice == "Wyloguj") {
+      _logOut();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
-          appBar: AppBar(
-            leading: Container(),
-            title: Text('IDOM Konta w systemie'),
-            actions: <Widget>[
-              IconButton(
-                key: Key("logOut"),
-                icon: Icon(Icons.exit_to_app),
-                onPressed: _logOut,
-              ),
-            ],
-          ),
-          body: FutureBuilder(
-              future: getAccounts(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<Account>> snapshot) {
-                if (snapshot.hasData) {
-                  List<Account> accounts = snapshot.data;
-                  return Column(children: <Widget>[
-                    Expanded(
-                        flex: 1,
-                        child:
-                            Text("Liczba wszystkich kont: ${accounts.length}")),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('IDOM Konta w systemie'),
+        actions: <Widget>[
+          PopupMenuButton(
+              offset: Offset(0, 100),
+              onSelected: _choiceAction,
+              itemBuilder: (BuildContext context) {
+                return menuChoices.map((String choice) {
+                  return PopupMenuItem(value: choice, child: Text(choice));
+                }).toList();
+              })
+        ],
+      ),
+      body: FutureBuilder(
+          future: getAccounts(),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Account>> snapshot) {
+            if (snapshot.hasData) {
+              List<Account> accounts = snapshot.data;
+              return Column(children: <Widget>[
+                Expanded(
+                    flex: 1,
+                    child: Text("Liczba wszystkich kont: ${accounts.length}")),
 
-                    /// A widget with the list of accounts
-                    Expanded(
-                        flex: 16,
-                        child: Scrollbar(
-                            child: ListView(
-                          shrinkWrap: true,
-                          children: accounts
-                              .map(
-                                (Account account) => ListTile(
-                                    title: Text(account.username),
-                                    onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => AccountDetail(
-                                                currentLoggedInToken:
-                                                    widget.currentLoggedInToken,
-                                                account: account,
-                                                api: widget.api))),
+                /// A widget with the list of accounts
+                Expanded(
+                    flex: 16,
+                    child: Scrollbar(
+                        child: ListView(
+                      shrinkWrap: true,
+                      children: accounts
+                          .map(
+                            (Account account) => ListTile(
+                                title: Text(account.username),
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => AccountDetail(
+                                            currentLoggedInToken:
+                                                widget.currentLoggedInToken,
+                                            account: account,
+                                            api: widget.api))),
 
-                                    /// delete account button
-                                    trailing: deleteButtonTrailing(account)),
-                              )
-                              .toList(),
-                        ))),
-                    Expanded(flex: 1, child: Divider()),
-                  ]);
-                }
+                                /// delete account button
+                                trailing: deleteButtonTrailing(account)),
+                          )
+                          .toList(),
+                    ))),
+                Expanded(flex: 1, child: Divider()),
+              ]);
+            }
 
-                /// shows progress indicator while fetching data
-                return Center(child: CircularProgressIndicator());
-              }),
-        ));
+            /// shows progress indicator while fetching data
+            return Center(child: CircularProgressIndicator());
+          }),
+    );
   }
 
   deleteButtonTrailing(Account account) {

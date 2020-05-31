@@ -33,8 +33,9 @@ class Account {
         isActive: json['is_active'] as bool);
   }
 
-  Account copy(){
-    return new Account(id: this.id,
+  Account copy() {
+    return new Account(
+        id: this.id,
         username: this.username,
         email: this.email,
         telephone: this.telephone,
@@ -42,5 +43,33 @@ class Account {
         appNotifications: this.appNotifications,
         isStaff: this.isStaff,
         isActive: this.isActive);
+  }
+}
+
+class Sensor {
+  final int id;
+  String name;
+  String category;
+  int batteryLevel;
+  bool notifications;
+  bool isActive;
+
+  Sensor({
+    @required this.id,
+    @required this.name,
+    @required this.category,
+    @required this.batteryLevel,
+    @required this.notifications,
+    @required this.isActive,
+  });
+
+  factory Sensor.fromJson(Map<String, dynamic> json) {
+    return Sensor(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        category: json['category'] as String,
+        batteryLevel: json['batteryLevel'] as int,
+        notifications: json['sms_notiications'] as bool,
+        isActive: json['is_active'] as bool);
   }
 }

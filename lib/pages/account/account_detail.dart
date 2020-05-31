@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/front.dart';
+import 'package:idom/utils/menu_items.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
@@ -71,34 +72,53 @@ class _AccountDetailState extends State<AccountDetail> {
     super.dispose();
   }
 
+  /// logs the user out of the app
+  _logOut() async {
+    try {
+      var statusCode;
+      if (widget.api != null)
+        statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      else {
+        Api api = Api();
+        statusCode = await api.logOut(widget.currentLoggedInToken);
+      }
+      if (statusCode == 200) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Front(), fullscreenDialog: true));
+      } else {
+        displayDialog(
+            context, "Błąd", "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _choiceAction(String choice) {
+    if (choice == "Konta") {
+      Navigator.pop(context);
+    } else if (choice == "Wyloguj") {
+      _logOut();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(title: Text(widget.account.username), actions: <Widget>[
-          IconButton(
-            key: Key("logOut"),
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () async {
-              try {
-                var statusCode =
-                    await widget.api.logOut(widget.currentLoggedInToken);
-                if (statusCode == 200) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Front(),
-                          fullscreenDialog: true));
-                } else {
-                  displayDialog(context, "Błąd",
-                      "Wylogowanie nie powiodło się. Spróbuj ponownie.");
-                }
-              } catch (e) {
-                print(e);
-              }
-            },
-          ),
-        ]),
+        appBar: AppBar(title: Text(widget.account.username),
+          actions: <Widget>[
+          PopupMenuButton(
+              offset: Offset(0,100),
+              onSelected: _choiceAction,
+              itemBuilder: (BuildContext context) {
+                return menuChoices.map((String choice) {
+                  return PopupMenuItem(value: choice, child: Text(choice));
+                }).toList();
+              })
+        ],),
         body: SingleChildScrollView(
               child: Form(
                   key: _formKey,

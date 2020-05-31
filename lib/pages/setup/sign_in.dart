@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:idom/api.dart';
-import 'package:idom/pages/account/accounts.dart';
+import 'package:idom/pages/sensors/sensors.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
@@ -63,7 +63,7 @@ class _SignInState extends State<SignIn> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => Accounts(
+                  builder: (context) => Sensors(
                       currentLoggedInToken:
                           result[0].split(':')[1].substring(1, 41),
                       currentLoggedInUsername: _usernameController.value.text,
