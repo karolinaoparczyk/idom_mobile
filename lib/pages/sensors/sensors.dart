@@ -85,6 +85,55 @@ class _SensorsState extends State<Sensors> {
     }
   }
 
+  /// deactivates ensor after confirmation
+  _deactivateSensor(Sensor sensor) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Text("Usuwanie czujnika"),
+          content:
+          Text("Czy na pewno chcesz usunąć czujnik ${sensor.name}?"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              key: Key("yesButton"),
+              child: Text("Tak"),
+              onPressed: () async {
+                var statusCode;
+                if (widget.api != null)
+                  statusCode = await widget.api.deactivateSensor(
+                      sensor.id, widget.currentLoggedInToken);
+                else {
+                  Api api = Api();
+                  statusCode = await api.deactivateSensor(
+                      sensor.id, widget.currentLoggedInToken);
+                }
+                if (statusCode == 200) {
+                  setState(() {
+                    getSensors();
+                  });
+                  Navigator.of(context).pop(true);
+                } else {
+                  displayDialog(context, "Błąd",
+                      "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.");
+                }
+              },
+            ),
+            FlatButton(
+              key: Key("noButton"),
+              child: Text("Nie"),
+              onPressed: () async {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _choiceAction(String choice) {
     if (choice == "Konta") {
       Navigator.push(
@@ -145,6 +194,8 @@ class _SensorsState extends State<Sensors> {
                                                   .currentLoggedInUsername,
                                               sensor: sensor,
                                               api: widget.api))),
+                                    /// delete sensor button
+                                    trailing: deleteButtonTrailing(sensor)
                                 ),
                               )
                               .toList(),
@@ -157,5 +208,17 @@ class _SensorsState extends State<Sensors> {
                 return Center(child: CircularProgressIndicator());
               }),
         ));
+  }
+
+  deleteButtonTrailing(Sensor sensor) {
+    return FlatButton(
+        key: Key("deleteButton"),
+        child: Icon(Icons.delete),
+        onPressed: () {
+          setState(() {
+            _deactivateSensor(sensor);
+          });
+        },
+      );
   }
 }

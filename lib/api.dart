@@ -51,6 +51,17 @@ class Api {
     return null;
   }
 
+  /// requests deactivating sensor
+  Future<int> deactivateSensor(int id, String userToken) async {
+    try {
+      var res = await http.delete('http://10.0.2.2:8000/sensors/delete/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
   /// requests deactivating user
   Future<http.Response> getSensors(String userToken) async {
     try {
