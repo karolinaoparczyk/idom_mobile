@@ -73,11 +73,12 @@ class _SensorDetailsState extends State<SensorDetails> {
         key: _scaffoldKey,
         appBar: AppBar(title: Text(widget.sensor.name), actions: <Widget>[
           PopupMenuButton(
+              key: Key("menuButton"),
               offset: Offset(0,100),
               onSelected: _choiceAction,
               itemBuilder: (BuildContext context) {
                 return menuChoices.map((String choice) {
-                  return PopupMenuItem(value: choice, child: Text(choice));
+                  return PopupMenuItem(key: Key(choice), value: choice, child: Text(choice));
                 }).toList();
               })
         ],),
