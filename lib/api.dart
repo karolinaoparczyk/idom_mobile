@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 class Api {
   /// requests signing in
@@ -53,7 +52,7 @@ class Api {
   }
 
   /// requests deactivating user
-  Future<Response> getSensors(String userToken) async {
+  Future<http.Response> getSensors(String userToken) async {
     try {
       var res = await http.get('http://10.0.2.2:8000/sensors/list',
           headers: {HttpHeaders.authorizationHeader: "Token $userToken"});

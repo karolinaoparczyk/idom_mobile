@@ -17,11 +17,13 @@ class Sensors extends StatefulWidget {
       {Key key,
       @required this.currentLoggedInToken,
       @required this.currentLoggedInUsername,
-      @required this.api})
+      @required this.api,
+      this.testSensors})
       : super(key: key);
   final String currentLoggedInToken;
   final String currentLoggedInUsername;
   final Api api;
+  final List<Sensor> testSensors;
 
   @override
   _SensorsState createState() => _SensorsState();
@@ -30,12 +32,16 @@ class Sensors extends StatefulWidget {
 class _SensorsState extends State<Sensors> {
   final String sensorsUrl = "http://10.0.2.2:8000/sensors/list";
 
-
   /// returns list of sensors
   Future<List<Sensor>> getSensors() async {
+    /// if statement for testing
+    if (widget.testSensors != null) {
+      return widget.testSensors;
+    }
+
     Response res;
     if (widget.api != null)
-       res = await widget.api.getSensors(widget.currentLoggedInToken);
+      res = await widget.api.getSensors(widget.currentLoggedInToken);
     else {
       Api api = Api();
       res = await api.getSensors(widget.currentLoggedInToken);
@@ -103,7 +109,8 @@ class _SensorsState extends State<Sensors> {
             title: Text('IDOM Czujniki'),
             actions: <Widget>[
               PopupMenuButton(
-                offset: Offset(0,100),
+                key: Key("menuButton"),
+                  offset: Offset(0, 100),
                   onSelected: _choiceAction,
                   itemBuilder: (BuildContext context) {
                     return menuChoices.map((String choice) {
@@ -134,7 +141,8 @@ class _SensorsState extends State<Sensors> {
                                           builder: (context) => SensorDetails(
                                               currentLoggedInToken:
                                                   widget.currentLoggedInToken,
-                                              currentLoggedInUsername: widget.currentLoggedInUsername,
+                                              currentLoggedInUsername: widget
+                                                  .currentLoggedInUsername,
                                               sensor: sensor,
                                               api: widget.api))),
                                 ),
