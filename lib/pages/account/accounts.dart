@@ -34,7 +34,6 @@ class _AccountsState extends State<Accounts> {
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
-    Response res = await get(accountsUrl);
 
     /// if statement for testing
     if (widget.testAccounts != null) {
@@ -44,6 +43,8 @@ class _AccountsState extends State<Accounts> {
           .toList()[0];
       return widget.testAccounts;
     }
+
+    Response res = await get(accountsUrl);
 
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
@@ -147,7 +148,8 @@ class _AccountsState extends State<Accounts> {
               onSelected: _choiceAction,
               itemBuilder: (BuildContext context) {
                 return menuChoices.map((String choice) {
-                  return PopupMenuItem(key: Key(choice), value: choice, child: Text(choice));
+                  return PopupMenuItem(
+                      key: Key(choice), value: choice, child: Text(choice));
                 }).toList();
               })
         ],
@@ -172,6 +174,7 @@ class _AccountsState extends State<Accounts> {
                       children: accounts
                           .map(
                             (Account account) => ListTile(
+                                key: Key(account.username),
                                 title: Text(account.username),
                                 onTap: () => Navigator.of(context).push(
                                     MaterialPageRoute(
