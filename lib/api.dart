@@ -80,9 +80,13 @@ class Api {
     return res.statusCode;
   }
 
-  Future<int> editAccount(id, email, telephone) async {
+  Future<Map<String, String>> editAccount(id, email, telephone) async {
     var res = await http.put('http://10.0.2.2:8000/users/update/$id',
         body: {"email": email, "telephone": telephone});
-    return res.statusCode;
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
   }
 }

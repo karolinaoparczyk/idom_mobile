@@ -142,13 +142,22 @@ class _AccountDetailState extends State<AccountDetail> {
     try {
       var res = await widget.api.editAccount(widget.account.id,
           _editingEmailController.text, _editingTelephoneController.text);
-      if (res == 200) {
+      Navigator.of(context).pop(false);
+      if (res['statusCode'] == "200") {
         var snackBar = SnackBar(content: Text("Zapisano dane konta."));
         _scaffoldKey.currentState.showSnackBar(snackBar);
-      } else {
-        var snackBar =
-            SnackBar(content: Text("Wystąpił błąd podczas próby zapisu."));
-        _scaffoldKey.currentState.showSnackBar(snackBar);
+      } else if (res['body']
+          .contains("User with given username already exists")) {
+        displayDialog(
+            context, "Błąd", "Konto dla podanego loginu już istnieje.");
+      } else if (res['body']
+          .contains("User with given email already exists")) {
+        displayDialog(
+            context, "Błąd", "Konto dla podanego adresu email już istnieje.");
+      } else if (res['body'].contains("Enter a valid phone number")) {
+        displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
+      } else if (res['body'].contains("User with given telephone number already exists")) {
+        displayDialog(context, "Błąd", "Konto dla podanego numeru telefonu już istnieje.");
       }
     } catch (e) {
       print(e);
@@ -171,7 +180,6 @@ class _AccountDetailState extends State<AccountDetail> {
               child: Text("Tak"),
               onPressed: () async {
                 await _saveChanges();
-                Navigator.of(context).pop(false);
               },
             ),
             FlatButton(

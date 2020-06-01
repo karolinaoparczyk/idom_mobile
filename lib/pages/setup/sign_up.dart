@@ -165,15 +165,17 @@ class _SignUpState extends State<SignUp> {
                   builder: (context) =>
                       SignIn(api: widget.api, onSignedIn: widget.onSignedIn)));
         } else if (res['body']
-            .contains("for key 'register_customuser.username'")) {
+            .contains("User with given username already exists")) {
           displayDialog(
               context, "Błąd", "Konto dla podanego loginu już istnieje.");
         } else if (res['body']
-            .contains("for key 'register_customuser.email'")) {
+            .contains("User with given email already exists")) {
           displayDialog(
               context, "Błąd", "Konto dla podanego adresu email już istnieje.");
         } else if (res['body'].contains("Enter a valid phone number")) {
           displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
+        } else if (res['body'].contains("User with given telephone number already exists")) {
+          displayDialog(context, "Błąd", "Konto dla podanego numeru telefonu już istnieje.");
         }
       } catch (e) {
         print(e.toString());
