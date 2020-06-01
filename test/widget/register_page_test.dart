@@ -15,7 +15,7 @@ void main() {
   /// tests if signs up with empty body
   testWidgets('body is empty, does not sign up', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    SignUp page = SignUp(api: mockApi);
+    SignUp page = SignUp(api: mockApi, onSignedIn: () {});
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -36,7 +36,7 @@ void main() {
     when(mockApi.signUp("username", "password", "password", "email@email.com",
             "+48765678789"))
         .thenAnswer((_) async => Future.value(res));
-    SignUp page = SignUp(api: mockApi);
+    SignUp page = SignUp(api: mockApi, onSignedIn: () {});
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -67,19 +67,19 @@ void main() {
     expect(find.byType(SignIn), findsOneWidget);
   });
 
-  /// tests if not signed up when username or email already in database
+  /// tests if not signed up when username already in database
   /// user gets error message and stays at sign up page
-  testWidgets('username or email already in database, does not sign up',
+  testWidgets('username already in database, does not sign up',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "for key 'register_customuser.username'",
+      "body": "User with given username already exists",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
             "+48765678789"))
         .thenAnswer((_) async => Future.value(res));
-    SignUp page = SignUp(api: mockApi);
+    SignUp page = SignUp(api: mockApi, onSignedIn: () {});
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -104,7 +104,139 @@ void main() {
             "email@email.com", "+48765678789"))
         .called(1);
     await tester.pumpAndSettle();
-    expect(find.text("Błąd"), findsOneWidget);
+    expect(
+        find.text("Konto dla podanego loginu już istnieje."), findsOneWidget);
+    await tester.tap(find.byKey(Key('ok button')));
+    await tester.pumpAndSettle();
+    expect(find.byType(SignUp), findsOneWidget);
+  });
+
+  /// tests if not signed up when email already in database
+  /// user gets error message and stays at sign up page
+  testWidgets('email already in database, does not sign up',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Map<String, String> res = {
+      "body": "User with given email already exists",
+      "statusCode": "400",
+    };
+    when(mockApi.signUp("username", "password", "password", "email@email.com",
+            "+48765678789"))
+        .thenAnswer((_) async => Future.value(res));
+    SignUp page = SignUp(api: mockApi, onSignedIn: () {});
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+
+    Finder usernameField = find.byKey(Key('username'));
+    await tester.enterText(usernameField, 'username');
+
+    Finder password1Field = find.byKey(Key('password1'));
+    await tester.enterText(password1Field, 'password');
+
+    Finder password2Field = find.byKey(Key('password2'));
+    await tester.enterText(password2Field, 'password');
+
+    Finder emailField = find.byKey(Key('email'));
+    await tester.enterText(emailField, "email@email.com");
+
+    Finder telephoneField = find.byKey(Key('telephone'));
+    await tester.enterText(telephoneField, "+48765678789");
+
+    await tester.tap(find.byKey(Key('Zarejestruj się')));
+
+    verify(await mockApi.signUp("username", "password", "password",
+            "email@email.com", "+48765678789"))
+        .called(1);
+    await tester.pumpAndSettle();
+    expect(find.text("Konto dla podanego adresu email już istnieje."),
+        findsOneWidget);
+    await tester.tap(find.byKey(Key('ok button')));
+    await tester.pumpAndSettle();
+    expect(find.byType(SignUp), findsOneWidget);
+  });
+
+  /// tests if not signed up when telephone already in database
+  /// user gets error message and stays at sign up page
+  testWidgets('telephone already in database, does not sign up',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Map<String, String> res = {
+      "body": "User with given telephone number already exists",
+      "statusCode": "400",
+    };
+    when(mockApi.signUp("username", "password", "password", "email@email.com",
+            "+48765678789"))
+        .thenAnswer((_) async => Future.value(res));
+    SignUp page = SignUp(api: mockApi, onSignedIn: () {});
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+
+    Finder usernameField = find.byKey(Key('username'));
+    await tester.enterText(usernameField, 'username');
+
+    Finder password1Field = find.byKey(Key('password1'));
+    await tester.enterText(password1Field, 'password');
+
+    Finder password2Field = find.byKey(Key('password2'));
+    await tester.enterText(password2Field, 'password');
+
+    Finder emailField = find.byKey(Key('email'));
+    await tester.enterText(emailField, "email@email.com");
+
+    Finder telephoneField = find.byKey(Key('telephone'));
+    await tester.enterText(telephoneField, "+48765678789");
+
+    await tester.tap(find.byKey(Key('Zarejestruj się')));
+
+    verify(await mockApi.signUp("username", "password", "password",
+            "email@email.com", "+48765678789"))
+        .called(1);
+    await tester.pumpAndSettle();
+    expect(find.text("Konto dla podanego numeru telefonu już istnieje."),
+        findsOneWidget);
+    await tester.tap(find.byKey(Key('ok button')));
+    await tester.pumpAndSettle();
+    expect(find.byType(SignUp), findsOneWidget);
+  });
+
+  /// tests if not signed up when telephone invalid
+  /// user gets error message and stays at sign up page
+  testWidgets('telephone invalid, does not sign up',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Map<String, String> res = {
+      "body": "Enter a valid phone number",
+      "statusCode": "400",
+    };
+    when(mockApi.signUp("username", "password", "password", "email@email.com",
+            "+48765678789"))
+        .thenAnswer((_) async => Future.value(res));
+    SignUp page = SignUp(api: mockApi, onSignedIn: () {});
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+
+    Finder usernameField = find.byKey(Key('username'));
+    await tester.enterText(usernameField, 'username');
+
+    Finder password1Field = find.byKey(Key('password1'));
+    await tester.enterText(password1Field, 'password');
+
+    Finder password2Field = find.byKey(Key('password2'));
+    await tester.enterText(password2Field, 'password');
+
+    Finder emailField = find.byKey(Key('email'));
+    await tester.enterText(emailField, "email@email.com");
+
+    Finder telephoneField = find.byKey(Key('telephone'));
+    await tester.enterText(telephoneField, "+48765678789");
+
+    await tester.tap(find.byKey(Key('Zarejestruj się')));
+
+    verify(await mockApi.signUp("username", "password", "password",
+            "email@email.com", "+48765678789"))
+        .called(1);
+    await tester.pumpAndSettle();
+    expect(find.text("Numer telefonu jest niepoprawny."), findsOneWidget);
     await tester.tap(find.byKey(Key('ok button')));
     await tester.pumpAndSettle();
     expect(find.byType(SignUp), findsOneWidget);

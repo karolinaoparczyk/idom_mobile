@@ -147,10 +147,6 @@ class _AccountDetailState extends State<AccountDetail> {
         var snackBar = SnackBar(content: Text("Zapisano dane konta."));
         _scaffoldKey.currentState.showSnackBar(snackBar);
       } else if (res['body']
-          .contains("User with given username already exists")) {
-        displayDialog(
-            context, "Błąd", "Konto dla podanego loginu już istnieje.");
-      } else if (res['body']
           .contains("User with given email already exists")) {
         displayDialog(
             context, "Błąd", "Konto dla podanego adresu email już istnieje.");

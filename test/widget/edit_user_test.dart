@@ -25,7 +25,8 @@ void main() {
         appNotifications: "true",
         isStaff: false,
         isActive: false);
-    AccountDetail page = AccountDetail(currentLoggedInToken: "token", account: user ,api: mockApi);
+    AccountDetail page = AccountDetail(
+        currentLoggedInToken: "token", account: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -49,7 +50,8 @@ void main() {
         appNotifications: "true",
         isStaff: false,
         isActive: false);
-    AccountDetail page = AccountDetail(currentLoggedInToken: "token", account: user ,api: mockApi);
+    AccountDetail page = AccountDetail(
+        currentLoggedInToken: "token", account: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -63,8 +65,8 @@ void main() {
   /// tests if saves with data change
   testWidgets('changed data, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editAccount(1, 'user@email.pl', ''))
-        .thenAnswer((_) async => Future.value(200));
+    when(mockApi.editAccount(1, 'user@email.pl', '')).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "200"}));
     Account user = Account(
         id: 1,
         username: "user1",
@@ -74,7 +76,8 @@ void main() {
         appNotifications: "true",
         isStaff: false,
         isActive: false);
-    AccountDetail page = AccountDetail(currentLoggedInToken: "token", account: user ,api: mockApi);
+    AccountDetail page = AccountDetail(
+        currentLoggedInToken: "token", account: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -91,10 +94,11 @@ void main() {
   });
 
   /// tests if does not save with data change but no confirmation
-  testWidgets('changed data, no confirmation, does not save', (WidgetTester tester) async {
+  testWidgets('changed data, no confirmation, does not save',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editAccount(1, 'user@email.pl', ''))
-        .thenAnswer((_) async => Future.value(200));
+    when(mockApi.editAccount(1, 'user@email.pl', '')).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "200"}));
     Account user = Account(
         id: 1,
         username: "user1",
@@ -104,7 +108,8 @@ void main() {
         appNotifications: "true",
         isStaff: false,
         isActive: false);
-    AccountDetail page = AccountDetail(currentLoggedInToken: "token", account: user ,api: mockApi);
+    AccountDetail page = AccountDetail(
+        currentLoggedInToken: "token", account: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -119,7 +124,8 @@ void main() {
   });
 
   /// tests if does not save with error in data
-  testWidgets('changed data, error in data, does not save', (WidgetTester tester) async {
+  testWidgets('changed data, error in data, does not save',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Account user = Account(
         id: 1,
@@ -130,7 +136,8 @@ void main() {
         appNotifications: "true",
         isStaff: false,
         isActive: false);
-    AccountDetail page = AccountDetail(currentLoggedInToken: "token", account: user ,api: mockApi);
+    AccountDetail page = AccountDetail(
+        currentLoggedInToken: "token", account: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -142,11 +149,15 @@ void main() {
     verifyNever(await mockApi.editAccount(1, 'user@email', ''));
   });
 
-  /// tests if does not save with error from API
-  testWidgets('changed data, error in API, does not save', (WidgetTester tester) async {
+  /// tests if does not save when email exists
+  testWidgets('changed data, email exists, does not save',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editAccount(1, 'user@email.pl', ''))
-        .thenAnswer((_) async => Future.value(400));
+    when(mockApi.editAccount(1, 'user@email.pl', '')).thenAnswer((_) async =>
+        Future.value({
+          "body": "User with given email already exists",
+          "statusCode": "400"
+        }));
     Account user = Account(
         id: 1,
         username: "user1",
@@ -156,7 +167,8 @@ void main() {
         appNotifications: "true",
         isStaff: false,
         isActive: false);
-    AccountDetail page = AccountDetail(currentLoggedInToken: "token", account: user ,api: mockApi);
+    AccountDetail page = AccountDetail(
+        currentLoggedInToken: "token", account: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -167,8 +179,83 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
-    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.byKey(Key("ok button")), findsOneWidget);
+    expect(find.text("Konto dla podanego adresu email już istnieje."),
+        findsOneWidget);
 
     verify(await mockApi.editAccount(1, 'user@email.pl', '')).called(1);
+  });
+
+  /// tests if does not save when telephone exists
+  testWidgets('changed data, telephone exists, does not save',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.editAccount(1, 'user@email.com', '+48777666555')).thenAnswer(
+        (_) async => Future.value({
+              "body": "User with given telephone number already exists",
+              "statusCode": "400"
+            }));
+    Account user = Account(
+        id: 1,
+        username: "user1",
+        email: "user@email.com",
+        telephone: "",
+        smsNotifications: "true",
+        appNotifications: "true",
+        isStaff: false,
+        isActive: false);
+    AccountDetail page = AccountDetail(
+        currentLoggedInToken: "token", account: user, api: mockApi);
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+
+    Finder usernameField = find.byKey(Key('telephone'));
+    await tester.enterText(usernameField, '+48777666555');
+
+    await tester.tap(find.byKey(Key('Zapisz zmiany')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(Key("ok button")), findsOneWidget);
+    expect(find.text("Konto dla podanego numeru telefonu już istnieje."),
+        findsOneWidget);
+
+    verify(await mockApi.editAccount(1, 'user@email.com', '+48777666555'))
+        .called(1);
+  });
+
+  /// tests if does not save when telephone is invalid
+  testWidgets('changed data, telephone invalid, does not save',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.editAccount(1, 'user@email.com', '+48111111111')).thenAnswer(
+        (_) async => Future.value(
+            {"body": "Enter a valid phone number", "statusCode": "400"}));
+    Account user = Account(
+        id: 1,
+        username: "user1",
+        email: "user@email.com",
+        telephone: "",
+        smsNotifications: "true",
+        appNotifications: "true",
+        isStaff: false,
+        isActive: false);
+    AccountDetail page = AccountDetail(
+        currentLoggedInToken: "token", account: user, api: mockApi);
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+
+    Finder usernameField = find.byKey(Key('telephone'));
+    await tester.enterText(usernameField, '+48111111111');
+
+    await tester.tap(find.byKey(Key('Zapisz zmiany')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(Key("ok button")), findsOneWidget);
+    expect(find.text("Numer telefonu jest niepoprawny."), findsOneWidget);
+
+    verify(await mockApi.editAccount(1, 'user@email.com', '+48111111111'))
+        .called(1);
   });
 }
