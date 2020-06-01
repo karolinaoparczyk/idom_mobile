@@ -155,6 +155,7 @@ class _SensorsState extends State<Sensors> {
         onWillPop: () async => false,
         child: Scaffold(
           appBar: AppBar(
+            leading: Container(),
             title: Text('IDOM Czujniki'),
             actions: <Widget>[
               PopupMenuButton(
