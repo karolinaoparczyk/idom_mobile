@@ -101,4 +101,21 @@ class Api {
     };
     return resDict;
   }
+
+  Future<Map<String, String>> editSensor(id, name, String userToken) async {
+    var body;
+    if (name != null) {
+      body = {"name": name};
+      var res = await http.put(
+        'http://10.0.2.2:8000/sensors/update/$id',
+        headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+        body: body,
+      );
+      var resDict = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return resDict;
+    }
+  }
 }

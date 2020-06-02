@@ -34,7 +34,7 @@ class _SignInState extends State<SignIn> {
         decoration: InputDecoration(
             labelText: 'Login',
             labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-        validator: UsernameFieldValidator.validate);
+        validator: NameFieldValidator.validate);
   }
 
   /// builds password text field for the form

@@ -5,14 +5,17 @@ import 'package:idom/models.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/menu_items.dart';
+import 'package:idom/utils/validators.dart';
+import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
 class SensorDetails extends StatefulWidget {
-  SensorDetails({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentLoggedInUsername,
-    @required this.sensor,
-    @required this.api})
+  SensorDetails(
+      {Key key,
+      @required this.currentLoggedInToken,
+      @required this.currentLoggedInUsername,
+      @required this.sensor,
+      @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final String currentLoggedInUsername;
@@ -26,6 +29,7 @@ class SensorDetails extends StatefulWidget {
 class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController _editingNameController;
 
   /// logs the user out of the app
   _logOut() async {
@@ -67,61 +71,153 @@ class _SensorDetailsState extends State<SensorDetails> {
     }
   }
 
+  Widget _buildName() {
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+        child: TextFormField(
+            key: Key('name'),
+            controller: _editingNameController,
+            decoration: InputDecoration(
+                labelText: 'Nazwa',
+                labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
+            validator: NameFieldValidator.validate));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _editingNameController = TextEditingController(text: widget.sensor.name);
+  }
+
+  @override
+  void dispose() {
+    _editingNameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(title: Text(widget.sensor.name), actions: <Widget>[
-          PopupMenuButton(
-              key: Key("menuButton"),
-              offset: Offset(0,100),
-              onSelected: _choiceAction,
-              itemBuilder: (BuildContext context) {
-                return menuChoices.map((String choice) {
-                  return PopupMenuItem(key: Key(choice), value: choice, child: Text(choice));
-                }).toList();
-              })
-        ],),
+        appBar: AppBar(
+          title: Text(widget.sensor.name),
+          actions: <Widget>[
+            PopupMenuButton(
+                key: Key("menuButton"),
+                offset: Offset(0, 100),
+                onSelected: _choiceAction,
+                itemBuilder: (BuildContext context) {
+                  return menuChoices.map((String choice) {
+                    return PopupMenuItem(
+                        key: Key(choice), value: choice, child: Text(choice));
+                  }).toList();
+                })
+          ],
+        ),
         body: SingleChildScrollView(
             child: Form(
                 key: _formKey,
                 child: Column(children: <Widget>[
-                Padding(
-                padding:
-                EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-                child: ListTile(
-                  title: Text("Nazwa", style: TextStyle(fontSize: 13.5)),
-                  subtitle: Text(widget.sensor.name,
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
-                )),
-            Padding(
-              padding:
-              EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-              child: ListTile(
-                  title:
-                  Text("Kategoria", style: TextStyle(fontSize: 13.5)),
-                  subtitle: Text(widget.sensor.category == "temperature"
-                      ? "Czujnik temperatury"
-                      : "Czujnik wilgotności",
-                      style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold)),
-            )),
-        Padding(
-            padding:
-            EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-            child: ListTile(
-              title: Text("Poziom baterii",
-                  style: TextStyle(fontSize: 13.5)),
-              subtitle: Text(
-                  widget.sensor.batteryLevel == null
-                      ? "Brak danych"
-                      : widget.sensor.batteryLevel.toString(),
-                  style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold)),
-            )),
-        Divider(),
-        ])))
+                  _buildName(),
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+                      child: ListTile(
+                        title:
+                            Text("Kategoria", style: TextStyle(fontSize: 13.5)),
+                        subtitle: Text(
+                            widget.sensor.category == "temperature"
+                                ? "Czujnik temperatury"
+                                : "Czujnik wilgotności",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                      )),
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+                      child: ListTile(
+                        title: Text("Poziom baterii",
+                            style: TextStyle(fontSize: 13.5)),
+                        subtitle: Text(
+                            widget.sensor.batteryLevel == null
+                                ? "Brak danych"
+                                : widget.sensor.batteryLevel.toString(),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                      )),
+                  Divider(),
+                  buttonWidget(context, "Zapisz zmiany", _verifyChanges)
+                ]))));
+  }
+
+  _saveChanges(bool changedName) async {
+    var name = changedName ? _editingNameController.text : null;
+    try {
+      var res = await widget.api
+          .editSensor(widget.sensor.id, name, widget.currentLoggedInToken);
+      Navigator.of(context).pop(false);
+      if (res['statusCode'] == "200") {
+        var snackBar = SnackBar(content: Text("Zapisano dane czujnika."));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      } else if (res['body']
+          .contains("Sensor with given name already exists")) {
+        displayDialog(
+            context, "Błąd", "Czujnik o podanej nazwie już istnieje.");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  /// confirms saving account changes
+  _confirmSavingChanges(bool changedName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Text("Potwierdź"),
+          content: Text("Czy na pewno zapisać zmiany?"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              key: Key("yesButton"),
+              child: Text("Tak"),
+              onPressed: () async {
+                await _saveChanges(changedName);
+              },
+            ),
+            FlatButton(
+              key: Key("noButton"),
+              child: Text("Nie"),
+              onPressed: () async {
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+        );
+      },
     );
+  }
+
+  /// verifies data changes
+  _verifyChanges() async {
+    var name = _editingNameController.text;
+    var changedName = false;
+
+    final formState = _formKey.currentState;
+    if (formState.validate()) {
+      /// sends request only if data changed
+      if (name != widget.sensor.name) {
+        changedName = true;
+      }
+      if (changedName) {
+        await _confirmSavingChanges(changedName);
+      } else {
+        var snackBar =
+            SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      }
+    }
   }
 }

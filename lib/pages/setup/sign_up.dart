@@ -40,7 +40,7 @@ class _SignUpState extends State<SignUp> {
           ),
         ),
         maxLength: 25,
-        validator: UsernameFieldValidator.validate);
+        validator: NameFieldValidator.validate);
   }
 
   Widget _buildPassword() {

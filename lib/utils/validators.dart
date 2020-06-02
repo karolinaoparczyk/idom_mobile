@@ -1,4 +1,4 @@
-class UsernameFieldValidator{
+class NameFieldValidator{
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Podaj login';
