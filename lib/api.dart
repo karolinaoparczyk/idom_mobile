@@ -12,6 +12,7 @@ class Api {
     return [result.body, result.statusCode];
   }
 
+  /// registers user
   Future<Map<String, String>> signUp(
       username, password1, password2, email, telephone) async {
     var res = await http.post('http://10.0.2.2:8000/users/add', body: {
@@ -62,6 +63,7 @@ class Api {
     }
     return null;
   }
+
   /// requests deactivating user
   Future<http.Response> getSensors(String userToken) async {
     try {
@@ -74,15 +76,25 @@ class Api {
     return null;
   }
 
+  /// sends request to reset password
   Future<int> resetPassword(String email) async {
     var res = await http
         .post('http://10.0.2.2:8000/password-reset/', body: {"email": email});
     return res.statusCode;
   }
 
+  /// edits users data
   Future<Map<String, String>> editAccount(id, email, telephone) async {
-    var res = await http.put('http://10.0.2.2:8000/users/update/$id',
-        body: {"email": email, "telephone": telephone});
+    var body;
+    if (email != null && telephone != null) {
+      body = {"email": email, "telephone": telephone};
+    } else if (email != null) {
+      body = {"email": email};
+    } else if (telephone != null) {
+      body = {"telephone": telephone};
+    }
+    var res =
+        await http.put('http://10.0.2.2:8000/users/update/$id', body: body);
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),

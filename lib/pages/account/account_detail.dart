@@ -108,52 +108,60 @@ class _AccountDetailState extends State<AccountDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(title: Text(widget.account.username),
+        appBar: AppBar(
+          title: Text(widget.account.username),
           actions: <Widget>[
-          PopupMenuButton(
-              key: Key("menuButton"),
-              offset: Offset(0,100),
-              onSelected: _choiceAction,
-              itemBuilder: (BuildContext context) {
-                return menuChoices.map((String choice) {
-                  return PopupMenuItem(key: Key(choice), value: choice, child: Text(choice));
-                }).toList();
-              })
-        ],),
+            PopupMenuButton(
+                key: Key("menuButton"),
+                offset: Offset(0, 100),
+                onSelected: _choiceAction,
+                itemBuilder: (BuildContext context) {
+                  return menuChoices.map((String choice) {
+                    return PopupMenuItem(
+                        key: Key(choice), value: choice, child: Text(choice));
+                  }).toList();
+                })
+          ],
+        ),
         body: SingleChildScrollView(
-              child: Form(
-                  key: _formKey,
-                  child: Column(children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-                        child: ListTile(
-                      title: Text("Login", style: TextStyle(fontSize: 13.5)),
-                      subtitle: Text(widget.account.username,style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    )),
-                    _buildEmail(),
-                    _buildTelephone(),
-                    Divider(),
-                    buttonWidget(context, "Zapisz zmiany", _verifyChanges)
-                  ])))
-        );
+            child: Form(
+                key: _formKey,
+                child: Column(children: <Widget>[
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+                      child: ListTile(
+                        title: Text("Login", style: TextStyle(fontSize: 13.5)),
+                        subtitle: Text(widget.account.username,
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                      )),
+                  _buildEmail(),
+                  _buildTelephone(),
+                  Divider(),
+                  buttonWidget(context, "Zapisz zmiany", _verifyChanges)
+                ]))));
   }
 
-  _saveChanges() async {
+  _saveChanges(bool changedEmail, bool changedTelephone) async {
+    var email = changedEmail ? _editingEmailController.text : null;
+    var telephone = changedTelephone ? _editingTelephoneController.text : null;
     try {
-      var res = await widget.api.editAccount(widget.account.id,
-          _editingEmailController.text, _editingTelephoneController.text);
+      var res =
+          await widget.api.editAccount(widget.account.id, email, telephone);
       Navigator.of(context).pop(false);
       if (res['statusCode'] == "200") {
         var snackBar = SnackBar(content: Text("Zapisano dane konta."));
         _scaffoldKey.currentState.showSnackBar(snackBar);
-      } else if (res['body']
-          .contains("User with given email already exists")) {
+      } else if (res['body'].contains("User with given email already exists")) {
         displayDialog(
             context, "Błąd", "Konto dla podanego adresu email już istnieje.");
       } else if (res['body'].contains("Enter a valid phone number")) {
         displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
-      } else if (res['body'].contains("User with given telephone number already exists")) {
-        displayDialog(context, "Błąd", "Konto dla podanego numeru telefonu już istnieje.");
+      } else if (res['body']
+          .contains("User with given telephone number already exists")) {
+        displayDialog(context, "Błąd",
+            "Konto dla podanego numeru telefonu już istnieje.");
       }
     } catch (e) {
       print(e);
@@ -161,7 +169,7 @@ class _AccountDetailState extends State<AccountDetail> {
   }
 
   /// confirms saving account changes
-  _confirmSavingChanges() {
+  _confirmSavingChanges(bool changedEmail, bool changedTelephone) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -175,7 +183,7 @@ class _AccountDetailState extends State<AccountDetail> {
               key: Key("yesButton"),
               child: Text("Tak"),
               onPressed: () async {
-                await _saveChanges();
+                await _saveChanges(changedEmail, changedTelephone);
               },
             ),
             FlatButton(
@@ -195,13 +203,20 @@ class _AccountDetailState extends State<AccountDetail> {
   _verifyChanges() async {
     var email = _editingEmailController.text;
     var telephone = _editingTelephoneController.text;
+    var changedEmail = false;
+    var changedTelephone = false;
 
     final formState = _formKey.currentState;
     if (formState.validate()) {
       /// sends request only if data changed
-      if (email != widget.account.email ||
-          telephone != widget.account.telephone) {
-        await _confirmSavingChanges();
+      if (email != widget.account.email) {
+        changedEmail = true;
+      }
+      if (telephone != widget.account.telephone) {
+        changedTelephone = true;
+      }
+      if (changedEmail || changedTelephone) {
+        await _confirmSavingChanges(changedEmail, changedTelephone);
       } else {
         var snackBar =
             SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
