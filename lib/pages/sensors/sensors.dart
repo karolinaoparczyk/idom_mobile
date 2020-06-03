@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/accounts.dart';
+import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/menu_items.dart';
@@ -31,6 +32,7 @@ class Sensors extends StatefulWidget {
 
 class _SensorsState extends State<Sensors> {
   final String sensorsUrl = "http://10.0.2.2:8000/sensors/list";
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   /// returns list of sensors
   Future<List<Sensor>> getSensors() async {
@@ -153,6 +155,16 @@ class _SensorsState extends State<Sensors> {
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
+          key: _scaffoldKey,
+          floatingActionButton: Container(
+              height: 80.0,
+              width: 80.0,
+              child: FittedBox(
+                  child: FloatingActionButton(
+                onPressed: addSensor,
+                child: Icon(Icons.add),
+                //backgroundColor: Colors.green,
+              ))),
           appBar: AppBar(
             leading: Container(),
             title: Text('IDOM Czujniki'),
@@ -203,6 +215,21 @@ class _SensorsState extends State<Sensors> {
                 return Center(child: CircularProgressIndicator());
               }),
         ));
+  }
+
+  addSensor() async {
+    bool result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => NewSensor(
+                currentLoggedInToken: widget.currentLoggedInToken,
+                currentLoggedInUsername: widget.currentLoggedInUsername,
+                api: widget.api),
+            fullscreenDialog: true));
+    if (result != null && result == true) {
+      var snackBar = SnackBar(content: Text("Dodano nowy czujnik."));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+    }
   }
 
   navigateToSensorDetails(Sensor sensor) {
