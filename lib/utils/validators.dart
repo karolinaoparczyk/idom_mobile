@@ -10,15 +10,6 @@ class UsernameFieldValidator{
   }
 }
 
-class SensorNameFieldValidator{
-  static String validate(String value) {
-    if (value.isEmpty) {
-      return 'Podaj nazwę';
-    }
-    return null;
-  }
-}
-
 class PasswordFieldValidator{
   static String validate(String value){
     if (value.isEmpty) {
@@ -52,5 +43,38 @@ class TelephoneFieldValidator{
       return 'Numer telefonu musi zawierać kierunkowy postaci +XX oraz 9 cyfr';
     }
     return null;
+  }
+}
+
+class SensorNameFieldValidator{
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Podaj nazwę';
+    }
+    return null;
+  }
+}
+
+Map<String, int> unitsToMinValues = {"seconds": 30, "minutes": 1, "hours": 1, "days": 1};
+Map<String, int> unitsToMaxValues = {"seconds": 2147483647, "minutes": 35791394, "hours": 596523, "days": 24};
+
+class SensorFrequencyFieldValidator{
+
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Podaj wartość';
+    }
+    return null;
+  }
+
+  static bool isFrequencyValueValid(String frequencyValue, String frequencyUnits){
+
+    var minValue = unitsToMinValues[frequencyUnits];
+    var maxValue = unitsToMaxValues[frequencyUnits];
+
+    if (int.parse(frequencyValue) < minValue || int.parse(frequencyValue) > maxValue)
+      return false;
+    else
+      return true;
   }
 }

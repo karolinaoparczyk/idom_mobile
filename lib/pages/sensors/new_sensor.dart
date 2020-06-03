@@ -9,11 +9,10 @@ import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
 class NewSensor extends StatefulWidget {
-  NewSensor(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentLoggedInUsername,
-      @required this.api})
+  NewSensor({Key key,
+    @required this.currentLoggedInToken,
+    @required this.currentLoggedInUsername,
+    @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final String currentLoggedInUsername;
@@ -26,10 +25,19 @@ class NewSensor extends StatefulWidget {
 class _NewSensorState extends State<NewSensor> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  TextEditingController _editingNameController = TextEditingController();
-  var dropdownSelectedItem;
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _frequencyValueController = TextEditingController();
+  var selectedCategory;
+  var selectedUnits;
 
   List<DropdownMenuItem<String>> categories;
+  List<DropdownMenuItem<String>> units;
+  Map<String, String> englishToPolishUnits ={
+    "seconds": "sekundy",
+    "minutes": "minuty",
+    "hours": "godziny",
+    "days": "dni"
+  };
 
   @override
   void initState() {
@@ -42,6 +50,16 @@ class _NewSensorState extends State<NewSensor> {
           key: Key("temperature")),
       DropdownMenuItem(
           child: Text("Wilgotność"), value: "humidity", key: Key("humidity"))
+    ];
+
+    units = [
+      DropdownMenuItem(
+          child: Text("Sekundy"), value: "seconds", key: Key("seconds")),
+      DropdownMenuItem(
+          child: Text("Minuty"), value: "minutes", key: Key("minutes")),
+      DropdownMenuItem(
+          child: Text("Godziny"), value: "hours", key: Key("hours")),
+      DropdownMenuItem(child: Text("Dni"), value: "days", key: Key("days"))
     ];
   }
 
@@ -75,10 +93,11 @@ class _NewSensorState extends State<NewSensor> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Accounts(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  currentLoggedInUsername: widget.currentLoggedInUsername,
-                  api: api),
+              builder: (context) =>
+                  Accounts(
+                      currentLoggedInToken: widget.currentLoggedInToken,
+                      currentLoggedInUsername: widget.currentLoggedInUsername,
+                      api: api),
               fullscreenDialog: true));
     } else if (choice == "Wyloguj") {
       _logOut();
@@ -91,7 +110,7 @@ class _NewSensorState extends State<NewSensor> {
         child: TextFormField(
             autofocus: true,
             key: Key('name'),
-            controller: _editingNameController,
+            controller: _nameController,
             decoration: InputDecoration(
                 labelText: 'Nazwa',
                 labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
@@ -102,14 +121,44 @@ class _NewSensorState extends State<NewSensor> {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
         child: DropdownButton(
-          key: Key("dropdownbutton"),
+          key: Key("categoriesButon"),
           items: categories,
           onChanged: (val) {
             setState(() {
-              dropdownSelectedItem = val;
+              selectedCategory = val;
             });
           },
-          value: dropdownSelectedItem,
+          value: selectedCategory,
+        ));
+  }
+
+  Widget _buildFrequencyValue() {
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+        child: TextFormField(
+          key: Key('frequencyValue'),
+          keyboardType: TextInputType.number,
+          controller: _frequencyValueController,
+          decoration: InputDecoration(
+            labelText: 'Wartość',
+            labelStyle: TextStyle(color: Colors.black, fontSize: 18),
+          ),
+          validator: SensorFrequencyFieldValidator.validate,
+        ));
+  }
+
+  Widget _buildUnits() {
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+        child: DropdownButton(
+          key: Key("unitsButton"),
+          items: units,
+          onChanged: (val) {
+            setState(() {
+              selectedUnits = val;
+            });
+          },
+          value: selectedUnits,
         ));
   }
 
@@ -146,10 +195,30 @@ class _NewSensorState extends State<NewSensor> {
                               style: TextStyle(fontSize: 13.5)))),
                   Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                      EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: _buildCategory())),
+                  Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Częstotliwość pobierania danych",
+                              style: TextStyle(fontSize: 13.5)))),
+                  Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      child: SizedBox(
+                          child: Row(children: <Widget>[
+                            Expanded(flex: 3, child: _buildFrequencyValue()),
+                            Expanded(flex: 1, child: SizedBox()),
+                            Expanded(
+                                flex: 5,
+                                child: Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: _buildUnits())),
+                          ]))),
                   Divider(),
                   buttonWidget(context, "Dodaj czujnik", _saveChanges)
                 ]))));
@@ -157,14 +226,37 @@ class _NewSensorState extends State<NewSensor> {
 
   _saveChanges() async {
     final formState = _formKey.currentState;
-    if (dropdownSelectedItem == null) {
-      await displayDialog(
-          context, "Brak danych", "Wybierz kategorię czujnika.");
+    var displayText = "";
+    if (selectedCategory == null) {
+      displayText += "Wybierz kategorię czujnika. \n";
+    }
+    if (selectedUnits == null) {
+      displayText += "Wybierz jednotski częstotliwości poberania danych.";
+    }
+    if (displayText != ""){
+      await displayDialog(context, "Brak danych", displayText);
     }
     if (formState.validate()) {
+      var validFequencyValue = SensorFrequencyFieldValidator
+          .isFrequencyValueValid(_frequencyValueController.text, selectedUnits);
+      if (!validFequencyValue) {
+        await displayDialog(
+            context, "Błąd",
+            "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} -  ${unitsToMaxValues[selectedUnits]}");
+        return;
+      }
+      var frequencyInSeconds = int.parse(_frequencyValueController.text);
+      if (selectedUnits != "seconds"){
+        if (selectedUnits == "minutes")
+          frequencyInSeconds = frequencyInSeconds * 60;
+        else if (selectedUnits == "hours")
+        frequencyInSeconds = frequencyInSeconds * 60 * 60;
+        else if (selectedUnits == "days")
+          frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
+      }
       try {
-        var res = await widget.api.addSensor(_editingNameController.text,
-            dropdownSelectedItem, widget.currentLoggedInToken);
+        var res = await widget.api.addSensor(_nameController.text,
+            selectedCategory, frequencyInSeconds, widget.currentLoggedInToken);
         if (res['statusCode'] == "201") {
           Navigator.of(context).pop(true);
         } else if (res['body']
