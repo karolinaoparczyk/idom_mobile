@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/pages/sensors/sensors.dart';
 import 'package:mockito/mockito.dart';
@@ -37,7 +38,8 @@ void main() {
   });
 
   /// tests if navigates back to accounts from account details page
-  testWidgets('navigates back, page account details', (WidgetTester tester) async {
+  testWidgets('navigates back, page account details',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     List<Account> accounts = List();
     accounts.add(Account(
@@ -87,70 +89,96 @@ void main() {
 
   /// tests if navigates to accounts from sensors page
   testWidgets('navigates, page sensors', (WidgetTester tester) async {
-        MockApi mockApi = MockApi();
-        List<Sensor> sensors = List();
-        sensors.add(Sensor(
-            id: 1,
-            name: "sensor1",
-            category: "temperature",
-            batteryLevel: null,
-            notifications: true,
-            isActive: false));
-        sensors.add(Sensor(
-            id: 2,
-            name: "sensor2",
-            category: "temperature",
-            batteryLevel: null,
-            notifications: true,
-            isActive: false));
+    MockApi mockApi = MockApi();
+    List<Sensor> sensors = List();
+    sensors.add(Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "temperature",
+        batteryLevel: null,
+        notifications: true,
+        isActive: false));
+    sensors.add(Sensor(
+        id: 2,
+        name: "sensor2",
+        category: "temperature",
+        batteryLevel: null,
+        notifications: true,
+        isActive: false));
 
-        Sensors page = Sensors(
-              currentLoggedInToken: "token",
-              currentLoggedInUsername: "username",
-              api: mockApi,
-              testSensors: sensors,
-        );
+    Sensors page = Sensors(
+      currentLoggedInToken: "token",
+      currentLoggedInUsername: "username",
+      api: mockApi,
+      testSensors: sensors,
+    );
 
-        await tester.pumpWidget(makeTestableWidget(child: page));
-        await tester.tap(find.byKey(Key('menuButton')));
-        await tester.pump();
-        await tester.pump(const Duration(seconds: 1));
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.tap(find.byKey(Key('menuButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
-        expect(find.text('Konta'), findsOneWidget);
-        await tester.tap(find.byKey(Key('Konta')));
-        await tester.pump();
-        await tester.pump();
-        await tester.pump(const Duration(seconds: 1));
-        expect(find.byType(Accounts), findsOneWidget);
+    expect(find.text('Konta'), findsOneWidget);
+    await tester.tap(find.byKey(Key('Konta')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(Accounts), findsOneWidget);
   });
 
   /// tests if navigates accounts from sensor details page
   testWidgets('navigates, page sensor details', (WidgetTester tester) async {
-        MockApi mockApi = MockApi();
-        Sensor sensor = Sensor(
-            id: 1,
-            name: "sensor1",
-            category: "temperature",
-            batteryLevel: null,
-            notifications: true,
-            isActive: false);
+    MockApi mockApi = MockApi();
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "temperature",
+        batteryLevel: null,
+        notifications: true,
+        isActive: false);
 
-        SensorDetails page = SensorDetails(
-            currentLoggedInToken: "token", currentLoggedInUsername: "username",
-            sensor: sensor, api: mockApi);
+    SensorDetails page = SensorDetails(
+        currentLoggedInToken: "token",
+        currentLoggedInUsername: "username",
+        sensor: sensor,
+        api: mockApi);
 
-        await tester.pumpWidget(makeTestableWidget(child: page));
-        await tester.pumpAndSettle();
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
 
-        await tester.tap(find.byKey(Key('menuButton')));
-        await tester.pump();
-        await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.byKey(Key('menuButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
-        expect(find.text('Konta'), findsOneWidget);
-        await tester.tap(find.byKey(Key('Konta')));
-        await tester.pump();
-        await tester.pump();
-        await tester.pump(const Duration(seconds: 1));
-        expect(find.byType(Accounts), findsOneWidget);
+    expect(find.text('Konta'), findsOneWidget);
+    await tester.tap(find.byKey(Key('Konta')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(Accounts), findsOneWidget);
+  });
+
+  /// tests if navigates accounts from add sensor page
+  testWidgets('navigates, page add sensor', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+
+    NewSensor page = NewSensor(
+        currentLoggedInToken: "token",
+        currentLoggedInUsername: "username",
+        api: mockApi);
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('menuButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Konta'), findsOneWidget);
+    await tester.tap(find.byKey(Key('Konta')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(Accounts), findsOneWidget);
   });
 }

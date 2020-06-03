@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/pages/sensors/sensors.dart';
 import 'package:mockito/mockito.dart';
@@ -291,5 +292,56 @@ void main() {
         expect(find.byKey(Key("ok button")), findsOneWidget);
         expect(find.byType(SensorDetails), findsOneWidget);
         verify(await mockApi.logOut('token')).called(1);
+      });
+
+  /// tests if logged out from add sensor page when valid token
+  testWidgets('valid token, logged out, page add sensor',
+          (WidgetTester tester) async {
+            MockApi mockApi = MockApi();
+            when(mockApi.logOut('token')).thenAnswer((_) async =>
+                Future.value(200));
+            NewSensor page = NewSensor(
+                currentLoggedInToken: "token",
+                currentLoggedInUsername: "username",
+                api: mockApi);
+
+            await tester.pumpWidget(makeTestableWidget(child: page));
+            await tester.tap(find.byKey(Key('menuButton')));
+            await tester.pump();
+            await tester.pump(const Duration(seconds: 1));
+
+            expect(find.text('Wyloguj'), findsOneWidget);
+            await tester.tap(find.byKey(Key('Wyloguj')));
+            await tester.pump();
+            await tester.pump();
+            await tester.pump(const Duration(seconds: 1));
+            expect(find.byType(Front), findsOneWidget);
+            verify(await mockApi.logOut('token')).called(1);
+      });
+
+  /// tests if still logged in when invalid token, add sensor page
+  testWidgets('invalid token, still logged in, page add sensor',
+          (WidgetTester tester) async {
+            MockApi mockApi = MockApi();
+            when(mockApi.logOut('token')).thenAnswer((_) async =>
+                Future.value(404));
+            NewSensor page = NewSensor(
+                currentLoggedInToken: "token",
+                currentLoggedInUsername: "username",
+                api: mockApi);
+
+            await tester.pumpWidget(makeTestableWidget(child: page));
+            await tester.tap(find.byKey(Key('menuButton')));
+            await tester.pump();
+            await tester.pump(const Duration(seconds: 1));
+
+            expect(find.text('Wyloguj'), findsOneWidget);
+            await tester.tap(find.byKey(Key('Wyloguj')));
+            await tester.pump();
+            await tester.pump();
+            await tester.pump(const Duration(seconds: 1));
+            expect(find.byKey(Key("ok button")), findsOneWidget);
+            expect(find.byType(NewSensor), findsOneWidget);
+            verify(await mockApi.logOut('token')).called(1);
       });
 }
