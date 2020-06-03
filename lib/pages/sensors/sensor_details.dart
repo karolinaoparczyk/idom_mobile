@@ -30,6 +30,25 @@ class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _editingNameController;
+  var dropdownSelectedItem;
+
+  List<DropdownMenuItem<String>> categories;
+
+  @override
+  void initState() {
+    super.initState();
+    _editingNameController = TextEditingController(text: widget.sensor.name);
+
+    categories = [
+      DropdownMenuItem(
+          child: Text("Temperatura"),
+          value: "temperature",
+          key: Key("temperature")),
+      DropdownMenuItem(
+          child: Text("Wilgotność"), value: "humidity", key: Key("humidity"))
+    ];
+    dropdownSelectedItem = widget.sensor.category;
+  }
 
   /// logs the user out of the app
   _logOut() async {
@@ -83,10 +102,19 @@ class _SensorDetailsState extends State<SensorDetails> {
             validator: NameFieldValidator.validate));
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _editingNameController = TextEditingController(text: widget.sensor.name);
+  Widget _buildCategory() {
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
+        child: DropdownButton(
+          key: Key("dropdownbutton"),
+          items: categories,
+          onChanged: (val) {
+            setState(() {
+              dropdownSelectedItem = val;
+            });
+          },
+          value: dropdownSelectedItem,
+        ));
   }
 
   @override
@@ -120,18 +148,18 @@ class _SensorDetailsState extends State<SensorDetails> {
                 child: Column(children: <Widget>[
                   _buildName(),
                   Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Kategoria",
+                              style: TextStyle(fontSize: 13.5)))),
+                  Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-                      child: ListTile(
-                        title:
-                            Text("Kategoria", style: TextStyle(fontSize: 13.5)),
-                        subtitle: Text(
-                            widget.sensor.category == "temperature"
-                                ? "Czujnik temperatury"
-                                : "Czujnik wilgotności",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                      )),
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: _buildCategory())),
                   Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
@@ -150,17 +178,18 @@ class _SensorDetailsState extends State<SensorDetails> {
                 ]))));
   }
 
-  _saveChanges(bool changedName) async {
+  _saveChanges(bool changedName, bool changedCategory) async {
     var name = changedName ? _editingNameController.text : null;
+    var category = changedCategory ? dropdownSelectedItem : null;
     try {
-      var res = await widget.api
-          .editSensor(widget.sensor.id, name, widget.currentLoggedInToken);
+      var res = await widget.api.editSensor(
+          widget.sensor.id, name, category, widget.currentLoggedInToken);
       Navigator.of(context).pop(false);
       if (res['statusCode'] == "200") {
         var snackBar = SnackBar(content: Text("Zapisano dane czujnika."));
         _scaffoldKey.currentState.showSnackBar(snackBar);
       } else if (res['body']
-          .contains("Sensor with given name already exists")) {
+          .contains("Sensor with provided name already exists")) {
         displayDialog(
             context, "Błąd", "Czujnik o podanej nazwie już istnieje.");
       }
@@ -170,7 +199,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   /// confirms saving account changes
-  _confirmSavingChanges(bool changedName) {
+  _confirmSavingChanges(bool changedName, bool changedCategory) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -184,7 +213,7 @@ class _SensorDetailsState extends State<SensorDetails> {
               key: Key("yesButton"),
               child: Text("Tak"),
               onPressed: () async {
-                await _saveChanges(changedName);
+                await _saveChanges(changedName, changedCategory);
               },
             ),
             FlatButton(
@@ -203,7 +232,9 @@ class _SensorDetailsState extends State<SensorDetails> {
   /// verifies data changes
   _verifyChanges() async {
     var name = _editingNameController.text;
+    var category = dropdownSelectedItem;
     var changedName = false;
+    var changedCategory = false;
 
     final formState = _formKey.currentState;
     if (formState.validate()) {
@@ -211,8 +242,11 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (name != widget.sensor.name) {
         changedName = true;
       }
-      if (changedName) {
-        await _confirmSavingChanges(changedName);
+      if (category != widget.sensor.category) {
+        changedCategory = true;
+      }
+      if (changedName || changedCategory) {
+        await _confirmSavingChanges(changedName, changedCategory);
       } else {
         var snackBar =
             SnackBar(content: Text("Nie wprowadzono żadnych zmian."));

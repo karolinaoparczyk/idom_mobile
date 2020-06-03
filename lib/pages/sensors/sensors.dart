@@ -40,9 +40,9 @@ class _SensorsState extends State<Sensors> {
     }
 
     Response res;
-    if (widget.api != null)
+    if (widget.api != null) {
       res = await widget.api.getSensors(widget.currentLoggedInToken);
-    else {
+    } else {
       Api api = Api();
       res = await api.getSensors(widget.currentLoggedInToken);
     }
@@ -52,7 +52,7 @@ class _SensorsState extends State<Sensors> {
 
       List<Sensor> sensors = body
           .map((dynamic item) => Sensor.fromJson(item))
-          .where((sensor) => sensor.isActive == true)
+          //.where((sensor) => sensor.isActive == true)
           .toList();
 
       return sensors;
@@ -93,8 +93,7 @@ class _SensorsState extends State<Sensors> {
         // return object of type Dialog
         return AlertDialog(
           title: Text("Usuwanie czujnika"),
-          content:
-          Text("Czy na pewno chcesz usunąć czujnik ${sensor.name}?"),
+          content: Text("Czy na pewno chcesz usunąć czujnik ${sensor.name}?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
@@ -103,8 +102,8 @@ class _SensorsState extends State<Sensors> {
               onPressed: () async {
                 var statusCode;
                 if (widget.api != null)
-                  statusCode = await widget.api.deactivateSensor(
-                      sensor.id, widget.currentLoggedInToken);
+                  statusCode = await widget.api
+                      .deactivateSensor(sensor.id, widget.currentLoggedInToken);
                 else {
                   Api api = Api();
                   statusCode = await api.deactivateSensor(
@@ -159,12 +158,13 @@ class _SensorsState extends State<Sensors> {
             title: Text('IDOM Czujniki'),
             actions: <Widget>[
               PopupMenuButton(
-                key: Key("menuButton"),
+                  key: Key("menuButton"),
                   offset: Offset(0, 100),
                   onSelected: _choiceAction,
                   itemBuilder: (BuildContext context) {
                     return menuChoices.map((String choice) {
-                      return PopupMenuItem(key: Key(choice), value: choice, child: Text(choice));
+                      return PopupMenuItem(
+                          key: Key(choice), value: choice, child: Text(choice));
                     }).toList();
                   })
             ],
@@ -185,19 +185,13 @@ class _SensorsState extends State<Sensors> {
                           children: sensors
                               .map(
                                 (Sensor sensor) => ListTile(
-                                  title: Text(sensor.name),
-                                  onTap: () => Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                          builder: (context) => SensorDetails(
-                                              currentLoggedInToken:
-                                                  widget.currentLoggedInToken,
-                                              currentLoggedInUsername: widget
-                                                  .currentLoggedInUsername,
-                                              sensor: sensor,
-                                              api: widget.api))),
+                                    title: Text(sensor.name),
+                                    onTap: () {
+                                      navigateToSensorDetails(sensor);
+                                    },
+
                                     /// delete sensor button
-                                    trailing: deleteButtonTrailing(sensor)
-                                ),
+                                    trailing: deleteButtonTrailing(sensor)),
                               )
                               .toList(),
                         ))),
@@ -211,15 +205,24 @@ class _SensorsState extends State<Sensors> {
         ));
   }
 
+  navigateToSensorDetails(Sensor sensor) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => SensorDetails(
+            currentLoggedInToken: widget.currentLoggedInToken,
+            currentLoggedInUsername: widget.currentLoggedInUsername,
+            sensor: sensor,
+            api: widget.api)));
+  }
+
   deleteButtonTrailing(Sensor sensor) {
     return FlatButton(
-        key: Key("deleteButton"),
-        child: Icon(Icons.delete),
-        onPressed: () {
-          setState(() {
-            _deactivateSensor(sensor);
-          });
-        },
-      );
+      key: Key("deleteButton"),
+      child: Icon(Icons.delete),
+      onPressed: () {
+        setState(() {
+          _deactivateSensor(sensor);
+        });
+      },
+    );
   }
 }
