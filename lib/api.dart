@@ -102,11 +102,12 @@ class Api {
     return resDict;
   }
 
+  /// edits sensor
   Future<Map<String, String>> editSensor(
       int id, String name, String category, String userToken) async {
     var body;
     if (name != null && category != null) {
-      body = {"name": name, "telephone": category};
+      body = {"name": name, "category": category};
     } else if (name != null) {
       body = {"name": name};
     } else if (category != null) {
@@ -117,7 +118,20 @@ class Api {
       headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
       body: body,
     );
-    print(res.body);
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// adds sensor
+  Future<Map<String, String>> addSensor(String name, String category, String userToken) async {
+    var res = await http.post(
+      'http://10.0.2.2:8000/sensors/add',
+      headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+      body: {"name": name, "category": category},
+    );
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
