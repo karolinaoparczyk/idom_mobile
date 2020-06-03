@@ -211,33 +211,6 @@ void main() {
         verifyNever(await mockApi.editSensor(1, 'newname', 'humidity', 'token'));
       });
 
-  /// tests if does not save with error in data
-  testWidgets('changed data, error in data, does not save',
-          (WidgetTester tester) async {
-        MockApi mockApi = MockApi();
-        Sensor sensor = Sensor(
-            id: 1,
-            name: "sensor1",
-            category: "temperature",
-            batteryLevel: null,
-            notifications: true,
-            isActive: false);
-        SensorDetails page = SensorDetails(
-            currentLoggedInToken: "token",
-            currentLoggedInUsername: "user",
-            sensor: sensor,
-            api: mockApi);
-
-        await tester.pumpWidget(makeTestableWidget(child: page));
-
-        Finder nameField = find.byKey(Key('name'));
-        await tester.enterText(nameField, 'new name');
-
-        await tester.tap(find.byKey(Key('Zapisz zmiany')));
-
-        verifyNever(await mockApi.editSensor(1, 'new name', null, "token"));
-      });
-
   /// tests if does not save when name exists
   testWidgets('changed data, name exists, does not save',
           (WidgetTester tester) async {
