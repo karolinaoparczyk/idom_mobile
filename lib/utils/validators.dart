@@ -1,10 +1,19 @@
-class NameFieldValidator{
+class UsernameFieldValidator{
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Podaj login';
     }
     if (value.contains(' ')) {
       return 'Login nie może zawierać spacji';
+    }
+    return null;
+  }
+}
+
+class SensorNameFieldValidator{
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Podaj nazwę';
     }
     return null;
   }

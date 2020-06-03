@@ -99,7 +99,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             decoration: InputDecoration(
                 labelText: 'Nazwa',
                 labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-            validator: NameFieldValidator.validate));
+            validator: SensorNameFieldValidator.validate));
   }
 
   Widget _buildCategory() {

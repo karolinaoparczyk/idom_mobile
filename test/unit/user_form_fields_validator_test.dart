@@ -6,19 +6,19 @@ void main() {
   ///
   /// tests if empty username is not validated
   test('empty username returns error string', () {
-    var result = NameFieldValidator.validate('');
+    var result = UsernameFieldValidator.validate('');
     expect(result, 'Podaj login');
   });
 
   /// tests if non-empty username is validated
   test('non-empty username returns null', () {
-    var result = NameFieldValidator.validate('login');
+    var result = UsernameFieldValidator.validate('login');
     expect(result, null);
   });
 
   /// tests if username with space is not validated
   test('username wtih space returns error string', () {
-    var result = NameFieldValidator.validate('log in');
+    var result = UsernameFieldValidator.validate('log in');
     expect(result, 'Login nie może zawierać spacji');
   });
 
