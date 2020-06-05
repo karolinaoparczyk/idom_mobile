@@ -5,8 +5,10 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
+/// allows to enter email and send reset password request
 class EnterEmail extends StatefulWidget {
   const EnterEmail({@required this.api});
+
   final Api api;
 
   @override
@@ -17,6 +19,7 @@ class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
 
+  /// build email form field
   Widget _buildEmail() {
     return TextFormField(
         key: Key("email"),
@@ -52,7 +55,8 @@ class _EnterEmailState extends State<EnterEmail> {
                       Text("Wprowadź email połączony z Twoim kontem"),
                       _buildEmail(),
                       SizedBox(height: 20),
-                      buttonWidget(context, "Resetuj hasło", sendResetPasswordRequest)
+                      buttonWidget(
+                          context, "Resetuj hasło", sendResetPasswordRequest)
                     ],
                   ))),
           Expanded(child: SizedBox(width: 1)),

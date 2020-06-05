@@ -8,11 +8,11 @@ import 'package:idom/pages/setup/sign_up.dart';
 import 'package:idom/widgets/button.dart';
 
 enum AuthStatus {
-  notDetermined,
   notSignedIn,
   signedIn,
 }
 
+/// allows signing in or signing up
 class Front extends StatefulWidget {
   Front({this.api});
 
@@ -23,9 +23,11 @@ class Front extends StatefulWidget {
 }
 
 class _FrontState extends State<Front> {
-  AuthStatus authStatus = AuthStatus.notDetermined;
+  AuthStatus authStatus = AuthStatus.notSignedIn;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String url;
 
+  /// when user logs in successfully
   void _signedIn() {
     setState(() {
       authStatus = AuthStatus.signedIn;
@@ -66,6 +68,7 @@ class _FrontState extends State<Front> {
             )));
   }
 
+  /// navigates to sending reset password request page
   navigateToEnterEmail() async {
     if (widget.api == null) widget.api = Api();
     bool result = await Navigator.push(
@@ -74,7 +77,7 @@ class _FrontState extends State<Front> {
             builder: (context) => EnterEmail(api: widget.api),
             fullscreenDialog: true));
 
-    /// displays success message when the email is successfuly sent
+    /// displays success message when the email is successfully sent
     if (result != null && result == true) {
       final snackBar = new SnackBar(
           content: new Text("Email został wysłany. Sprawdź pocztę."));
@@ -83,6 +86,7 @@ class _FrontState extends State<Front> {
     }
   }
 
+  /// navigates to signing in page
   void navigateToSignIn() {
     if (widget.api == null) widget.api = Api();
     Navigator.push(
@@ -95,12 +99,14 @@ class _FrontState extends State<Front> {
             fullscreenDialog: true));
   }
 
+  /// navigates to signing up page
   void navigateToSignUp() {
     if (widget.api == null) widget.api = Api();
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SignUp(api: widget.api, onSignedIn: _signedIn),
+            builder: (context) =>
+                SignUp(api: widget.api, onSignedIn: _signedIn),
             fullscreenDialog: true));
   }
 }

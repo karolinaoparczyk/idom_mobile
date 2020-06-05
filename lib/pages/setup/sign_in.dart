@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/pages/sensors/sensors.dart';
@@ -9,10 +8,10 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
-final storage = FlutterSecureStorage();
-
+/// signs user in
 class SignIn extends StatefulWidget {
   const SignIn({@required this.api, this.onSignedIn});
+
   final VoidCallback onSignedIn;
   final Api api;
 
@@ -112,11 +111,13 @@ class _SignInState extends State<SignIn> {
     );
   }
 
+  /// navigates to sending reset password request page
   navigateToEnterEmail() async {
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EnterEmail(api: widget.api), fullscreenDialog: true));
+            builder: (context) => EnterEmail(api: widget.api),
+            fullscreenDialog: true));
 
     /// displays success message when the email is successfuly sent
     if (result != null && result == true) {

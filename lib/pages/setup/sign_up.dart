@@ -8,6 +8,7 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
+/// signs user up
 class SignUp extends StatefulWidget {
   const SignUp({Key key, @required this.onSignedIn, @required this.api})
       : super(key: key);
@@ -27,6 +28,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
 
+  /// builds username form field
   Widget _buildUsername() {
     return TextFormField(
         key: Key('username'),
@@ -43,6 +45,7 @@ class _SignUpState extends State<SignUp> {
         validator: UsernameFieldValidator.validate);
   }
 
+  /// builds password form field
   Widget _buildPassword() {
     return TextFormField(
       key: Key('password1'),
@@ -61,6 +64,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  /// builds password confirmation form field
   Widget _buildConfirmPassword() {
     return TextFormField(
       key: Key('password2'),
@@ -83,6 +87,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  /// builds email form field
   Widget _buildEmail() {
     return TextFormField(
         key: Key('email'),
@@ -99,6 +104,7 @@ class _SignUpState extends State<SignUp> {
         validator: EmailFieldValidator.validate);
   }
 
+  /// builds telephone form field
   Widget _buildTelephone() {
     return TextFormField(
         key: Key('telephone'),
@@ -143,6 +149,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  /// signs user up after form validation
   Future<void> signUp() async {
     var username = _usernameController.text;
     var password1 = _passwordController.text;
@@ -159,6 +166,8 @@ class _SignUpState extends State<SignUp> {
         if (res['statusCode'] == "201") {
           await displayDialog(context, "Sukces",
               "Konto zostało utworzone. Możesz się zalogować.");
+
+          /// navigates to logging in page
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -174,8 +183,10 @@ class _SignUpState extends State<SignUp> {
               context, "Błąd", "Konto dla podanego adresu email już istnieje.");
         } else if (res['body'].contains("Enter a valid phone number")) {
           displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
-        } else if (res['body'].contains("User with given telephone number already exists")) {
-          displayDialog(context, "Błąd", "Konto dla podanego numeru telefonu już istnieje.");
+        } else if (res['body']
+            .contains("User with given telephone number already exists")) {
+          displayDialog(context, "Błąd",
+              "Konto dla podanego numeru telefonu już istnieje.");
         }
       } catch (e) {
         print(e.toString());

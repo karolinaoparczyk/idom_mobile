@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
@@ -39,7 +38,8 @@ class _SensorsState extends State<Sensors> {
       return widget.testSensors;
     }
 
-    Map<String,String> res;
+    /// gets sensors
+    Map<String, String> res;
     if (widget.api != null) {
       res = await widget.api.getSensors(widget.currentLoggedInToken);
     } else {
@@ -48,23 +48,28 @@ class _SensorsState extends State<Sensors> {
     }
 
     if (res['statusCodeSensors'] == "200") {
-      Map<String,String> resFreq;
+      /// gets sensors data
+      Map<String, String> resSenData;
       if (widget.api != null) {
-        resFreq = await widget.api.getFrequency(widget.currentLoggedInToken);
+        resSenData =
+            await widget.api.getSensorData(widget.currentLoggedInToken);
       } else {
         Api api = Api();
-        resFreq = await api.getFrequency(widget.currentLoggedInToken);
+        resSenData = await api.getSensorData(widget.currentLoggedInToken);
       }
       List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
-      List<dynamic> bodyFrequency = jsonDecode(resFreq['bodyFrequency']);
+      List<dynamic> bodySensorData = jsonDecode(resSenData['bodySensorData']);
+      if (resSenData['statusSensorData'] == "200") {
+        bodySensorData = [
+          {"sensor": 1, "sensor_data": "27.0"}
+        ];
+        List<Sensor> sensors = bodySensors
+            .map((dynamic item) => Sensor.fromJson(item, bodySensorData))
+            //.where((sensor) => sensor.isActive == true)
+            .toList();
 
-      bodyFrequency = [{"sensor": 1, "sensor_data": "27.0"}];
-      List<Sensor> sensors = bodySensors
-          .map((dynamic item) => Sensor.fromJson(item, bodyFrequency))
-          //.where((sensor) => sensor.isActive == true)
-          .toList();
-
-      return sensors;
+        return sensors;
+      }
     } else {
       throw "Can't get sensors";
     }
@@ -141,6 +146,7 @@ class _SensorsState extends State<Sensors> {
     );
   }
 
+  /// navigates according to menu choice
   void _choiceAction(String choice) {
     if (choice == "Konta") {
       Navigator.push(
@@ -162,13 +168,15 @@ class _SensorsState extends State<Sensors> {
         onWillPop: () async => false,
         child: Scaffold(
           key: _scaffoldKey,
+
+          /// adds sensor adding button
           floatingActionButton: Container(
               height: 80.0,
               width: 80.0,
               child: FittedBox(
                   child: FloatingActionButton(
                 key: Key("addSensorButton"),
-                onPressed: addSensor,
+                onPressed: navigateToNewSensor,
                 child: Icon(Icons.add),
                 //backgroundColor: Colors.green,
               ))),
@@ -176,10 +184,13 @@ class _SensorsState extends State<Sensors> {
             leading: Container(),
             title: Text('IDOM Czujniki'),
             actions: <Widget>[
+              /// menu dropdown button
               PopupMenuButton(
                   key: Key("menuButton"),
                   offset: Offset(0, 100),
                   onSelected: _choiceAction,
+
+                  /// menu choices from utils/menu_items.dart
                   itemBuilder: (BuildContext context) {
                     return menuChoices.map((String choice) {
                       return PopupMenuItem(
@@ -188,6 +199,8 @@ class _SensorsState extends State<Sensors> {
                   })
             ],
           ),
+
+          /// builds sensor's list
           body: FutureBuilder(
               future: getSensors(),
               builder:
@@ -224,7 +237,8 @@ class _SensorsState extends State<Sensors> {
         ));
   }
 
-  addSensor() async {
+  /// navigates to adding sensor page
+  navigateToNewSensor() async {
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -233,12 +247,15 @@ class _SensorsState extends State<Sensors> {
                 currentLoggedInUsername: widget.currentLoggedInUsername,
                 api: widget.api),
             fullscreenDialog: true));
+
+    /// displays success message if sensor added succesfully
     if (result != null && result == true) {
       var snackBar = SnackBar(content: Text("Dodano nowy czujnik."));
       _scaffoldKey.currentState.showSnackBar(snackBar);
     }
   }
 
+  /// navigates to sensor's details
   navigateToSensorDetails(Sensor sensor) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SensorDetails(
@@ -248,6 +265,7 @@ class _SensorsState extends State<Sensors> {
             api: widget.api)));
   }
 
+  /// deletes sensor
   deleteButtonTrailing(Sensor sensor) {
     return FlatButton(
       key: Key("deleteButton"),

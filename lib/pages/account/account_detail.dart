@@ -8,6 +8,7 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
+/// displays account details and allows editing them
 class AccountDetail extends StatefulWidget {
   AccountDetail(
       {Key key,
@@ -30,6 +31,7 @@ class _AccountDetailState extends State<AccountDetail> {
   TextEditingController _editingEmailController;
   TextEditingController _editingTelephoneController;
 
+  /// builds email form field
   Widget _buildEmail() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
@@ -44,6 +46,7 @@ class _AccountDetailState extends State<AccountDetail> {
             validator: EmailFieldValidator.validate));
   }
 
+  /// builds telephone form field
   Widget _buildTelephone() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
@@ -72,7 +75,7 @@ class _AccountDetailState extends State<AccountDetail> {
     super.dispose();
   }
 
-  /// logs the user out of the app
+  /// logs the user out from the app
   _logOut() async {
     try {
       var statusCode;
@@ -96,6 +99,7 @@ class _AccountDetailState extends State<AccountDetail> {
     }
   }
 
+  /// navigates according to menu choice
   void _choiceAction(String choice) {
     if (choice == "Konta") {
       Navigator.pop(context);
@@ -111,11 +115,13 @@ class _AccountDetailState extends State<AccountDetail> {
         appBar: AppBar(
           title: Text(widget.account.username),
           actions: <Widget>[
+            /// menu dropdown button
             PopupMenuButton(
                 key: Key("menuButton"),
                 offset: Offset(0, 100),
                 onSelected: _choiceAction,
                 itemBuilder: (BuildContext context) {
+                  /// menu choices from utils/menu_items.dart
                   return menuChoices.map((String choice) {
                     return PopupMenuItem(
                         key: Key(choice), value: choice, child: Text(choice));
@@ -143,6 +149,7 @@ class _AccountDetailState extends State<AccountDetail> {
                 ]))));
   }
 
+  /// saves changes or displays error dialogs
   _saveChanges(bool changedEmail, bool changedTelephone) async {
     var email = changedEmail ? _editingEmailController.text : null;
     var telephone = changedTelephone ? _editingTelephoneController.text : null;
@@ -208,7 +215,7 @@ class _AccountDetailState extends State<AccountDetail> {
 
     final formState = _formKey.currentState;
     if (formState.validate()) {
-      /// sends request only if data changed
+      /// sends request only if data has changed
       if (email != widget.account.email) {
         changedEmail = true;
       }

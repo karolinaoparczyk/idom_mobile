@@ -33,6 +33,7 @@ class Account {
         isActive: json['is_active'] as bool);
   }
 
+  /// copies Account instance into another
   Account copy() {
     return new Account(
         id: this.id,
@@ -55,29 +56,27 @@ class Sensor {
   bool isActive;
   String data;
 
-  Sensor({
-    @required this.id,
-    @required this.name,
-    @required this.category,
-    @required this.batteryLevel,
-    @required this.notifications,
-    @required this.isActive,
-    this.data
-  });
+  Sensor(
+      {@required this.id,
+      @required this.name,
+      @required this.category,
+      @required this.batteryLevel,
+      @required this.notifications,
+      @required this.isActive,
+      this.data});
 
-  factory Sensor.fromJson(Map<String, dynamic> json, List<dynamic> frequency) {
-    var freq;
-    for (var i=0; i < frequency.length; i++){
-      if(frequency[i]["sensor"] == json['id'])
-        freq = frequency[i]['sensor_data'];
+  factory Sensor.fromJson(Map<String, dynamic> json, List<dynamic> data) {
+    var currentData;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i]["sensor"] == json['id']) currentData = data[i]['sensor_data'];
     }
     return Sensor(
         id: json['id'] as int,
         name: json['name'] as String,
         category: json['category'] as String,
         batteryLevel: json['batteryLevel'] as int,
-        notifications: json['sms_notiications'] as bool,
+        notifications: json['sms_notifications'] as bool,
         isActive: json['is_active'] as bool,
-        data: freq);
+        data: currentData);
   }
 }

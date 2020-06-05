@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
@@ -12,6 +9,7 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
+/// displays sensor details and allows editing them
 class SensorDetails extends StatefulWidget {
   SensorDetails(
       {Key key,
@@ -40,9 +38,11 @@ class _SensorDetailsState extends State<SensorDetails> {
   @override
   void initState() {
     super.initState();
+
+    /// seting current sensor name
     _editingNameController = TextEditingController(text: widget.sensor.name);
-    print(widget.sensor.id);
-    print(widget.sensor.data);
+
+    /// available sensor categories choices
     categories = [
       DropdownMenuItem(
           child: Text("Temperatura"),
@@ -51,21 +51,10 @@ class _SensorDetailsState extends State<SensorDetails> {
       DropdownMenuItem(
           child: Text("Wilgotność"), value: "humidity", key: Key("humidity"))
     ];
+
+    /// setting current sensor category
     selectedCategory = widget.sensor.category;
   }
-
-  getDetails() async{
-    var res = await http.post(
-      'http://10.0.2.2:8000/sensors/details/${widget.sensor.id}',
-      headers: {HttpHeaders.authorizationHeader: "Token ${widget.currentLoggedInToken}"},
-    );
-    var resDict = {
-      "body": res.body.toString(),
-      "statusCode": res.statusCode.toString(),
-    };
-    print(resDict["body"]);
-    print(resDict["statusCode"]);
-}
 
   /// logs the user out of the app
   _logOut() async {
@@ -91,6 +80,7 @@ class _SensorDetailsState extends State<SensorDetails> {
     }
   }
 
+  /// navigates according to menu choice
   void _choiceAction(String choice) {
     if (choice == "Konta") {
       Api api = Api();
@@ -107,6 +97,7 @@ class _SensorDetailsState extends State<SensorDetails> {
     }
   }
 
+  /// builds sensor name form field
   Widget _buildName() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
@@ -119,6 +110,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             validator: SensorNameFieldValidator.validate));
   }
 
+  /// builds sensor category dropdown button
   Widget _buildCategory() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
@@ -147,11 +139,13 @@ class _SensorDetailsState extends State<SensorDetails> {
         appBar: AppBar(
           title: Text(widget.sensor.name),
           actions: <Widget>[
+            /// menu dropdown button
             PopupMenuButton(
                 key: Key("menuButton"),
                 offset: Offset(0, 100),
                 onSelected: _choiceAction,
                 itemBuilder: (BuildContext context) {
+                  /// menu choices from utils/menu_items.dart
                   return menuChoices.map((String choice) {
                     return PopupMenuItem(
                         key: Key(choice), value: choice, child: Text(choice));
@@ -159,6 +153,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                 })
           ],
         ),
+
+        /// builds form with editable and non-editable sensor properties
         body: SingleChildScrollView(
             child: Form(
                 key: _formKey,
@@ -192,7 +188,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                       )),
                   Padding(
                       padding:
-                      EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
                       child: ListTile(
                         title: Text("Dane z czujnika",
                             style: TextStyle(fontSize: 13.5)),
@@ -208,6 +204,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                 ]))));
   }
 
+  /// saves changes after form fields and dropdown buttons validation
   _saveChanges(bool changedName, bool changedCategory) async {
     var name = changedName ? _editingNameController.text : null;
     var category = changedCategory ? selectedCategory : null;

@@ -1,9 +1,14 @@
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
-import 'package:idom/url.dart';
 
 class Api {
+  /// sets api url in constructor
+  Api() {
+    url = "127.0.0.1:8000";
+  }
+
+  String url;
+
   /// requests signing in
   Future<List<dynamic>> signIn(username, password) async {
     var result = await http.post('$url/api-token-auth/', body: {
@@ -54,60 +59,13 @@ class Api {
     return null;
   }
 
-  /// requests deactivating sensor
-  Future<int> deactivateSensor(int id, String userToken) async {
-    try {
-      var res = await http.delete('$url/sensors/delete/$id',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
-      return res.statusCode;
-    } catch (e) {
-      print(e);
-    }
-    return null;
-  }
-
-  /// get sensors
-  Future<Map<String, String>> getSensors(String userToken) async {
-    try {
-      var resSensors = await http.get('$url/sensors/list',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
-
-      Map<String, String> responses = {
-        "bodySensors": resSensors.body.toString(),
-        "statusCodeSensors": resSensors.statusCode.toString(),
-      };
-      return responses;
-    } catch (e) {
-      print(e);
-    }
-    return null;
-  }
-
-  /// get frequency
-  Future<Map<String, String>> getFrequency(String userToken) async {
-    try {
-      var resFrequency = await http.get(
-          '$url/sensors_data/list',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
-
-      Map<String, String> responses = {
-        "bodyFrequency": resFrequency.body.toString(),
-        "statusFrequency": resFrequency.statusCode.toString(),
-      };
-      return responses;
-    } catch (e) {
-      print(e);
-    }
-    return null;
-  }
-
   /// sends request to reset password
   Future<int> resetPassword(String email) async {
-    var res = await http
-        .post('$url/password-reset/', body: {"email": email});
+    var res = await http.post('$url/password-reset/', body: {"email": email});
     return res.statusCode;
   }
 
+  /// gets accounts
   Future<Map<String, String>> getAccounts(String userToken) async {
     var res = await http.get('$url/users/list',
         headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
@@ -128,8 +86,7 @@ class Api {
     } else if (telephone != null) {
       body = {"telephone": telephone};
     }
-    var res =
-        await http.put('$url/users/update/$id', body: body);
+    var res = await http.put('$url/users/update/$id', body: body);
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
@@ -175,11 +132,10 @@ class Api {
     return resDict;
   }
 
-  /// adds sensor
+  /// adds sensor frequency
   Future<Map<String, String>> addFrequency(
       int id, int frequency, String userToken) async {
-    var resFreq = await http.post(
-        '$url/sensors_data/frequency/$id',
+    var resFreq = await http.post('$url/sensors_data/frequency/$id',
         headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
         body: {"frequency": frequency.toString()});
     print(resFreq.body);
@@ -189,5 +145,51 @@ class Api {
       "statusCodeFreq": resFreq.statusCode.toString(),
     };
     return resDict;
+  }
+
+  /// requests deactivating sensor
+  Future<int> deactivateSensor(int id, String userToken) async {
+    try {
+      var res = await http.delete('$url/sensors/delete/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// gets sensors
+  Future<Map<String, String>> getSensors(String userToken) async {
+    try {
+      var resSensors = await http.get('$url/sensors/list',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+
+      Map<String, String> responses = {
+        "bodySensors": resSensors.body.toString(),
+        "statusCodeSensors": resSensors.statusCode.toString(),
+      };
+      return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// gets sensors' frequency
+  Future<Map<String, String>> getSensorData(String userToken) async {
+    try {
+      var resFrequency = await http.get('$url/sensors_data/list',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+
+      Map<String, String> responses = {
+        "bodySensorData": resFrequency.body.toString(),
+        "statusSensorData": resFrequency.statusCode.toString(),
+      };
+      return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 }

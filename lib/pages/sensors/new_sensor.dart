@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+
 import 'package:idom/api.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/setup/front.dart';
@@ -8,11 +9,13 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 
+/// adds new sensor
 class NewSensor extends StatefulWidget {
-  NewSensor({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentLoggedInUsername,
-    @required this.api})
+  NewSensor(
+      {Key key,
+      @required this.currentLoggedInToken,
+      @required this.currentLoggedInUsername,
+      @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final String currentLoggedInUsername;
@@ -32,7 +35,7 @@ class _NewSensorState extends State<NewSensor> {
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
-  Map<String, String> englishToPolishUnits ={
+  Map<String, String> englishToPolishUnits = {
     "seconds": "sekundy",
     "minutes": "minuty",
     "hours": "godziny",
@@ -43,6 +46,7 @@ class _NewSensorState extends State<NewSensor> {
   void initState() {
     super.initState();
 
+    /// available sensor categories choices
     categories = [
       DropdownMenuItem(
           child: Text("Temperatura"),
@@ -52,6 +56,7 @@ class _NewSensorState extends State<NewSensor> {
           child: Text("Wilgotność"), value: "humidity", key: Key("humidity"))
     ];
 
+    /// available frequency units choices
     units = [
       DropdownMenuItem(
           child: Text("Sekundy"), value: "seconds", key: Key("seconds")),
@@ -87,23 +92,24 @@ class _NewSensorState extends State<NewSensor> {
     }
   }
 
+  /// navigates according to menu choice
   void _choiceAction(String choice) {
     if (choice == "Konta") {
       Api api = Api();
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  Accounts(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      currentLoggedInUsername: widget.currentLoggedInUsername,
-                      api: api),
+              builder: (context) => Accounts(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  currentLoggedInUsername: widget.currentLoggedInUsername,
+                  api: api),
               fullscreenDialog: true));
     } else if (choice == "Wyloguj") {
       _logOut();
     }
   }
 
+  /// builds sensor name form field
   Widget _buildName() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
@@ -117,6 +123,7 @@ class _NewSensorState extends State<NewSensor> {
             validator: SensorNameFieldValidator.validate));
   }
 
+  /// builds sensor category dropdown button
   Widget _buildCategory() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
@@ -132,6 +139,7 @@ class _NewSensorState extends State<NewSensor> {
         ));
   }
 
+  /// builds sensor frequency value form field
   Widget _buildFrequencyValue() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
@@ -147,6 +155,7 @@ class _NewSensorState extends State<NewSensor> {
         ));
   }
 
+  /// builds frequency units dropdown button
   Widget _buildUnits() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
@@ -169,6 +178,7 @@ class _NewSensorState extends State<NewSensor> {
         appBar: AppBar(
           title: Text("Dodaj czujnik"),
           actions: <Widget>[
+            /// builds menu dropdown button
             PopupMenuButton(
                 key: Key("menuButton"),
                 offset: Offset(0, 100),
@@ -181,6 +191,8 @@ class _NewSensorState extends State<NewSensor> {
                 })
           ],
         ),
+
+        /// builds form with sensor properties
         body: SingleChildScrollView(
             child: Form(
                 key: _formKey,
@@ -195,7 +207,7 @@ class _NewSensorState extends State<NewSensor> {
                               style: TextStyle(fontSize: 13.5)))),
                   Padding(
                       padding:
-                      EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: _buildCategory())),
@@ -211,19 +223,20 @@ class _NewSensorState extends State<NewSensor> {
                           vertical: 10.0, horizontal: 30.0),
                       child: SizedBox(
                           child: Row(children: <Widget>[
-                            Expanded(flex: 3, child: _buildFrequencyValue()),
-                            Expanded(flex: 1, child: SizedBox()),
-                            Expanded(
-                                flex: 5,
-                                child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: _buildUnits())),
-                          ]))),
+                        Expanded(flex: 3, child: _buildFrequencyValue()),
+                        Expanded(flex: 1, child: SizedBox()),
+                        Expanded(
+                            flex: 5,
+                            child: Align(
+                                alignment: Alignment.bottomLeft,
+                                child: _buildUnits())),
+                      ]))),
                   Divider(),
                   buttonWidget(context, "Dodaj czujnik", _saveChanges)
                 ]))));
   }
 
+  /// saves changes after form fields and dropdown buttons validation
   _saveChanges() async {
     final formState = _formKey.currentState;
     var displayText = "";
@@ -233,33 +246,40 @@ class _NewSensorState extends State<NewSensor> {
     if (selectedUnits == null) {
       displayText += "Wybierz jednotski częstotliwości pobierania danych.";
     }
-    if (displayText != ""){
+    if (displayText != "") {
       await displayDialog(context, "Brak danych", displayText);
     }
     if (formState.validate()) {
-      var validFequencyValue = SensorFrequencyFieldValidator
-          .isFrequencyValueValid(_frequencyValueController.text, selectedUnits);
+      /// validates if frequency value is valid for given frequency units
+      var validFequencyValue =
+          SensorFrequencyFieldValidator.isFrequencyValueValid(
+              _frequencyValueController.text, selectedUnits);
       if (!validFequencyValue) {
-        await displayDialog(
-            context, "Błąd",
+        await displayDialog(context, "Błąd",
             "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
         return;
       }
+
+      /// converts frequency value to seconds
       var frequencyInSeconds = int.parse(_frequencyValueController.text);
-      if (selectedUnits != "seconds"){
+      if (selectedUnits != "seconds") {
         if (selectedUnits == "minutes")
           frequencyInSeconds = frequencyInSeconds * 60;
         else if (selectedUnits == "hours")
-        frequencyInSeconds = frequencyInSeconds * 60 * 60;
+          frequencyInSeconds = frequencyInSeconds * 60 * 60;
         else if (selectedUnits == "days")
           frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
       }
       try {
         var res = await widget.api.addSensor(_nameController.text,
             selectedCategory, frequencyInSeconds, widget.currentLoggedInToken);
+
+        /// withdraws id of added sensor
         Map valueMap = json.decode(res['bodySen']);
         if (res['statusCodeSen'] == "201") {
-          var resFreq = await widget.api.addFrequency(valueMap['id'], frequencyInSeconds, widget.currentLoggedInToken);
+          /// sends current frequency of the added sensor
+          await widget.api.addFrequency(
+              valueMap['id'], frequencyInSeconds, widget.currentLoggedInToken);
           Navigator.of(context).pop(true);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {

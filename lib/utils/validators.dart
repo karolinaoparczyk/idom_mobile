@@ -1,4 +1,7 @@
-class UsernameFieldValidator{
+/// form fields validators
+///
+/// username field validator
+class UsernameFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Podaj login';
@@ -10,8 +13,9 @@ class UsernameFieldValidator{
   }
 }
 
-class PasswordFieldValidator{
-  static String validate(String value){
+/// password field validator
+class PasswordFieldValidator {
+  static String validate(String value) {
     if (value.isEmpty) {
       return 'Podaj hasło';
     }
@@ -22,13 +26,14 @@ class PasswordFieldValidator{
   }
 }
 
-class EmailFieldValidator{
-  static String validate(String value){
+/// email field validator
+class EmailFieldValidator {
+  static String validate(String value) {
     if (value.isEmpty) {
       return 'Email jest wymagany';
     }
     if (!RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(value)) {
       return 'Podaj poprawny adres email';
     }
@@ -36,8 +41,9 @@ class EmailFieldValidator{
   }
 }
 
-class TelephoneFieldValidator{
-  static String validate(String value){
+/// telephone field validator
+class TelephoneFieldValidator {
+  static String validate(String value) {
     value = value.replaceAll(' ', '');
     if (value.isNotEmpty && !RegExp(r"^\+\d{11}$").hasMatch(value)) {
       return 'Numer telefonu musi zawierać kierunkowy postaci +XX oraz 9 cyfr';
@@ -46,7 +52,8 @@ class TelephoneFieldValidator{
   }
 }
 
-class SensorNameFieldValidator{
+/// sensor name field validator
+class SensorNameFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Podaj nazwę';
@@ -55,11 +62,22 @@ class SensorNameFieldValidator{
   }
 }
 
-Map<String, int> unitsToMinValues = {"seconds": 30, "minutes": 1, "hours": 1, "days": 1};
-Map<String, int> unitsToMaxValues = {"seconds": 2147483647, "minutes": 35791394, "hours": 596523, "days": 24};
+/// minimum and maximum frequency values due to chosen frequency units
+Map<String, int> unitsToMinValues = {
+  "seconds": 30,
+  "minutes": 1,
+  "hours": 1,
+  "days": 1
+};
+Map<String, int> unitsToMaxValues = {
+  "seconds": 2147483647,
+  "minutes": 35791394,
+  "hours": 596523,
+  "days": 24
+};
 
-class SensorFrequencyFieldValidator{
-
+/// frequency field validator
+class SensorFrequencyFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Podaj wartość';
@@ -67,12 +85,14 @@ class SensorFrequencyFieldValidator{
     return null;
   }
 
-  static bool isFrequencyValueValid(String frequencyValue, String frequencyUnits){
-
+  /// checks if provided frequency value is in the given range of provided frequency units
+  static bool isFrequencyValueValid(
+      String frequencyValue, String frequencyUnits) {
     var minValue = unitsToMinValues[frequencyUnits];
     var maxValue = unitsToMaxValues[frequencyUnits];
 
-    if (int.parse(frequencyValue) < minValue || int.parse(frequencyValue) > maxValue)
+    if (int.parse(frequencyValue) < minValue ||
+        int.parse(frequencyValue) > maxValue)
       return false;
     else
       return true;

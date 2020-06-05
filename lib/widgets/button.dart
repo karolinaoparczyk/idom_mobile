@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// default app button
 Widget buttonWidget(BuildContext context, String text, Function onPressed) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,

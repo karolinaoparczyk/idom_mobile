@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
@@ -32,8 +31,7 @@ class _AccountsState extends State<Accounts> {
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
-
-    /// if statement for testing
+    /// if widget is being tested
     if (widget.testAccounts != null) {
       currentUser = widget.testAccounts
           .where(
@@ -51,6 +49,8 @@ class _AccountsState extends State<Accounts> {
           .map((dynamic item) => Account.fromJson(item))
           .where((account) => account.isActive == true)
           .toList();
+
+      /// sets current logged in user
       currentUser = accounts
           .where(
               (account) => account.username == widget.currentLoggedInUsername)
@@ -88,6 +88,7 @@ class _AccountsState extends State<Accounts> {
                 }
                 if (statusCode == 200) {
                   setState(() {
+                    /// refreshes accounts' list
                     getAccounts();
                   });
                   Navigator.of(context).pop(true);
@@ -128,6 +129,9 @@ class _AccountsState extends State<Accounts> {
     }
   }
 
+  /// navigates according to menu choice
+  /// we are already on accounts page,
+  /// so if user choses accounts in menu, nothing happens
   void _choiceAction(String choice) {
     if (choice == "Wyloguj") {
       _logOut();
@@ -152,6 +156,8 @@ class _AccountsState extends State<Accounts> {
               })
         ],
       ),
+
+      /// accounts' list builder
       body: FutureBuilder(
           future: getAccounts(),
           builder:
@@ -159,10 +165,6 @@ class _AccountsState extends State<Accounts> {
             if (snapshot.hasData) {
               List<Account> accounts = snapshot.data;
               return Column(children: <Widget>[
-                Expanded(
-                    flex: 1,
-                    child: Text("Liczba wszystkich kont: ${accounts.length}")),
-
                 /// A widget with the list of accounts
                 Expanded(
                     flex: 16,
@@ -174,6 +176,8 @@ class _AccountsState extends State<Accounts> {
                             (Account account) => ListTile(
                                 key: Key(account.username),
                                 title: Text(account.username),
+
+                                /// when username tapped, navigates to account's details
                                 onTap: () => Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (context) => AccountDetail(
@@ -197,6 +201,7 @@ class _AccountsState extends State<Accounts> {
     );
   }
 
+  /// delete account button
   deleteButtonTrailing(Account account) {
     if (currentUser.isStaff) {
       return FlatButton(
