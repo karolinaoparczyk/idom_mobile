@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
@@ -31,7 +30,6 @@ class Sensors extends StatefulWidget {
 }
 
 class _SensorsState extends State<Sensors> {
-  final String sensorsUrl = "http://10.0.2.2:8000/sensors/list";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   /// returns list of sensors
@@ -41,7 +39,7 @@ class _SensorsState extends State<Sensors> {
       return widget.testSensors;
     }
 
-    Response res;
+    Map<String,String> res;
     if (widget.api != null) {
       res = await widget.api.getSensors(widget.currentLoggedInToken);
     } else {
@@ -49,11 +47,20 @@ class _SensorsState extends State<Sensors> {
       res = await api.getSensors(widget.currentLoggedInToken);
     }
 
-    if (res.statusCode == 200) {
-      List<dynamic> body = jsonDecode(res.body);
+    if (res['statusCodeSensors'] == "200") {
+      Map<String,String> resFreq;
+      if (widget.api != null) {
+        resFreq = await widget.api.getFrequency(widget.currentLoggedInToken);
+      } else {
+        Api api = Api();
+        resFreq = await api.getFrequency(widget.currentLoggedInToken);
+      }
+      List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
+      List<dynamic> bodyFrequency = jsonDecode(resFreq['bodyFrequency']);
 
-      List<Sensor> sensors = body
-          .map((dynamic item) => Sensor.fromJson(item))
+      bodyFrequency = [{"sensor": 1, "sensor_data": "27.0"}];
+      List<Sensor> sensors = bodySensors
+          .map((dynamic item) => Sensor.fromJson(item, bodyFrequency))
           //.where((sensor) => sensor.isActive == true)
           .toList();
 
@@ -115,7 +122,6 @@ class _SensorsState extends State<Sensors> {
                   setState(() {
                     getSensors();
                   });
-                  Navigator.of(context).pop(true);
                 } else {
                   displayDialog(context, "Błąd",
                       "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.");

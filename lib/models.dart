@@ -53,6 +53,7 @@ class Sensor {
   int batteryLevel;
   bool notifications;
   bool isActive;
+  String data;
 
   Sensor({
     @required this.id,
@@ -61,15 +62,22 @@ class Sensor {
     @required this.batteryLevel,
     @required this.notifications,
     @required this.isActive,
+    this.data
   });
 
-  factory Sensor.fromJson(Map<String, dynamic> json) {
+  factory Sensor.fromJson(Map<String, dynamic> json, List<dynamic> frequency) {
+    var freq;
+    for (var i=0; i < frequency.length; i++){
+      if(frequency[i]["sensor"] == json['id'])
+        freq = frequency[i]['sensor_data'];
+    }
     return Sensor(
         id: json['id'] as int,
         name: json['name'] as String,
         category: json['category'] as String,
         batteryLevel: json['batteryLevel'] as int,
         notifications: json['sms_notiications'] as bool,
-        isActive: json['is_active'] as bool);
+        isActive: json['is_active'] as bool,
+        data: freq);
   }
 }

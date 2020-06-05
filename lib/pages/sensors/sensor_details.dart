@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
@@ -30,7 +33,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _editingNameController;
-  var dropdownSelectedItem;
+  var selectedCategory;
 
   List<DropdownMenuItem<String>> categories;
 
@@ -38,7 +41,8 @@ class _SensorDetailsState extends State<SensorDetails> {
   void initState() {
     super.initState();
     _editingNameController = TextEditingController(text: widget.sensor.name);
-
+    print(widget.sensor.id);
+    print(widget.sensor.data);
     categories = [
       DropdownMenuItem(
           child: Text("Temperatura"),
@@ -47,8 +51,21 @@ class _SensorDetailsState extends State<SensorDetails> {
       DropdownMenuItem(
           child: Text("Wilgotność"), value: "humidity", key: Key("humidity"))
     ];
-    dropdownSelectedItem = widget.sensor.category;
+    selectedCategory = widget.sensor.category;
   }
+
+  getDetails() async{
+    var res = await http.post(
+      'http://10.0.2.2:8000/sensors/details/${widget.sensor.id}',
+      headers: {HttpHeaders.authorizationHeader: "Token ${widget.currentLoggedInToken}"},
+    );
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    print(resDict["body"]);
+    print(resDict["statusCode"]);
+}
 
   /// logs the user out of the app
   _logOut() async {
@@ -110,10 +127,10 @@ class _SensorDetailsState extends State<SensorDetails> {
           items: categories,
           onChanged: (val) {
             setState(() {
-              dropdownSelectedItem = val;
+              selectedCategory = val;
             });
           },
-          value: dropdownSelectedItem,
+          value: selectedCategory,
         ));
   }
 
@@ -173,6 +190,19 @@ class _SensorDetailsState extends State<SensorDetails> {
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                       )),
+                  Padding(
+                      padding:
+                      EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+                      child: ListTile(
+                        title: Text("Dane z czujnika",
+                            style: TextStyle(fontSize: 13.5)),
+                        subtitle: Text(
+                            widget.sensor.data == null
+                                ? "Brak danych"
+                                : widget.sensor.data.toString(),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                      )),
                   Divider(),
                   buttonWidget(context, "Zapisz zmiany", _verifyChanges)
                 ]))));
@@ -180,7 +210,7 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   _saveChanges(bool changedName, bool changedCategory) async {
     var name = changedName ? _editingNameController.text : null;
-    var category = changedCategory ? dropdownSelectedItem : null;
+    var category = changedCategory ? selectedCategory : null;
     try {
       var res = await widget.api.editSensor(
           widget.sensor.id, name, category, widget.currentLoggedInToken);
@@ -232,7 +262,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   /// verifies data changes
   _verifyChanges() async {
     var name = _editingNameController.text;
-    var category = dropdownSelectedItem;
+    var category = selectedCategory;
     var changedName = false;
     var changedCategory = false;
 

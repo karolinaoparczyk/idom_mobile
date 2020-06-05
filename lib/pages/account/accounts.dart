@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
@@ -29,7 +28,6 @@ class Accounts extends StatefulWidget {
 }
 
 class _AccountsState extends State<Accounts> {
-  final String accountsUrl = "http://10.0.2.2:8000/users/list";
   Account currentUser;
 
   /// returns list of accounts
@@ -44,10 +42,10 @@ class _AccountsState extends State<Accounts> {
       return widget.testAccounts;
     }
 
-    Response res = await get(accountsUrl);
+    var res = await widget.api.getAccounts(widget.currentLoggedInToken);
 
-    if (res.statusCode == 200) {
-      List<dynamic> body = jsonDecode(res.body);
+    if (res['statusCode'] == "200") {
+      List<dynamic> body = jsonDecode(res['body']);
 
       List<Account> accounts = body
           .map((dynamic item) => Account.fromJson(item))

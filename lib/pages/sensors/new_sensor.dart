@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:convert';
 import 'package:idom/api.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/setup/front.dart';
@@ -231,7 +231,7 @@ class _NewSensorState extends State<NewSensor> {
       displayText += "Wybierz kategorię czujnika. \n";
     }
     if (selectedUnits == null) {
-      displayText += "Wybierz jednotski częstotliwości poberania danych.";
+      displayText += "Wybierz jednotski częstotliwości pobierania danych.";
     }
     if (displayText != ""){
       await displayDialog(context, "Brak danych", displayText);
@@ -242,7 +242,7 @@ class _NewSensorState extends State<NewSensor> {
       if (!validFequencyValue) {
         await displayDialog(
             context, "Błąd",
-            "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} -  ${unitsToMaxValues[selectedUnits]}");
+            "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
         return;
       }
       var frequencyInSeconds = int.parse(_frequencyValueController.text);
@@ -257,9 +257,11 @@ class _NewSensorState extends State<NewSensor> {
       try {
         var res = await widget.api.addSensor(_nameController.text,
             selectedCategory, frequencyInSeconds, widget.currentLoggedInToken);
-        if (res['statusCode'] == "201") {
+        Map valueMap = json.decode(res['bodySen']);
+        if (res['statusCodeSen'] == "201") {
+          var resFreq = await widget.api.addFrequency(valueMap['id'], frequencyInSeconds, widget.currentLoggedInToken);
           Navigator.of(context).pop(true);
-        } else if (res['body']
+        } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
           displayDialog(
               context, "Błąd", "Czujnik o podanej nazwie już istnieje.");
