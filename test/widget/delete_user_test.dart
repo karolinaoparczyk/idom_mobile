@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/accounts.dart';
-import 'package:mockito/mockito.dart';
 
 class MockApi extends Mock implements Api {}
 

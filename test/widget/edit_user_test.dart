@@ -257,11 +257,11 @@ void main() {
   testWidgets('changed data, telephone exists, does not save',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editAccount(1, null, '+48777666555')).thenAnswer(
-        (_) async => Future.value({
-              "body": "User with given telephone number already exists",
-              "statusCode": "400"
-            }));
+    when(mockApi.editAccount(1, null, '+48777666555')).thenAnswer((_) async =>
+        Future.value({
+          "body": "User with given telephone number already exists",
+          "statusCode": "400"
+        }));
     Account user = Account(
         id: 1,
         username: "user1",
@@ -287,16 +287,15 @@ void main() {
     expect(find.text("Konto dla podanego numeru telefonu już istnieje."),
         findsOneWidget);
 
-    verify(await mockApi.editAccount(1, null, '+48777666555'))
-        .called(1);
+    verify(await mockApi.editAccount(1, null, '+48777666555')).called(1);
   });
 
   /// tests if does not save when telephone is invalid
   testWidgets('changed data, telephone invalid, does not save',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editAccount(1, null, '+48111111111')).thenAnswer(
-        (_) async => Future.value(
+    when(mockApi.editAccount(1, null, '+48111111111')).thenAnswer((_) async =>
+        Future.value(
             {"body": "Enter a valid phone number", "statusCode": "400"}));
     Account user = Account(
         id: 1,
@@ -322,7 +321,6 @@ void main() {
     expect(find.byKey(Key("ok button")), findsOneWidget);
     expect(find.text("Numer telefonu jest niepoprawny."), findsOneWidget);
 
-    verify(await mockApi.editAccount(1, null, '+48111111111'))
-        .called(1);
+    verify(await mockApi.editAccount(1, null, '+48111111111')).called(1);
   });
 }

@@ -1,5 +1,6 @@
-import 'package:idom/utils/validators.dart';
 import 'package:test/test.dart';
+
+import 'package:idom/utils/validators.dart';
 
 void main() {
   ///Username
@@ -21,7 +22,6 @@ void main() {
     var result = UsernameFieldValidator.validate('log in');
     expect(result, 'Login nie może zawierać spacji');
   });
-
 
   ///Password
   ///
@@ -49,7 +49,6 @@ void main() {
     expect(result, 'Hasło musi zawierać przynajmniej 8 znaków');
   });
 
-
   ///Email
   ///
   /// tests if empty email is not validated
@@ -69,7 +68,6 @@ void main() {
     var result = EmailFieldValidator.validate('email@ema.il');
     expect(result, null);
   });
-
 
   ///Telephone
   ///

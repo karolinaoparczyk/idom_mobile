@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:idom/pages/sensors/sensors.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
+import 'package:idom/pages/sensors/sensors.dart';
 
 class MockApi extends Mock implements Api {}
 
@@ -46,9 +46,9 @@ void main() {
     expect(find.byType(ListTile).evaluate().length, 2);
   });
 
-
   /// tests if deletes sensor after confirmation
-  testWidgets('sensors on list, confirms, deletes', (WidgetTester tester) async {
+  testWidgets('sensors on list, confirms, deletes',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     List<Sensor> sensors = List();
     sensors.add(Sensor(
@@ -87,7 +87,8 @@ void main() {
   });
 
   /// tests if does not delete sensor when no confirmation
-  testWidgets('sensors on list, does not confirm, does not delete', (WidgetTester tester) async {
+  testWidgets('sensors on list, does not confirm, does not delete',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     List<Sensor> sensors = List();
     sensors.add(Sensor(
@@ -126,7 +127,8 @@ void main() {
   });
 
   /// tests eror message when api error
-  testWidgets('sensors on list, api error, message to user', (WidgetTester tester) async {
+  testWidgets('sensors on list, api error, message to user',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.deactivateSensor(1, "token"))
         .thenAnswer((_) async => Future.value(404));

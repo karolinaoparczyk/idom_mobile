@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+
 import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/pages/sensors/sensors.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/pages/setup/sign_in.dart';
-import 'package:mockito/mockito.dart';
 
 class MockApi extends Mock implements Api {}
 
@@ -14,7 +15,8 @@ void main() {
   }
 
   /// tests if request is sent when entered email from sign in page
-  testWidgets('enter email, request sent, sign in page', (WidgetTester tester) async {
+  testWidgets('enter email, request sent, sign in page',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.resetPassword("email@email.com"))
         .thenAnswer((_) async => Future.value(200));
@@ -39,10 +41,10 @@ void main() {
   });
 
   /// tests if request is not sent when empty email from sign in page
-  testWidgets('empty email, request not sent, sign in page', (WidgetTester tester) async {
+  testWidgets('empty email, request not sent, sign in page',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.resetPassword(""))
-        .thenAnswer((_) async => Future.value(400));
+    when(mockApi.resetPassword("")).thenAnswer((_) async => Future.value(400));
     SignIn page = SignIn(api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -60,7 +62,8 @@ void main() {
   });
 
   /// tests if request is sent when entered email from front page
-  testWidgets('enter email, request sent, front page', (WidgetTester tester) async {
+  testWidgets('enter email, request sent, front page',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.resetPassword("email@email.com"))
         .thenAnswer((_) async => Future.value(200));
@@ -83,5 +86,4 @@ void main() {
 
     expect(find.byType(Front), findsOneWidget);
   });
-
 }
