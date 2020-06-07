@@ -73,6 +73,7 @@ class _SensorsState extends State<Sensors> {
     } else {
       throw "Can't get sensors";
     }
+    return null;
   }
 
   /// logs the user out of the app
@@ -252,17 +253,23 @@ class _SensorsState extends State<Sensors> {
     if (result != null && result == true) {
       var snackBar = SnackBar(content: Text("Dodano nowy czujnik."));
       _scaffoldKey.currentState.showSnackBar(snackBar);
+      setState(() {
+        getSensors();
+      });
     }
   }
 
   /// navigates to sensor's details
-  navigateToSensorDetails(Sensor sensor) {
-    Navigator.of(context).push(MaterialPageRoute(
+  navigateToSensorDetails(Sensor sensor) async {
+    await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SensorDetails(
             currentLoggedInToken: widget.currentLoggedInToken,
             currentLoggedInUsername: widget.currentLoggedInUsername,
             sensor: sensor,
             api: widget.api)));
+    setState(() {
+      getSensors();
+    });
   }
 
   /// deletes sensor
