@@ -8,6 +8,7 @@ import 'package:idom/utils/menu_items.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/loading_indicator.dart';
 
 /// adds new sensor
 class NewSensor extends StatefulWidget {
@@ -32,6 +33,7 @@ class _NewSensorState extends State<NewSensor> {
   TextEditingController _frequencyValueController = TextEditingController();
   var selectedCategory;
   var selectedUnits;
+  bool _load = false;
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
@@ -232,12 +234,16 @@ class _NewSensorState extends State<NewSensor> {
                                 child: _buildUnits())),
                       ]))),
                   Divider(),
-                  buttonWidget(context, "Dodaj czujnik", _saveChanges)
+                  buttonWidget(context, "Dodaj czujnik", _saveChanges),
+                  Align(child: loadingIndicator(_load),alignment: FractionalOffset.center,),
                 ]))));
   }
 
   /// saves changes after form fields and dropdown buttons validation
   _saveChanges() async {
+    setState((){
+      _load=true;
+    });
     final formState = _formKey.currentState;
     var displayText = "";
     if (selectedCategory == null) {
@@ -280,6 +286,9 @@ class _NewSensorState extends State<NewSensor> {
           /// sends current frequency of the added sensor
           await widget.api.addFrequency(
               valueMap['id'], frequencyInSeconds, widget.currentLoggedInToken);
+          setState((){
+            _load=false;
+            });
           Navigator.of(context).pop(true);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
