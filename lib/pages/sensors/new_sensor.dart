@@ -33,7 +33,7 @@ class _NewSensorState extends State<NewSensor> {
   TextEditingController _frequencyValueController = TextEditingController();
   var selectedCategory;
   var selectedUnits;
-  bool _load = false;
+  bool _load;
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
@@ -47,6 +47,7 @@ class _NewSensorState extends State<NewSensor> {
   @override
   void initState() {
     super.initState();
+    _load = false;
 
     /// available sensor categories choices
     categories = [
@@ -278,7 +279,7 @@ class _NewSensorState extends State<NewSensor> {
       }
       try {
         var res = await widget.api.addSensor(_nameController.text,
-            selectedCategory, frequencyInSeconds, widget.currentLoggedInToken);
+            selectedCategory, widget.currentLoggedInToken);
 
         /// withdraws id of added sensor
         Map valueMap = json.decode(res['bodySen']);
@@ -294,6 +295,9 @@ class _NewSensorState extends State<NewSensor> {
             .contains("Sensor with provided name already exists")) {
           displayDialog(
               context, "Błąd", "Czujnik o podanej nazwie już istnieje.");
+          setState((){
+            _load=false;
+          });
         }
       } catch (e) {
         print(e);

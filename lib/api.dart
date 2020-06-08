@@ -119,7 +119,7 @@ class Api {
 
   /// adds sensor
   Future<Map<String, String>> addSensor(
-      String name, String category, int frequency, String userToken) async {
+      String name, String category, String userToken) async {
     var resSen = await http.post(
       '$url/sensors/add',
       headers: {HttpHeaders.authorizationHeader: "Token $userToken"},

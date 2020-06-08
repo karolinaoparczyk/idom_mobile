@@ -204,7 +204,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       return Text("");
     return widget.sensor.category == "temperature"
         ? Text("${widget.sensor.lastData} °C", style: TextStyle(fontSize: 17.0))
-        : Text(widget.sensor.lastData, style: TextStyle(fontSize: 17.0));
+        : Text("${widget.sensor.lastData} %", style: TextStyle(fontSize: 17.0));
   }
 
   /// saves changes after form fields and dropdown buttons validation

@@ -225,7 +225,7 @@ class _SensorsState extends State<Sensors> {
       return Text("");
     return sensor.category == "temperature"
         ? Text("${sensor.lastData} °C", style: TextStyle(fontSize: 17.0))
-        : Text(sensor.lastData, style: TextStyle(fontSize: 17.0));
+        : Text("${sensor.lastData} %", style: TextStyle(fontSize: 17.0));
   }
 
   /// navigates to adding sensor page

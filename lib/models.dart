@@ -53,7 +53,6 @@ class Sensor {
   String category;
   int batteryLevel;
   bool notifications;
-  bool isActive;
   String data;
   String lastData;
 
@@ -63,7 +62,6 @@ class Sensor {
     @required this.category,
     @required this.batteryLevel,
     @required this.notifications,
-    @required this.isActive,
     @required this.lastData,
   });
 
@@ -74,8 +72,7 @@ class Sensor {
         category: json['category'] as String,
         batteryLevel: json['batteryLevel'] as int,
         notifications: json['sms_notifications'] as bool,
-        isActive: json['is_active'] as bool,
-  //      lastData: "27.0");
+   //     lastData: "27.0");
        lastData: json['last_data'] as String);
   }
 }
