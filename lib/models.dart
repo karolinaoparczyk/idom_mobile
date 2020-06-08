@@ -55,21 +55,19 @@ class Sensor {
   bool notifications;
   bool isActive;
   String data;
+  String lastData;
 
-  Sensor(
-      {@required this.id,
-      @required this.name,
-      @required this.category,
-      @required this.batteryLevel,
-      @required this.notifications,
-      @required this.isActive,
-      this.data});
+  Sensor({
+    @required this.id,
+    @required this.name,
+    @required this.category,
+    @required this.batteryLevel,
+    @required this.notifications,
+    @required this.isActive,
+    @required this.lastData,
+  });
 
-  factory Sensor.fromJson(Map<String, dynamic> json, List<dynamic> data) {
-    var currentData;
-    for (var i = 0; i < data.length; i++) {
-      if (data[i]["sensor"] == json['id']) currentData = data[i]['sensor_data'];
-    }
+  factory Sensor.fromJson(Map<String, dynamic> json) {
     return Sensor(
         id: json['id'] as int,
         name: json['name'] as String,
@@ -77,6 +75,7 @@ class Sensor {
         batteryLevel: json['batteryLevel'] as int,
         notifications: json['sms_notifications'] as bool,
         isActive: json['is_active'] as bool,
-        data: currentData);
+  //      lastData: "27.0");
+       lastData: json['last_data'] as String);
   }
 }

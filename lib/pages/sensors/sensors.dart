@@ -48,32 +48,14 @@ class _SensorsState extends State<Sensors> {
     }
 
     if (res['statusCodeSensors'] == "200") {
-      /// gets sensors data
-      Map<String, String> resSenData;
-      if (widget.api != null) {
-        resSenData =
-            await widget.api.getSensorData(widget.currentLoggedInToken);
-      } else {
-        Api api = Api();
-        resSenData = await api.getSensorData(widget.currentLoggedInToken);
-      }
       List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
-      List<dynamic> bodySensorData = jsonDecode(resSenData['bodySensorData']);
-      if (resSenData['statusSensorData'] == "200") {
-        bodySensorData = [
-          {"sensor": 1, "sensor_data": "27.0"}
-        ];
-        List<Sensor> sensors = bodySensors
-            .map((dynamic item) => Sensor.fromJson(item, bodySensorData))
-            //.where((sensor) => sensor.isActive == true)
-            .toList();
+      List<Sensor> sensors =
+          bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
 
-        return sensors;
-      }
+      return sensors;
     } else {
       throw "Can't get sensors";
     }
-    return null;
   }
 
   /// logs the user out of the app
@@ -218,11 +200,11 @@ class _SensorsState extends State<Sensors> {
                           children: sensors
                               .map(
                                 (Sensor sensor) => ListTile(
-                                    title: Text(sensor.name),
+                                    title: Text(sensor.name, style: TextStyle(fontSize: 20.0)),
+                                    subtitle: sensorData(sensor),
                                     onTap: () {
                                       navigateToSensorDetails(sensor);
                                     },
-
                                     /// delete sensor button
                                     trailing: deleteButtonTrailing(sensor)),
                               )
@@ -236,6 +218,14 @@ class _SensorsState extends State<Sensors> {
                 return Center(child: CircularProgressIndicator());
               }),
         ));
+  }
+
+  Widget sensorData(Sensor sensor){
+    if (sensor.lastData == null)
+      return Text("");
+    return sensor.category == "temperature"
+        ? Text("${sensor.lastData} °C", style: TextStyle(fontSize: 17.0))
+        : Text(sensor.lastData, style: TextStyle(fontSize: 17.0));
   }
 
   /// navigates to adding sensor page
