@@ -175,7 +175,7 @@ class _AccountsState extends State<Accounts> {
                           .map(
                             (Account account) => ListTile(
                                 key: Key(account.username),
-                                title: Text(account.username),
+                                title: Text(account.username, style: TextStyle(fontSize: 20.0)),
 
                                 /// when username tapped, navigates to account's details
                                 onTap: () => Navigator.of(context).push(
