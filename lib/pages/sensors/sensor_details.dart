@@ -192,16 +192,19 @@ class _SensorDetailsState extends State<SensorDetails> {
                       child: ListTile(
                         title: Text("Dane z czujnika",
                             style: TextStyle(fontSize: 13.5)),
-                        subtitle: Text(
-                            widget.sensor.data == null
-                                ? "Brak danych"
-                                : widget.sensor.data.toString(),
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        subtitle: sensorData(),
                       )),
                   Divider(),
                   buttonWidget(context, "Zapisz zmiany", _verifyChanges)
                 ]))));
+  }
+
+  Widget sensorData(){
+    if (widget.sensor.lastData == null)
+      return Text("");
+    return widget.sensor.category == "temperature"
+        ? Text("${widget.sensor.lastData} °C", style: TextStyle(fontSize: 17.0))
+        : Text(widget.sensor.lastData, style: TextStyle(fontSize: 17.0));
   }
 
   /// saves changes after form fields and dropdown buttons validation
