@@ -22,8 +22,7 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false,
-        data: "27.0");
+        lastData: "27.0");
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
         currentLoggedInUsername: "user",
@@ -36,7 +35,36 @@ void main() {
     await tester.enterText(emailField, '');
 
     expect(find.text("Dane z czujnika"), findsOneWidget);
-    expect(find.text("27.0"), findsOneWidget);
+    expect(find.text("27.0 °C"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('Zapisz zmiany')));
+
+    verifyNever(await mockApi.editSensor(1, '', null, "token"));
+  });
+
+  /// tests if displays humidity correctly
+  testWidgets('displays humidity correctly', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "humidity",
+        batteryLevel: null,
+        notifications: true,
+        lastData: "27.0");
+    SensorDetails page = SensorDetails(
+        currentLoggedInToken: "token",
+        currentLoggedInUsername: "user",
+        sensor: sensor,
+        api: mockApi);
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, '');
+
+    expect(find.text("Dane z czujnika"), findsOneWidget);
+    expect(find.text("27.0 %"), findsOneWidget);
 
     await tester.tap(find.byKey(Key('Zapisz zmiany')));
 
@@ -52,7 +80,7 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false);
+        lastData: null);
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
         currentLoggedInUsername: "user",
@@ -82,7 +110,7 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false);
+        lastData: "27.0");
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
         currentLoggedInUsername: "user",
@@ -114,7 +142,7 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false);
+        lastData: "27.0");
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
         currentLoggedInUsername: "user",
@@ -150,7 +178,7 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false);
+        lastData: "27.0");
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
         currentLoggedInUsername: "user",
@@ -191,7 +219,7 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false);
+        lastData: "27.0");
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
         currentLoggedInUsername: "user",
@@ -232,7 +260,7 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false);
+        lastData: "27.0");
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
         currentLoggedInUsername: "user",

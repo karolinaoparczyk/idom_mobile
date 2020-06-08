@@ -97,14 +97,14 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
     sensors.add(Sensor(
         id: 2,
         name: "sensor2",
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
 
     Sensors page = Sensors(
       currentLoggedInToken: "token",
@@ -135,7 +135,7 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false);
+        lastData: "27.0");
 
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",

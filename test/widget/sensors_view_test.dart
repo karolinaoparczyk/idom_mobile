@@ -25,14 +25,14 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
     sensors.add(Sensor(
         id: 2,
         name: "sensor2",
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
 
     Sensors page = Sensors(
       currentLoggedInToken: "token",
@@ -44,6 +44,7 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
     expect(find.byType(ListTile).evaluate().length, 2);
+    expect(find.text("27.0 °C"), findsNWidgets(2));
   });
 
   /// tests if deletes sensor after confirmation
@@ -54,17 +55,17 @@ void main() {
     sensors.add(Sensor(
         id: 1,
         name: "sensor1",
-        category: "temperature",
+        category: "humidity",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
     sensors.add(Sensor(
         id: 2,
         name: "sensor2",
-        category: "temperature",
+        category: "humidity",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
 
     Sensors page = Sensors(
       currentLoggedInToken: "token",
@@ -76,6 +77,7 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
     expect(find.byType(ListTile).evaluate().length, 2);
+    expect(find.text("27.0 %"), findsNWidgets(2));
 
     await tester.tap(find.byType(FlatButton).first);
     await tester.pumpAndSettle();
@@ -97,14 +99,14 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
     sensors.add(Sensor(
         id: 2,
         name: "sensor2",
-        category: "temperature",
+        category: "humidity",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
 
     Sensors page = Sensors(
       currentLoggedInToken: "token",
@@ -116,6 +118,8 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
     expect(find.byType(ListTile).evaluate().length, 2);
+    expect(find.text("27.0 °C"), findsOneWidget);
+    expect(find.text("27.0 %"), findsOneWidget);
 
     await tester.tap(find.byType(FlatButton).first);
     await tester.pumpAndSettle();
@@ -139,14 +143,14 @@ void main() {
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
     sensors.add(Sensor(
         id: 2,
         name: "sensor2",
         category: "temperature",
         batteryLevel: null,
         notifications: true,
-        isActive: false));
+        lastData: "27.0"));
 
     Sensors page = Sensors(
       currentLoggedInToken: "token",
