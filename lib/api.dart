@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 class Api {
   /// sets api url in constructor
   Api() {
-    url = "127.0.0.1:8000";
+    url = "http://10.0.2.2:8000";
   }
 
   String url;
