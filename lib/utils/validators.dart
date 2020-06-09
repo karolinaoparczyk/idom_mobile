@@ -70,10 +70,10 @@ Map<String, int> unitsToMinValues = {
   "days": 1
 };
 Map<String, int> unitsToMaxValues = {
-  "seconds": 2147483647,
-  "minutes": 35791394,
-  "hours": 596523,
-  "days": 24
+  "seconds": 21474836,
+  "minutes": 357913,
+  "hours": 5965,
+  "days": 248
 };
 
 /// frequency field validator

@@ -119,30 +119,15 @@ class Api {
 
   /// adds sensor
   Future<Map<String, String>> addSensor(
-      String name, String category, String userToken) async {
+      String name, String category, int frequency, String userToken) async {
     var resSen = await http.post(
       '$url/sensors/add',
       headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
-      body: {"name": name, "category": category},
+      body: {"name": name, "category": category, "frequency": frequency.toString()},
     );
     var resDict = {
       "bodySen": resSen.body.toString(),
       "statusCodeSen": resSen.statusCode.toString(),
-    };
-    return resDict;
-  }
-
-  /// adds sensor frequency
-  Future<Map<String, String>> addFrequency(
-      int id, int frequency, String userToken) async {
-    var resFreq = await http.post('$url/sensors_data/frequency/$id',
-        headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
-        body: {"frequency": frequency.toString()});
-    print(resFreq.body);
-
-    var resDict = {
-      "bodyFreq": resFreq.body.toString(),
-      "statusCodeFreq": resFreq.statusCode.toString(),
     };
     return resDict;
   }

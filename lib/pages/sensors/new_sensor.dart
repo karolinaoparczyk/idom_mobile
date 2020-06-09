@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 import 'package:idom/api.dart';
 import 'package:idom/pages/account/accounts.dart';
@@ -242,9 +241,6 @@ class _NewSensorState extends State<NewSensor> {
 
   /// saves changes after form fields and dropdown buttons validation
   _saveChanges() async {
-    setState((){
-      _load=true;
-    });
     final formState = _formKey.currentState;
     var displayText = "";
     if (selectedCategory == null) {
@@ -266,7 +262,9 @@ class _NewSensorState extends State<NewSensor> {
             "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
         return;
       }
-
+      setState((){
+        _load=true;
+      });
       /// converts frequency value to seconds
       var frequencyInSeconds = int.parse(_frequencyValueController.text);
       if (selectedUnits != "seconds") {
@@ -279,14 +277,9 @@ class _NewSensorState extends State<NewSensor> {
       }
       try {
         var res = await widget.api.addSensor(_nameController.text,
-            selectedCategory, widget.currentLoggedInToken);
+            selectedCategory, frequencyInSeconds, widget.currentLoggedInToken);
 
-        /// withdraws id of added sensor
-        Map valueMap = json.decode(res['bodySen']);
         if (res['statusCodeSen'] == "201") {
-          /// sends current frequency of the added sensor
-          await widget.api.addFrequency(
-              valueMap['id'], frequencyInSeconds, widget.currentLoggedInToken);
           setState((){
             _load=false;
             });
