@@ -143,15 +143,13 @@ void main() {
         id: 1,
         name: "sensor1",
         category: "temperature",
-        batteryLevel: null,
-        notifications: true,
+        frequency: 300,
         lastData: "27.0"));
     sensors.add(Sensor(
         id: 2,
         name: "sensor2",
         category: "temperature",
-        batteryLevel: null,
-        notifications: true,
+        frequency: 300,
         lastData: "27.0"));
 
     Sensors page = Sensors(
@@ -186,15 +184,13 @@ void main() {
         id: 1,
         name: "sensor1",
         category: "temperature",
-        batteryLevel: null,
-        notifications: true,
+        frequency: 300,
         lastData: "27.0"));
     sensors.add(Sensor(
         id: 2,
         name: "sensor2",
         category: "temperature",
-        batteryLevel: null,
-        notifications: true,
+        frequency: 300,
         lastData: "27.0"));
 
     Sensors page = Sensors(
@@ -229,8 +225,7 @@ void main() {
         id: 1,
         name: "sensor1",
         category: "temperature",
-        batteryLevel: null,
-        notifications: true,
+        frequency: 300,
         lastData: "27.0");
 
     SensorDetails page = SensorDetails(
@@ -263,8 +258,7 @@ void main() {
         id: 1,
         name: "sensor1",
         category: "temperature",
-        batteryLevel: null,
-        notifications: true,
+        frequency: 300,
         lastData: "27.0");
 
     SensorDetails page = SensorDetails(

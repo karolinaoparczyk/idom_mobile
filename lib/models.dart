@@ -51,17 +51,14 @@ class Sensor {
   final int id;
   String name;
   String category;
-  int batteryLevel;
-  bool notifications;
-  String data;
+  int frequency;
   String lastData;
 
   Sensor({
     @required this.id,
     @required this.name,
     @required this.category,
-    @required this.batteryLevel,
-    @required this.notifications,
+    @required this.frequency,
     @required this.lastData,
   });
 
@@ -70,8 +67,7 @@ class Sensor {
         id: json['id'] as int,
         name: json['name'] as String,
         category: json['category'] as String,
-        batteryLevel: json['batteryLevel'] as int,
-        notifications: json['sms_notifications'] as bool,
+        frequency: json['frequency'] as int,
    //     lastData: "27.0");
        lastData: json['last_data'] as String);
   }

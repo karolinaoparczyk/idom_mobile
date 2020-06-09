@@ -200,11 +200,14 @@ class _SensorsState extends State<Sensors> {
                           children: sensors
                               .map(
                                 (Sensor sensor) => ListTile(
-                                    title: Text(sensor.name, style: TextStyle(fontSize: 20.0)),
+                                    key: Key(sensor.name),
+                                    title: Text(sensor.name,
+                                        style: TextStyle(fontSize: 20.0)),
                                     subtitle: sensorData(sensor),
                                     onTap: () {
                                       navigateToSensorDetails(sensor);
                                     },
+
                                     /// delete sensor button
                                     trailing: deleteButtonTrailing(sensor)),
                               )
@@ -220,9 +223,8 @@ class _SensorsState extends State<Sensors> {
         ));
   }
 
-  Widget sensorData(Sensor sensor){
-    if (sensor.lastData == null)
-      return Text("");
+  Widget sensorData(Sensor sensor) {
+    if (sensor.lastData == null) return Text("");
     return sensor.category == "temperature"
         ? Text("${sensor.lastData} °C", style: TextStyle(fontSize: 17.0))
         : Text("${sensor.lastData} %", style: TextStyle(fontSize: 17.0));
@@ -251,15 +253,21 @@ class _SensorsState extends State<Sensors> {
 
   /// navigates to sensor's details
   navigateToSensorDetails(Sensor sensor) async {
-    await Navigator.of(context).push(MaterialPageRoute(
+    var result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SensorDetails(
             currentLoggedInToken: widget.currentLoggedInToken,
             currentLoggedInUsername: widget.currentLoggedInUsername,
             sensor: sensor,
             api: widget.api)));
-    setState(() {
-      getSensors();
-    });
+
+    /// displays success message if sensor updated succesfully
+    if (result != null && result == true) {
+      var snackBar = SnackBar(content: Text("Zapisano dane czujnika."));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+      setState(() {
+        getSensors();
+      });
+    }
   }
 
   /// deletes sensor

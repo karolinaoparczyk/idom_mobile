@@ -96,14 +96,23 @@ class Api {
 
   /// edits sensor
   Future<Map<String, String>> editSensor(
-      int id, String name, String category, String userToken) async {
+      int id, String name, String category, int frequency, String userToken) async {
+    var frequencyString = frequency.toString();
     var body;
-    if (name != null && category != null) {
+    if (name != null && category != null && frequency != null) {
+      body = {"name": name, "category": category, "frequency": frequencyString};
+    } else if (name != null && category != null) {
       body = {"name": name, "category": category};
-    } else if (name != null) {
+    } else if (category != null && frequency !=null) {
+      body = {"category": category, "frequency": frequencyString};
+    } else if (name != null && frequency !=null) {
+      body = {"name": name, "frequency": frequencyString};
+    } else if (name != null){
       body = {"name": name};
-    } else if (category != null) {
+    } else if (category != null){
       body = {"category": category};
+    } else if (frequency != null){
+      body = {"frequency": frequencyString};
     }
     var res = await http.put(
       '$url/sensors/update/$id',
