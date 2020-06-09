@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/models.dart';
 import 'package:idom/pages/sensors/sensors.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/utils/validators.dart';
@@ -59,14 +62,20 @@ class _SignInState extends State<SignIn> {
             _usernameController.value.text, _passwordController.value.text);
         if (result[1] == 200 && result[0].toString().contains('token')) {
           widget.onSignedIn();
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Sensors(
-                      currentLoggedInToken:
-                          result[0].split(':')[1].substring(1, 41),
-                      currentLoggedInUsername: _usernameController.value.text,
-                      api: widget.api)));
+          var userResult =
+              await widget.api.getUser(_usernameController.value.text);
+          if (userResult[1] == 200) {
+            dynamic body = jsonDecode(userResult[0]);
+            Account account = Account.fromJson(body);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Sensors(
+                        currentLoggedInToken:
+                            result[0].split(':')[1].substring(1, 41),
+                        currentUser: account,
+                        api: widget.api)));
+          }
         } else if (result[1] == 400) {
           displayDialog(context, "Błąd logowania",
               "Błędne hasło lub konto z podanym loginem nie istnieje");

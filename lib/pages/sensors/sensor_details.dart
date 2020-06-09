@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
+import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/menu_items.dart';
@@ -15,12 +16,12 @@ class SensorDetails extends StatefulWidget {
   SensorDetails(
       {Key key,
       @required this.currentLoggedInToken,
-      @required this.currentLoggedInUsername,
+      @required this.currentUser,
       @required this.sensor,
       @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
-  final String currentLoggedInUsername;
+  final Account currentUser;
   final Api api;
   final Sensor sensor;
 
@@ -112,14 +113,24 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   /// navigates according to menu choice
   void _choiceAction(String choice) {
-    if (choice == "Konta") {
+    if (choice == "Moje konto") {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api),
+              fullscreenDialog: true));
+    } else if (choice == "Konta") {
       Api api = Api();
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => Accounts(
                   currentLoggedInToken: widget.currentLoggedInToken,
-                  currentLoggedInUsername: widget.currentLoggedInUsername,
+                  currentUser: widget.currentUser,
                   api: api),
               fullscreenDialog: true));
     } else if (choice == "Wyloguj") {
@@ -208,9 +219,18 @@ class _SensorDetailsState extends State<SensorDetails> {
                 onSelected: _choiceAction,
                 itemBuilder: (BuildContext context) {
                   /// menu choices from utils/menu_items.dart
-                  return menuChoices.map((String choice) {
+                  return widget.currentUser.isStaff
+                      ? menuChoicesSuperUser.map((String choice) {
                     return PopupMenuItem(
-                        key: Key(choice), value: choice, child: Text(choice));
+                        key: Key(choice),
+                        value: choice,
+                        child: Text(choice));
+                  }).toList()
+                      : menuChoicesNormalUser.map((String choice) {
+                    return PopupMenuItem(
+                        key: Key(choice),
+                        value: choice,
+                        child: Text(choice));
                   }).toList();
                 })
           ],

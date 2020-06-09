@@ -25,9 +25,19 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.logOut('token')).thenAnswer((_) async => Future.value(200));
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Accounts page = Accounts(
         currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
+        currentUser: account,
         api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -49,9 +59,19 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.logOut('token')).thenAnswer((_) async => Future.value(404));
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Accounts page = Accounts(
         currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
+        currentUser: account,
         api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -73,6 +93,7 @@ void main() {
   testWidgets('valid token, logged out, page account details',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+
     Account account = Account(
         id: 1,
         username: "username",
@@ -82,9 +103,10 @@ void main() {
         smsNotifications: "true",
         isActive: true,
         isStaff: true);
+
     when(mockApi.logOut('token')).thenAnswer((_) async => Future.value(200));
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: account, api: mockApi);
+        currentLoggedInToken: "token", account: account, currentUser: account, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -116,7 +138,7 @@ void main() {
         isStaff: true);
     when(mockApi.logOut('token')).thenAnswer((_) async => Future.value(404));
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: account, api: mockApi);
+        currentLoggedInToken: "token", account: account, currentUser: account, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -152,9 +174,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -193,9 +225,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -228,9 +270,19 @@ void main() {
         frequency: 300,
         lastData: "27.0");
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
+        currentUser: account,
         sensor: sensor,
         api: mockApi);
     when(mockApi.logOut('token')).thenAnswer((_) async => Future.value(200));
@@ -261,9 +313,19 @@ void main() {
         frequency: 300,
         lastData: "27.0");
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
+        currentUser: account,
         sensor: sensor,
         api: mockApi);
     when(mockApi.logOut('token')).thenAnswer((_) async => Future.value(404));
@@ -289,9 +351,19 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.logOut('token')).thenAnswer((_) async => Future.value(200));
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     NewSensor page = NewSensor(
         currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
+        currentUser: account,
         api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -313,9 +385,19 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.logOut('token')).thenAnswer((_) async => Future.value(404));
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     NewSensor page = NewSensor(
         currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
+        currentUser: account,
         api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));

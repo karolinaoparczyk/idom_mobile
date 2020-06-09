@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
+import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
@@ -15,12 +16,12 @@ class Sensors extends StatefulWidget {
   const Sensors(
       {Key key,
       @required this.currentLoggedInToken,
-      @required this.currentLoggedInUsername,
+      @required this.currentUser,
       @required this.api,
       this.testSensors})
       : super(key: key);
   final String currentLoggedInToken;
-  final String currentLoggedInUsername;
+  final Account currentUser;
   final Api api;
   final List<Sensor> testSensors;
 
@@ -30,7 +31,14 @@ class Sensors extends StatefulWidget {
 
 class _SensorsState extends State<Sensors> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  List<String> menuItems;
+  
+  /// displays appropriate menu choices according to user data
+  @override
+  void initState() {
+    super.initState();
+    menuItems = widget.currentUser.isStaff ? menuChoicesSuperUser : menuChoicesNormalUser;
+  }
   /// returns list of sensors
   Future<List<Sensor>> getSensors() async {
     /// if statement for testing
@@ -131,13 +139,23 @@ class _SensorsState extends State<Sensors> {
 
   /// navigates according to menu choice
   void _choiceAction(String choice) {
-    if (choice == "Konta") {
+    if (choice == "Moje konto") {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api),
+              fullscreenDialog: true));
+    } if (choice == "Konta") {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => Accounts(
                   currentLoggedInToken: widget.currentLoggedInToken,
-                  currentLoggedInUsername: widget.currentLoggedInUsername,
+                  currentUser: widget.currentUser,
                   api: widget.api),
               fullscreenDialog: true));
     } else if (choice == "Wyloguj") {
@@ -175,7 +193,7 @@ class _SensorsState extends State<Sensors> {
 
                   /// menu choices from utils/menu_items.dart
                   itemBuilder: (BuildContext context) {
-                    return menuChoices.map((String choice) {
+                    return menuItems.map((String choice) {
                       return PopupMenuItem(
                           key: Key(choice), value: choice, child: Text(choice));
                     }).toList();
@@ -237,7 +255,7 @@ class _SensorsState extends State<Sensors> {
         MaterialPageRoute(
             builder: (context) => NewSensor(
                 currentLoggedInToken: widget.currentLoggedInToken,
-                currentLoggedInUsername: widget.currentLoggedInUsername,
+                currentUser: widget.currentUser,
                 api: widget.api),
             fullscreenDialog: true));
 
@@ -256,7 +274,7 @@ class _SensorsState extends State<Sensors> {
     var result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SensorDetails(
             currentLoggedInToken: widget.currentLoggedInToken,
-            currentLoggedInUsername: widget.currentLoggedInUsername,
+            currentUser: widget.currentUser,
             sensor: sensor,
             api: widget.api)));
 

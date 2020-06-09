@@ -26,7 +26,8 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user,
+        api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -51,7 +52,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -77,7 +78,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -108,7 +109,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -140,7 +141,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -176,7 +177,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -204,7 +205,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -235,7 +236,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -272,7 +273,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 
@@ -307,7 +308,7 @@ void main() {
         isStaff: false,
         isActive: false);
     AccountDetail page = AccountDetail(
-        currentLoggedInToken: "token", account: user, api: mockApi);
+        currentLoggedInToken: "token", account: user, currentUser: user, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
 

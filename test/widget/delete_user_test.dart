@@ -38,9 +38,19 @@ void main() {
         isStaff: false,
         isActive: false));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Accounts page = Accounts(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "user1",
+      currentUser: account,
       api: mockApi,
       testAccounts: accounts,
     );
@@ -83,9 +93,19 @@ void main() {
         isStaff: false,
         isActive: false));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Accounts page = Accounts(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "user1",
+      currentUser: account,
       api: mockApi,
       testAccounts: accounts,
     );
@@ -128,9 +148,19 @@ void main() {
         isStaff: false,
         isActive: false));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: false);
+
     Accounts page = Accounts(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "user2",
+      currentUser: account,
       api: mockApi,
       testAccounts: accounts,
     );
@@ -168,9 +198,19 @@ void main() {
         isStaff: false,
         isActive: false));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Accounts page = Accounts(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "user1",
+      currentUser: account,
       api: mockApi,
       testAccounts: accounts,
     );

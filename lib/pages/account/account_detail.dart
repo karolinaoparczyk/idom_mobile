@@ -14,11 +14,13 @@ class AccountDetail extends StatefulWidget {
       {Key key,
       @required this.currentLoggedInToken,
       @required this.account,
+      @required this.currentUser,
       @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final Api api;
   final Account account;
+  final Account currentUser;
 
   @override
   _AccountDetailState createState() => new _AccountDetailState();
@@ -101,7 +103,17 @@ class _AccountDetailState extends State<AccountDetail> {
 
   /// navigates according to menu choice
   void _choiceAction(String choice) {
-    if (choice == "Konta") {
+    if (choice == "Moje konto" && widget.currentUser.username != widget.account.username) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api),
+              fullscreenDialog: true));
+    } else if (choice == "Konta") {
       Navigator.pop(context);
     } else if (choice == "Wyloguj") {
       _logOut();
@@ -122,10 +134,19 @@ class _AccountDetailState extends State<AccountDetail> {
                 onSelected: _choiceAction,
                 itemBuilder: (BuildContext context) {
                   /// menu choices from utils/menu_items.dart
-                  return menuChoices.map((String choice) {
-                    return PopupMenuItem(
-                        key: Key(choice), value: choice, child: Text(choice));
-                  }).toList();
+                  return widget.account.isStaff
+                      ? menuChoicesSuperUser.map((String choice) {
+                          return PopupMenuItem(
+                              key: Key(choice),
+                              value: choice,
+                              child: Text(choice));
+                        }).toList()
+                      : menuChoicesNormalUser.map((String choice) {
+                          return PopupMenuItem(
+                              key: Key(choice),
+                              value: choice,
+                              child: Text(choice));
+                        }).toList();
                 })
           ],
         ),

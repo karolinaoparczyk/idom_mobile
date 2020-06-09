@@ -22,10 +22,18 @@ void main() {
   /// tests if does not navigate to accounts from accounts page
   testWidgets('does not navigate, page accounts', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Accounts page = Accounts(
-        currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
-        api: mockApi);
+        currentLoggedInToken: "token", currentUser: account, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.tap(find.byKey(Key('menuButton')));
@@ -61,9 +69,19 @@ void main() {
         isStaff: false,
         isActive: false));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Accounts page = Accounts(
         currentLoggedInToken: "token",
-        currentLoggedInUsername: "user1",
+        currentUser: account,
         api: mockApi,
         testAccounts: accounts);
 
@@ -104,9 +122,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -134,9 +162,19 @@ void main() {
         frequency: 300,
         lastData: "27.0");
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     SensorDetails page = SensorDetails(
         currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
+        currentUser: account,
         sensor: sensor,
         api: mockApi);
 
@@ -159,10 +197,18 @@ void main() {
   testWidgets('navigates, page add sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     NewSensor page = NewSensor(
-        currentLoggedInToken: "token",
-        currentLoggedInUsername: "username",
-        api: mockApi);
+        currentLoggedInToken: "token", currentUser: account, api: mockApi);
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
@@ -177,5 +223,164 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     expect(find.byType(Accounts), findsOneWidget);
+  });
+
+  /// tests if no go to accounts choice available when not superuser, page accounts
+  testWidgets('no go to accounts choice available when not superuser, page accounts', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: false);
+
+    Accounts page = Accounts(
+        currentLoggedInToken: "token", currentUser: account, api: mockApi);
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.tap(find.byKey(Key('menuButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Konta'), findsNothing);
+  });
+
+  /// tests if no go to accounts choice available when not superuser, page accounts details
+  testWidgets('no go to accounts choice available when not superuser, page accounts details', (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+
+        Account account = Account(
+            id: 1,
+            username: "username",
+            email: "email@email.com",
+            telephone: "",
+            appNotifications: "true",
+            smsNotifications: "true",
+            isActive: true,
+            isStaff: false);
+
+        AccountDetail page = AccountDetail(
+            currentLoggedInToken: "token",
+            account: account,
+            currentUser: account,
+            api: mockApi,);
+
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(Key('menuButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+
+        expect(find.text('Konta'), findsNothing);
+  });
+
+  /// tests if no go to accounts choice available when not superuser, page sensors
+  testWidgets('no go to accounts choice available when not superuser, page sensors', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Sensor> sensors = List();
+    sensors.add(Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "temperature",
+        frequency: 300,
+        lastData: "27.0"));
+    sensors.add(Sensor(
+        id: 2,
+        name: "sensor2",
+        category: "temperature",
+        frequency: 300,
+        lastData: "27.0"));
+
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: false);
+
+    Sensors page = Sensors(
+      currentLoggedInToken: "token",
+      currentUser: account,
+      api: mockApi,
+      testSensors: sensors,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.tap(find.byKey(Key('menuButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Konta'), findsNothing);
+  });
+
+  /// tests if no go to accounts choice available when not superuser, page sensors details
+  testWidgets('no go to accounts choice available when not superuser, page sensors details', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "temperature",
+        frequency: 300,
+        lastData: "27.0");
+
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: false);
+
+    SensorDetails page = SensorDetails(
+        currentLoggedInToken: "token",
+        currentUser: account,
+        sensor: sensor,
+        api: mockApi);
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('menuButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Konta'), findsNothing);
+  });
+
+  /// tests if no go to accounts choice available when not superuser, page add sensor
+  testWidgets('no go to accounts choice available when not superuser, page add sensor', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: false);
+
+    NewSensor page = NewSensor(
+        currentLoggedInToken: "token", currentUser: account, api: mockApi);
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('menuButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Konta'), findsNothing);
   });
 }

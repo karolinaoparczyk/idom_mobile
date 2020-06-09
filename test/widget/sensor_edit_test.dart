@@ -31,9 +31,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -76,9 +86,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -120,9 +140,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -165,9 +195,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -214,9 +254,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -266,9 +316,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -314,9 +374,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -367,9 +437,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -434,9 +514,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );
@@ -500,9 +590,19 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
+    Account account = Account(
+        id: 1,
+        username: "username",
+        email: "email@email.com",
+        telephone: "",
+        appNotifications: "true",
+        smsNotifications: "true",
+        isActive: true,
+        isStaff: true);
+
     Sensors page = Sensors(
       currentLoggedInToken: "token",
-      currentLoggedInUsername: "username",
+      currentUser: account,
       api: mockApi,
       testSensors: sensors,
     );

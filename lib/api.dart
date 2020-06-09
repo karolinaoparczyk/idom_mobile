@@ -35,6 +35,12 @@ class Api {
     return resDict;
   }
 
+  /// gets user data
+  Future<List<dynamic>> getUser(username) async {
+    var result = await http.get('$url/users/detail/$username');
+    return [result.body, result.statusCode];
+  }
+
   /// requests logging out
   Future<int> logOut(String token) async {
     try {

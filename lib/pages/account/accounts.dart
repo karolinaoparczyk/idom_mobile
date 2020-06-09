@@ -13,12 +13,12 @@ class Accounts extends StatefulWidget {
   const Accounts(
       {Key key,
       @required this.currentLoggedInToken,
-      @required this.currentLoggedInUsername,
+      @required this.currentUser,
       @required this.api,
       this.testAccounts})
       : super(key: key);
   final String currentLoggedInToken;
-  final String currentLoggedInUsername;
+  final Account currentUser;
   final Api api;
   final List<Account> testAccounts;
 
@@ -27,16 +27,10 @@ class Accounts extends StatefulWidget {
 }
 
 class _AccountsState extends State<Accounts> {
-  Account currentUser;
-
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
     /// if widget is being tested
     if (widget.testAccounts != null) {
-      currentUser = widget.testAccounts
-          .where(
-              (account) => account.username == widget.currentLoggedInUsername)
-          .toList()[0];
       return widget.testAccounts;
     }
 
@@ -49,12 +43,6 @@ class _AccountsState extends State<Accounts> {
           .map((dynamic item) => Account.fromJson(item))
           .where((account) => account.isActive == true)
           .toList();
-
-      /// sets current logged in user
-      currentUser = accounts
-          .where(
-              (account) => account.username == widget.currentLoggedInUsername)
-          .toList()[0];
       return accounts;
     } else {
       throw "Can't get posts";
@@ -133,7 +121,17 @@ class _AccountsState extends State<Accounts> {
   /// we are already on accounts page,
   /// so if user choses accounts in menu, nothing happens
   void _choiceAction(String choice) {
-    if (choice == "Wyloguj") {
+    if (choice == "Moje konto") {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api),
+              fullscreenDialog: true));
+    } else if (choice == "Wyloguj") {
       _logOut();
     }
   }
@@ -149,7 +147,7 @@ class _AccountsState extends State<Accounts> {
               offset: Offset(0, 100),
               onSelected: _choiceAction,
               itemBuilder: (BuildContext context) {
-                return menuChoices.map((String choice) {
+                return menuChoicesSuperUser.map((String choice) {
                   return PopupMenuItem(
                       key: Key(choice), value: choice, child: Text(choice));
                 }).toList();
@@ -175,7 +173,8 @@ class _AccountsState extends State<Accounts> {
                           .map(
                             (Account account) => ListTile(
                                 key: Key(account.username),
-                                title: Text(account.username, style: TextStyle(fontSize: 20.0)),
+                                title: Text(account.username,
+                                    style: TextStyle(fontSize: 20.0)),
 
                                 /// when username tapped, navigates to account's details
                                 onTap: () => Navigator.of(context).push(
@@ -184,6 +183,7 @@ class _AccountsState extends State<Accounts> {
                                             currentLoggedInToken:
                                                 widget.currentLoggedInToken,
                                             account: account,
+                                            currentUser: widget.currentUser,
                                             api: widget.api))),
 
                                 /// delete account button
@@ -203,7 +203,7 @@ class _AccountsState extends State<Accounts> {
 
   /// delete account button
   deleteButtonTrailing(Account account) {
-    if (currentUser.isStaff) {
+    if (widget.currentUser.isStaff) {
       return FlatButton(
         key: Key("deleteButton"),
         child: Icon(Icons.delete),
