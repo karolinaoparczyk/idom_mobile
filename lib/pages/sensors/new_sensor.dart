@@ -14,11 +14,10 @@ import '../../models.dart';
 
 /// adds new sensor
 class NewSensor extends StatefulWidget {
-  NewSensor(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentUser,
-      @required this.api})
+  NewSensor({Key key,
+    @required this.currentLoggedInToken,
+    @required this.currentUser,
+    @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
@@ -103,21 +102,23 @@ class _NewSensorState extends State<NewSensor> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => AccountDetail(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  account: widget.currentUser,
-                  currentUser: widget.currentUser,
-                  api: widget.api),
+              builder: (context) =>
+                  AccountDetail(
+                      currentLoggedInToken: widget.currentLoggedInToken,
+                      account: widget.currentUser,
+                      currentUser: widget.currentUser,
+                      api: widget.api),
               fullscreenDialog: true));
     } else if (choice == "Konta") {
       Api api = Api();
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Accounts(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  currentUser: widget.currentUser,
-                  api: api),
+              builder: (context) =>
+                  Accounts(
+                      currentLoggedInToken: widget.currentLoggedInToken,
+                      currentUser: widget.currentUser,
+                      api: api),
               fullscreenDialog: true));
     } else if (choice == "Wyloguj") {
       _logOut();
@@ -193,6 +194,7 @@ class _NewSensorState extends State<NewSensor> {
         appBar: AppBar(
           title: Text("Dodaj czujnik"),
           actions: <Widget>[
+
             /// builds menu dropdown button
             PopupMenuButton(
                 key: Key("menuButton"),
@@ -217,7 +219,8 @@ class _NewSensorState extends State<NewSensor> {
         ),
 
         /// builds form with sensor properties
-        body: SingleChildScrollView(
+        body: Container(child: Column(
+            children:<Widget>[ Expanded(flex:4, child: SingleChildScrollView(
             child: Form(
                 key: _formKey,
                 child: Column(children: <Widget>[
@@ -230,8 +233,8 @@ class _NewSensorState extends State<NewSensor> {
                           child: Text("Kategoria",
                               style: TextStyle(fontSize: 13.5)))),
                   Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: _buildCategory())),
@@ -247,18 +250,28 @@ class _NewSensorState extends State<NewSensor> {
                           vertical: 10.0, horizontal: 30.0),
                       child: SizedBox(
                           child: Row(children: <Widget>[
-                        Expanded(flex: 3, child: _buildFrequencyValue()),
-                        Expanded(flex: 1, child: SizedBox()),
-                        Expanded(
-                            flex: 5,
-                            child: Align(
-                                alignment: Alignment.bottomLeft,
-                                child: _buildUnits())),
-                      ]))),
-                  Divider(),
-                  buttonWidget(context, "Dodaj czujnik", _saveChanges),
-                  Align(child: loadingIndicator(_load),alignment: FractionalOffset.center,),
-                ]))));
+                            Expanded(flex: 3, child: _buildFrequencyValue()),
+                            Expanded(flex: 1, child: SizedBox()),
+                            Expanded(
+                                flex: 5,
+                                child: Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: _buildUnits())),
+                          ]))),
+                ])))),
+            Expanded(
+                flex: 1, child: AnimatedContainer(
+                curve: Curves.easeInToLinear,
+                duration: Duration(
+                  milliseconds: 10,
+                ),
+                alignment: Alignment.bottomCenter,
+                child: Column(children: <Widget>[buttonWidget(context, "Dodaj czujnik", _saveChanges),
+              Align(
+                child: loadingIndicator(_load),
+                alignment: FractionalOffset.center,
+              ),
+            ])))])));
   }
 
   /// saves changes after form fields and dropdown buttons validation
@@ -277,16 +290,17 @@ class _NewSensorState extends State<NewSensor> {
     if (formState.validate()) {
       /// validates if frequency value is valid for given frequency units
       var validFequencyValue =
-          SensorFrequencyFieldValidator.isFrequencyValueValid(
-              _frequencyValueController.text, selectedUnits);
+      SensorFrequencyFieldValidator.isFrequencyValueValid(
+          _frequencyValueController.text, selectedUnits);
       if (!validFequencyValue) {
         await displayDialog(context, "Błąd",
             "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
         return;
       }
-      setState((){
-        _load=true;
+      setState(() {
+        _load = true;
       });
+
       /// converts frequency value to seconds
       var frequencyInSeconds = int.parse(_frequencyValueController.text);
       if (selectedUnits != "seconds") {
@@ -302,16 +316,16 @@ class _NewSensorState extends State<NewSensor> {
             selectedCategory, frequencyInSeconds, widget.currentLoggedInToken);
 
         if (res['statusCodeSen'] == "201") {
-          setState((){
-            _load=false;
-            });
+          setState(() {
+            _load = false;
+          });
           Navigator.of(context).pop(true);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
           displayDialog(
               context, "Błąd", "Czujnik o podanej nazwie już istnieje.");
-          setState((){
-            _load=false;
+          setState(() {
+            _load = false;
           });
         }
       } catch (e) {
