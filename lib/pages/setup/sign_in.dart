@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
-import 'package:idom/pages/sensors/sensors.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
@@ -16,7 +15,7 @@ import 'package:idom/widgets/loading_indicator.dart';
 class SignIn extends StatefulWidget {
   const SignIn({@required this.api, this.onSignedIn});
 
-  final VoidCallback onSignedIn;
+  final Function(String, Account) onSignedIn;
   final Api api;
 
   @override
@@ -71,7 +70,6 @@ class _SignInState extends State<SignIn> {
         var result = await widget.api.signIn(
             _usernameController.value.text, _passwordController.value.text);
         if (result[1] == 200 && result[0].toString().contains('token')) {
-          widget.onSignedIn();
           var userResult = await widget.api.getUser(
               _usernameController.value.text,
               result[0].split(':')[1].substring(1, 41));
@@ -81,14 +79,8 @@ class _SignInState extends State<SignIn> {
             setState(() {
               _load = false;
             });
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Sensors(
-                        currentLoggedInToken:
-                            result[0].split(':')[1].substring(1, 41),
-                        currentUser: account,
-                        api: widget.api)));
+            widget.onSignedIn(result[0].split(':')[1].substring(1, 41), account);
+            Navigator.of(context).pop();
           }
         } else if (result[1] == 400) {
           setState(() {

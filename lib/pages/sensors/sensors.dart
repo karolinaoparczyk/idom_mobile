@@ -32,13 +32,16 @@ class Sensors extends StatefulWidget {
 class _SensorsState extends State<Sensors> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> menuItems;
-  
+
   /// displays appropriate menu choices according to user data
   @override
   void initState() {
     super.initState();
-    menuItems = widget.currentUser.isStaff ? menuChoicesSuperUser : menuChoicesNormalUser;
+    menuItems = widget.currentUser.isStaff
+        ? menuChoicesSuperUser
+        : menuChoicesNormalUser;
   }
+
   /// returns list of sensors
   Future<List<Sensor>> getSensors() async {
     /// if statement for testing
@@ -151,7 +154,8 @@ class _SensorsState extends State<Sensors> {
                   currentUser: widget.currentUser,
                   api: widget.api),
               fullscreenDialog: true));
-    } if (choice == "Konta") {
+    }
+    if (choice == "Konta") {
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -167,9 +171,7 @@ class _SensorsState extends State<Sensors> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
+    return Scaffold(
           key: _scaffoldKey,
 
           /// adds sensor adding button
@@ -178,13 +180,15 @@ class _SensorsState extends State<Sensors> {
               width: 80.0,
               child: FittedBox(
                   child: FloatingActionButton(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
                 key: Key("addSensorButton"),
                 onPressed: navigateToNewSensor,
-                child: Icon(Icons.add),
+                child: Icon(Icons.add, size: 30),
                 //backgroundColor: Colors.green,
               ))),
           appBar: AppBar(
-            leading: Container(),
+            automaticallyImplyLeading: false,
             title: Text('IDOM Czujniki'),
             actions: <Widget>[
               /// menu dropdown button
@@ -233,14 +237,13 @@ class _SensorsState extends State<Sensors> {
                               )
                               .toList(),
                         ))),
-                    Expanded(flex: 1, child: Divider()),
                   ]);
                 }
 
                 /// shows progress indicator while fetching data
                 return Center(child: CircularProgressIndicator());
               }),
-        ));
+        );
   }
 
   Widget sensorData(Sensor sensor) {
@@ -292,14 +295,18 @@ class _SensorsState extends State<Sensors> {
 
   /// deletes sensor
   deleteButtonTrailing(Sensor sensor) {
-    return FlatButton(
-      key: Key("deleteButton"),
-      child: Icon(Icons.delete),
-      onPressed: () {
-        setState(() {
-          _deactivateSensor(sensor);
-        });
-      },
-    );
+    return SizedBox(
+        width: 35,
+        child: Container(
+            alignment: Alignment.centerRight,
+            child: FlatButton(
+              key: Key("deleteButton"),
+              child: Icon(Icons.delete),
+              onPressed: () {
+                setState(() {
+                  _deactivateSensor(sensor);
+                });
+              },
+            )));
   }
 }

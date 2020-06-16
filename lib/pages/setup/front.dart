@@ -7,15 +7,13 @@ import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
 import 'package:idom/widgets/button.dart';
 
-enum AuthStatus {
-  notSignedIn,
-  signedIn,
-}
+import '../../models.dart';
+
 
 /// allows signing in or signing up
 class Front extends StatefulWidget {
-  Front({this.api});
-
+  Front({this.api, this.onSignedIn});
+  Function(String, Account) onSignedIn;
   Api api;
 
   @override
@@ -23,16 +21,7 @@ class Front extends StatefulWidget {
 }
 
 class _FrontState extends State<Front> {
-  AuthStatus authStatus = AuthStatus.notSignedIn;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String url;
-
-  /// when user logs in successfully
-  void _signedIn() {
-    setState(() {
-      authStatus = AuthStatus.signedIn;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +83,7 @@ class _FrontState extends State<Front> {
         MaterialPageRoute(
             builder: (context) => SignIn(
                   api: widget.api,
-                  onSignedIn: _signedIn,
+                  onSignedIn: widget.onSignedIn,
                 ),
             fullscreenDialog: true));
   }
@@ -106,7 +95,7 @@ class _FrontState extends State<Front> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                SignUp(api: widget.api, onSignedIn: _signedIn),
+                SignUp(api: widget.api, onSignedIn: widget.onSignedIn),
             fullscreenDialog: true));
   }
 }

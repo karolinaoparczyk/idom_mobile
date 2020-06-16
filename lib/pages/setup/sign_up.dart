@@ -9,11 +9,13 @@ import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
+import '../../models.dart';
+
 /// signs user up
 class SignUp extends StatefulWidget {
   const SignUp({Key key, @required this.onSignedIn, @required this.api})
       : super(key: key);
-  final VoidCallback onSignedIn;
+  final Function(String, Account) onSignedIn;
   final Api api;
 
   @override
