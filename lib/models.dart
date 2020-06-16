@@ -68,7 +68,28 @@ class Sensor {
         name: json['name'] as String,
         category: json['category'] as String,
         frequency: json['frequency'] as int,
-   //     lastData: "27.0");
-       lastData: json['last_data'] as String);
+        lastData: json['last_data'] as String);
+  }
+}
+
+class SensorData {
+  int id;
+  String sensorName;
+  String data;
+  DateTime deliveryTime;
+
+  SensorData({
+    @required this.id,
+    @required this.sensorName,
+    @required this.data,
+    @required this.deliveryTime,
+  });
+
+  factory SensorData.fromJson(Map<String, dynamic> json, int id) {
+    return SensorData(
+        id: id,
+        sensorName: json['sensor'] as String,
+        data: json['sensor_data'] as String,
+        deliveryTime: DateTime.parse(json['delivery_time'].substring(0, 19).replaceAll("T", " ") as String));
   }
 }

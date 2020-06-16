@@ -19,7 +19,6 @@ Widget buttonWidget(BuildContext context, String text, Function onPressed) {
             ),
             color: Colors.black,
             padding: EdgeInsets.symmetric(vertical: 12),
-            elevation: 10,
             shape: new RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(30.0))),
       ),

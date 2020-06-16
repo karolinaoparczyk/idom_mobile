@@ -118,7 +118,9 @@ class _SensorsState extends State<Sensors> {
                   setState(() {
                     getSensors();
                   });
+                  Navigator.of(context).pop(true);
                 } else {
+                  Navigator.of(context).pop(true);
                   displayDialog(context, "Błąd",
                       "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.");
                 }
@@ -263,10 +265,10 @@ class _SensorsState extends State<Sensors> {
     if (result != null && result == true) {
       var snackBar = SnackBar(content: Text("Dodano nowy czujnik."));
       _scaffoldKey.currentState.showSnackBar(snackBar);
-      setState(() {
-        getSensors();
-      });
     }
+    setState(() {
+      getSensors();
+    });
   }
 
   /// navigates to sensor's details
@@ -282,10 +284,10 @@ class _SensorsState extends State<Sensors> {
     if (result != null && result == true) {
       var snackBar = SnackBar(content: Text("Zapisano dane czujnika."));
       _scaffoldKey.currentState.showSnackBar(snackBar);
-      setState(() {
-        getSensors();
-      });
     }
+    setState(() {
+      getSensors();
+    });
   }
 
   /// deletes sensor

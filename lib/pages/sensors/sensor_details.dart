@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
@@ -37,6 +40,11 @@ class _SensorDetailsState extends State<SensorDetails> {
   var selectedCategory;
   var selectedUnits;
   bool _load;
+  List<SensorData> sensorData;
+  List<charts.Series<SensorData, DateTime>> _seriesData;
+  DateTime _time;
+  String _measure;
+  String dataMeasuresTime;
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
@@ -50,7 +58,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   @override
   void initState() {
     super.initState();
-    _load = false;
+    _load = true;
 
     /// seting current sensor name
     _editingNameController = TextEditingController(text: widget.sensor.name);
@@ -85,6 +93,106 @@ class _SensorDetailsState extends State<SensorDetails> {
     /// setting current sensor frequency
     _frequencyValueController =
         TextEditingController(text: widget.sensor.frequency.toString());
+
+    _seriesData = List<charts.Series<SensorData, DateTime>>();
+    dataMeasuresTime = "today";
+    setState(() {
+      getSensorData();
+    });
+  }
+
+  _onSelectionChanged(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+
+    DateTime time;
+    String measure;
+
+    if (selectedDatum.isNotEmpty) {
+      time = selectedDatum.first.datum.deliveryTime;
+      selectedDatum.forEach((charts.SeriesDatum datumPair) {
+        measure = datumPair.datum.data;
+      });
+    }
+
+    setState(() {
+      _time = time;
+      _measure = measure;
+    });
+  }
+
+  getSensorData() async {
+    if (widget.sensor.category == "temperature") {
+      var res = await widget.api
+          .getSensorData(widget.currentLoggedInToken, widget.sensor.id);
+      if (res['statusSensorData'] == "200") {
+        List<dynamic> bodySensorData = jsonDecode(res['bodySensorData']);
+        sensorData = List<SensorData>();
+        print(bodySensorData);
+        for (var i = 0; i < bodySensorData.length; i++) {
+          if (bodySensorData[i]['sensor'] == "Temperatura")
+            sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
+        }
+        setState(() {
+          drawPlot();
+        });
+        return sensorData;
+      } else {
+        throw "Can't get sensors";
+      }
+    }
+  }
+
+  drawPlot() {
+    if (_seriesData.length != 0)
+      _seriesData.removeLast();
+    var now = DateTime.now();
+    var data;
+
+    if (dataMeasuresTime == "today") {
+      data = sensorData
+          .where((data) =>
+              data.deliveryTime.year == now.year &&
+              data.deliveryTime.month == now.month &&
+              data.deliveryTime.day == now.day)
+          .toList();
+    } else if (dataMeasuresTime == "thisMonth") {
+      data = sensorData
+          .where((data) =>
+              data.deliveryTime.year == now.year &&
+              data.deliveryTime.month == now.month)
+          .toList();
+    } else if (dataMeasuresTime == "allTime") {
+      data = sensorData;
+    }
+    _seriesData.add(charts.Series(
+        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xffdaa520)),
+        id: "wykres",
+        data: data,
+        domainFn: (SensorData sensorData, _) => sensorData.deliveryTime,
+        measureFn: (SensorData sensorData, _) =>
+            double.parse(sensorData.data)));
+    _load = false;
+  }
+
+  todayPlot() {
+    setState(() {
+      dataMeasuresTime = "today";
+      drawPlot();
+    });
+  }
+
+  thisMonthPlot() {
+    setState(() {
+      dataMeasuresTime = "thisMonth";
+      drawPlot();
+    });
+  }
+
+  allTimePlot() {
+    setState(() {
+      dataMeasuresTime = "allTime";
+      drawPlot();
+    });
   }
 
   /// logs the user out of the app
@@ -140,15 +248,10 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   /// builds sensor name form field
   Widget _buildName() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-        child: TextFormField(
-            key: Key('name'),
-            controller: _editingNameController,
-            decoration: InputDecoration(
-                labelText: 'Nazwa',
-                labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-            validator: SensorNameFieldValidator.validate));
+    return TextFormField(
+        key: Key('name'),
+        controller: _editingNameController,
+        validator: SensorNameFieldValidator.validate);
   }
 
   /// builds sensor category dropdown button
@@ -176,7 +279,6 @@ class _SensorDetailsState extends State<SensorDetails> {
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
           decoration: InputDecoration(
-            labelText: 'Wartość',
             labelStyle: TextStyle(color: Colors.black, fontSize: 18),
           ),
           validator: SensorFrequencyFieldValidator.validate,
@@ -221,17 +323,17 @@ class _SensorDetailsState extends State<SensorDetails> {
                   /// menu choices from utils/menu_items.dart
                   return widget.currentUser.isStaff
                       ? menuChoicesSuperUser.map((String choice) {
-                    return PopupMenuItem(
-                        key: Key(choice),
-                        value: choice,
-                        child: Text(choice));
-                  }).toList()
+                          return PopupMenuItem(
+                              key: Key(choice),
+                              value: choice,
+                              child: Text(choice));
+                        }).toList()
                       : menuChoicesNormalUser.map((String choice) {
-                    return PopupMenuItem(
-                        key: Key(choice),
-                        value: choice,
-                        child: Text(choice));
-                  }).toList();
+                          return PopupMenuItem(
+                              key: Key(choice),
+                              value: choice,
+                              child: Text(choice));
+                        }).toList();
                 })
           ],
         ),
@@ -241,14 +343,32 @@ class _SensorDetailsState extends State<SensorDetails> {
             child: Form(
                 key: _formKey,
                 child: Column(children: <Widget>[
-                  _buildName(),
+                  Align(
+                    child: loadingIndicator(_load),
+                    alignment: FractionalOffset.center,
+                  ),
                   Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Nazwa",
+                              style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
+                      child: _buildName()),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Kategoria",
-                              style: TextStyle(fontSize: 13.5)))),
+                              style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold)))),
                   Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
@@ -256,41 +376,157 @@ class _SensorDetailsState extends State<SensorDetails> {
                           alignment: Alignment.centerLeft,
                           child: _buildCategory())),
                   Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Częstotliwość pobierania danych",
-                              style: TextStyle(fontSize: 13.5)))),
+                              style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold)))),
                   Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
                       child: SizedBox(
                           child: Row(children: <Widget>[
                         Expanded(flex: 3, child: _buildFrequencyValue()),
                         Expanded(flex: 1, child: SizedBox()),
                         Expanded(
                             flex: 5,
-                            child: Align(
-                                alignment: Alignment.bottomLeft,
-                                child: _buildUnits())),
+                            child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 0.0,
+                                    top: 0.0,
+                                    right: 90.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: _buildUnits()))),
+                      ]))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 7.0, right: 30.0, bottom: 0.0),
+                      child: SizedBox(
+                          child: Row(children: <Widget>[
+                        Expanded(
+                            flex: 3,
+                            child: Text("Wartość",
+                                style: TextStyle(fontSize: 13.5))),
+                        Expanded(flex: 1, child: SizedBox()),
+                        Expanded(
+                            flex: 5,
+                            child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 0.0,
+                                    top: 0.0,
+                                    right: 90.0,
+                                    bottom: 0.0),
+                                child: Text("Jednostki",
+                                    style: TextStyle(fontSize: 13.5)))),
                       ]))),
                   Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-                      child: ListTile(
-                        title: Text("Dane z czujnika",
-                            style: TextStyle(fontSize: 13.5)),
-                        subtitle: sensorData(),
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 30.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Aktualna temperatura",
+                            style: TextStyle(
+                                fontSize: 13.5, fontWeight: FontWeight.bold)),
                       )),
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5.0, horizontal: 30.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: getSensorLastData())),
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Okres wyświetlanych danych:",
+                            style: TextStyle(
+                                fontSize: 13.5, fontWeight: FontWeight.bold)),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
+                      child: SizedBox(
+                          child: Row(children: <Widget>[
+                        Expanded(
+                            flex: 1,
+                            child: FlatButton(
+                              key: Key("today"),
+                              child: Text('Dzisiaj', textAlign: TextAlign.center),
+                              onPressed: todayPlot,
+                            )),
+                        Expanded(
+                            flex: 1,
+                            child: FlatButton(
+                              key: Key("thisMonth"),
+                              child: Text('Ten miesiąc', textAlign: TextAlign.center),
+                              onPressed: thisMonthPlot,
+                            )),
+                        Expanded(
+                            flex: 1,
+                            child: FlatButton(
+                              key: Key("allTime"),
+                              child: Text('Ostatnie 30 dni', textAlign: TextAlign.center),
+                              onPressed: allTimePlot,
+                            )),
+                      ]))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 0.0, right: 17.0, bottom: 0.0),
+                      child: Container(
+                          child: Center(
+                              child: Column(children: <Widget>[
+                        SizedBox(
+                            width: 355,
+                            height: 200,
+                            child: _seriesData != null
+                                ? charts.TimeSeriesChart(
+                                    _seriesData,
+                                    defaultRenderer: charts.LineRendererConfig(
+                                        includeArea: true, stacked: true),
+                                    animate: false,
+//                                animationDuration: Duration(seconds: 1),
+                                    primaryMeasureAxis: new charts
+                                            .NumericAxisSpec(
+                                        tickProviderSpec: new charts
+                                                .BasicNumericTickProviderSpec(
+                                            zeroBound: false)),
+                                    selectionModels: [
+                                      new charts.SelectionModelConfig(
+                                        type: charts.SelectionModelType.info,
+                                        changedListener: _onSelectionChanged,
+                                      )
+                                    ],
+                                  )
+                                : Container())
+                      ])))),
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 30.0),
+                      child: _time != null
+                          ? Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                  "${_time.toString().substring(0, 19)}    ${_measure.toString()} °C",
+                                  style: TextStyle(
+                                      fontSize: 17.0,
+                                      fontWeight: FontWeight.bold)),
+                            )
+                          : SizedBox()),
                   Divider(),
                   buttonWidget(context, "Zapisz zmiany", _verifyChanges),
-                  Align(child: loadingIndicator(_load),alignment: FractionalOffset.center,),
+                  SizedBox(height: 50)
                 ]))));
   }
 
-  Widget sensorData() {
-    if (widget.sensor.lastData == null) return Text("Brak danych");
+  Widget getSensorLastData() {
+    if (widget.sensor.lastData == null)
+      return Text("Brak danych", style: TextStyle(fontSize: 17.0));
     return widget.sensor.category == "temperature"
         ? Text("${widget.sensor.lastData} °C", style: TextStyle(fontSize: 17.0))
         : Text("${widget.sensor.lastData} %", style: TextStyle(fontSize: 17.0));
@@ -302,23 +538,22 @@ class _SensorDetailsState extends State<SensorDetails> {
     var name = changedName ? _editingNameController.text : null;
     var category = changedCategory ? selectedCategory : null;
     var frequencyValue = changedFrequencyValue ? frequencyInSeconds : null;
-    setState((){
-      _load=true;
+    setState(() {
+      _load = true;
     });
     try {
-      var res = await widget.api.editSensor(
-          widget.sensor.id, name, category, frequencyValue, widget.currentLoggedInToken);
+      var res = await widget.api.editSensor(widget.sensor.id, name, category,
+          frequencyValue, widget.currentLoggedInToken);
       Navigator.of(context).pop(false);
       if (res['statusCode'] == "200") {
         Navigator.of(context).pop(true);
-
       } else if (res['body']
           .contains("Sensor with provided name already exists")) {
         displayDialog(
             context, "Błąd", "Czujnik o podanej nazwie już istnieje.");
       }
-      setState((){
-        _load=false;
+      setState(() {
+        _load = false;
       });
     } catch (e) {
       print(e);

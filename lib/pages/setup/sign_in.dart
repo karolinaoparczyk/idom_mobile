@@ -10,6 +10,7 @@ import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user in
 class SignIn extends StatefulWidget {
@@ -27,6 +28,12 @@ class _SignInState extends State<SignIn> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _load;
+
+  void initState() {
+    super.initState();
+    _load = false;
+  }
 
   /// builds username text field for the form
   Widget _buildUsername() {
@@ -58,15 +65,22 @@ class _SignInState extends State<SignIn> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
+        setState(() {
+          _load = true;
+        });
         var result = await widget.api.signIn(
             _usernameController.value.text, _passwordController.value.text);
         if (result[1] == 200 && result[0].toString().contains('token')) {
           widget.onSignedIn();
-          var userResult =
-              await widget.api.getUser(_usernameController.value.text);
+          var userResult = await widget.api.getUser(
+              _usernameController.value.text,
+              result[0].split(':')[1].substring(1, 41));
           if (userResult[1] == 200) {
             dynamic body = jsonDecode(userResult[0]);
             Account account = Account.fromJson(body);
+            setState(() {
+              _load = false;
+            });
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -77,6 +91,9 @@ class _SignInState extends State<SignIn> {
                         api: widget.api)));
           }
         } else if (result[1] == 400) {
+          setState(() {
+            _load = false;
+          });
           displayDialog(context, "Błąd logowania",
               "Błędne hasło lub konto z podanym loginem nie istnieje");
         }
@@ -111,10 +128,14 @@ class _SignInState extends State<SignIn> {
                         child: Text('Zapomniałeś/aś hasła?'),
                         onPressed: navigateToEnterEmail,
                       ),
-                      buttonWidget(context, "Zaloguj się", signIn)
+                      buttonWidget(context, "Zaloguj się", signIn),
+                      Align(
+                        child: loadingIndicator(_load),
+                        alignment: FractionalOffset.center,
+                      )
                     ],
                   ))),
-          Expanded(child: SizedBox(width: 1))
+          Expanded(child: SizedBox(width: 1)),
         ],
       ),
     );

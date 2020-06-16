@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 class Api {
   /// sets api url in constructor
   Api() {
-    url = "http://10.0.2.2:8000";
+    url = "http://raspberry2020.ddns.net:38294";
+//    url = "http://10.0.2.2:8000";
   }
 
   String url;
@@ -36,8 +37,9 @@ class Api {
   }
 
   /// gets user data
-  Future<List<dynamic>> getUser(username) async {
-    var result = await http.get('$url/users/detail/$username');
+  Future<List<dynamic>> getUser(username, token) async {
+    var result = await http.get('$url/users/detail/$username',
+        headers: {HttpHeaders.authorizationHeader: "Token $token"});
     return [result.body, result.statusCode];
   }
 
@@ -177,7 +179,7 @@ class Api {
   }
 
   /// gets sensors' frequency
-  Future<Map<String, String>> getSensorData(String userToken) async {
+  Future<Map<String, String>> getSensorData(String userToken, int sensorId) async {
     try {
       var resFrequency = await http.get('$url/sensors_data/list',
           headers: {HttpHeaders.authorizationHeader: "Token $userToken"});

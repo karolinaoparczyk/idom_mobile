@@ -7,6 +7,7 @@ import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user up
 class SignUp extends StatefulWidget {
@@ -27,6 +28,12 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
+  bool _load;
+
+  void initState() {
+    super.initState();
+    _load = false;
+  }
 
   /// builds username form field
   Widget _buildUsername() {
@@ -140,9 +147,13 @@ class _SignUpState extends State<SignUp> {
                         _buildConfirmPassword(),
                         SizedBox(height: 20),
                         buttonWidget(context, "Zarejestruj się", signUp),
+                        Align(
+                          child: loadingIndicator(_load),
+                          alignment: FractionalOffset.center,
+                        )
                       ],
                     ))),
-            Expanded(child: SizedBox(width: 1))
+            Expanded(child: SizedBox(width: 1)),
           ],
         ),
       ),
@@ -161,9 +172,16 @@ class _SignUpState extends State<SignUp> {
     if (formState.validate()) {
       formState.save();
       try {
+        setState(() {
+          _load = true;
+        });
         var res = await widget.api
             .signUp(username, password1, password2, email, telephone);
+
         if (res['statusCode'] == "201") {
+          setState(() {
+            _load = false;
+          });
           await displayDialog(context, "Sukces",
               "Konto zostało utworzone. Możesz się zalogować.");
 
@@ -188,6 +206,9 @@ class _SignUpState extends State<SignUp> {
           displayDialog(context, "Błąd",
               "Konto dla podanego numeru telefonu już istnieje.");
         }
+        setState(() {
+          _load = false;
+        });
       } catch (e) {
         print(e.toString());
       }
