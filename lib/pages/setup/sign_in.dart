@@ -15,7 +15,7 @@ import 'package:idom/widgets/loading_indicator.dart';
 class SignIn extends StatefulWidget {
   const SignIn({@required this.api, this.onSignedIn});
 
-  final Function(String, Account) onSignedIn;
+  final Function(String, Account, Api) onSignedIn;
   final Api api;
 
   @override
@@ -79,7 +79,7 @@ class _SignInState extends State<SignIn> {
             setState(() {
               _load = false;
             });
-            widget.onSignedIn(result[0].split(':')[1].substring(1, 41), account);
+            widget.onSignedIn(result[0].split(':')[1].substring(1, 41), account, widget.api);
             Navigator.of(context).pop();
           }
         } else if (result[1] == 400) {

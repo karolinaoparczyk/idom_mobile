@@ -178,6 +178,23 @@ class Api {
     return null;
   }
 
+  /// gets sensor details
+  Future<Map<String, String>> getSensorDetails(int sensorId, String userToken) async{
+    try {
+      var res = await http.get('$url/sensors/detail/$sensorId',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+
+      Map<String, String> responses = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
   /// gets sensors' frequency
   Future<Map<String, String>> getSensorData(String userToken, int sensorId) async {
     try {

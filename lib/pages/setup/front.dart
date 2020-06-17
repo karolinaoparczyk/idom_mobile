@@ -13,7 +13,7 @@ import '../../models.dart';
 /// allows signing in or signing up
 class Front extends StatefulWidget {
   Front({this.api, this.onSignedIn});
-  Function(String, Account) onSignedIn;
+  Function(String, Account, Api) onSignedIn;
   Api api;
 
   @override

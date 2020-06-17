@@ -13,7 +13,7 @@ import 'package:idom/widgets/dialog.dart';
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
-  const Sensors(
+  Sensors(
       {Key key,
       @required this.currentLoggedInToken,
       @required this.currentUser,
@@ -22,7 +22,7 @@ class Sensors extends StatefulWidget {
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
-  final Api api;
+  Api api;
   final List<Sensor> testSensors;
 
   @override
@@ -37,6 +37,9 @@ class _SensorsState extends State<Sensors> {
   @override
   void initState() {
     super.initState();
+    if (widget.api == null)
+      widget.api = Api();
+
     menuItems = widget.currentUser.isStaff
         ? menuChoicesSuperUser
         : menuChoicesNormalUser;
@@ -276,18 +279,13 @@ class _SensorsState extends State<Sensors> {
 
   /// navigates to sensor's details
   navigateToSensorDetails(Sensor sensor) async {
-    var result = await Navigator.of(context).push(MaterialPageRoute(
+    await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SensorDetails(
             currentLoggedInToken: widget.currentLoggedInToken,
             currentUser: widget.currentUser,
             sensor: sensor,
             api: widget.api)));
 
-    /// displays success message if sensor updated succesfully
-    if (result != null && result == true) {
-      var snackBar = SnackBar(content: Text("Zapisano dane czujnika."));
-      _scaffoldKey.currentState.showSnackBar(snackBar);
-    }
     setState(() {
       getSensors();
     });

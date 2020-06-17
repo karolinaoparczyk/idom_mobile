@@ -22,11 +22,12 @@ class _HomeState extends State<Home> {
   Account currentUser;
 
   /// when user logs in successfully
-  void _signedIn(String token, Account user) {
+  void _signedIn(String token, Account user, Api apiClass) {
     setState(() {
       authStatus = AuthStatus.signedIn;
       currentLoggedInToken = token;
       currentUser = user;
+      api = apiClass;
     });
   }
 

@@ -15,7 +15,7 @@ import '../../models.dart';
 class SignUp extends StatefulWidget {
   const SignUp({Key key, @required this.onSignedIn, @required this.api})
       : super(key: key);
-  final Function(String, Account) onSignedIn;
+  final Function(String, Account, Api) onSignedIn;
   final Api api;
 
   @override
