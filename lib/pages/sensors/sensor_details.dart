@@ -20,10 +20,10 @@ import 'edit_sensor.dart';
 class SensorDetails extends StatefulWidget {
   SensorDetails(
       {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentUser,
-      @required this.sensor,
-      @required this.api})
+        @required this.currentLoggedInToken,
+        @required this.currentUser,
+        @required this.sensor,
+        @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
@@ -37,10 +37,11 @@ class SensorDetails extends StatefulWidget {
 class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  TextEditingController _editingNameController;
-  TextEditingController _frequencyValueController = TextEditingController();
-  String selectedCategory;
-  String selectedUnits;
+  TextEditingController _nameController;
+  TextEditingController _frequencyValueController;
+  TextEditingController _categoryController;
+  TextEditingController _frequencyUnitsController;
+  TextEditingController _currentSensorDataController;
   bool _load;
   List<SensorData> sensorData;
   List<charts.Series<SensorData, DateTime>> _seriesData;
@@ -51,6 +52,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   bool thisMonthChart = false;
   bool allTimeChart = false;
   bool noDataForChart = false;
+  Widget chartWid = Text("");
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
@@ -63,7 +65,7 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   Map<String, String> englishToPolishCategories = {
     "temperature": "temperatura",
-    "humdity": "wilgotność",
+    "humidity": "wilgotność",
   };
 
   @override
@@ -72,44 +74,29 @@ class _SensorDetailsState extends State<SensorDetails> {
     _load = true;
 
     /// seting current sensor name
-    _editingNameController = TextEditingController(text: widget.sensor.name);
-
-    /// available sensor categories choices
-    categories = [
-      DropdownMenuItem(
-          child: Text("Temperatura"),
-          value: "temperature",
-          key: Key("temperature")),
-      DropdownMenuItem(
-          child: Text("Wilgotność"), value: "humidity", key: Key("humidity"))
-    ];
+    _nameController = TextEditingController(text: widget.sensor.name);
 
     /// setting current sensor category
-    selectedCategory = widget.sensor.category;
-
-    /// available frequency units choices
-    units = [
-      DropdownMenuItem(
-          child: Text("Sekundy"), value: "seconds", key: Key("seconds")),
-      DropdownMenuItem(
-          child: Text("Minuty"), value: "minutes", key: Key("minutes")),
-      DropdownMenuItem(
-          child: Text("Godziny"), value: "hours", key: Key("hours")),
-      DropdownMenuItem(child: Text("Dni"), value: "days", key: Key("days"))
-    ];
+    _categoryController = TextEditingController(text: widget.sensor.category);
 
     /// setting current sensor units
-    selectedUnits = "seconds";
+    _frequencyUnitsController = TextEditingController(text: "seconds");
 
     /// setting current sensor frequency
     _frequencyValueController =
         TextEditingController(text: widget.sensor.frequency.toString());
 
+    _currentSensorDataController =
+        TextEditingController(text: widget.sensor.lastData.toString());
+
     _seriesData = List<charts.Series<SensorData, DateTime>>();
     dataMeasuresTime = "today";
-    setState(() {
-      getSensorData();
-    });
+    getSensorData().then((value) => setState(() {
+      if (sensorData.length > 0) {
+        drawPlot();
+      }
+      chartWid = chartWidget();
+    }));
   }
 
   _onSelectionChanged(charts.SelectionModel model) {
@@ -138,14 +125,12 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (res['statusSensorData'] == "200") {
         List<dynamic> bodySensorData = jsonDecode(res['bodySensorData']);
         sensorData = List<SensorData>();
-        print(bodySensorData);
+
         for (var i = 0; i < bodySensorData.length; i++) {
           if (bodySensorData[i]['sensor'] == "send temp")
             sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
         }
-        setState(() {
-          drawPlot();
-        });
+
         return sensorData;
       } else {
         throw "Can't get sensors";
@@ -161,18 +146,31 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (dataMeasuresTime == "today") {
       data = sensorData
           .where((data) =>
-              data.deliveryTime.year == now.year &&
-              data.deliveryTime.month == now.month &&
-              data.deliveryTime.day == now.day)
+      data.deliveryTime.year == now.year &&
+          data.deliveryTime.month == now.month &&
+          data.deliveryTime.day == now.day)
           .toList();
     } else if (dataMeasuresTime == "thisMonth") {
       data = sensorData
           .where((data) =>
-              data.deliveryTime.year == now.year &&
-              data.deliveryTime.month == now.month)
+      data.deliveryTime.year == now.year &&
+          data.deliveryTime.month == now.month)
           .toList();
     } else if (dataMeasuresTime == "allTime") {
       data = sensorData;
+    }
+
+    DateTime time;
+    String measure;
+
+    if (data.length == 1) {
+      time = data[0].deliveryTime;
+      measure = data[0].data;
+
+      setState(() {
+        _time = time;
+        _measure = measure;
+      });
     }
 
     if (data.length > 0) {
@@ -184,11 +182,12 @@ class _SensorDetailsState extends State<SensorDetails> {
           domainFn: (SensorData sensorData, _) => sensorData.deliveryTime,
           measureFn: (SensorData sensorData, _) =>
               double.parse(sensorData.data)));
-    }
-    else{
+    } else {
       noDataForChart = true;
     }
-    _load = false;
+    setState(() {
+      _load = false;
+    });
   }
 
   todayPlot() {
@@ -197,7 +196,10 @@ class _SensorDetailsState extends State<SensorDetails> {
       todayChart = true;
       thisMonthChart = false;
       allTimeChart = false;
+      _time = null;
+      _measure = null;
       drawPlot();
+      chartWid = chartWidget();
     });
   }
 
@@ -207,7 +209,10 @@ class _SensorDetailsState extends State<SensorDetails> {
       todayChart = false;
       thisMonthChart = true;
       allTimeChart = false;
+      _time = null;
+      _measure = null;
       drawPlot();
+      chartWid = chartWidget();
     });
   }
 
@@ -217,7 +222,10 @@ class _SensorDetailsState extends State<SensorDetails> {
       todayChart = false;
       thisMonthChart = false;
       allTimeChart = true;
+      _time = null;
+      _measure = null;
       drawPlot();
+      chartWid = chartWidget();
     });
   }
 
@@ -274,7 +282,7 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   @override
   void dispose() {
-    _editingNameController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -294,17 +302,17 @@ class _SensorDetailsState extends State<SensorDetails> {
                   /// menu choices from utils/menu_items.dart
                   return widget.currentUser.isStaff
                       ? menuChoicesSuperUser.map((String choice) {
-                          return PopupMenuItem(
-                              key: Key(choice),
-                              value: choice,
-                              child: Text(choice));
-                        }).toList()
+                    return PopupMenuItem(
+                        key: Key(choice),
+                        value: choice,
+                        child: Text(choice));
+                  }).toList()
                       : menuChoicesNormalUser.map((String choice) {
-                          return PopupMenuItem(
-                              key: Key(choice),
-                              value: choice,
-                              child: Text(choice));
-                        }).toList();
+                    return PopupMenuItem(
+                        key: Key(choice),
+                        value: choice,
+                        child: Text(choice));
+                  }).toList();
                 })
           ],
         ),
@@ -325,20 +333,19 @@ class _SensorDetailsState extends State<SensorDetails> {
                           alignment: Alignment.centerLeft,
                           child: Text("Nazwa",
                               style: TextStyle(
-                                color: textColor,
+                                  color: textColor,
                                   fontSize: 13.5,
                                   fontWeight: FontWeight.bold)))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(_editingNameController.text,
-                              style: TextStyle(
-                                  fontSize: 17.0)))),
+                          child: Text(_nameController.text,
+                              style: TextStyle(fontSize: 17.0)))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 14, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Kategoria",
@@ -348,15 +355,16 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   fontWeight: FontWeight.bold)))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 14, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(englishToPolishCategories[selectedCategory],
-                              style: TextStyle(
-                                  fontSize: 17.0)))),
+                          child: Text(
+                              englishToPolishCategories[
+                              _categoryController.text],
+                              style: TextStyle(fontSize: 17.0)))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Częstotliwość pobierania danych",
@@ -366,140 +374,126 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   fontWeight: FontWeight.bold)))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
                       child: SizedBox(
                           child: Row(children: <Widget>[
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                              Text(_frequencyValueController.text,
-                            style: TextStyle(
-                                fontSize: 17.0)),
-                          ]),
-                      SizedBox(width: 5.0),
-                      Column( children: <Widget>[
-
-                      Text(englishToPolishUnits[selectedUnits],
-                                    style: TextStyle(
-                                        fontSize: 17.0)),
-                        ])
-                                ]))),
+                                  Text(_frequencyValueController.text,
+                                      style: TextStyle(fontSize: 17.0)),
+                                ]),
+                            SizedBox(width: 5.0),
+                            Column(children: <Widget>[
+                              Text(
+                                  englishToPolishUnits[
+                                  _frequencyUnitsController.text],
+                                  style: TextStyle(fontSize: 17.0)),
+                            ])
+                          ]))),
                   Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 13.5, horizontal: 30.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text("Aktualna temperatura",
                             style: TextStyle(
-                                color: textColor, fontSize: 13.5, fontWeight: FontWeight.bold)),
+                                color: textColor,
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.bold)),
                       )),
                   Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
+                      EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: getSensorLastData())),
                   Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 13.5, horizontal: 30.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text("Okres wyświetlanych danych:",
                             style: TextStyle(
-                                color: textColor, fontSize: 13.5, fontWeight: FontWeight.bold)),
+                                color: textColor,
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.bold)),
                       )),
                   Padding(
                       padding: EdgeInsets.only(
                           left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
                       child: SizedBox(
                           child: Row(children: <Widget>[
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                                margin: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: !todayChart ? textColor : Colors.black),
-                                  borderRadius: BorderRadius.circular(30.0)
-                                ),
-                                child:FlatButton(
-                              key: Key("today"),
-                              child:
-                                  Text('Dzisiaj', textAlign: TextAlign.center),
-                              onPressed: !todayChart ? todayPlot : null,
-                            ))),
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                                margin: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: !thisMonthChart ? textColor : Colors.black),
-                                    borderRadius: BorderRadius.circular(30.0)
-                                ),
-                                child:FlatButton(
-                              key: Key("thisMonth"),
-                              child: Text('Ten miesiąc',
-                                  textAlign: TextAlign.center),
-                              onPressed: !thisMonthChart ? thisMonthPlot : null,
-                            ))),
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                                margin: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: !allTimeChart ? textColor : Colors.black),
-                                    borderRadius: BorderRadius.circular(30.0)
-                                ),
-                                child:FlatButton(
-                              key: Key("allTime"),
-                              child: Text('Ostatnie \n30 dni',
-                                  textAlign: TextAlign.center),
-                              onPressed: !allTimeChart ? allTimePlot : null,
-                            ))),
-                      ]))),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    margin: const EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: !todayChart
+                                                ? textColor
+                                                : Colors.black),
+                                        borderRadius: BorderRadius.circular(30.0)),
+                                    child: FlatButton(
+                                      key: Key("today"),
+                                      child: Text('Dzisiaj',
+                                          textAlign: TextAlign.center),
+                                      onPressed: !todayChart ? todayPlot : null,
+                                    ))),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    margin: const EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: !thisMonthChart
+                                                ? textColor
+                                                : Colors.black),
+                                        borderRadius: BorderRadius.circular(30.0)),
+                                    child: FlatButton(
+                                      key: Key("thisMonth"),
+                                      child: Text('Ten miesiąc',
+                                          textAlign: TextAlign.center),
+                                      onPressed:
+                                      !thisMonthChart ? thisMonthPlot : null,
+                                    ))),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    margin: const EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: !allTimeChart
+                                                ? textColor
+                                                : Colors.black),
+                                        borderRadius: BorderRadius.circular(30.0)),
+                                    child: FlatButton(
+                                      key: Key("allTime"),
+                                      child: Text('Ostatnie \n30 dni',
+                                          textAlign: TextAlign.center),
+                                      onPressed: !allTimeChart ? allTimePlot : null,
+                                    ))),
+                          ]))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 10.0, right: 17.0, bottom: 0.0),
+                          left: 30.0, top: 13.5, right: 17.0, bottom: 0.0),
                       child: Container(
                           child: Center(
                               child: Column(children: <Widget>[
-                        SizedBox(
-                            width: 355,
-                            height: 200,
-                            child: !noDataForChart
-                                ? charts.TimeSeriesChart(
-                                    _seriesData,
-                                    defaultRenderer: charts.LineRendererConfig(
-                                        includeArea: true, stacked: true),
-                                    animate: false,
-//                                animationDuration: Duration(seconds: 1),
-                                    primaryMeasureAxis: new charts
-                                            .NumericAxisSpec(
-                                        tickProviderSpec: new charts
-                                                .BasicNumericTickProviderSpec(
-                                            zeroBound: false)),
-                                    selectionModels: [
-                                      new charts.SelectionModelConfig(
-                                        type: charts.SelectionModelType.info,
-                                        changedListener: _onSelectionChanged,
-                                      )
-                                    ],
-                                  )
-                                : Container(child: Text("Brak danych z wybranego okresu.",
-                                style: TextStyle(
-                                    fontSize: 17.0))))
-                      ])))),
+                                SizedBox(width: 355, height: 200, child: chartWid)
+                              ])))),
                   Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
                       child: _time != null
                           ? Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                  "${_time.toString().substring(0, 19)}    ${_measure.toString()} °C",
-                                  style: TextStyle(
-                                      fontSize: 17.0,
-                                      fontWeight: FontWeight.bold)),
-                            )
+                        alignment: Alignment.center,
+                        child: Text(
+                            "${_time.toString().substring(0, 19)}    ${_measure.toString()} °C",
+                            style: TextStyle(
+                                fontSize: 17.0,
+                                fontWeight: FontWeight.bold)),
+                      )
                           : SizedBox()),
                   buttonWidget(
                       context, "Edytuj czujnik", _navigateToEditSensor),
@@ -508,15 +502,17 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   Widget getSensorLastData() {
-    if (widget.sensor.lastData == null)
+    if (_currentSensorDataController.text == null)
       return Text("Brak danych", style: TextStyle(fontSize: 17.0));
     return widget.sensor.category == "temperature"
-        ? Text("${widget.sensor.lastData} °C", style: TextStyle(fontSize: 17.0))
-        : Text("${widget.sensor.lastData} %", style: TextStyle(fontSize: 17.0));
+        ? Text("${_currentSensorDataController.text} °C",
+        style: TextStyle(fontSize: 17.0))
+        : Text("${_currentSensorDataController.text} %",
+        style: TextStyle(fontSize: 17.0));
   }
 
   _navigateToEditSensor() async {
-    var result = Navigator.push(
+    var result = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => EditSensor(
@@ -533,10 +529,8 @@ class _SensorDetailsState extends State<SensorDetails> {
       setState(() {
         _load = true;
       });
+
       await _refreshSensorDetails();
-      setState(() {
-        _load = false;
-      });
     }
   }
 
@@ -546,12 +540,48 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (res['statusCode'] == "200") {
       dynamic body = jsonDecode(res['body']);
       Sensor refreshedSensor = Sensor.fromJson(body);
-      setState(() {
+      getSensorData().then((value) => setState(() {
+        _nameController = TextEditingController(text: refreshedSensor.name);
+        _categoryController =
+            TextEditingController(text: refreshedSensor.category);
+        _frequencyValueController = TextEditingController(
+            text: refreshedSensor.frequency.toString());
+        _currentSensorDataController = TextEditingController(
+            text: refreshedSensor.lastData.toString());
         widget.sensor = refreshedSensor;
-      });
+        if (sensorData.length > 0) {
+          drawPlot();
+        }
+        chartWid = chartWidget();
+      }));
     } else {
       displayDialog(
           context, "Błąd", "Odświeżenie danych czujnika nie powiodło się.");
     }
+  }
+
+  Widget chartWidget() {
+    if (!_load) {
+      return charts.TimeSeriesChart(
+        _seriesData,
+        defaultRenderer:
+        charts.LineRendererConfig(includeArea: true, stacked: true),
+        animate: true,
+        primaryMeasureAxis: new charts.NumericAxisSpec(
+            tickProviderSpec:
+            new charts.BasicNumericTickProviderSpec(zeroBound: false)),
+        selectionModels: [
+          new charts.SelectionModelConfig(
+            type: charts.SelectionModelType.info,
+            changedListener: _onSelectionChanged,
+          )
+        ],
+      );
+    } else if (noDataForChart) {
+      return Container(
+          child: Text("Brak danych z wybranego okresu.",
+              style: TextStyle(fontSize: 17.0)));
+    }
+    return null;
   }
 }
