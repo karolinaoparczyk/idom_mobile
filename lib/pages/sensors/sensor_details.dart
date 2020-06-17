@@ -52,6 +52,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   bool thisMonthChart = false;
   bool allTimeChart = false;
   bool noDataForChart = false;
+  bool dataLoaded = false;
   Widget chartWid = Text("");
 
   List<DropdownMenuItem<String>> categories;
@@ -92,10 +93,13 @@ class _SensorDetailsState extends State<SensorDetails> {
     _seriesData = List<charts.Series<SensorData, DateTime>>();
     dataMeasuresTime = "today";
     getSensorData().then((value) => setState(() {
-      if (sensorData.length > 0) {
+      if (sensorData != null && sensorData.length > 0) {
         drawPlot();
       }
       chartWid = chartWidget();
+      setState(() {
+        _load = false;
+      });
     }));
   }
 
@@ -119,23 +123,24 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   getSensorData() async {
-    if (widget.sensor.category == "temperature") {
       var res = await widget.api
           .getSensorData(widget.currentLoggedInToken, widget.sensor.id);
       if (res['statusSensorData'] == "200") {
-        List<dynamic> bodySensorData = jsonDecode(res['bodySensorData']);
-        sensorData = List<SensorData>();
+        if (res['bodySensorData'] != "[]") {
+          List<dynamic> bodySensorData = jsonDecode(res['bodySensorData']);
+          sensorData = List<SensorData>();
 
-        for (var i = 0; i < bodySensorData.length; i++) {
-          if (bodySensorData[i]['sensor'] == "send temp")
+          for (var i = 0; i < bodySensorData.length; i++) {
             sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
+          }
+          noDataForChart = false;
+          dataLoaded = true;
+          return sensorData;
+        } else {
+          noDataForChart = true;
+          dataLoaded = false;
         }
-
-        return sensorData;
-      } else {
-        throw "Can't get sensors";
       }
-    }
   }
 
   drawPlot() {
@@ -182,6 +187,9 @@ class _SensorDetailsState extends State<SensorDetails> {
           domainFn: (SensorData sensorData, _) => sensorData.deliveryTime,
           measureFn: (SensorData sensorData, _) =>
               double.parse(sensorData.data)));
+      setState(() {
+        dataLoaded = true;
+      });
     } else {
       noDataForChart = true;
     }
@@ -198,8 +206,10 @@ class _SensorDetailsState extends State<SensorDetails> {
       allTimeChart = false;
       _time = null;
       _measure = null;
-      drawPlot();
-      chartWid = chartWidget();
+      if (sensorData != null && sensorData.length > 0) {
+        drawPlot();}
+        chartWid = chartWidget();
+
     });
   }
 
@@ -211,8 +221,10 @@ class _SensorDetailsState extends State<SensorDetails> {
       allTimeChart = false;
       _time = null;
       _measure = null;
-      drawPlot();
-      chartWid = chartWidget();
+      if (sensorData != null && sensorData.length > 0) {
+        drawPlot();}
+        chartWid = chartWidget();
+
     });
   }
 
@@ -224,8 +236,10 @@ class _SensorDetailsState extends State<SensorDetails> {
       allTimeChart = true;
       _time = null;
       _measure = null;
-      drawPlot();
-      chartWid = chartWidget();
+      if (sensorData != null && sensorData.length > 0) {
+        drawPlot();}
+        chartWid = chartWidget();
+
     });
   }
 
@@ -502,7 +516,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   Widget getSensorLastData() {
-    if (_currentSensorDataController.text == null)
+    if (_currentSensorDataController.text == "null")
       return Text("Brak danych", style: TextStyle(fontSize: 17.0));
     return widget.sensor.category == "temperature"
         ? Text("${_currentSensorDataController.text} °C",
@@ -561,7 +575,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   Widget chartWidget() {
-    if (!_load) {
+    if (dataLoaded) {
       return charts.TimeSeriesChart(
         _seriesData,
         defaultRenderer:

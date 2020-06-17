@@ -198,7 +198,7 @@ class Api {
   /// gets sensors' frequency
   Future<Map<String, String>> getSensorData(String userToken, int sensorId) async {
     try {
-      var resFrequency = await http.get('$url/sensors_data/list',
+      var resFrequency = await http.get('$url/sensors_data/list/$sensorId',
           headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
 
       Map<String, String> responses = {

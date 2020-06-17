@@ -312,7 +312,7 @@ class _EditSensorState extends State<EditSensor> {
                                     bottom: 0.0),
                                 child: SizedBox(
                                     child: Row(children: <Widget>[
-                                      Expanded(flex: 6,
+                                      Expanded(flex: 8,
                                           child: _buildFrequencyValue()),
                                       Expanded(flex: 1, child: SizedBox()),
                                       Expanded(

@@ -10,6 +10,7 @@ import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/text_color.dart';
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
@@ -184,7 +185,7 @@ class _SensorsState extends State<Sensors> {
               child: FittedBox(
                   child: FloatingActionButton(
                 backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
+                foregroundColor: textColor,
                 key: Key("addSensorButton"),
                 onPressed: navigateToNewSensor,
                 child: Icon(Icons.add, size: 30),
@@ -222,24 +223,25 @@ class _SensorsState extends State<Sensors> {
                     Expanded(
                         flex: 16,
                         child: Scrollbar(
-                            child: ListView(
+                            child: ListView.separated(
+                              separatorBuilder: (context, index) => Divider(
+                                color: textColor,
+                              ),
                           shrinkWrap: true,
-                          children: sensors
-                              .map(
-                                (Sensor sensor) => ListTile(
-                                    key: Key(sensor.name),
-                                    title: Text(sensor.name,
+                          itemCount: sensors.length,
+                              itemBuilder: (context, index) => ListTile(
+                                    key: Key(sensors[index].name),
+                                    title: Text(sensors[index].name,
                                         style: TextStyle(fontSize: 20.0)),
-                                    subtitle: sensorData(sensor),
+                                    subtitle: sensorData(sensors[index]),
                                     onTap: () {
-                                      navigateToSensorDetails(sensor);
+                                      navigateToSensorDetails(sensors[index]);
                                     },
 
                                     /// delete sensor button
-                                    trailing: deleteButtonTrailing(sensor)),
+                                    trailing: deleteButtonTrailing(sensors[index])),
                               )
-                              .toList(),
-                        ))),
+                        )),
                   ]);
                 }
 
@@ -252,8 +254,8 @@ class _SensorsState extends State<Sensors> {
   Widget sensorData(Sensor sensor) {
     if (sensor.lastData == null) return Text("");
     return sensor.category == "temperature"
-        ? Text("${sensor.lastData} °C", style: TextStyle(fontSize: 17.0))
-        : Text("${sensor.lastData} %", style: TextStyle(fontSize: 17.0));
+        ? Text("${sensor.lastData} °C", style: TextStyle(fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold))
+        : Text("${sensor.lastData} %", style: TextStyle(fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold));
   }
 
   /// navigates to adding sensor page

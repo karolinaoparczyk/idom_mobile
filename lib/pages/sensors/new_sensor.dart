@@ -9,15 +9,17 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/widgets/text_color.dart';
 
 import '../../models.dart';
 
 /// adds new sensor
 class NewSensor extends StatefulWidget {
-  NewSensor({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentUser,
-    @required this.api})
+  NewSensor(
+      {Key key,
+      @required this.currentLoggedInToken,
+      @required this.currentUser,
+      @required this.api})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
@@ -102,23 +104,21 @@ class _NewSensorState extends State<NewSensor> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  AccountDetail(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      account: widget.currentUser,
-                      currentUser: widget.currentUser,
-                      api: widget.api),
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api),
               fullscreenDialog: true));
     } else if (choice == "Konta") {
       Api api = Api();
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  Accounts(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      currentUser: widget.currentUser,
-                      api: api),
+              builder: (context) => Accounts(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  currentUser: widget.currentUser,
+                  api: api),
               fullscreenDialog: true));
     } else if (choice == "Wyloguj") {
       _logOut();
@@ -127,23 +127,27 @@ class _NewSensorState extends State<NewSensor> {
 
   /// builds sensor name form field
   Widget _buildName() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-        child: TextFormField(
-            autofocus: true,
-            key: Key('name'),
-            controller: _nameController,
-            decoration: InputDecoration(
-                labelText: 'Nazwa',
-                labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-            validator: SensorNameFieldValidator.validate));
+    return TextFormField(
+        decoration: InputDecoration(
+          contentPadding:
+              EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 0.0),
+          border: InputBorder.none,
+          hintText: "Podaj nazwę",
+        ),
+        autofocus: true,
+        key: Key('name'),
+        style: TextStyle(fontSize: 17.0),
+        controller: _nameController,
+        validator: SensorNameFieldValidator.validate);
   }
 
   /// builds sensor category dropdown button
   Widget _buildCategory() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
-        child: DropdownButton(
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton(
+          style: TextStyle(fontSize: 17.0, color: Colors.black),
           key: Key("categoriesButon"),
           items: categories,
           onChanged: (val) {
@@ -152,7 +156,7 @@ class _NewSensorState extends State<NewSensor> {
             });
           },
           value: selectedCategory,
-        ));
+        )));
   }
 
   /// builds sensor frequency value form field
@@ -163,9 +167,10 @@ class _NewSensorState extends State<NewSensor> {
           key: Key('frequencyValue'),
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
+          style: TextStyle(fontSize: 17.0),
           decoration: InputDecoration(
-            labelText: 'Wartość',
-            labelStyle: TextStyle(color: Colors.black, fontSize: 18),
+            border: InputBorder.none,
+            hintText: "Podaj wartość",
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -175,7 +180,9 @@ class _NewSensorState extends State<NewSensor> {
   Widget _buildUnits() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: DropdownButton(
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton(
+          style: TextStyle(fontSize: 17.0, color: Colors.black),
           key: Key("unitsButton"),
           items: units,
           onChanged: (val) {
@@ -184,7 +191,7 @@ class _NewSensorState extends State<NewSensor> {
             });
           },
           value: selectedUnits,
-        ));
+        )));
   }
 
   @override
@@ -194,7 +201,6 @@ class _NewSensorState extends State<NewSensor> {
         appBar: AppBar(
           title: Text("Dodaj czujnik"),
           actions: <Widget>[
-
             /// builds menu dropdown button
             PopupMenuButton(
                 key: Key("menuButton"),
@@ -203,75 +209,124 @@ class _NewSensorState extends State<NewSensor> {
                 itemBuilder: (BuildContext context) {
                   return widget.currentUser.isStaff
                       ? menuChoicesSuperUser.map((String choice) {
-                    return PopupMenuItem(
-                        key: Key(choice),
-                        value: choice,
-                        child: Text(choice));
-                  }).toList()
+                          return PopupMenuItem(
+                              key: Key(choice),
+                              value: choice,
+                              child: Text(choice));
+                        }).toList()
                       : menuChoicesNormalUser.map((String choice) {
-                    return PopupMenuItem(
-                        key: Key(choice),
-                        value: choice,
-                        child: Text(choice));
-                  }).toList();
+                          return PopupMenuItem(
+                              key: Key(choice),
+                              value: choice,
+                              child: Text(choice));
+                        }).toList();
                 })
           ],
         ),
 
         /// builds form with sensor properties
-        body: Container(child: Column(
-            children:<Widget>[ Expanded(flex:4, child: SingleChildScrollView(
-            child: Form(
-                key: _formKey,
-                child: Column(children: <Widget>[
-                  _buildName(),
-                  Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Kategoria",
-                              style: TextStyle(fontSize: 13.5)))),
-                  Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 0.0, horizontal: 0.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: _buildCategory())),
-                  Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Częstotliwość pobierania danych",
-                              style: TextStyle(fontSize: 13.5)))),
-                  Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
-                      child: SizedBox(
-                          child: Row(children: <Widget>[
-                            Expanded(flex: 3, child: _buildFrequencyValue()),
-                            Expanded(flex: 1, child: SizedBox()),
-                            Expanded(
-                                flex: 5,
-                                child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: _buildUnits())),
-                          ]))),
-                ])))),
-            Expanded(
-                flex: 1, child: AnimatedContainer(
-                curve: Curves.easeInToLinear,
-                duration: Duration(
-                  milliseconds: 10,
-                ),
-                alignment: Alignment.bottomCenter,
-                child: Column(children: <Widget>[buttonWidget(context, "Dodaj czujnik", _saveChanges),
-              Align(
-                child: loadingIndicator(_load),
-                alignment: FractionalOffset.center,
-              ),
-            ])))])));
+        body: Container(
+            child: Column(children: <Widget>[
+          Expanded(
+              flex: 4,
+              child: SingleChildScrollView(
+                  child: Form(
+                      key: _formKey,
+                      child: Column(children: <Widget>[
+                        Align(
+                          child: loadingIndicator(_load),
+                          alignment: FractionalOffset.center,
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 10.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text("Nazwa",
+                                    style: TextStyle(
+                                        color: textColor,
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.bold)))),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 0.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: _buildName()),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 0.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text("Kategoria",
+                                    style: TextStyle(
+                                        color: textColor,
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.bold)))),
+                        Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 0.0, horizontal: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: _buildCategory())),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 0.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                    "Częstotliwość pobierania danych",
+                                    style: TextStyle(
+                                        color: textColor,
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.bold)))),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 0.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: SizedBox(
+                                child: Row(children: <Widget>[
+                                  Expanded(flex: 8,
+                                      child: _buildFrequencyValue()),
+                                  Expanded(flex: 1, child: SizedBox()),
+                                  Expanded(
+                                      flex: 12,
+                                      child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 0.0,
+                                              top: 0.0,
+                                              right: 0.0,
+                                              bottom: 0.0),
+                                          child: Align(
+                                              alignment: Alignment
+                                                  .bottomLeft,
+                                              child: _buildUnits()))),
+                                ]))),
+                      ])))),
+          Expanded(
+              flex: 1,
+              child: AnimatedContainer(
+                  curve: Curves.easeInToLinear,
+                  duration: Duration(
+                    milliseconds: 10,
+                  ),
+                  alignment: Alignment.bottomCenter,
+                  child: Column(children: <Widget>[
+                    buttonWidget(context, "Dodaj czujnik", _saveChanges),
+                  ])))
+        ])));
   }
 
   /// saves changes after form fields and dropdown buttons validation
@@ -290,8 +345,8 @@ class _NewSensorState extends State<NewSensor> {
     if (formState.validate()) {
       /// validates if frequency value is valid for given frequency units
       var validFequencyValue =
-      SensorFrequencyFieldValidator.isFrequencyValueValid(
-          _frequencyValueController.text, selectedUnits);
+          SensorFrequencyFieldValidator.isFrequencyValueValid(
+              _frequencyValueController.text, selectedUnits);
       if (!validFequencyValue) {
         await displayDialog(context, "Błąd",
             "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
