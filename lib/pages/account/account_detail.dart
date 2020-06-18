@@ -1,14 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/menu_items.dart';
-import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/widgets/text_color.dart';
 
-/// displays account details and allows editing them
+import 'accounts.dart';
+import 'edit_account.dart';
+
+/// displays account details
 class AccountDetail extends StatefulWidget {
   AccountDetail(
       {Key key,
@@ -19,7 +25,7 @@ class AccountDetail extends StatefulWidget {
       : super(key: key);
   final String currentLoggedInToken;
   final Api api;
-  final Account account;
+  Account account;
   final Account currentUser;
 
   @override
@@ -29,51 +35,24 @@ class AccountDetail extends StatefulWidget {
 class _AccountDetailState extends State<AccountDetail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _load;
 
-  TextEditingController _editingEmailController;
-  TextEditingController _editingTelephoneController;
-
-  /// builds email form field
-  Widget _buildEmail() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-        child: TextFormField(
-            key: Key('email'),
-            controller: _editingEmailController,
-            decoration: InputDecoration(
-              labelText: 'Email',
-              labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-            ),
-            keyboardType: TextInputType.emailAddress,
-            validator: EmailFieldValidator.validate));
-  }
-
-  /// builds telephone form field
-  Widget _buildTelephone() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-        child: TextFormField(
-            key: Key('telephone'),
-            controller: _editingTelephoneController,
-            decoration: InputDecoration(
-                labelText: 'Nr telefonu komórkowego',
-                labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-            keyboardType: TextInputType.phone,
-            validator: TelephoneFieldValidator.validate));
-  }
+  TextEditingController _emailController;
+  TextEditingController _telephoneController;
 
   @override
   void initState() {
     super.initState();
-    _editingEmailController = TextEditingController(text: widget.account.email);
-    _editingTelephoneController =
+    _load = false;
+    _emailController = TextEditingController(text: widget.account.email);
+    _telephoneController =
         TextEditingController(text: widget.account.telephone);
   }
 
   @override
   void dispose() {
-    _editingEmailController.dispose();
-    _editingTelephoneController.dispose();
+    _emailController.dispose();
+    _telephoneController.dispose();
     super.dispose();
   }
 
@@ -114,7 +93,14 @@ class _AccountDetailState extends State<AccountDetail> {
                   api: widget.api),
               fullscreenDialog: true));
     } else if (choice == "Konta") {
-      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Accounts(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  currentUser: widget.currentUser,
+                  api: widget.api),
+              fullscreenDialog: true));
     } else if (choice == "Wyloguj") {
       _logOut();
     }
@@ -134,7 +120,7 @@ class _AccountDetailState extends State<AccountDetail> {
                 onSelected: _choiceAction,
                 itemBuilder: (BuildContext context) {
                   /// menu choices from utils/menu_items.dart
-                  return widget.account.isStaff
+                  return widget.currentUser.isStaff
                       ? menuChoicesSuperUser.map((String choice) {
                           return PopupMenuItem(
                               key: Key(choice),
@@ -154,102 +140,106 @@ class _AccountDetailState extends State<AccountDetail> {
             child: Form(
                 key: _formKey,
                 child: Column(children: <Widget>[
+                  Align(
+                    child: loadingIndicator(_load),
+                    alignment: FractionalOffset.center,
+                  ),
                   Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-                      child: ListTile(
-                        title: Text("Login", style: TextStyle(fontSize: 13.5)),
-                        subtitle: Text(widget.account.username,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                      )),
-                  _buildEmail(),
-                  _buildTelephone(),
-                  Divider(),
-                  buttonWidget(context, "Zapisz zmiany", _verifyChanges)
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Login",
+                              style: TextStyle(
+                                  color: textColor,
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(widget.account.username,
+                              style: TextStyle(fontSize: 17.0)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 10, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Adres E-mail",
+                              style: TextStyle(
+                                  color: textColor,
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 14, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(_emailController.text,
+                              style: TextStyle(fontSize: 17.0)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 14, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Nr telefonu",
+                              style: TextStyle(
+                                  color: textColor,
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 13.5, right: 30.0, bottom: 15.5),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(_telephoneController.text,
+                              style: TextStyle(fontSize: 17.0)))),
+                  buttonWidget(context, "Edytuj konto", _navitageToEditAccount)
                 ]))));
   }
+  _navitageToEditAccount() async {
+    var result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EditAccount(
+                currentLoggedInToken: widget.currentLoggedInToken,
+                currentUser: widget.currentUser,
+                account: widget.account,
+                api: widget.api),
+            fullscreenDialog: true));
 
-  /// saves changes or displays error dialogs
-  _saveChanges(bool changedEmail, bool changedTelephone) async {
-    var email = changedEmail ? _editingEmailController.text : null;
-    var telephone = changedTelephone ? _editingTelephoneController.text : null;
-    try {
-      var res =
-          await widget.api.editAccount(widget.account.id, email, telephone);
-      Navigator.of(context).pop(false);
-      if (res['statusCode'] == "200") {
-        var snackBar = SnackBar(content: Text("Zapisano dane konta."));
-        _scaffoldKey.currentState.showSnackBar(snackBar);
-      } else if (res['body'].contains("User with given email already exists")) {
-        displayDialog(
-            context, "Błąd", "Konto dla podanego adresu email już istnieje.");
-      } else if (res['body'].contains("Enter a valid phone number")) {
-        displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
-      } else if (res['body']
-          .contains("User with given telephone number already exists")) {
-        displayDialog(context, "Błąd",
-            "Konto dla podanego numeru telefonu już istnieje.");
-      }
-    } catch (e) {
-      print(e);
+    if (result != null && result == true) {
+      var snackBar = SnackBar(content: Text("Zapisano dane użytkownika."));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+
+      setState(() {
+        _load = true;
+      });
+
+      await _refreshAccountDetails();
+
+      setState(() {
+        _load = false;
+      });
     }
   }
 
-  /// confirms saving account changes
-  _confirmSavingChanges(bool changedEmail, bool changedTelephone) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: Text("Potwierdź"),
-          content: Text("Czy na pewno zapisać zmiany?"),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            FlatButton(
-              key: Key("yesButton"),
-              child: Text("Tak"),
-              onPressed: () async {
-                await _saveChanges(changedEmail, changedTelephone);
-              },
-            ),
-            FlatButton(
-              key: Key("noButton"),
-              child: Text("Nie"),
-              onPressed: () async {
-                Navigator.of(context).pop(false);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// verifies data changes
-  _verifyChanges() async {
-    var email = _editingEmailController.text;
-    var telephone = _editingTelephoneController.text;
-    var changedEmail = false;
-    var changedTelephone = false;
-
-    final formState = _formKey.currentState;
-    if (formState.validate()) {
-      /// sends request only if data has changed
-      if (email != widget.account.email) {
-        changedEmail = true;
-      }
-      if (telephone != widget.account.telephone) {
-        changedTelephone = true;
-      }
-      if (changedEmail || changedTelephone) {
-        await _confirmSavingChanges(changedEmail, changedTelephone);
-      } else {
-        var snackBar =
-            SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
-        _scaffoldKey.currentState.showSnackBar(snackBar);
-      }
+  _refreshAccountDetails() async {
+    var res = await widget.api
+        .getUser(widget.account.username, widget.currentLoggedInToken);
+    if (res[1] == 200) {
+      dynamic body = jsonDecode(res[0]);
+      Account account = Account.fromJson(body);
+      setState(() {
+        _emailController = TextEditingController(text: account.email);
+        _telephoneController =
+            TextEditingController(text: account.telephone);
+        widget.account = account;
+      });
+    } else {
+      displayDialog(
+          context, "Błąd", "Odświeżenie danych użytkownika nie powiodło się.");
     }
   }
 }

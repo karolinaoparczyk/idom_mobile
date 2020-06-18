@@ -7,6 +7,7 @@ import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/text_color.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
@@ -167,13 +168,15 @@ class _AccountsState extends State<Accounts> {
                 Expanded(
                     flex: 16,
                     child: Scrollbar(
-                        child: ListView(
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) => Divider(
+                            color: textColor,
+                          ),
                       shrinkWrap: true,
-                      children: accounts
-                          .map(
-                            (Account account) => ListTile(
-                                key: Key(account.username),
-                                title: Text(account.username,
+                          itemCount: accounts.length,
+                          itemBuilder: (context, index) => ListTile(
+                                key: Key(accounts[index].username),
+                                title: Text(accounts[index].username,
                                     style: TextStyle(fontSize: 20.0)),
 
                                 /// when username tapped, navigates to account's details
@@ -182,15 +185,14 @@ class _AccountsState extends State<Accounts> {
                                         builder: (context) => AccountDetail(
                                             currentLoggedInToken:
                                                 widget.currentLoggedInToken,
-                                            account: account,
+                                            account: accounts[index],
                                             currentUser: widget.currentUser,
                                             api: widget.api))),
 
                                 /// delete account button
-                                trailing: deleteButtonTrailing(account)),
+                                trailing: deleteButtonTrailing(accounts[index])),
                           )
-                          .toList(),
-                    ))),
+                    )),
                 Expanded(flex: 1, child: Divider()),
               ]);
             }
@@ -204,7 +206,11 @@ class _AccountsState extends State<Accounts> {
   /// delete account button
   deleteButtonTrailing(Account account) {
     if (widget.currentUser.isStaff) {
-      return FlatButton(
+      return SizedBox(
+          width: 35,
+          child: Container(
+          alignment: Alignment.centerRight,
+          child: FlatButton(
         key: Key("deleteButton"),
         child: Icon(Icons.delete),
         onPressed: () {
@@ -212,7 +218,7 @@ class _AccountsState extends State<Accounts> {
             _deactivateAccount(account);
           });
         },
-      );
+      )));
     } else
       return null;
   }

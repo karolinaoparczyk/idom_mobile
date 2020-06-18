@@ -85,7 +85,7 @@ class Api {
   }
 
   /// edits users data
-  Future<Map<String, String>> editAccount(id, email, telephone) async {
+  Future<Map<String, String>> editAccount(int id, String email, String telephone, String userToken) async {
     var body;
     if (email != null && telephone != null) {
       body = {"email": email, "telephone": telephone};
@@ -94,7 +94,8 @@ class Api {
     } else if (telephone != null) {
       body = {"telephone": telephone};
     }
-    var res = await http.put('$url/users/update/$id', body: body);
+    var res = await http.put('$url/users/update/$id',
+        headers: {HttpHeaders.authorizationHeader: "Token $userToken"}, body: body);
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
