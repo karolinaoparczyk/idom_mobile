@@ -240,7 +240,7 @@ class _NewSensorState extends State<NewSensor> {
                         Padding(
                             padding: EdgeInsets.only(
                                 left: 30.0,
-                                top: 10.0,
+                                top: 13.5,
                                 right: 30.0,
                                 bottom: 0.0),
                             child: Align(
@@ -252,17 +252,11 @@ class _NewSensorState extends State<NewSensor> {
                                         fontWeight: FontWeight.bold)))),
                         Padding(
                             padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 0.0,
-                                right: 30.0,
-                                bottom: 0.0),
+                                left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
                             child: _buildName()),
                         Padding(
                             padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 0.0,
-                                right: 30.0,
-                                bottom: 0.0),
+                                left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text("Kategoria",
@@ -278,42 +272,33 @@ class _NewSensorState extends State<NewSensor> {
                                 child: _buildCategory())),
                         Padding(
                             padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 0.0,
-                                right: 30.0,
-                                bottom: 0.0),
+                                left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
                             child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text(
-                                    "Częstotliwość pobierania danych",
+                                child: Text("Częstotliwość pobierania danych",
                                     style: TextStyle(
                                         color: textColor,
                                         fontSize: 13.5,
                                         fontWeight: FontWeight.bold)))),
                         Padding(
                             padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 0.0,
-                                right: 30.0,
-                                bottom: 0.0),
+                                left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
                             child: SizedBox(
                                 child: Row(children: <Widget>[
-                                  Expanded(flex: 8,
-                                      child: _buildFrequencyValue()),
-                                  Expanded(flex: 1, child: SizedBox()),
-                                  Expanded(
-                                      flex: 12,
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 0.0,
-                                              top: 0.0,
-                                              right: 0.0,
-                                              bottom: 0.0),
-                                          child: Align(
-                                              alignment: Alignment
-                                                  .bottomLeft,
-                                              child: _buildUnits()))),
-                                ]))),
+                              Expanded(flex: 8, child: _buildFrequencyValue()),
+                              Expanded(flex: 1, child: SizedBox()),
+                              Expanded(
+                                  flex: 12,
+                                  child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 0.0,
+                                          top: 0.0,
+                                          right: 0.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.bottomLeft,
+                                          child: _buildUnits()))),
+                            ]))),
                       ])))),
           Expanded(
               flex: 1,
@@ -337,7 +322,7 @@ class _NewSensorState extends State<NewSensor> {
       displayText += "Wybierz kategorię czujnika. \n";
     }
     if (selectedUnits == null) {
-      displayText += "Wybierz jednotski częstotliwości pobierania danych.";
+      displayText += "Wybierz jednostki częstotliwości pobierania danych.";
     }
     if (displayText != "") {
       await displayDialog(context, "Brak danych", displayText);
@@ -348,8 +333,12 @@ class _NewSensorState extends State<NewSensor> {
           SensorFrequencyFieldValidator.isFrequencyValueValid(
               _frequencyValueController.text, selectedUnits);
       if (!validFequencyValue) {
-        await displayDialog(context, "Błąd",
-            "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
+        var text =
+            "Maksymalna częstotliwość to co ${unitsToMaxValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}";
+        if (selectedUnits == "seconds")
+          text =
+              "Minimalna częstotliwość to co ${unitsToMinValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}, a maksymalna to co ${unitsToMaxValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}";
+        await displayDialog(context, "Błąd", text);
         return;
       }
       setState(() {

@@ -145,8 +145,6 @@ class _EditSensorState extends State<EditSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.only(
-              left: 0.0, top: 0.0, right: 0.0, bottom: 0.0),
           border: InputBorder.none,
           hintText: "Podaj nazwę",),
         key: Key('name'),
@@ -254,7 +252,7 @@ class _EditSensorState extends State<EditSensor> {
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 10.0,
+                                    top: 13.5,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
@@ -363,12 +361,13 @@ class _EditSensorState extends State<EditSensor> {
         displayDialog(
             context, "Błąd", "Czujnik o podanej nazwie już istnieje.");
       }
-      setState(() {
-        _load = false;
-      });
+
     } catch (e) {
       print(e);
     }
+    setState(() {
+      _load = false;
+    });
   }
 
   /// confirms saving account changes

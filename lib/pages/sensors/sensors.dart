@@ -185,7 +185,7 @@ class _SensorsState extends State<Sensors> {
               child: FittedBox(
                   child: FloatingActionButton(
                 backgroundColor: Colors.black,
-                foregroundColor: textColor,
+                foregroundColor: Colors.white,
                 key: Key("addSensorButton"),
                 onPressed: navigateToNewSensor,
                 child: Icon(Icons.add, size: 30),

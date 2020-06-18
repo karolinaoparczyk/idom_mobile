@@ -54,6 +54,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   bool noDataForChart = false;
   bool dataLoaded = false;
   Widget chartWid = Text("");
+  DateTime firstDeliveryTime;
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
@@ -165,24 +166,17 @@ class _SensorDetailsState extends State<SensorDetails> {
       data = sensorData;
     }
 
-    DateTime time;
-    String measure;
-
-    if (data.length == 1) {
-      time = data[0].deliveryTime;
-      measure = data[0].data;
-
-      setState(() {
-        _time = time;
-        _measure = measure;
-      });
-    }
-
     if (data.length > 0) {
+      firstDeliveryTime = data[0].deliveryTime;
+      setState(() {
+        _time = data[0].deliveryTime;
+        _measure = data[0].data;
+      });
+
       noDataForChart = false;
       _seriesData.add(charts.Series(
           colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xffdaa520)),
-          id: "wykres",
+          id: "timeChart",
           data: data,
           domainFn: (SensorData sensorData, _) => sensorData.deliveryTime,
           measureFn: (SensorData sensorData, _) =>
@@ -342,7 +336,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                   ),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Nazwa",
@@ -410,7 +404,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                           vertical: 13.5, horizontal: 30.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text("Aktualna temperatura",
+                        child: Text(getSensorLastDataLabel(),
                             style: TextStyle(
                                 color: textColor,
                                 fontSize: 13.5,
@@ -421,10 +415,10 @@ class _SensorDetailsState extends State<SensorDetails> {
                       EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: getSensorLastData())),
+                          child: Text(getSensorLastData(), style: TextStyle(fontSize: 17.0)))),
                   Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 13.5, horizontal: 30.0),
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text("Okres wyświetlanych danych:",
@@ -435,13 +429,14 @@ class _SensorDetailsState extends State<SensorDetails> {
                       )),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 0.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 5.0, right: 30.0, bottom: 0.0),
                       child: SizedBox(
                           child: Row(children: <Widget>[
                             Expanded(
                                 flex: 1,
                                 child: Container(
-                                    margin: const EdgeInsets.all(10.0),
+                                    margin: EdgeInsets.only(
+                                        left: 10.0, top: 5.0, right: 10.0, bottom: 0.0),
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: !todayChart
@@ -457,7 +452,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                             Expanded(
                                 flex: 1,
                                 child: Container(
-                                    margin: const EdgeInsets.all(10.0),
+                                    margin: EdgeInsets.only(
+                                        left: 10.0, top: 5.0, right: 10.0, bottom: 0.0),
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: !thisMonthChart
@@ -474,7 +470,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                             Expanded(
                                 flex: 1,
                                 child: Container(
-                                    margin: const EdgeInsets.all(10.0),
+                                    margin: EdgeInsets.only(
+                                        left: 10.0, top: 5.0, right: 10.0, bottom: 0.0),
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: !allTimeChart
@@ -490,15 +487,15 @@ class _SensorDetailsState extends State<SensorDetails> {
                           ]))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 30.0, top: 13.5, right: 17.0, bottom: 0.0),
+                          left: 30.0, top: 5.0, right: 17.0, bottom: 0.0),
                       child: Container(
                           child: Center(
                               child: Column(children: <Widget>[
                                 SizedBox(width: 355, height: 200, child: chartWid)
                               ])))),
                   Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                      padding: EdgeInsets.only(
+                          left: 30.0, top: 5.0, right: 30.0, bottom: 10.0),
                       child: _time != null
                           ? Align(
                         alignment: Alignment.center,
@@ -515,14 +512,18 @@ class _SensorDetailsState extends State<SensorDetails> {
                 ]))));
   }
 
-  Widget getSensorLastData() {
+  String getSensorLastData() {
     if (_currentSensorDataController.text == "null")
-      return Text("Brak danych", style: TextStyle(fontSize: 17.0));
+      return "Brak danych";
     return widget.sensor.category == "temperature"
-        ? Text("${_currentSensorDataController.text} °C",
-        style: TextStyle(fontSize: 17.0))
-        : Text("${_currentSensorDataController.text} %",
-        style: TextStyle(fontSize: 17.0));
+        ? "${_currentSensorDataController.text} °C"
+        : "${_currentSensorDataController.text} %";
+  }
+
+  String getSensorLastDataLabel() {
+    return widget.sensor.category == "temperature"
+        ? "Aktualna temperatura"
+        : "Aktualna wilgotność";
   }
 
   _navigateToEditSensor() async {
@@ -539,13 +540,12 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (result != null && result == true) {
       var snackBar = SnackBar(content: Text("Zapisano dane czujnika."));
       _scaffoldKey.currentState.showSnackBar(snackBar);
-
+    }
       setState(() {
         _load = true;
       });
 
       await _refreshSensorDetails();
-    }
   }
 
   _refreshSensorDetails() async {
@@ -575,27 +575,48 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   Widget chartWidget() {
-    if (dataLoaded) {
+    if (noDataForChart) {
+      return Container(
+          child: Text("Brak danych z wybranego okresu.",
+              style: TextStyle(fontSize: 17.0)));
+    } else if (dataLoaded) {
       return charts.TimeSeriesChart(
         _seriesData,
         defaultRenderer:
         charts.LineRendererConfig(includeArea: true, stacked: true),
         animate: true,
+        behaviors: [
+          charts.InitialSelection(selectedDataConfig: [
+            new charts.SeriesDatumConfig<DateTime>('timeChart', firstDeliveryTime)
+          ])
+        ],
         primaryMeasureAxis: new charts.NumericAxisSpec(
             tickProviderSpec:
-            new charts.BasicNumericTickProviderSpec(zeroBound: false)),
+            new charts.BasicNumericTickProviderSpec(zeroBound: false),
+        tickFormatterSpec: charts.BasicNumericTickFormatterSpec(
+                (num value) => getFormattedSensorDataForChart(value))),
         selectionModels: [
           new charts.SelectionModelConfig(
             type: charts.SelectionModelType.info,
             changedListener: _onSelectionChanged,
           )
         ],
+          domainAxis: new charts.DateTimeAxisSpec(
+              tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
+                  day: new charts.TimeFormatterSpec(
+                      format: 'dd.MM', transitionFormat: 'dd.MM'),
+                  minute: new charts.TimeFormatterSpec(
+                      format: 'HH:mm', transitionFormat: 'HH:mm'),
+                  hour: new charts.TimeFormatterSpec(
+                      format: 'HH:mm', transitionFormat: 'HH:mm'))),
       );
-    } else if (noDataForChart) {
-      return Container(
-          child: Text("Brak danych z wybranego okresu.",
-              style: TextStyle(fontSize: 17.0)));
     }
     return null;
+  }
+
+  String getFormattedSensorDataForChart(num value) {
+    return widget.sensor.category == "temperature"
+        ? "$value °C"
+        : "$value %";
   }
 }
