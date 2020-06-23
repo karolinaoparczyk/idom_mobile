@@ -15,7 +15,7 @@ class Api {
     var result = await http.post('$url/api-token-auth/', body: {
       "username": username,
       "password": password,
-    });
+    }).timeout(Duration(seconds: 5));
     return [result.body, result.statusCode];
   }
 
@@ -28,7 +28,7 @@ class Api {
       "password2": password2,
       "email": email,
       "telephone": telephone,
-    });
+    }).timeout(Duration(seconds: 5));
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
@@ -38,16 +38,18 @@ class Api {
 
   /// gets user data
   Future<List<dynamic>> getUser(username, token) async {
-    var result = await http.get('$url/users/detail/$username',
-        headers: {HttpHeaders.authorizationHeader: "Token $token"});
+    var result = await http.get('$url/users/detail/$username', headers: {
+      HttpHeaders.authorizationHeader: "Token $token"
+    }).timeout(Duration(seconds: 5));
     return [result.body, result.statusCode];
   }
 
   /// requests logging out
   Future<int> logOut(String token) async {
     try {
-      var res = await http.post('$url/api-logout/$token',
-          headers: {HttpHeaders.authorizationHeader: "Token $token"});
+      var res = await http.post('$url/api-logout/$token', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
       print(e);
@@ -58,8 +60,9 @@ class Api {
   /// requests deactivating user
   Future<int> deactivateAccount(int id, String userToken) async {
     try {
-      var res = await http.delete('$url/users/delete/$id',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+      var res = await http.delete('$url/users/delete/$id', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
       print(e);
@@ -69,14 +72,16 @@ class Api {
 
   /// sends request to reset password
   Future<int> resetPassword(String email) async {
-    var res = await http.post('$url/password-reset/', body: {"email": email});
+    var res = await http.post('$url/password-reset/',
+        body: {"email": email}).timeout(Duration(seconds: 5));
     return res.statusCode;
   }
 
   /// gets accounts
   Future<Map<String, String>> getAccounts(String userToken) async {
-    var res = await http.get('$url/users/list',
-        headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+    var res = await http.get('$url/users/list', headers: {
+      HttpHeaders.authorizationHeader: "Token $userToken"
+    }).timeout(Duration(seconds: 5));
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
@@ -85,7 +90,8 @@ class Api {
   }
 
   /// edits users data
-  Future<Map<String, String>> editAccount(int id, String email, String telephone, String userToken) async {
+  Future<Map<String, String>> editAccount(
+      int id, String email, String telephone, String userToken) async {
     var body;
     if (email != null && telephone != null) {
       body = {"email": email, "telephone": telephone};
@@ -94,8 +100,11 @@ class Api {
     } else if (telephone != null) {
       body = {"telephone": telephone};
     }
-    var res = await http.put('$url/users/update/$id',
-        headers: {HttpHeaders.authorizationHeader: "Token $userToken"}, body: body);
+    var res = await http
+        .put('$url/users/update/$id',
+            headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+            body: body)
+        .timeout(Duration(seconds: 5));
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
@@ -104,30 +113,32 @@ class Api {
   }
 
   /// edits sensor
-  Future<Map<String, String>> editSensor(
-      int id, String name, String category, int frequency, String userToken) async {
+  Future<Map<String, String>> editSensor(int id, String name, String category,
+      int frequency, String userToken) async {
     var frequencyString = frequency.toString();
     var body;
     if (name != null && category != null && frequency != null) {
       body = {"name": name, "category": category, "frequency": frequencyString};
     } else if (name != null && category != null) {
       body = {"name": name, "category": category};
-    } else if (category != null && frequency !=null) {
+    } else if (category != null && frequency != null) {
       body = {"category": category, "frequency": frequencyString};
-    } else if (name != null && frequency !=null) {
+    } else if (name != null && frequency != null) {
       body = {"name": name, "frequency": frequencyString};
-    } else if (name != null){
+    } else if (name != null) {
       body = {"name": name};
-    } else if (category != null){
+    } else if (category != null) {
       body = {"category": category};
-    } else if (frequency != null){
+    } else if (frequency != null) {
       body = {"frequency": frequencyString};
     }
-    var res = await http.put(
-      '$url/sensors/update/$id',
-      headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
-      body: body,
-    );
+    var res = await http
+        .put(
+          '$url/sensors/update/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+          body: body,
+        )
+        .timeout(Duration(seconds: 5));
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
@@ -141,8 +152,12 @@ class Api {
     var resSen = await http.post(
       '$url/sensors/add',
       headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
-      body: {"name": name, "category": category, "frequency": frequency.toString()},
-    );
+      body: {
+        "name": name,
+        "category": category,
+        "frequency": frequency.toString()
+      },
+    ).timeout(Duration(seconds: 5));
     var resDict = {
       "bodySen": resSen.body.toString(),
       "statusCodeSen": resSen.statusCode.toString(),
@@ -153,8 +168,9 @@ class Api {
   /// requests deactivating sensor
   Future<int> deactivateSensor(int id, String userToken) async {
     try {
-      var res = await http.delete('$url/sensors/delete/$id',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+      var res = await http.delete('$url/sensors/delete/$id', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
       print(e);
@@ -165,8 +181,9 @@ class Api {
   /// gets sensors
   Future<Map<String, String>> getSensors(String userToken) async {
     try {
-      var resSensors = await http.get('$url/sensors/list',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+      var resSensors = await http.get('$url/sensors/list', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
         "bodySensors": resSensors.body.toString(),
@@ -180,10 +197,12 @@ class Api {
   }
 
   /// gets sensor details
-  Future<Map<String, String>> getSensorDetails(int sensorId, String userToken) async{
+  Future<Map<String, String>> getSensorDetails(
+      int sensorId, String userToken) async {
     try {
-      var res = await http.get('$url/sensors/detail/$sensorId',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+      var res = await http.get('$url/sensors/detail/$sensorId', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
         "body": res.body.toString(),
@@ -197,10 +216,13 @@ class Api {
   }
 
   /// gets sensors' frequency
-  Future<Map<String, String>> getSensorData(String userToken, int sensorId) async {
+  Future<Map<String, String>> getSensorData(
+      String userToken, int sensorId) async {
     try {
       var resFrequency = await http.get('$url/sensors_data/list/$sensorId',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"});
+          headers: {
+            HttpHeaders.authorizationHeader: "Token $userToken"
+          }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
         "bodySensorData": resFrequency.body.toString(),

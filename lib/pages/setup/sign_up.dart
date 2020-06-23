@@ -8,15 +8,21 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/widgets/text_color.dart';
 
 import '../../models.dart';
 
 /// signs user up
 class SignUp extends StatefulWidget {
-  const SignUp({Key key, @required this.onSignedIn, @required this.api})
+  SignUp(
+      {Key key,
+      @required this.onSignedIn,
+      @required this.api,
+      @required this.onSignedOut})
       : super(key: key);
   final Function(String, Account, Api) onSignedIn;
-  final Api api;
+  Api api;
+  VoidCallback onSignedOut;
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -30,28 +36,33 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
+  final FocusScopeNode _node = FocusScopeNode();
+  final _scrollController = ScrollController();
   bool _load;
 
   void initState() {
     super.initState();
     _load = false;
+    if (widget.api == null) {
+      widget.api = Api();
+    }
   }
 
   /// builds username form field
   Widget _buildUsername() {
     return TextFormField(
-        key: Key('username'),
-        controller: _usernameController,
-        decoration: InputDecoration(
-          labelText: 'Login',
-          labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-          suffixText: '*',
-          suffixStyle: TextStyle(
-            color: Colors.red,
-          ),
-        ),
-        maxLength: 25,
-        validator: UsernameFieldValidator.validate);
+      key: Key('username'),
+      autofocus: true,
+      controller: _usernameController,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: "Podaj login",
+      ),
+      style: TextStyle(fontSize: 17.0),
+      validator: UsernameFieldValidator.validate,
+      onEditingComplete: _node.nextFocus,
+      textInputAction: TextInputAction.next,
+    );
   }
 
   /// builds password form field
@@ -60,16 +71,14 @@ class _SignUpState extends State<SignUp> {
       key: Key('password1'),
       controller: _passwordController,
       decoration: InputDecoration(
-        labelText: 'Hasło',
-        labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-        suffixText: '*',
-        suffixStyle: TextStyle(
-          color: Colors.red,
-        ),
+        border: InputBorder.none,
+        hintText: "Podaj hasło",
       ),
-      maxLength: 20,
+      style: TextStyle(fontSize: 17.0),
       validator: PasswordFieldValidator.validate,
       obscureText: true,
+      onEditingComplete: _node.nextFocus,
+      textInputAction: TextInputAction.next,
     );
   }
 
@@ -79,50 +88,53 @@ class _SignUpState extends State<SignUp> {
       key: Key('password2'),
       controller: _confirmPasswordController,
       decoration: InputDecoration(
-        labelText: 'Powtórz hasło',
-        labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-        suffixText: '*',
-        suffixStyle: TextStyle(
-          color: Colors.red,
-        ),
+        border: InputBorder.none,
+        hintText: "Powtórz hasło",
       ),
-      maxLength: 20,
+      style: TextStyle(fontSize: 17.0),
       validator: (String value) {
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić';
         }
       },
       obscureText: true,
+      onEditingComplete: _node.nextFocus,
+      textInputAction: TextInputAction.done,
     );
   }
 
   /// builds email form field
   Widget _buildEmail() {
     return TextFormField(
-        key: Key('email'),
-        controller: _emailController,
-        decoration: InputDecoration(
-          labelText: 'Email',
-          labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-          suffixText: '*',
-          suffixStyle: TextStyle(
-            color: Colors.red,
-          ),
-        ),
-        keyboardType: TextInputType.emailAddress,
-        validator: EmailFieldValidator.validate);
+      key: Key('email'),
+      controller: _emailController,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: "Podaj adres e-mail",
+      ),
+      keyboardType: TextInputType.emailAddress,
+      style: TextStyle(fontSize: 17.0),
+      validator: EmailFieldValidator.validate,
+      onEditingComplete: _node.nextFocus,
+      textInputAction: TextInputAction.next,
+    );
   }
 
   /// builds telephone form field
   Widget _buildTelephone() {
     return TextFormField(
-        key: Key('telephone'),
-        controller: _telephoneController,
-        decoration: InputDecoration(
-            labelText: 'Nr telefonu komórkowego',
-            labelStyle: TextStyle(color: Colors.black, fontSize: 18)),
-        keyboardType: TextInputType.phone,
-        validator: TelephoneFieldValidator.validate);
+      key: Key('telephone'),
+      controller: _telephoneController,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: "Podaj nr telefonu komórkowego",
+      ),
+      keyboardType: TextInputType.phone,
+      style: TextStyle(fontSize: 17.0),
+      validator: TelephoneFieldValidator.validate,
+      onEditingComplete: _node.nextFocus,
+      textInputAction: TextInputAction.next,
+    );
   }
 
   @override
@@ -131,34 +143,147 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(
         title: Text('Zarejestruj się'),
       ),
-      body: SingleChildScrollView(
-        child: Row(
-          children: <Widget>[
-            Expanded(child: SizedBox(width: 1)),
-            Expanded(
-                flex: 7,
+      body: Container(
+          child: Column(children: <Widget>[
+        Expanded(
+            flex: 5,
+            child: SingleChildScrollView(
+                controller: _scrollController,
                 child: Form(
                     key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        _buildUsername(),
-                        _buildEmail(),
-                        _buildTelephone(),
-                        _buildPassword(),
-                        _buildConfirmPassword(),
-                        SizedBox(height: 20),
-                        buttonWidget(context, "Zarejestruj się", signUp),
-                        Align(
-                          child: loadingIndicator(_load),
-                          alignment: FractionalOffset.center,
-                        )
-                      ],
-                    ))),
-            Expanded(child: SizedBox(width: 1)),
-          ],
-        ),
-      ),
+                    child: FocusScope(
+                        node: _node,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Align(
+                              child: loadingIndicator(_load),
+                              alignment: FractionalOffset.center,
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 13.5,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Login*",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildUsername())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Adres e-mail*",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildEmail())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Nr telefonu komórkowego",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildTelephone())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Hasło*",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildPassword())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Powtórz hasło*",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildConfirmPassword())),
+                          ],
+                        ))))),
+        Expanded(
+            flex: 1,
+            child: AnimatedContainer(
+                curve: Curves.easeInToLinear,
+                duration: Duration(
+                  milliseconds: 10,
+                ),
+                alignment: Alignment.bottomCenter,
+                child: Column(children: <Widget>[
+                  buttonWidget(context, "Zarejestruj się", signUp),
+                ])))
+      ])),
     );
   }
 
@@ -179,41 +304,82 @@ class _SignUpState extends State<SignUp> {
         });
         var res = await widget.api
             .signUp(username, password1, password2, email, telephone);
+        var loginExists = false;
+        var emailExists = false;
+        var telephoneExists = false;
+        var telephoneInvalid = false;
 
         if (res['statusCode'] == "201") {
           setState(() {
             _load = false;
           });
-          await displayDialog(context, "Sukces",
-              "Konto zostało utworzone. Możesz się zalogować.");
+          await displayDialog(
+              context: context,
+              title: "Sukces",
+              text: "Konto zostało utworzone. Możesz się zalogować.");
 
           /// navigates to logging in page
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      SignIn(api: widget.api, onSignedIn: widget.onSignedIn)));
-        } else if (res['body']
-            .contains("User with given username already exists")) {
-          displayDialog(
-              context, "Błąd", "Konto dla podanego loginu już istnieje.");
-        } else if (res['body']
-            .contains("User with given email already exists")) {
-          displayDialog(
-              context, "Błąd", "Konto dla podanego adresu email już istnieje.");
-        } else if (res['body'].contains("Enter a valid phone number")) {
-          displayDialog(context, "Błąd", "Numer telefonu jest niepoprawny.");
-        } else if (res['body']
-            .contains("User with given telephone number already exists")) {
-          displayDialog(context, "Błąd",
-              "Konto dla podanego numeru telefonu już istnieje.");
+                  builder: (context) => SignIn(
+                      api: widget.api,
+                      onSignedIn: widget.onSignedIn,
+                      onSignedOut: widget.onSignedOut)));
         }
+        if (res['body'].contains("Username already exists")) {
+          loginExists = true;
+        }
+        if (res['body'].contains("Email address already exists")) {
+          emailExists = true;
+        }
+        if (res['body'].contains("Enter a valid phone number")) {
+          telephoneInvalid = true;
+        }
+        if (res['body'].contains("Telephone number already exists")) {
+          telephoneExists = true;
+        }
+
+        String errorText;
+        if (loginExists && emailExists && telephoneExists)
+          errorText =
+              "Konto dla podanego loginu, adresu e-mail i nr telefonu już istnieje.";
+        else if (loginExists && emailExists)
+          errorText = "Konto dla podanego loginu i adresu e-mail już istnieje.";
+        else if (loginExists && telephoneExists)
+          errorText = "Konto dla podanego loginu i nr telefonu już istnieje.";
+        else if (emailExists && telephoneExists)
+          errorText =
+              "Konto dla podanego adresu e-mail i nr telefonu już istnieje.";
+        else if (emailExists)
+          errorText = "Konto dla podanego adresu e-mail już istnieje.";
+        else if (loginExists)
+          errorText = "Konto dla podanego loginu już istnieje.";
+        else if (telephoneExists)
+          errorText = "Konto dla podanego nr telefonu już istnieje.";
+
+        if (telephoneInvalid) errorText += " Podaj poprawny nr telefonu.";
+
+        if (errorText != null)
+          displayDialog(context: context, title: "Błąd", text: errorText);
+
         setState(() {
           _load = false;
         });
       } catch (e) {
         print(e.toString());
+        setState(() {
+          _load = false;
+        });
+        if (e.toString().contains("TimeoutException")) {
+          displayDialog(
+              context: context,
+              title: "Błąd rejestracji",
+              text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        }
       }
+    } else {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
 }

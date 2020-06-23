@@ -4,12 +4,15 @@ import 'package:idom/api.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/widgets/text_color.dart';
 
 /// allows to enter email and send reset password request
 class EnterEmail extends StatefulWidget {
-  const EnterEmail({@required this.api});
+  EnterEmail({@required this.api, @required this.onSignedOut});
 
-  final Api api;
+  Api api;
+  VoidCallback onSignedOut;
 
   @override
   _EnterEmailState createState() => _EnterEmailState();
@@ -18,51 +21,111 @@ class EnterEmail extends StatefulWidget {
 class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  bool _load;
+
+  void initState() {
+    super.initState();
+    if (widget.api == null) {
+      widget.api = Api();
+    }
+    _load = false;
+  }
 
   /// build email form field
   Widget _buildEmail() {
     return TextFormField(
         key: Key("email"),
         controller: _emailController,
+        autofocus: true,
         decoration: InputDecoration(
-          labelText: 'Email',
-          labelStyle: TextStyle(color: Colors.black, fontSize: 18),
-          suffixText: '*',
-          suffixStyle: TextStyle(
-            color: Colors.red,
-          ),
+          border: InputBorder.none,
+          hintText: "Podaj adres e-mail",
         ),
         keyboardType: TextInputType.emailAddress,
+        style: TextStyle(fontSize: 17.0),
         validator: EmailFieldValidator.validate);
+  }
+
+  Future<bool> _onBackButton() async {
+    Map<String, dynamic> result = {
+      'onSignedOut': widget.onSignedOut,
+      'dataSaved': false
+    };
+    Navigator.of(context).pop(result);
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Reset hasła'),
-      ),
-      body: Row(
-        children: <Widget>[
-          Expanded(child: SizedBox(width: 1)),
-          Expanded(
-              flex: 7,
-              child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text("Wprowadź email połączony z Twoim kontem"),
-                      _buildEmail(),
-                      SizedBox(height: 20),
-                      buttonWidget(
-                          context, "Resetuj hasło", sendResetPasswordRequest)
-                    ],
-                  ))),
-          Expanded(child: SizedBox(width: 1)),
-        ],
-      ),
-    );
+    return WillPopScope(
+        onWillPop: _onBackButton,
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text('Reset hasła'),
+            ),
+            body: Row(children: <Widget>[
+              Expanded(flex: 1, child: SizedBox(width: 1)),
+              Expanded(
+                  flex: 30,
+                  child: Column(children: <Widget>[
+                    Expanded(
+                        flex: 3,
+                        child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: <Widget>[
+                                Align(
+                                  child: loadingIndicator(_load),
+                                  alignment: FractionalOffset.center,
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 33.5,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: Text(
+                                        "Wprowadź adres e-mail połączony z Twoim kontem",
+                                        style: TextStyle(fontSize: 13.5))),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 33.5,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Adres e-mail*",
+                                            style: TextStyle(
+                                                color: textColor,
+                                                fontSize: 13.5,
+                                                fontWeight: FontWeight.bold)))),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 0.0,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: _buildEmail())),
+                              ],
+                            ))),
+                    Expanded(
+                        flex: 1,
+                        child: AnimatedContainer(
+                            curve: Curves.easeInToLinear,
+                            duration: Duration(
+                              milliseconds: 10,
+                            ),
+                            alignment: Alignment.bottomCenter,
+                            child: Column(children: <Widget>[
+                              buttonWidget(context, "Resetuj hasło",
+                                  sendResetPasswordRequest)
+                            ])))
+                  ])),
+              Expanded(flex: 1, child: SizedBox(width: 1)),
+            ])));
   }
 
   /// sends request to API to reset password if form is validated
@@ -70,16 +133,37 @@ class _EnterEmailState extends State<EnterEmail> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
+        setState(() {
+          _load = true;
+        });
         var res = await widget.api.resetPassword(_emailController.value.text);
+        setState(() {
+          _load = false;
+        });
         if (res == 200) {
-          Navigator.of(context).pop(true);
+          Map<String, dynamic> result = {
+            'onSignedOut': widget.onSignedOut,
+            'dataSaved': true
+          };
+          Navigator.of(context).pop(result);
         } else if (res == 400) {
           displayDialog(
-              context, "Błąd", "Konto dla podanego adresu email nie istnieje.");
+              context: context,
+              title: "Błąd",
+              text: "Konto dla podanego adresu e-mail nie istnieje.");
         }
       }
     } catch (e) {
       print(e.toString());
+      setState(() {
+        _load = false;
+      });
+      if (e.toString().contains("TimeoutException")) {
+        displayDialog(
+            context: context,
+            title: "Błąd resetu hasła",
+            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
     }
   }
 }

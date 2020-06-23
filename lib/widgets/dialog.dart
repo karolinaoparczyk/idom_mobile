@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// displays dialog for user with provided title and text
-void displayDialog(BuildContext context, String title, String text) =>
+void displayDialog({BuildContext context, String title, String text}) =>
     showDialog(
       context: context,
       builder: (context) =>
@@ -13,3 +13,23 @@ void displayDialog(BuildContext context, String title, String text) =>
         ),
       ]),
     );
+
+void displayProgressDialog({BuildContext context, GlobalKey key, String text}) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return new WillPopScope(
+            onWillPop: () async => false,
+            child: SimpleDialog(key: key, children: <Widget>[
+              Center(
+                child: Column(children: [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(text)
+                ]),
+              )
+            ]));
+      });
+}

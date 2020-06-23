@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
-import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
@@ -15,16 +14,19 @@ import '../../models.dart';
 
 /// edits sensor
 class EditSensor extends StatefulWidget {
-  EditSensor({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentUser,
-    @required this.sensor,
-    @required this.api})
+  EditSensor(
+      {Key key,
+      @required this.currentLoggedInToken,
+      @required this.currentUser,
+      @required this.sensor,
+      @required this.api,
+      @required this.onSignedOut})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
   final Sensor sensor;
-  final Api api;
+  Api api;
+  VoidCallback onSignedOut;
 
   @override
   _EditSensorState createState() => new _EditSensorState();
@@ -35,6 +37,7 @@ class _EditSensorState extends State<EditSensor> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _frequencyValueController = TextEditingController();
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   var selectedCategory;
   var selectedUnits;
   bool _load;
@@ -51,6 +54,9 @@ class _EditSensorState extends State<EditSensor> {
   @override
   void initState() {
     super.initState();
+    if (widget.api == null) {
+      widget.api = Api();
+    }
     _load = false;
 
     /// seting current sensor name
@@ -91,51 +97,69 @@ class _EditSensorState extends State<EditSensor> {
   /// logs the user out of the app
   _logOut() async {
     try {
-      var statusCode;
-      if (widget.api != null)
-        statusCode = await widget.api.logOut(widget.currentLoggedInToken);
-      else {
-        Api api = Api();
-        statusCode = await api.logOut(widget.currentLoggedInToken);
-      }
+      displayProgressDialog(
+          context: _scaffoldKey.currentContext,
+          key: _keyLoader,
+          text: "Trwa wylogowywanie...");
+      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       if (statusCode == 200) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Front(), fullscreenDialog: true));
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      } else if (statusCode == null) {
+        displayDialog(
+            context: _scaffoldKey.currentContext,
+            title: "Błąd wylogowywania",
+            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       } else {
         displayDialog(
-            context, "Błąd", "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+            context: context,
+            title: "Błąd",
+            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
       }
     } catch (e) {
       print(e);
+      setState(() {
+        _load = false;
+      });
+      if (e.toString().contains("TimeoutException")) {
+        displayDialog(
+            context: context,
+            title: "Błąd wylogowania",
+            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
     }
   }
 
   /// navigates according to menu choice
-  void _choiceAction(String choice) {
+  void _choiceAction(String choice) async {
     if (choice == "Moje konto") {
-      Navigator.push(
+      var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  AccountDetail(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      account: widget.currentUser,
-                      currentUser: widget.currentUser,
-                      api: widget.api),
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
+      setState(() {
+        widget.onSignedOut = result;
+      });
     } else if (choice == "Konta") {
-      Api api = Api();
-      Navigator.push(
+      var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  Accounts(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      currentUser: widget.currentUser,
-                      api: api),
+              builder: (context) => Accounts(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  currentUser: widget.currentUser,
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
+      setState(() {
+        widget.onSignedOut = result;
+      });
     } else if (choice == "Wyloguj") {
       _logOut();
     }
@@ -146,7 +170,8 @@ class _EditSensorState extends State<EditSensor> {
     return TextFormField(
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "Podaj nazwę",),
+          hintText: "Podaj nazwę",
+        ),
         key: Key('name'),
         style: TextStyle(fontSize: 17.0),
         autofocus: true,
@@ -158,7 +183,8 @@ class _EditSensorState extends State<EditSensor> {
   Widget _buildCategory() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
-        child: DropdownButtonHideUnderline(child: DropdownButton(
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton(
           style: TextStyle(fontSize: 17.0, color: Colors.black),
           key: Key("categoriesButon"),
           items: categories,
@@ -192,7 +218,8 @@ class _EditSensorState extends State<EditSensor> {
   Widget _buildUnits() {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: DropdownButtonHideUnderline(child: DropdownButton(
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton(
           style: TextStyle(fontSize: 17.0, color: Colors.black),
           key: Key("unitsButton"),
           items: units,
@@ -205,40 +232,50 @@ class _EditSensorState extends State<EditSensor> {
         )));
   }
 
+  Future<bool> _onBackButton() async {
+    Map<String, dynamic> result = {
+      'onSignedOut': widget.onSignedOut,
+      'dataSaved': false
+    };
+    Navigator.of(context).pop(result);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text(widget.sensor.name),
-          actions: <Widget>[
+    return WillPopScope(
+        onWillPop: _onBackButton,
+        child: Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: Text(widget.sensor.name),
+              actions: <Widget>[
+                /// builds menu dropdown button
+                PopupMenuButton(
+                    key: Key("menuButton"),
+                    offset: Offset(0, 100),
+                    onSelected: _choiceAction,
+                    itemBuilder: (BuildContext context) {
+                      return widget.currentUser.isStaff
+                          ? menuChoicesSuperUser.map((String choice) {
+                              return PopupMenuItem(
+                                  key: Key(choice),
+                                  value: choice,
+                                  child: Text(choice));
+                            }).toList()
+                          : menuChoicesNormalUser.map((String choice) {
+                              return PopupMenuItem(
+                                  key: Key(choice),
+                                  value: choice,
+                                  child: Text(choice));
+                            }).toList();
+                    })
+              ],
+            ),
 
-            /// builds menu dropdown button
-            PopupMenuButton(
-                key: Key("menuButton"),
-                offset: Offset(0, 100),
-                onSelected: _choiceAction,
-                itemBuilder: (BuildContext context) {
-                  return widget.currentUser.isStaff
-                      ? menuChoicesSuperUser.map((String choice) {
-                    return PopupMenuItem(
-                        key: Key(choice),
-                        value: choice,
-                        child: Text(choice));
-                  }).toList()
-                      : menuChoicesNormalUser.map((String choice) {
-                    return PopupMenuItem(
-                        key: Key(choice),
-                        value: choice,
-                        child: Text(choice));
-                  }).toList();
-                })
-          ],
-        ),
-
-        /// builds form with sensor properties
-        body: Container(
-            child: Column(children: <Widget>[
+            /// builds form with sensor properties
+            body: Container(
+                child: Column(children: <Widget>[
               Expanded(
                   flex: 4,
                   child: SingleChildScrollView(
@@ -310,22 +347,21 @@ class _EditSensorState extends State<EditSensor> {
                                     bottom: 0.0),
                                 child: SizedBox(
                                     child: Row(children: <Widget>[
-                                      Expanded(flex: 8,
-                                          child: _buildFrequencyValue()),
-                                      Expanded(flex: 1, child: SizedBox()),
-                                      Expanded(
-                                          flex: 12,
-                                          child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 0.0,
-                                                  top: 0.0,
-                                                  right: 0.0,
-                                                  bottom: 0.0),
-                                              child: Align(
-                                                  alignment: Alignment
-                                                      .bottomLeft,
-                                                  child: _buildUnits()))),
-                                    ]))),
+                                  Expanded(
+                                      flex: 8, child: _buildFrequencyValue()),
+                                  Expanded(flex: 1, child: SizedBox()),
+                                  Expanded(
+                                      flex: 12,
+                                      child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 0.0,
+                                              top: 0.0,
+                                              right: 0.0,
+                                              bottom: 0.0),
+                                          child: Align(
+                                              alignment: Alignment.bottomLeft,
+                                              child: _buildUnits()))),
+                                ]))),
                           ])))),
               Expanded(
                   flex: 1,
@@ -338,7 +374,7 @@ class _EditSensorState extends State<EditSensor> {
                       child: Column(children: <Widget>[
                         buttonWidget(context, "Zapisz zmiany", _verifyChanges),
                       ])))
-            ])));
+            ]))));
   }
 
   /// saves changes after form fields and dropdown buttons validation
@@ -355,19 +391,33 @@ class _EditSensorState extends State<EditSensor> {
       var res = await widget.api.editSensor(widget.sensor.id, name, category,
           frequencyValue, widget.currentLoggedInToken);
       if (res['statusCode'] == "200") {
-        Navigator.of(context).pop(true);
+        Map<String, dynamic> result = {
+          'onSignedOut': widget.onSignedOut,
+          'dataSaved': true
+        };
+        Navigator.of(context).pop(result);
       } else if (res['body']
           .contains("Sensor with provided name already exists")) {
         displayDialog(
-            context, "Błąd", "Czujnik o podanej nazwie już istnieje.");
+            context: context,
+            title: "Błąd",
+            text: "Czujnik o podanej nazwie już istnieje.");
+        setState(() {
+          _load = false;
+        });
       }
-
     } catch (e) {
-      print(e);
+      print(e.toString());
+      setState(() {
+        _load = false;
+      });
+      if (e.toString().contains("TimeoutException")) {
+        displayDialog(
+            context: context,
+            title: "Błąd edytowania czujnika",
+            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
     }
-    setState(() {
-      _load = false;
-    });
   }
 
   /// confirms saving account changes
@@ -429,11 +479,14 @@ class _EditSensorState extends State<EditSensor> {
 
         /// validates if frequency value is valid for given frequency units
         var validFrequencyValue =
-        SensorFrequencyFieldValidator.isFrequencyValueValid(
-            _frequencyValueController.text, selectedUnits);
+            SensorFrequencyFieldValidator.isFrequencyValueValid(
+                _frequencyValueController.text, selectedUnits);
         if (!validFrequencyValue) {
-          await displayDialog(context, "Błąd",
-              "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
+          await displayDialog(
+              context: context,
+              title: "Błąd",
+              text:
+                  "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
           return;
         }
 
@@ -453,7 +506,7 @@ class _EditSensorState extends State<EditSensor> {
             changedFrequencyValue, frequencyInSeconds);
       } else {
         var snackBar =
-        SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
+            SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
         _scaffoldKey.currentState.showSnackBar(snackBar);
       }
     }

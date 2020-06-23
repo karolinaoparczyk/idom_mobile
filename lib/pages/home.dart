@@ -11,6 +11,9 @@ enum AuthStatus {
 }
 
 class Home extends StatefulWidget {
+  Home({Key key, this.signedOut}) : super(key: key);
+  bool signedOut;
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -20,6 +23,14 @@ class _HomeState extends State<Home> {
   Api api;
   String currentLoggedInToken;
   Account currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    api = Api();
+    if (widget.signedOut != null && widget.signedOut == true)
+      authStatus = AuthStatus.notSignedIn;
+  }
 
   /// when user logs in successfully
   void _signedIn(String token, Account user, Api apiClass) {
@@ -31,13 +42,25 @@ class _HomeState extends State<Home> {
     });
   }
 
+  /// when user logs in successfully
+  void _signedOut() {
+    setState(() {
+      authStatus = AuthStatus.notSignedIn;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return authStatus == AuthStatus.notSignedIn
-        ? Front(api: api, onSignedIn: _signedIn)
-        : Sensors(
-            currentLoggedInToken: currentLoggedInToken,
-            currentUser: currentUser,
-            api: api);
+        ? Front(api: api, onSignedIn: _signedIn, onSignedOut: _signedOut)
+        : sensorWidget();
+  }
+
+  Widget sensorWidget() {
+    return Sensors(
+        currentLoggedInToken: currentLoggedInToken,
+        currentUser: currentUser,
+        api: api,
+        onSignedOut: _signedOut);
   }
 }

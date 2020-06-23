@@ -4,10 +4,13 @@
 class UsernameFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Podaj login';
+      return 'Pole wymagane';
     }
     if (value.contains(' ')) {
       return 'Login nie może zawierać spacji';
+    }
+    if (value.length > 25) {
+      return 'Login nie może zawierać więcej niż 25 znaków';
     }
     return null;
   }
@@ -17,10 +20,13 @@ class UsernameFieldValidator {
 class PasswordFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Podaj hasło';
+      return 'Pole wymagane';
     }
     if (value.length < 8) {
       return 'Hasło musi zawierać przynajmniej 8 znaków';
+    }
+    if (value.length > 25) {
+      return 'Hasło nie może zawierać więcej niż 20 znaków';
     }
     return null;
   }
@@ -30,7 +36,7 @@ class PasswordFieldValidator {
 class EmailFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Email jest wymagany';
+      return 'Pole wymagane';
     }
     if (!RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -56,7 +62,7 @@ class TelephoneFieldValidator {
 class SensorNameFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Podaj nazwę';
+      return 'Pole wymagane';
     }
     return null;
   }

@@ -7,7 +7,6 @@ import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
-import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/text_color.dart';
@@ -19,12 +18,14 @@ class Sensors extends StatefulWidget {
       @required this.currentLoggedInToken,
       @required this.currentUser,
       @required this.api,
+      @required this.onSignedOut,
       this.testSensors})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
   Api api;
   final List<Sensor> testSensors;
+  VoidCallback onSignedOut;
 
   @override
   _SensorsState createState() => _SensorsState();
@@ -32,15 +33,16 @@ class Sensors extends StatefulWidget {
 
 class _SensorsState extends State<Sensors> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   List<String> menuItems;
 
-  /// displays appropriate menu choices according to user data
   @override
   void initState() {
     super.initState();
-    if (widget.api == null)
-      widget.api = Api();
 
+    if (widget.api == null) widget.api = Api();
+
+    /// displays appropriate menu choices according to user data
     menuItems = widget.currentUser.isStaff
         ? menuChoicesSuperUser
         : menuChoicesNormalUser;
@@ -52,54 +54,62 @@ class _SensorsState extends State<Sensors> {
     if (widget.testSensors != null) {
       return widget.testSensors;
     }
+    List<Sensor> sensors = List<Sensor>();
 
-    /// gets sensors
-    Map<String, String> res;
-    if (widget.api != null) {
-      res = await widget.api.getSensors(widget.currentLoggedInToken);
-    } else {
-      Api api = Api();
-      res = await api.getSensors(widget.currentLoggedInToken);
+    try {
+      /// gets sensors
+      var res = await widget.api.getSensors(widget.currentLoggedInToken);
+
+      if (res != null && res['statusCodeSensors'] == "200") {
+        List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
+        sensors =
+            bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
+      } else {
+        throw "Can't get sensors";
+      }
+    } catch (e) {
+      print(e.toString());
     }
-
-    if (res['statusCodeSensors'] == "200") {
-      List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
-      List<Sensor> sensors =
-          bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
-
-      return sensors;
-    } else {
-      throw "Can't get sensors";
-    }
+    return sensors;
   }
 
   /// logs the user out of the app
   _logOut() async {
     try {
-      var statusCode;
-      if (widget.api != null)
-        statusCode = await widget.api.logOut(widget.currentLoggedInToken);
-      else {
-        Api api = Api();
-        statusCode = await api.logOut(widget.currentLoggedInToken);
-      }
+      displayProgressDialog(
+          context: _scaffoldKey.currentContext,
+          key: _keyLoader,
+          text: "Trwa wylogowywanie...");
+      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       if (statusCode == 200) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Front(), fullscreenDialog: true));
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      } else if (statusCode == null) {
+        displayDialog(
+            context: _scaffoldKey.currentContext,
+            title: "Błąd wylogowywania",
+            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       } else {
         displayDialog(
-            context, "Błąd", "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+            context: _scaffoldKey.currentContext,
+            title: "Błąd",
+            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
       }
     } catch (e) {
       print(e);
+      if (e.toString().contains("TimeoutException")) {
+        displayDialog(
+            context: _scaffoldKey.currentContext,
+            title: "Błąd wylogowania",
+            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
     }
   }
 
-  /// deactivates ensor after confirmation
-  _deactivateSensor(Sensor sensor) {
-    showDialog(
+  /// deactivates sensor after confirmation
+  _deactivateSensor(Sensor sensor) async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
@@ -112,24 +122,48 @@ class _SensorsState extends State<Sensors> {
               key: Key("yesButton"),
               child: Text("Tak"),
               onPressed: () async {
-                var statusCode;
-                if (widget.api != null)
-                  statusCode = await widget.api
+                try {
+                  Navigator.of(context).pop(true);
+                  displayProgressDialog(
+                      context: _scaffoldKey.currentContext,
+                      key: _keyLoader,
+                      text: "Trwa usuwanie czujnika...");
+
+                  int statusCode = await widget.api
                       .deactivateSensor(sensor.id, widget.currentLoggedInToken);
-                else {
-                  Api api = Api();
-                  statusCode = await api.deactivateSensor(
-                      sensor.id, widget.currentLoggedInToken);
-                }
-                if (statusCode == 200) {
-                  setState(() {
-                    getSensors();
-                  });
-                  Navigator.of(context).pop(true);
-                } else {
-                  Navigator.of(context).pop(true);
-                  displayDialog(context, "Błąd",
-                      "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.");
+                  Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+                      .pop();
+                  if (statusCode == 200) {
+                    setState(() {
+                      /// refreshes sensors' list
+                      getSensors();
+                    });
+                  } else if (statusCode == null) {
+                    displayDialog(
+                        context: _scaffoldKey.currentContext,
+                        title: "Błąd usuwania czujnika",
+                        text:
+                            "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                  } else {
+                    displayDialog(
+                        context: _scaffoldKey.currentContext,
+                        title: "Błąd",
+                        text:
+                            "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.");
+                  }
+                } catch (e) {
+                  Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+                      .pop();
+
+                  print("error deleting sensor");
+                  print(e.toString());
+                  if (e.toString().contains("TimeoutException")) {
+                    displayDialog(
+                        context: _scaffoldKey.currentContext,
+                        title: "Błąd usuwania czujnika",
+                        text:
+                            "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                  }
                 }
               },
             ),
@@ -147,27 +181,35 @@ class _SensorsState extends State<Sensors> {
   }
 
   /// navigates according to menu choice
-  void _choiceAction(String choice) {
+  void _choiceAction(String choice) async {
     if (choice == "Moje konto") {
-      Navigator.push(
+      var result = await Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => AccountDetail(
                   currentLoggedInToken: widget.currentLoggedInToken,
                   account: widget.currentUser,
                   currentUser: widget.currentUser,
-                  api: widget.api),
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
+      setState(() {
+        widget.onSignedOut = result;
+      });
     }
     if (choice == "Konta") {
-      Navigator.push(
+      var result = await Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => Accounts(
                   currentLoggedInToken: widget.currentLoggedInToken,
                   currentUser: widget.currentUser,
-                  api: widget.api),
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
+      setState(() {
+        widget.onSignedOut = result;
+      });
     } else if (choice == "Wyloguj") {
       _logOut();
     }
@@ -176,119 +218,137 @@ class _SensorsState extends State<Sensors> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          key: _scaffoldKey,
+      key: _scaffoldKey,
 
-          /// adds sensor adding button
-          floatingActionButton: Container(
-              height: 80.0,
-              width: 80.0,
-              child: FittedBox(
-                  child: FloatingActionButton(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                key: Key("addSensorButton"),
-                onPressed: navigateToNewSensor,
-                child: Icon(Icons.add, size: 30),
-                //backgroundColor: Colors.green,
-              ))),
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Text('IDOM Czujniki'),
-            actions: <Widget>[
-              /// menu dropdown button
-              PopupMenuButton(
-                  key: Key("menuButton"),
-                  offset: Offset(0, 100),
-                  onSelected: _choiceAction,
+      /// adds sensor adding button
+      floatingActionButton: Container(
+          height: 80.0,
+          width: 80.0,
+          child: FittedBox(
+              child: FloatingActionButton(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            key: Key("addSensorButton"),
+            onPressed: navigateToNewSensor,
+            child: Icon(Icons.add, size: 30),
+            //backgroundColor: Colors.green,
+          ))),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('IDOM Czujniki'),
+        actions: <Widget>[
+          /// menu dropdown button
+          PopupMenuButton(
+              key: Key("menuButton"),
+              offset: Offset(0, 100),
+              onSelected: _choiceAction,
 
-                  /// menu choices from utils/menu_items.dart
-                  itemBuilder: (BuildContext context) {
-                    return menuItems.map((String choice) {
-                      return PopupMenuItem(
-                          key: Key(choice), value: choice, child: Text(choice));
-                    }).toList();
-                  })
-            ],
-          ),
+              /// menu choices from utils/menu_items.dart
+              itemBuilder: (BuildContext context) {
+                return menuItems.map((String choice) {
+                  return PopupMenuItem(
+                      key: Key(choice), value: choice, child: Text(choice));
+                }).toList();
+              })
+        ],
+      ),
 
-          /// builds sensor's list
-          body: FutureBuilder(
-              future: getSensors(),
-              builder:
-                  (BuildContext context, AsyncSnapshot<List<Sensor>> snapshot) {
-                if (snapshot.hasData) {
-                  List<Sensor> sensors = snapshot.data;
-                  return Column(children: <Widget>[
-                    /// A widget with the list of sensors
-                    Expanded(
-                        flex: 16,
-                        child: Scrollbar(
-                            child: ListView.separated(
-                              separatorBuilder: (context, index) => Divider(
-                                color: textColor,
-                              ),
-                          shrinkWrap: true,
-                          itemCount: sensors.length,
-                              itemBuilder: (context, index) => ListTile(
-                                    key: Key(sensors[index].name),
-                                    title: Text(sensors[index].name,
-                                        style: TextStyle(fontSize: 20.0)),
-                                    subtitle: sensorData(sensors[index]),
-                                    onTap: () {
-                                      navigateToSensorDetails(sensors[index]);
-                                    },
+      /// builds sensor's list
+      body: FutureBuilder(
+          future: getSensors(),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Sensor>> snapshot) {
+            if (snapshot.data != null && snapshot.data.length == 0) {
+              return Padding(
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                          "Brak czujników w systemie \nlub błąd połączenia z serwerem.",
+                          style: TextStyle(fontSize: 13.5),
+                          textAlign: TextAlign.center)));
+            }
+            if (snapshot.hasData) {
+              List<Sensor> sensors = snapshot.data;
+              return Column(children: <Widget>[
+                /// A widget with the list of sensors
+                Expanded(
+                    flex: 16,
+                    child: Scrollbar(
+                        child: ListView.separated(
+                      separatorBuilder: (context, index) => Divider(
+                        color: textColor,
+                      ),
+                      shrinkWrap: true,
+                      itemCount: sensors.length,
+                      itemBuilder: (context, index) => ListTile(
+                          key: Key(sensors[index].name),
+                          title: Text(sensors[index].name,
+                              style: TextStyle(fontSize: 20.0)),
+                          subtitle: sensorData(sensors[index]),
+                          onTap: () {
+                            navigateToSensorDetails(sensors[index]);
+                          },
 
-                                    /// delete sensor button
-                                    trailing: deleteButtonTrailing(sensors[index])),
-                              )
-                        )),
-                  ]);
-                }
+                          /// delete sensor button
+                          trailing: deleteButtonTrailing(sensors[index])),
+                    ))),
+              ]);
+            }
 
-                /// shows progress indicator while fetching data
-                return Center(child: CircularProgressIndicator());
-              }),
-        );
+            /// shows progress indicator while fetching data
+            return Center(child: CircularProgressIndicator());
+          }),
+    );
   }
 
   Widget sensorData(Sensor sensor) {
     if (sensor.lastData == null) return Text("");
     return sensor.category == "temperature"
-        ? Text("${sensor.lastData} °C", style: TextStyle(fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold))
-        : Text("${sensor.lastData} %", style: TextStyle(fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold));
+        ? Text("${sensor.lastData} °C",
+            style: TextStyle(
+                fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold))
+        : Text("${sensor.lastData} %",
+            style: TextStyle(
+                fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold));
   }
 
   /// navigates to adding sensor page
   navigateToNewSensor() async {
-    bool result = await Navigator.push(
+    var result = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => NewSensor(
                 currentLoggedInToken: widget.currentLoggedInToken,
                 currentUser: widget.currentUser,
-                api: widget.api),
+                api: widget.api,
+                onSignedOut: widget.onSignedOut),
             fullscreenDialog: true));
 
     /// displays success message if sensor added succesfully
-    if (result != null && result == true) {
+    if (result != null && result['dataSaved'] == true) {
       var snackBar = SnackBar(content: Text("Dodano nowy czujnik."));
       _scaffoldKey.currentState.showSnackBar(snackBar);
     }
     setState(() {
+      widget.onSignedOut = result['onSignedOut'];
       getSensors();
     });
   }
 
   /// navigates to sensor's details
   navigateToSensorDetails(Sensor sensor) async {
-    await Navigator.of(context).push(MaterialPageRoute(
+    var result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SensorDetails(
             currentLoggedInToken: widget.currentLoggedInToken,
             currentUser: widget.currentUser,
             sensor: sensor,
-            api: widget.api)));
+            api: widget.api,
+            onSignedOut: widget.onSignedOut)));
 
     setState(() {
+      widget.onSignedOut = result;
       getSensors();
     });
   }
