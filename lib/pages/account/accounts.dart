@@ -31,6 +31,7 @@ class Accounts extends StatefulWidget {
 class _AccountsState extends State<Accounts> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
 
   void initState() {
     super.initState();
@@ -56,8 +57,16 @@ class _AccountsState extends State<Accounts> {
             .map((dynamic item) => Account.fromJson(item))
             .where((account) => account.isActive == true)
             .toList();
-      } else {
-        throw "Can't get posts";
+      } else if (res != null && res['statusCode'] == "401") {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoaderInvalidToken,
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+        await new Future.delayed(const Duration(seconds: 3));
+        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+            .pop();
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     } catch (e) {
       print(e.toString());
@@ -69,7 +78,7 @@ class _AccountsState extends State<Accounts> {
   _deactivateAccount(Account account) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         // return object of type Dialog
         return AlertDialog(
           title: Text("Usuwanie konta"),
@@ -82,7 +91,7 @@ class _AccountsState extends State<Accounts> {
               child: Text("Tak"),
               onPressed: () async {
                 try {
-                  Navigator.of(context).pop(true);
+                  Navigator.of(dialogContext).pop(true);
                   displayProgressDialog(
                       context: _scaffoldKey.currentContext,
                       key: _keyLoader,
@@ -97,6 +106,18 @@ class _AccountsState extends State<Accounts> {
                       /// refreshes accounts' list
                       getAccounts();
                     });
+                  } else if (statusCode == 401) {
+                    displayProgressDialog(
+                        context: _scaffoldKey.currentContext,
+                        key: _keyLoaderInvalidToken,
+                        text:
+                            "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+                    await new Future.delayed(const Duration(seconds: 3));
+                    Navigator.of(_keyLoaderInvalidToken.currentContext,
+                            rootNavigator: true)
+                        .pop();
+                    widget.onSignedOut();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   } else if (statusCode == null) {
                     displayDialog(
                         context: _scaffoldKey.currentContext,
@@ -112,9 +133,6 @@ class _AccountsState extends State<Accounts> {
                   }
                 } catch (e) {
                   print(e.toString());
-                  Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                      .pop();
-
                   if (e.toString().contains("TimeoutException")) {
                     displayDialog(
                         context: context,
@@ -147,7 +165,7 @@ class _AccountsState extends State<Accounts> {
           text: "Trwa wylogowywanie...");
       var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200) {
+      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {

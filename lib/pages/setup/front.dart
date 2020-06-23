@@ -80,15 +80,17 @@ class _FrontState extends State<Front> {
             fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
-    if (result != null && result['dataSaved'] == true) {
-      final snackBar = new SnackBar(
-          content: new Text("Email został wysłany. Sprawdź pocztę."));
+    if (result != null) {
+      if (result['dataSaved'] == true) {
+        final snackBar = new SnackBar(
+            content: new Text("Email został wysłany. Sprawdź pocztę."));
 
-      _scaffoldKey.currentState.showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      }
+      setState(() {
+        widget.onSignedOut = result['onSignedOut'];
+      });
     }
-    setState(() {
-      widget.onSignedOut = result['onSignedOut'];
-    });
   }
 
   /// navigates to signing in page

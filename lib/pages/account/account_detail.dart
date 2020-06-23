@@ -70,7 +70,7 @@ class _AccountDetailState extends State<AccountDetail> {
           text: "Trwa wylogowywanie...");
       var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200) {
+      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
@@ -280,6 +280,15 @@ class _AccountDetailState extends State<AccountDetail> {
           _telephoneController = TextEditingController(text: account.telephone);
           widget.account = account;
         });
+      } else if (res[1] == 401) {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoader,
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+        await new Future.delayed(const Duration(seconds: 3));
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         displayDialog(
             context: context,

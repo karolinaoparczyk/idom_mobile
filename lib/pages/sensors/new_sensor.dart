@@ -36,6 +36,7 @@ class _NewSensorState extends State<NewSensor> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _frequencyValueController = TextEditingController();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   var selectedCategory;
   var selectedUnits;
   bool _load;
@@ -88,7 +89,7 @@ class _NewSensorState extends State<NewSensor> {
           text: "Trwa wylogowywanie...");
       var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200) {
+      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
@@ -418,6 +419,15 @@ class _NewSensorState extends State<NewSensor> {
             'dataSaved': true
           };
           Navigator.of(context).pop(result);
+        } else if (res['statusCodeSen'] == "401") {
+          displayProgressDialog(
+              context: _scaffoldKey.currentContext,
+              key: _keyLoaderInvalidToken,
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+          await new Future.delayed(const Duration(seconds: 3));
+          Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true).pop();
+          widget.onSignedOut();
+          Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
           displayDialog(

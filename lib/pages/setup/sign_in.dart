@@ -242,13 +242,15 @@ class _SignInState extends State<SignIn> {
             fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
-    if (result != null && result['dataSaved'] == true) {
-      final snackBar = new SnackBar(
-          content: new Text("Email został wysłany. Sprawdź pocztę."));
-      _scaffoldKey.currentState.showSnackBar((snackBar));
+    if (result != null) {
+      if (result['dataSaved'] == true) {
+        final snackBar = new SnackBar(
+            content: new Text("Email został wysłany. Sprawdź pocztę."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      }
+      setState(() {
+        widget.onSignedOut = result['onSignedOut'];
+      });
     }
-    setState(() {
-      widget.onSignedOut = result['onSignedOut'];
-    });
   }
 }

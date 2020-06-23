@@ -109,6 +109,13 @@ class _SensorDetailsState extends State<SensorDetails> {
         }));
   }
 
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   _onSelectionChanged(charts.SelectionModel model) {
     final selectedDatum = model.selectedDatum;
 
@@ -129,22 +136,33 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   getSensorData() async {
-    var res = await widget.api
-        .getSensorData(widget.currentLoggedInToken, widget.sensor.id);
-    if (res['statusSensorData'] == "200") {
-      if (res['bodySensorData'] != "[]") {
-        List<dynamic> bodySensorData = jsonDecode(res['bodySensorData']);
-        sensorData = List<SensorData>();
+    if (widget.sensor != null) {
+      var res = await widget.api
+          .getSensorData(widget.currentLoggedInToken, widget.sensor.id);
+      if (res['statusSensorData'] == "200") {
+        if (res['bodySensorData'] != "[]") {
+          List<dynamic> bodySensorData = jsonDecode(res['bodySensorData']);
+          sensorData = List<SensorData>();
 
-        for (var i = 0; i < bodySensorData.length; i++) {
-          sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
+          for (var i = 0; i < bodySensorData.length; i++) {
+            sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
+          }
+          noDataForChart = false;
+          dataLoaded = true;
+          return sensorData;
+        } else {
+          noDataForChart = true;
+          dataLoaded = false;
         }
-        noDataForChart = false;
-        dataLoaded = true;
-        return sensorData;
-      } else {
-        noDataForChart = true;
-        dataLoaded = false;
+      } else if (res != null && res['statusSensorData'] == "401") {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoader,
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+        await new Future.delayed(const Duration(seconds: 3));
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     }
   }
@@ -249,9 +267,9 @@ class _SensorDetailsState extends State<SensorDetails> {
           context: _scaffoldKey.currentContext,
           key: _keyLoader,
           text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      var statusCode = await widget.api.logOut("");
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200) {
+      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
@@ -313,6 +331,11 @@ class _SensorDetailsState extends State<SensorDetails> {
   @override
   void dispose() {
     _nameController.dispose();
+    _categoryController.dispose();
+    _frequencyValueController.dispose();
+    _currentSensorDataController.dispose();
+    widget.sensor = null;
+    chartWid = null;
     super.dispose();
   }
 
@@ -625,6 +648,15 @@ class _SensorDetailsState extends State<SensorDetails> {
               }
               chartWid = chartWidget();
             }));
+      } else if (res['statusCode'] == "401") {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoader,
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+        await new Future.delayed(const Duration(seconds: 3));
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         displayDialog(
             context: context,

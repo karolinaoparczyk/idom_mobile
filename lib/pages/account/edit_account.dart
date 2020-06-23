@@ -33,6 +33,7 @@ class _EditAccountState extends State<EditAccount> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   bool _load;
 
   TextEditingController _emailController;
@@ -80,6 +81,13 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _telephoneController.dispose();
@@ -95,7 +103,7 @@ class _EditAccountState extends State<EditAccount> {
           text: "Trwa wylogowywanie...");
       var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200) {
+      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
@@ -276,7 +284,6 @@ class _EditAccountState extends State<EditAccount> {
       var emailInvalid = false;
       var telephoneExists = false;
       var telephoneInvalid = false;
-      print(res['body']);
 
       if (res['statusCode'] == "200") {
         Map<String, dynamic> result = {
@@ -284,6 +291,16 @@ class _EditAccountState extends State<EditAccount> {
           'dataSaved': true
         };
         Navigator.of(context).pop(result);
+      } else if (res['statusCode'] == "401") {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoaderInvalidToken,
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+        await new Future.delayed(const Duration(seconds: 3));
+        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+            .pop();
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
       if (res['body'].contains("Username already exists")) {
         loginExists = true;

@@ -34,6 +34,7 @@ class Sensors extends StatefulWidget {
 class _SensorsState extends State<Sensors> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   List<String> menuItems;
 
   @override
@@ -64,8 +65,16 @@ class _SensorsState extends State<Sensors> {
         List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
         sensors =
             bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
-      } else {
-        throw "Can't get sensors";
+      } else if (res != null && res['statusCodeSensors'] == "401") {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoaderInvalidToken,
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+        await new Future.delayed(const Duration(seconds: 3));
+        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+            .pop();
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     } catch (e) {
       print(e.toString());
@@ -82,7 +91,7 @@ class _SensorsState extends State<Sensors> {
           text: "Trwa wylogowywanie...");
       var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200) {
+      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
@@ -138,6 +147,18 @@ class _SensorsState extends State<Sensors> {
                       /// refreshes sensors' list
                       getSensors();
                     });
+                  } else if (statusCode == 401) {
+                    displayProgressDialog(
+                        context: _scaffoldKey.currentContext,
+                        key: _keyLoaderInvalidToken,
+                        text:
+                            "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+                    await new Future.delayed(const Duration(seconds: 3));
+                    Navigator.of(_keyLoaderInvalidToken.currentContext,
+                            rootNavigator: true)
+                        .pop();
+                    widget.onSignedOut();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   } else if (statusCode == null) {
                     displayDialog(
                         context: _scaffoldKey.currentContext,
@@ -327,14 +348,16 @@ class _SensorsState extends State<Sensors> {
             fullscreenDialog: true));
 
     /// displays success message if sensor added succesfully
-    if (result != null && result['dataSaved'] == true) {
-      var snackBar = SnackBar(content: Text("Dodano nowy czujnik."));
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+    if (result != null) {
+      if (result['dataSaved'] == true) {
+        var snackBar = SnackBar(content: Text("Dodano nowy czujnik."));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      }
+      setState(() {
+        widget.onSignedOut = result['onSignedOut'];
+        getSensors();
+      });
     }
-    setState(() {
-      widget.onSignedOut = result['onSignedOut'];
-      getSensors();
-    });
   }
 
   /// navigates to sensor's details

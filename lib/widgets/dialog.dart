@@ -27,7 +27,7 @@ void displayProgressDialog({BuildContext context, GlobalKey key, String text}) {
                   SizedBox(
                     height: 10,
                   ),
-                  Text(text)
+                  Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: 13.5))
                 ]),
               )
             ]));
