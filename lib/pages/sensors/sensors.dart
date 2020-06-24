@@ -362,7 +362,9 @@ class _SensorsState extends State<Sensors> {
     } else if (_sensorList != null && _sensorList.length > 0) {
       return Expanded(
           child: Scrollbar(
-              child: ListView.separated(
+              child: RefreshIndicator(
+                  onRefresh: _pullRefresh,
+                  child: ListView.separated(
         separatorBuilder: (context, index) => Divider(
           color: textColor,
         ),
@@ -379,11 +381,19 @@ class _SensorsState extends State<Sensors> {
 
             /// delete sensor button
             trailing: deleteButtonTrailing(_sensorList[index])),
-      )));
+      ))));
     }
 
     /// shows progress indicator while fetching data
     return Center(child: CircularProgressIndicator());
+  }
+
+  Future<void> _pullRefresh() async {
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {
+      /// refreshes sensors' list
+      getSensors();
+    });
   }
 
   void filterSearchResults(String query) {

@@ -100,13 +100,11 @@ class _AccountsState extends State<Accounts> {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        // return object of type Dialog
         return AlertDialog(
           title: Text("Usuwanie konta"),
           content:
           Text("Czy na pewno chcesz usunąć konto ${account.username}?"),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             FlatButton(
               key: Key("yesButton"),
               child: Text("Tak"),
@@ -330,29 +328,40 @@ class _AccountsState extends State<Accounts> {
     } else if (_accountList != null && _accountList.length > 0) {
       return Expanded(
           child: Scrollbar(
-              child: ListView.separated(
-                separatorBuilder: (context, index) =>
-                    Divider(
-                      color: textColor,
-                    ),
-                shrinkWrap: true,
-                itemCount: _accountList.length,
-                itemBuilder: (context, index) =>
-                    ListTile(
-                        key: Key(_accountList[index].username),
-                        title: Text(_accountList[index].username,
-                            style: TextStyle(fontSize: 20.0)),
-                        onTap: () {
-                          navigateToAccountDetails(_accountList[index]);
-                        },
+              child: RefreshIndicator(
+                  onRefresh: _pullRefresh,
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        Divider(
+                          color: textColor,
+                        ),
+                    shrinkWrap: true,
+                    itemCount: _accountList.length,
+                    itemBuilder: (context, index) =>
+                        ListTile(
+                            key: Key(_accountList[index].username),
+                            title: Text(_accountList[index].username,
+                                style: TextStyle(fontSize: 20.0)),
+                            onTap: () {
+                              navigateToAccountDetails(_accountList[index]);
+                            },
 
-                        /// delete sensor button
-                        trailing: deleteButtonTrailing(_accountList[index])),
-              )));
+                            /// delete sensor button
+                            trailing: deleteButtonTrailing(
+                                _accountList[index])),
+                  ))));
     }
 
     /// shows progress indicator while fetching data
     return Center(child: CircularProgressIndicator());
+  }
+
+  Future<void> _pullRefresh() async {
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {
+      /// refreshes accounts' list
+      getAccounts();
+    });
   }
 
   void filterSearchResults(String query) {

@@ -51,10 +51,11 @@ class _HomeState extends State<Home> {
 
   permissionsGranted() async {
     if (await Permission.storage.request().isGranted) {
-      await setApiAddress();
-      return true;
+      var result = await setApiAddress();
+      return result;
     }
-    return false;
+
+    return null;
   }
 
   setApiAddress() async {
@@ -112,6 +113,6 @@ class _HomeState extends State<Home> {
         onSignedOut: _signedOut,
         apiAddressAdded: apiAddressAdded,
         apiAddress: apiAddress,
-        setApiAddress: setApiAddress);
+        setApiAddress: permissionsGranted);
   }
 }

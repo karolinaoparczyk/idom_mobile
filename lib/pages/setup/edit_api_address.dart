@@ -9,6 +9,7 @@ import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/widgets/text_color.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// allows to enter email and send reset password request
 class EditApiAddress extends StatefulWidget {
@@ -140,14 +141,15 @@ class _EditApiAddressState extends State<EditApiAddress> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
-        setState(() {
-          _load = true;
-        });
 
-        final directory = await DownloadsPathProvider.downloadsDirectory;
-        final path = '${directory.path}/serverAddress.txt';
-        final file = File(path);
-        await file.writeAsString(_apiAddressController.text);
+        if (await Permission.storage.request().isGranted) {
+          setState(() {
+            _load = true;
+          });
+          final directory = await DownloadsPathProvider.downloadsDirectory;
+          final path = '${directory.path}/serverAddress.txt';
+          final file = File(path);
+          await file.writeAsString(_apiAddressController.text);
 
         setState(() {
           _load = false;
@@ -156,7 +158,13 @@ class _EditApiAddressState extends State<EditApiAddress> {
           'onSignedOut': widget.onSignedOut,
           'dataSaved': true
         };
-        Navigator.of(context).pop(result);
+        Navigator.of(context).pop(result);}
+        else{
+          displayDialog(
+              context: context,
+              title: "Dostęp do plików",
+              text: "Aplikacja wymaga dostępu do plików.");
+        }
       }
     } catch (e) {
       print(e.toString());
