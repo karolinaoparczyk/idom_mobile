@@ -32,12 +32,16 @@ class _AccountsState extends State<Accounts> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
+  List<Account> _accountList;
+  List<Account> _duplicateAccountList = List<Account>();
+  bool zeroFetchedItems = false;
 
   void initState() {
     super.initState();
     if (widget.api == null) {
       widget.api = Api();
     }
+    getAccounts();
   }
 
   /// returns list of accounts
@@ -46,17 +50,20 @@ class _AccountsState extends State<Accounts> {
     if (widget.testAccounts != null) {
       return widget.testAccounts;
     }
-    List<Account> accounts = List<Account>();
     try {
       var res = await widget.api.getAccounts(widget.currentLoggedInToken);
 
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);
 
-        accounts = body
-            .map((dynamic item) => Account.fromJson(item))
-            .where((account) => account.isActive == true)
-            .toList();
+        setState(() {
+          _accountList = body
+              .map((dynamic item) => Account.fromJson(item))
+              .where((account) => account.isActive == true)
+              .toList();
+        });
+        if (_accountList.length == 0) zeroFetchedItems = true;
+        zeroFetchedItems = false;
       } else if (res != null && res['statusCode'] == "401") {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
@@ -71,7 +78,11 @@ class _AccountsState extends State<Accounts> {
     } catch (e) {
       print(e.toString());
     }
-    return accounts;
+    setState(() {
+      _duplicateAccountList.clear();
+      _duplicateAccountList.addAll(_accountList);
+    });
+    return _accountList;
   }
 
   /// deactivates user after confirmation
@@ -223,72 +234,117 @@ class _AccountsState extends State<Accounts> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            title: Text('IDOM Konta w systemie'),
-            actions: <Widget>[
-              PopupMenuButton(
-                  key: Key("menuButton"),
-                  offset: Offset(0, 100),
-                  onSelected: _choiceAction,
-                  itemBuilder: (BuildContext context) {
-                    return menuChoicesSuperUser.map((String choice) {
-                      return PopupMenuItem(
-                          key: Key(choice), value: choice, child: Text(choice));
-                    }).toList();
-                  })
-            ],
-          ),
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: Text('IDOM Konta w systemie'),
+              actions: <Widget>[
+                PopupMenuButton(
+                    key: Key("menuButton"),
+                    offset: Offset(0, 100),
+                    onSelected: _choiceAction,
+                    itemBuilder: (BuildContext context) {
+                      return menuChoicesSuperUser.map((String choice) {
+                        return PopupMenuItem(
+                            key: Key(choice),
+                            value: choice,
+                            child: Text(choice));
+                      }).toList();
+                    })
+              ],
+            ),
 
-          /// accounts' list builder
-          body: FutureBuilder(
-              future: getAccounts(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<Account>> snapshot) {
-                if (snapshot.data != null && snapshot.data.length == 0) {
-                  return Padding(
-                      padding: EdgeInsets.only(
-                          left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-                      child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                              "Brak kont w systemie \nlub błąd połączenia z serwerem.",
-                              style: TextStyle(fontSize: 13.5),
-                              textAlign: TextAlign.center)));
-                }
-                if (snapshot.hasData) {
-                  List<Account> accounts = snapshot.data;
-                  return Column(children: <Widget>[
-                    /// A widget with the list of accounts
-                    Expanded(
-                        flex: 16,
-                        child: Scrollbar(
-                            child: ListView.separated(
-                          separatorBuilder: (context, index) => Divider(
-                            color: textColor,
-                          ),
-                          shrinkWrap: true,
-                          itemCount: accounts.length,
-                          itemBuilder: (context, index) => ListTile(
-                              key: Key(accounts[index].username),
-                              title: Text(accounts[index].username,
-                                  style: TextStyle(fontSize: 20.0)),
+            /// accounts' list builder
+            body: Container(
+                child: Column(children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(
+                      left: 5.0, top: 5.0, right: 5.0, bottom: 5.0),
+                  child: TextField(
+                    onChanged: (value) {
+                      filterSearchResults(value);
+                    },
+                    autofocus: true,
+                    decoration: InputDecoration(
+                        labelText: "Wyszukaj",
+                        hintText: "Wyszukaj",
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(30.0)))),
+                  )),
+              listSensors()
+            ]))));
+  }
 
-                              /// when username tapped, navigates to account's details
-                              onTap: () =>
-                                  navigateToAccountDetails(accounts[index]),
+  Widget listSensors() {
+    if (zeroFetchedItems) {
+      return Padding(
+          padding:
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text(
+                  "Brak kont w systemie \nlub błąd połączenia z serwerem.",
+                  style: TextStyle(fontSize: 13.5),
+                  textAlign: TextAlign.center)));
+    } else if (!zeroFetchedItems &&
+        _accountList != null &&
+        _accountList.length == 0) {
+      return Padding(
+          padding:
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text("Brak wyników wyszukiwania.",
+                  style: TextStyle(fontSize: 13.5),
+                  textAlign: TextAlign.center)));
+    } else if (_accountList != null && _accountList.length > 0) {
+      return Expanded(
+          child: Scrollbar(
+              child: ListView.separated(
+        separatorBuilder: (context, index) => Divider(
+          color: textColor,
+        ),
+        shrinkWrap: true,
+        itemCount: _accountList.length,
+        itemBuilder: (context, index) => ListTile(
+            key: Key(_accountList[index].username),
+            title: Text(_accountList[index].username,
+                style: TextStyle(fontSize: 20.0)),
+            onTap: () {
+              navigateToAccountDetails(_accountList[index]);
+            },
 
-                              /// delete account button
-                              trailing: deleteButtonTrailing(accounts[index])),
-                        ))),
-                    Expanded(flex: 1, child: Divider()),
-                  ]);
-                }
+            /// delete sensor button
+            trailing: deleteButtonTrailing(_accountList[index])),
+      )));
+    }
 
-                /// shows progress indicator while fetching data
-                return Center(child: CircularProgressIndicator());
-              }),
-        ));
+    /// shows progress indicator while fetching data
+    return Center(child: CircularProgressIndicator());
+  }
+
+  void filterSearchResults(String query) {
+    List<Account> dummySearchList = List<Account>();
+    dummySearchList.addAll(_duplicateAccountList);
+    if (query.isNotEmpty) {
+      List<Account> dummyListData = List<Account>();
+      dummySearchList.forEach((item) {
+        if (item.username.contains(query)) {
+          dummyListData.add(item);
+        }
+      });
+      setState(() {
+        _accountList.clear();
+        _accountList.addAll(dummyListData);
+      });
+      return;
+    } else {
+      setState(() {
+        _accountList.clear();
+        _accountList.addAll(_duplicateAccountList);
+      });
+    }
   }
 
   navigateToAccountDetails(Account account) async {
@@ -302,6 +358,7 @@ class _AccountsState extends State<Accounts> {
     setState(() {
       widget.onSignedOut = result;
     });
+    await getAccounts();
   }
 
   /// delete account button
