@@ -104,3 +104,21 @@ class SensorFrequencyFieldValidator {
       return true;
   }
 }
+
+/// validates url field
+class UrlFieldValidator{
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane';
+    }
+    if (value.contains(' ')) {
+      return 'Adres nie może zawierać spacji';
+    }
+    var httpMatch = RegExp(r"http://").matchAsPrefix(value) != null;
+    var httpsMatch = RegExp(r"https://").matchAsPrefix(value) != null;
+    if (!httpMatch && !httpsMatch) {
+      return 'Adres musi rozpoczynać się od "http://"';
+    }
+    return null;
+  }
+}

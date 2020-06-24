@@ -55,9 +55,6 @@ class _EditSensorState extends State<EditSensor> {
   @override
   void initState() {
     super.initState();
-    if (widget.api == null) {
-      widget.api = Api();
-    }
     _load = false;
 
     /// seting current sensor name
@@ -128,6 +125,14 @@ class _EditSensorState extends State<EditSensor> {
             context: context,
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd wylogowania",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     }
   }
@@ -403,7 +408,8 @@ class _EditSensorState extends State<EditSensor> {
             key: _keyLoaderInvalidToken,
             text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
         await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true).pop();
+        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+            .pop();
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
@@ -426,6 +432,14 @@ class _EditSensorState extends State<EditSensor> {
             context: context,
             title: "Błąd edytowania czujnika",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd edytowania czujnika",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     }
   }

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
@@ -8,39 +11,47 @@ import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/widgets/text_color.dart';
 
 /// allows to enter email and send reset password request
-class EnterEmail extends StatefulWidget {
-  EnterEmail({@required this.api, @required this.onSignedOut});
+class EditApiAddress extends StatefulWidget {
+  EditApiAddress(
+      {@required this.api, @required this.onSignedOut, this.apiAddress});
 
   Api api;
   VoidCallback onSignedOut;
+  String apiAddress;
 
   @override
-  _EnterEmailState createState() => _EnterEmailState();
+  _EditApiAddressState createState() => _EditApiAddressState();
 }
 
-class _EnterEmailState extends State<EnterEmail> {
+class _EditApiAddressState extends State<EditApiAddress> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
+  TextEditingController _apiAddressController = TextEditingController();
   bool _load;
 
   void initState() {
     super.initState();
+//    if (widget.api == null) {
+//      widget.api = Api();
+//    }
     _load = false;
+    if (widget.apiAddress != null) {
+      _apiAddressController = TextEditingController(text: widget.api.url);
+    } else
+      _apiAddressController = TextEditingController(text: "http://");
   }
 
-  /// build email form field
-  Widget _buildEmail() {
+  /// build api address form field
+  Widget _buildApiAddress() {
     return TextFormField(
-        key: Key("email"),
-        controller: _emailController,
+        key: Key("apiAddress"),
+        controller: _apiAddressController,
         autofocus: true,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "Podaj adres e-mail",
+          hintText: "Podaj adres serwera",
         ),
-        keyboardType: TextInputType.emailAddress,
         style: TextStyle(fontSize: 17.0),
-        validator: EmailFieldValidator.validate);
+        validator: UrlFieldValidator.validate);
   }
 
   Future<bool> _onBackButton() async {
@@ -58,7 +69,7 @@ class _EnterEmailState extends State<EnterEmail> {
         onWillPop: _onBackButton,
         child: Scaffold(
             appBar: AppBar(
-              title: Text('Reset hasła'),
+              title: Text('Adres serwera'),
             ),
             body: Row(children: <Widget>[
               Expanded(flex: 1, child: SizedBox(width: 1)),
@@ -81,8 +92,7 @@ class _EnterEmailState extends State<EnterEmail> {
                                         top: 33.5,
                                         right: 30.0,
                                         bottom: 0.0),
-                                    child: Text(
-                                        "Wprowadź adres e-mail połączony z Twoim kontem",
+                                    child: Text("Wprowadź adres serwera",
                                         style: TextStyle(fontSize: 13.5))),
                                 Padding(
                                     padding: EdgeInsets.only(
@@ -92,7 +102,7 @@ class _EnterEmailState extends State<EnterEmail> {
                                         bottom: 0.0),
                                     child: Align(
                                         alignment: Alignment.centerLeft,
-                                        child: Text("Adres e-mail*",
+                                        child: Text("Adres serwera*",
                                             style: TextStyle(
                                                 color: textColor,
                                                 fontSize: 13.5,
@@ -105,7 +115,7 @@ class _EnterEmailState extends State<EnterEmail> {
                                         bottom: 0.0),
                                     child: Align(
                                         alignment: Alignment.centerLeft,
-                                        child: _buildEmail())),
+                                        child: _buildApiAddress())),
                               ],
                             ))),
                     Expanded(
@@ -117,38 +127,36 @@ class _EnterEmailState extends State<EnterEmail> {
                             ),
                             alignment: Alignment.bottomCenter,
                             child: Column(children: <Widget>[
-                              buttonWidget(context, "Resetuj hasło",
-                                  sendResetPasswordRequest)
+                              buttonWidget(
+                                  context, "Zapisz adres", setApiAddress)
                             ])))
                   ])),
               Expanded(flex: 1, child: SizedBox(width: 1)),
             ])));
   }
 
-  /// sends request to API to reset password if form is validated
-  sendResetPasswordRequest() async {
+  /// sets api address
+  setApiAddress() async {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
         setState(() {
           _load = true;
         });
-        var res = await widget.api.resetPassword(_emailController.value.text);
+
+        final directory = await DownloadsPathProvider.downloadsDirectory;
+        final path = '${directory.path}/serverAddress.txt';
+        final file = File(path);
+        await file.writeAsString(_apiAddressController.text);
+
         setState(() {
           _load = false;
         });
-        if (res == 200) {
-          Map<String, dynamic> result = {
-            'onSignedOut': widget.onSignedOut,
-            'dataSaved': true
-          };
-          Navigator.of(context).pop(result);
-        } else if (res == 400) {
-          displayDialog(
-              context: context,
-              title: "Błąd",
-              text: "Konto dla podanego adresu e-mail nie istnieje.");
-        }
+        Map<String, dynamic> result = {
+          'onSignedOut': widget.onSignedOut,
+          'dataSaved': true
+        };
+        Navigator.of(context).pop(result);
       }
     } catch (e) {
       print(e.toString());
@@ -158,16 +166,8 @@ class _EnterEmailState extends State<EnterEmail> {
       if (e.toString().contains("TimeoutException")) {
         displayDialog(
             context: context,
-            title: "Błąd resetu hasła",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      }
-      if (e.toString().contains("No address associated with hostname")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd resetu hasła",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+            title: "Błąd zapisu adresu serwera",
+            text: "Spróbuj ponownie.");
       }
     }
   }

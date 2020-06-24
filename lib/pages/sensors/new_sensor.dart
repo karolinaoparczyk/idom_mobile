@@ -53,9 +53,6 @@ class _NewSensorState extends State<NewSensor> {
   @override
   void initState() {
     super.initState();
-    if (widget.api == null) {
-      widget.api = Api();
-    }
     _load = false;
 
     /// available sensor categories choices
@@ -110,6 +107,14 @@ class _NewSensorState extends State<NewSensor> {
             context: context,
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd wylogowania",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     }
   }
@@ -425,7 +430,9 @@ class _NewSensorState extends State<NewSensor> {
               key: _keyLoaderInvalidToken,
               text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
           await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true).pop();
+          Navigator.of(_keyLoaderInvalidToken.currentContext,
+                  rootNavigator: true)
+              .pop();
           widget.onSignedOut();
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['bodySen']
@@ -448,6 +455,14 @@ class _NewSensorState extends State<NewSensor> {
               context: context,
               title: "Błąd dodawania czujnika",
               text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        }
+        if (e.toString().contains("No address associated with hostname")) {
+          await displayDialog(
+              context: context,
+              title: "Błąd dodawania czujnika",
+              text: "Adres serwera nieprawidłowy.");
+          widget.onSignedOut();
+          Navigator.of(context).popUntil((route) => route.isFirst);
         }
       }
     }

@@ -71,9 +71,6 @@ class _EditAccountState extends State<EditAccount> {
   @override
   void initState() {
     super.initState();
-    if (widget.api == null) {
-      widget.api = Api();
-    }
     _load = false;
     _emailController = TextEditingController(text: widget.account.email);
     _telephoneController =
@@ -124,6 +121,14 @@ class _EditAccountState extends State<EditAccount> {
             context: context,
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd wylogowania",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     }
   }
@@ -357,6 +362,14 @@ class _EditAccountState extends State<EditAccount> {
             context: context,
             title: "Błąd edycji użytkownika",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd edycji użytkownika",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     }
   }

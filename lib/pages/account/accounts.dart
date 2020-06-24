@@ -10,13 +10,12 @@ import 'package:idom/widgets/text_color.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
-  Accounts(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentUser,
-      @required this.api,
-      @required this.onSignedOut,
-      this.testAccounts})
+  Accounts({Key key,
+    @required this.currentLoggedInToken,
+    @required this.currentUser,
+    @required this.api,
+    @required this.onSignedOut,
+    this.testAccounts})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
@@ -38,9 +37,6 @@ class _AccountsState extends State<Accounts> {
 
   void initState() {
     super.initState();
-    if (widget.api == null) {
-      widget.api = Api();
-    }
     getAccounts();
   }
 
@@ -77,6 +73,20 @@ class _AccountsState extends State<Accounts> {
       }
     } catch (e) {
       print(e.toString());
+      if (e.toString().contains("TimeoutException")) {
+        displayDialog(
+            context: _scaffoldKey.currentContext,
+            title: "Błąd pobierania kont",
+            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd pobierania kont",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     }
     setState(() {
       _duplicateAccountList.clear();
@@ -94,7 +104,7 @@ class _AccountsState extends State<Accounts> {
         return AlertDialog(
           title: Text("Usuwanie konta"),
           content:
-              Text("Czy na pewno chcesz usunąć konto ${account.username}?"),
+          Text("Czy na pewno chcesz usunąć konto ${account.username}?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
@@ -122,10 +132,10 @@ class _AccountsState extends State<Accounts> {
                         context: _scaffoldKey.currentContext,
                         key: _keyLoaderInvalidToken,
                         text:
-                            "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+                        "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
                     await new Future.delayed(const Duration(seconds: 3));
                     Navigator.of(_keyLoaderInvalidToken.currentContext,
-                            rootNavigator: true)
+                        rootNavigator: true)
                         .pop();
                     widget.onSignedOut();
                     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -134,13 +144,13 @@ class _AccountsState extends State<Accounts> {
                         context: _scaffoldKey.currentContext,
                         title: "Błąd usuwania konta",
                         text:
-                            "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                        "Sprawdź połączenie z serwerem i spróbuj ponownie.");
                   } else {
                     displayDialog(
                         context: _scaffoldKey.currentContext,
                         title: "Błąd",
                         text:
-                            "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
+                        "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
                   }
                 } catch (e) {
                   print(e.toString());
@@ -149,7 +159,17 @@ class _AccountsState extends State<Accounts> {
                         context: context,
                         title: "Błąd usuwania konta",
                         text:
-                            "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                        "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                  }
+                  if (e
+                      .toString()
+                      .contains("No address associated with hostname")) {
+                    await displayDialog(
+                        context: context,
+                        title: "Błąd usuwania konta",
+                        text: "Adres serwera nieprawidłowy.");
+                    widget.onSignedOut();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 }
               },
@@ -198,6 +218,14 @@ class _AccountsState extends State<Accounts> {
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd wylogowania",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     }
   }
 
@@ -209,12 +237,13 @@ class _AccountsState extends State<Accounts> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => AccountDetail(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  account: widget.currentUser,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
+              builder: (context) =>
+                  AccountDetail(
+                      currentLoggedInToken: widget.currentLoggedInToken,
+                      account: widget.currentUser,
+                      currentUser: widget.currentUser,
+                      api: widget.api,
+                      onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -256,31 +285,31 @@ class _AccountsState extends State<Accounts> {
             /// accounts' list builder
             body: Container(
                 child: Column(children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(
-                      left: 5.0, top: 5.0, right: 5.0, bottom: 5.0),
-                  child: TextField(
-                    onChanged: (value) {
-                      filterSearchResults(value);
-                    },
-                    autofocus: true,
-                    decoration: InputDecoration(
-                        labelText: "Wyszukaj",
-                        hintText: "Wyszukaj",
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                            borderRadius:
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 5.0, top: 5.0, right: 5.0, bottom: 5.0),
+                      child: TextField(
+                        onChanged: (value) {
+                          filterSearchResults(value);
+                        },
+                        autofocus: true,
+                        decoration: InputDecoration(
+                            labelText: "Wyszukaj",
+                            hintText: "Wyszukaj",
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(
+                                borderRadius:
                                 BorderRadius.all(Radius.circular(30.0)))),
-                  )),
-              listSensors()
-            ]))));
+                      )),
+                  listSensors()
+                ]))));
   }
 
   Widget listSensors() {
     if (zeroFetchedItems) {
       return Padding(
           padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
@@ -292,7 +321,7 @@ class _AccountsState extends State<Accounts> {
         _accountList.length == 0) {
       return Padding(
           padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.",
@@ -302,22 +331,24 @@ class _AccountsState extends State<Accounts> {
       return Expanded(
           child: Scrollbar(
               child: ListView.separated(
-        separatorBuilder: (context, index) => Divider(
-          color: textColor,
-        ),
-        shrinkWrap: true,
-        itemCount: _accountList.length,
-        itemBuilder: (context, index) => ListTile(
-            key: Key(_accountList[index].username),
-            title: Text(_accountList[index].username,
-                style: TextStyle(fontSize: 20.0)),
-            onTap: () {
-              navigateToAccountDetails(_accountList[index]);
-            },
+                separatorBuilder: (context, index) =>
+                    Divider(
+                      color: textColor,
+                    ),
+                shrinkWrap: true,
+                itemCount: _accountList.length,
+                itemBuilder: (context, index) =>
+                    ListTile(
+                        key: Key(_accountList[index].username),
+                        title: Text(_accountList[index].username,
+                            style: TextStyle(fontSize: 20.0)),
+                        onTap: () {
+                          navigateToAccountDetails(_accountList[index]);
+                        },
 
-            /// delete sensor button
-            trailing: deleteButtonTrailing(_accountList[index])),
-      )));
+                        /// delete sensor button
+                        trailing: deleteButtonTrailing(_accountList[index])),
+              )));
     }
 
     /// shows progress indicator while fetching data
@@ -349,12 +380,13 @@ class _AccountsState extends State<Accounts> {
 
   navigateToAccountDetails(Account account) async {
     var result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => AccountDetail(
-            currentLoggedInToken: widget.currentLoggedInToken,
-            account: account,
-            currentUser: widget.currentUser,
-            api: widget.api,
-            onSignedOut: widget.onSignedOut)));
+        builder: (context) =>
+            AccountDetail(
+                currentLoggedInToken: widget.currentLoggedInToken,
+                account: account,
+                currentUser: widget.currentUser,
+                api: widget.api,
+                onSignedOut: widget.onSignedOut)));
     setState(() {
       widget.onSignedOut = result;
     });

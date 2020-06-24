@@ -44,8 +44,6 @@ class _SensorsState extends State<Sensors> {
   void initState() {
     super.initState();
 
-    if (widget.api == null) widget.api = Api();
-
     /// displays appropriate menu choices according to user data
     menuItems = widget.currentUser.isStaff
         ? menuChoicesSuperUser
@@ -85,6 +83,20 @@ class _SensorsState extends State<Sensors> {
       }
     } catch (e) {
       print(e.toString());
+      if (e.toString().contains("TimeoutException")) {
+        displayDialog(
+            context: _scaffoldKey.currentContext,
+            title: "Błąd pobierania czujników",
+            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd pobierania czujników",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     }
     setState(() {
       _duplicateSensorList.clear();
@@ -123,6 +135,14 @@ class _SensorsState extends State<Sensors> {
             context: _scaffoldKey.currentContext,
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("No address associated with hostname")) {
+        await displayDialog(
+            context: context,
+            title: "Błąd wylogowania",
+            text: "Adres serwera nieprawidłowy.");
+        widget.onSignedOut();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     }
   }
@@ -194,6 +214,16 @@ class _SensorsState extends State<Sensors> {
                         title: "Błąd usuwania czujnika",
                         text:
                             "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                  }
+                  if (e
+                      .toString()
+                      .contains("No address associated with hostname")) {
+                    await displayDialog(
+                        context: context,
+                        title: "Błąd resetu hasła",
+                        text: "Adres serwera nieprawidłowy.");
+                    widget.onSignedOut();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 }
               },

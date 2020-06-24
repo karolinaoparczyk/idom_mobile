@@ -25,12 +25,15 @@ dependencies:
   cupertino_icons: ^0.1.2
   http:
   flutter_secure_storage:
-  path_provider: ^1.1.0
+  path_provider:
   dio: ^2.1.6
   cookie_jar: ^1.0.0
   charts_flutter:
   keyboard_visibility: ^0.5.6
   fl_chart: ^0.10.0
+  downloads_path_provider:
+  permission_handler:
+
 
 dev_dependencies:
   flutter_test:

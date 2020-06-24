@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:idom/pages/sensors/sensors.dart';
 import 'package:idom/pages/setup/front.dart';
 
@@ -23,11 +28,13 @@ class _HomeState extends State<Home> {
   Api api;
   String currentLoggedInToken;
   Account currentUser;
+  bool apiAddressAdded = true;
+  String apiAddress;
 
   @override
   void initState() {
     super.initState();
-    api = Api();
+    permissionsGranted();
     if (widget.signedOut != null && widget.signedOut == true)
       authStatus = AuthStatus.notSignedIn;
   }
@@ -42,6 +49,33 @@ class _HomeState extends State<Home> {
     });
   }
 
+  permissionsGranted() async {
+    if (await Permission.storage.request().isGranted) {
+      await setApiAddress();
+      return true;
+    }
+    return false;
+  }
+
+  setApiAddress() async {
+    final directory = await DownloadsPathProvider.downloadsDirectory;
+    final path = '${directory.path}/serverAddress.txt';
+    var apiString;
+    try {
+      final file = File(path);
+      apiString = await file.readAsString();
+      apiAddressAdded = true;
+      setState(() {
+        apiAddress = apiString;
+        api = Api(apiAddress);
+      });
+    } catch (e) {
+      print(e);
+      apiAddressAdded = false;
+    }
+    return apiString;
+  }
+
   /// when user logs in successfully
   void _signedOut() {
     setState(() {
@@ -52,7 +86,14 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return authStatus == AuthStatus.notSignedIn
-        ? Front(api: api, onSignedIn: _signedIn, onSignedOut: _signedOut)
+        ? FutureBuilder<Widget>(
+            future: frontWidget(),
+            builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+              if (snapshot.hasData) return snapshot.data;
+
+              return Container(
+                  child: Center(child: CircularProgressIndicator()));
+            })
         : sensorWidget();
   }
 
@@ -62,5 +103,15 @@ class _HomeState extends State<Home> {
         currentUser: currentUser,
         api: api,
         onSignedOut: _signedOut);
+  }
+
+  Future<Widget> frontWidget() async {
+    return Front(
+        api: api,
+        onSignedIn: _signedIn,
+        onSignedOut: _signedOut,
+        apiAddressAdded: apiAddressAdded,
+        apiAddress: apiAddress,
+        setApiAddress: setApiAddress);
   }
 }

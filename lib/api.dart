@@ -3,9 +3,8 @@ import 'package:http/http.dart' as http;
 
 class Api {
   /// sets api url in constructor
-  Api() {
-    url = "http://raspberry2020.ddns.net:38294";
-//    url = "http://10.0.2.2:8000";
+  Api(String apiAddress) {
+    url = apiAddress;
   }
 
   String url;
