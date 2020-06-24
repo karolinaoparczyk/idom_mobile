@@ -13,12 +13,13 @@ import 'package:idom/widgets/text_color.dart';
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
-  Sensors({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentUser,
-    @required this.api,
-    @required this.onSignedOut,
-    this.testSensors})
+  Sensors(
+      {Key key,
+      @required this.currentLoggedInToken,
+      @required this.currentUser,
+      @required this.api,
+      @required this.onSignedOut,
+      this.testSensors})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
@@ -65,12 +66,12 @@ class _SensorsState extends State<Sensors> {
 
       if (res != null && res['statusCodeSensors'] == "200") {
         List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
-        setState(() {_sensorList =
-            bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();});
-        if (_sensorList.length == 0)
-          zeroFetchedItems = true;
+        setState(() {
+          _sensorList =
+              bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
+        });
+        if (_sensorList.length == 0) zeroFetchedItems = true;
         zeroFetchedItems = false;
-
       } else if (res != null && res['statusCodeSensors'] == "401") {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
@@ -85,8 +86,10 @@ class _SensorsState extends State<Sensors> {
     } catch (e) {
       print(e.toString());
     }
-    setState(() {_duplicateSensorList.clear();
-    _duplicateSensorList.addAll(_sensorList);});
+    setState(() {
+      _duplicateSensorList.clear();
+      _duplicateSensorList.addAll(_sensorList);
+    });
     return _sensorList;
   }
 
@@ -160,10 +163,10 @@ class _SensorsState extends State<Sensors> {
                         context: _scaffoldKey.currentContext,
                         key: _keyLoaderInvalidToken,
                         text:
-                        "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+                            "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
                     await new Future.delayed(const Duration(seconds: 3));
                     Navigator.of(_keyLoaderInvalidToken.currentContext,
-                        rootNavigator: true)
+                            rootNavigator: true)
                         .pop();
                     widget.onSignedOut();
                     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -172,13 +175,13 @@ class _SensorsState extends State<Sensors> {
                         context: _scaffoldKey.currentContext,
                         title: "Błąd usuwania czujnika",
                         text:
-                        "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                            "Sprawdź połączenie z serwerem i spróbuj ponownie.");
                   } else {
                     displayDialog(
                         context: _scaffoldKey.currentContext,
                         title: "Błąd",
                         text:
-                        "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.");
+                            "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.");
                   }
                 } catch (e) {
                   Navigator.of(_keyLoader.currentContext, rootNavigator: true)
@@ -190,7 +193,7 @@ class _SensorsState extends State<Sensors> {
                         context: _scaffoldKey.currentContext,
                         title: "Błąd usuwania czujnika",
                         text:
-                        "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                            "Sprawdź połączenie z serwerem i spróbuj ponownie.");
                   }
                 }
               },
@@ -214,13 +217,12 @@ class _SensorsState extends State<Sensors> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  AccountDetail(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      account: widget.currentUser,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -230,12 +232,11 @@ class _SensorsState extends State<Sensors> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  Accounts(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
+              builder: (context) => Accounts(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  currentUser: widget.currentUser,
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -248,107 +249,107 @@ class _SensorsState extends State<Sensors> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
+      key: _scaffoldKey,
 
-        /// adds sensor adding button
-        floatingActionButton: Container(
-            height: 80.0,
-            width: 80.0,
-            child: FittedBox(
-                child: FloatingActionButton(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  key: Key("addSensorButton"),
-                  onPressed: navigateToNewSensor,
-                  child: Icon(Icons.add, size: 30),
-                  //backgroundColor: Colors.green,
-                ))),
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text('IDOM Czujniki'),
-          actions: <Widget>[
+      /// adds sensor adding button
+      floatingActionButton: Container(
+          height: 80.0,
+          width: 80.0,
+          child: FittedBox(
+              child: FloatingActionButton(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            key: Key("addSensorButton"),
+            onPressed: navigateToNewSensor,
+            child: Icon(Icons.add, size: 30),
+            //backgroundColor: Colors.green,
+          ))),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('IDOM Czujniki'),
+        actions: <Widget>[
+          /// menu dropdown button
+          PopupMenuButton(
+              key: Key("menuButton"),
+              offset: Offset(0, 100),
+              onSelected: _choiceAction,
 
-            /// menu dropdown button
-            PopupMenuButton(
-                key: Key("menuButton"),
-                offset: Offset(0, 100),
-                onSelected: _choiceAction,
+              /// menu choices from utils/menu_items.dart
+              itemBuilder: (BuildContext context) {
+                return menuItems.map((String choice) {
+                  return PopupMenuItem(
+                      key: Key(choice), value: choice, child: Text(choice));
+                }).toList();
+              })
+        ],
+      ),
 
-                /// menu choices from utils/menu_items.dart
-                itemBuilder: (BuildContext context) {
-                  return menuItems.map((String choice) {
-                    return PopupMenuItem(
-                        key: Key(choice), value: choice, child: Text(choice));
-                  }).toList();
-                })
-          ],
-        ),
-
-        /// builds sensor's list
-        body: Container(child: Column(children: <Widget> [Padding(
-        padding: EdgeInsets.only(
-            left: 5.0, top: 5.0, right: 5.0, bottom: 5.0),
-            child: TextField(onChanged: (value) {
-              filterSearchResults(value);
-            },
+      /// builds sensor's list
+      body: Container(
+          child: Column(children: <Widget>[
+        Padding(
+            padding:
+                EdgeInsets.only(left: 5.0, top: 5.0, right: 5.0, bottom: 5.0),
+            child: TextField(
+              onChanged: (value) {
+                filterSearchResults(value);
+              },
+              autofocus: true,
               decoration: InputDecoration(
                   labelText: "Wyszukaj",
                   hintText: "Wyszukaj",
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(30.0)))),
-            )), listSensors()
-
-    ])
-    )
-    ,
+            )),
+        listSensors()
+      ])),
     );
   }
 
   Widget listSensors() {
     if (zeroFetchedItems) {
       return Padding(
-          padding: EdgeInsets.only(
-              left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          padding:
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
                   "Brak czujników w systemie \nlub błąd połączenia z serwerem.",
                   style: TextStyle(fontSize: 13.5),
                   textAlign: TextAlign.center)));
-    } else if (!zeroFetchedItems && _sensorList != null && _sensorList.length == 0) {
+    } else if (!zeroFetchedItems &&
+        _sensorList != null &&
+        _sensorList.length == 0) {
       return Padding(
-          padding: EdgeInsets.only(
-              left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          padding:
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text(
-                  "Brak wyników wyszukiwania.",
+              child: Text("Brak wyników wyszukiwania.",
                   style: TextStyle(fontSize: 13.5),
                   textAlign: TextAlign.center)));
-    }
-    else if (_sensorList != null && _sensorList.length > 0) {
-      return Expanded(child: Scrollbar(
-          child: ListView.separated(
-            separatorBuilder: (context, index) =>
-                Divider(
-                  color: textColor,
-                ),
-            shrinkWrap: true,
-            itemCount: _sensorList.length,
-            itemBuilder: (context, index) =>
-                ListTile(
-                    key: Key(_sensorList[index].name),
-                    title: Text(_sensorList[index].name,
-                        style: TextStyle(fontSize: 20.0)),
-                    subtitle: sensorData(_sensorList[index]),
-                    onTap: () {
-                      navigateToSensorDetails(_sensorList[index]);
-                    },
+    } else if (_sensorList != null && _sensorList.length > 0) {
+      return Expanded(
+          child: Scrollbar(
+              child: ListView.separated(
+        separatorBuilder: (context, index) => Divider(
+          color: textColor,
+        ),
+        shrinkWrap: true,
+        itemCount: _sensorList.length,
+        itemBuilder: (context, index) => ListTile(
+            key: Key(_sensorList[index].name),
+            title:
+                Text(_sensorList[index].name, style: TextStyle(fontSize: 20.0)),
+            subtitle: sensorData(_sensorList[index]),
+            onTap: () {
+              navigateToSensorDetails(_sensorList[index]);
+            },
 
-                    /// delete sensor button
-                    trailing: deleteButtonTrailing(_sensorList[index])),
-          )));
+            /// delete sensor button
+            trailing: deleteButtonTrailing(_sensorList[index])),
+      )));
     }
 
     /// shows progress indicator while fetching data
@@ -382,11 +383,11 @@ class _SensorsState extends State<Sensors> {
     if (sensor.lastData == null) return Text("");
     return sensor.category == "temperature"
         ? Text("${sensor.lastData} °C",
-        style: TextStyle(
-            fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold))
+            style: TextStyle(
+                fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold))
         : Text("${sensor.lastData} %",
-        style: TextStyle(
-            fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold));
+            style: TextStyle(
+                fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold));
   }
 
   /// navigates to adding sensor page
@@ -394,12 +395,11 @@ class _SensorsState extends State<Sensors> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                NewSensor(
-                    currentLoggedInToken: widget.currentLoggedInToken,
-                    currentUser: widget.currentUser,
-                    api: widget.api,
-                    onSignedOut: widget.onSignedOut),
+            builder: (context) => NewSensor(
+                currentLoggedInToken: widget.currentLoggedInToken,
+                currentUser: widget.currentUser,
+                api: widget.api,
+                onSignedOut: widget.onSignedOut),
             fullscreenDialog: true));
 
     /// displays success message if sensor added succesfully
@@ -418,13 +418,12 @@ class _SensorsState extends State<Sensors> {
   /// navigates to sensor's details
   navigateToSensorDetails(Sensor sensor) async {
     var result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            SensorDetails(
-                currentLoggedInToken: widget.currentLoggedInToken,
-                currentUser: widget.currentUser,
-                sensor: sensor,
-                api: widget.api,
-                onSignedOut: widget.onSignedOut)));
+        builder: (context) => SensorDetails(
+            currentLoggedInToken: widget.currentLoggedInToken,
+            currentUser: widget.currentUser,
+            sensor: sensor,
+            api: widget.api,
+            onSignedOut: widget.onSignedOut)));
 
     setState(() {
       widget.onSignedOut = result;
