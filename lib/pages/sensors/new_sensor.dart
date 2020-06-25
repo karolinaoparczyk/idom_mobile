@@ -108,7 +108,7 @@ class _NewSensorState extends State<NewSensor> {
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd wylogowania",
@@ -456,7 +456,7 @@ class _NewSensorState extends State<NewSensor> {
               title: "Błąd dodawania czujnika",
               text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
         }
-        if (e.toString().contains("No address associated with hostname")) {
+        if (e.toString().contains("SocketException")) {
           await displayDialog(
               context: context,
               title: "Błąd dodawania czujnika",

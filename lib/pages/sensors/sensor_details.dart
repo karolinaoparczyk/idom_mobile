@@ -17,12 +17,13 @@ import 'edit_sensor.dart';
 
 /// displays sensor details and allows editing them
 class SensorDetails extends StatefulWidget {
-  SensorDetails({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentUser,
-    @required this.sensor,
-    @required this.api,
-    @required this.onSignedOut})
+  SensorDetails(
+      {Key key,
+      @required this.currentLoggedInToken,
+      @required this.currentUser,
+      @required this.sensor,
+      @required this.api,
+      @required this.onSignedOut})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
@@ -94,8 +95,7 @@ class _SensorDetailsState extends State<SensorDetails> {
 
     _seriesData = List<charts.Series<SensorData, DateTime>>();
     dataMeasuresTime = "today";
-    getSensorData().then((value) =>
-        setState(() {
+    getSensorData().then((value) => setState(() {
           if (sensorData != null && sensorData.length > 0) {
             drawPlot();
           }
@@ -163,8 +163,7 @@ class _SensorDetailsState extends State<SensorDetails> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
       }
-    }
-    catch (e) {
+    } catch (e) {
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
         displayDialog(
@@ -172,7 +171,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             title: "Błąd pobierania danych z czujnika",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd pobierania danych z czujnika",
@@ -191,15 +190,15 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (dataMeasuresTime == "today") {
       data = sensorData
           .where((data) =>
-      data.deliveryTime.year == now.year &&
-          data.deliveryTime.month == now.month &&
-          data.deliveryTime.day == now.day)
+              data.deliveryTime.year == now.year &&
+              data.deliveryTime.month == now.month &&
+              data.deliveryTime.day == now.day)
           .toList();
     } else if (dataMeasuresTime == "thisMonth") {
       data = sensorData
           .where((data) =>
-      data.deliveryTime.year == now.year &&
-          data.deliveryTime.month == now.month)
+              data.deliveryTime.year == now.year &&
+              data.deliveryTime.month == now.month)
           .toList();
     } else if (dataMeasuresTime == "allTime") {
       data = sensorData;
@@ -307,7 +306,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd wylogowania",
@@ -324,13 +323,12 @@ class _SensorDetailsState extends State<SensorDetails> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  AccountDetail(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      account: widget.currentUser,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -339,12 +337,11 @@ class _SensorDetailsState extends State<SensorDetails> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  Accounts(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
+              builder: (context) => Accounts(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  currentUser: widget.currentUser,
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -379,7 +376,6 @@ class _SensorDetailsState extends State<SensorDetails> {
             appBar: AppBar(
               title: Text(widget.sensor.name),
               actions: <Widget>[
-
                 /// menu dropdown button
                 PopupMenuButton(
                     key: Key("menuButton"),
@@ -389,17 +385,17 @@ class _SensorDetailsState extends State<SensorDetails> {
                       /// menu choices from utils/menu_items.dart
                       return widget.currentUser.isStaff
                           ? menuChoicesSuperUser.map((String choice) {
-                        return PopupMenuItem(
-                            key: Key(choice),
-                            value: choice,
-                            child: Text(choice));
-                      }).toList()
+                              return PopupMenuItem(
+                                  key: Key(choice),
+                                  value: choice,
+                                  child: Text(choice));
+                            }).toList()
                           : menuChoicesNormalUser.map((String choice) {
-                        return PopupMenuItem(
-                            key: Key(choice),
-                            value: choice,
-                            child: Text(choice));
-                      }).toList();
+                              return PopupMenuItem(
+                                  key: Key(choice),
+                                  value: choice,
+                                  child: Text(choice));
+                            }).toList();
                     })
               ],
             ),
@@ -447,7 +443,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                   englishToPolishCategories[
-                                  _categoryController.text],
+                                      _categoryController.text],
                                   style: TextStyle(fontSize: 17.0)))),
                       Padding(
                           padding: EdgeInsets.only(
@@ -464,21 +460,20 @@ class _SensorDetailsState extends State<SensorDetails> {
                               left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
                           child: SizedBox(
                               child: Row(children: <Widget>[
-                                Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
-                                    children: <Widget>[
-                                      Text(_frequencyValueController.text,
-                                          style: TextStyle(fontSize: 17.0)),
-                                    ]),
-                                SizedBox(width: 5.0),
-                                Column(children: <Widget>[
-                                  Text(
-                                      englishToPolishUnits[
-                                      _frequencyUnitsController.text],
+                            Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(_frequencyValueController.text,
                                       style: TextStyle(fontSize: 17.0)),
-                                ])
-                              ]))),
+                                ]),
+                            SizedBox(width: 5.0),
+                            Column(children: <Widget>[
+                              Text(
+                                  englishToPolishUnits[
+                                      _frequencyUnitsController.text],
+                                  style: TextStyle(fontSize: 17.0)),
+                            ])
+                          ]))),
                       Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 13.5, horizontal: 30.0),
@@ -513,98 +508,93 @@ class _SensorDetailsState extends State<SensorDetails> {
                               left: 30.0, top: 5.0, right: 30.0, bottom: 0.0),
                           child: SizedBox(
                               child: Row(children: <Widget>[
-                                Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                        margin: EdgeInsets.only(
-                                            left: 10.0,
-                                            top: 5.0,
-                                            right: 10.0,
-                                            bottom: 0.0),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: !todayChart
-                                                    ? textColor
-                                                    : Colors.black),
-                                            borderRadius:
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    margin: EdgeInsets.only(
+                                        left: 10.0,
+                                        top: 5.0,
+                                        right: 10.0,
+                                        bottom: 0.0),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: !todayChart
+                                                ? textColor
+                                                : Colors.black),
+                                        borderRadius:
                                             BorderRadius.circular(30.0)),
-                                        child: FlatButton(
-                                          key: Key("today"),
-                                          child: Text('Dzisiaj',
-                                              textAlign: TextAlign.center),
-                                          onPressed: !todayChart
-                                              ? todayPlot
-                                              : null,
-                                        ))),
-                                Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                        margin: EdgeInsets.only(
-                                            left: 10.0,
-                                            top: 5.0,
-                                            right: 10.0,
-                                            bottom: 0.0),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: !thisMonthChart
-                                                    ? textColor
-                                                    : Colors.black),
-                                            borderRadius:
+                                    child: FlatButton(
+                                      key: Key("today"),
+                                      child: Text('Dzisiaj',
+                                          textAlign: TextAlign.center),
+                                      onPressed: !todayChart ? todayPlot : null,
+                                    ))),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    margin: EdgeInsets.only(
+                                        left: 10.0,
+                                        top: 5.0,
+                                        right: 10.0,
+                                        bottom: 0.0),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: !thisMonthChart
+                                                ? textColor
+                                                : Colors.black),
+                                        borderRadius:
                                             BorderRadius.circular(30.0)),
-                                        child: FlatButton(
-                                          key: Key("thisMonth"),
-                                          child: Text('Ten miesiąc',
-                                              textAlign: TextAlign.center),
-                                          onPressed: !thisMonthChart
-                                              ? thisMonthPlot
-                                              : null,
-                                        ))),
-                                Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                        margin: EdgeInsets.only(
-                                            left: 10.0,
-                                            top: 5.0,
-                                            right: 10.0,
-                                            bottom: 0.0),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: !allTimeChart
-                                                    ? textColor
-                                                    : Colors.black),
-                                            borderRadius:
+                                    child: FlatButton(
+                                      key: Key("thisMonth"),
+                                      child: Text('Ten miesiąc',
+                                          textAlign: TextAlign.center),
+                                      onPressed: !thisMonthChart
+                                          ? thisMonthPlot
+                                          : null,
+                                    ))),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    margin: EdgeInsets.only(
+                                        left: 10.0,
+                                        top: 5.0,
+                                        right: 10.0,
+                                        bottom: 0.0),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: !allTimeChart
+                                                ? textColor
+                                                : Colors.black),
+                                        borderRadius:
                                             BorderRadius.circular(30.0)),
-                                        child: FlatButton(
-                                          key: Key("allTime"),
-                                          child: Text('Ostatnie \n30 dni',
-                                              textAlign: TextAlign.center),
-                                          onPressed:
+                                    child: FlatButton(
+                                      key: Key("allTime"),
+                                      child: Text('Ostatnie \n30 dni',
+                                          textAlign: TextAlign.center),
+                                      onPressed:
                                           !allTimeChart ? allTimePlot : null,
-                                        ))),
-                              ]))),
+                                    ))),
+                          ]))),
                       Padding(
                           padding: EdgeInsets.only(
                               left: 30.0, top: 5.0, right: 17.0, bottom: 0.0),
                           child: Container(
                               child: Center(
                                   child: Column(children: <Widget>[
-                                    SizedBox(width: 355,
-                                        height: 200,
-                                        child: chartWid)
-                                  ])))),
+                            SizedBox(width: 355, height: 200, child: chartWid)
+                          ])))),
                       Padding(
                           padding: EdgeInsets.only(
                               left: 30.0, top: 5.0, right: 30.0, bottom: 10.0),
                           child: _time != null
                               ? Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                                "${_time.toString().substring(
-                                    0, 19)}    ${_measure.toString()} °C",
-                                style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold)),
-                          )
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                      "${_time.toString().substring(0, 19)}    ${_measure.toString()} °C",
+                                      style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.bold)),
+                                )
                               : SizedBox()),
                       buttonWidget(
                           context, "Edytuj czujnik", _navigateToEditSensor),
@@ -629,13 +619,12 @@ class _SensorDetailsState extends State<SensorDetails> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                EditSensor(
-                    currentLoggedInToken: widget.currentLoggedInToken,
-                    currentUser: widget.currentUser,
-                    sensor: widget.sensor,
-                    api: widget.api,
-                    onSignedOut: widget.onSignedOut),
+            builder: (context) => EditSensor(
+                currentLoggedInToken: widget.currentLoggedInToken,
+                currentUser: widget.currentUser,
+                sensor: widget.sensor,
+                api: widget.api,
+                onSignedOut: widget.onSignedOut),
             fullscreenDialog: true));
 
     if (result != null && result['dataSaved'] == true) {
@@ -667,8 +656,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);
         Sensor refreshedSensor = Sensor.fromJson(body);
-        getSensorData().then((value) =>
-            setState(() {
+        getSensorData().then((value) => setState(() {
               _nameController =
                   TextEditingController(text: refreshedSensor.name);
               _categoryController =
@@ -709,7 +697,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             title: "Błąd pobierania danych czujnika",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd pobierania danych czujnika",
@@ -729,7 +717,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       return charts.TimeSeriesChart(
         _seriesData,
         defaultRenderer:
-        charts.LineRendererConfig(includeArea: true, stacked: true),
+            charts.LineRendererConfig(includeArea: true, stacked: true),
         animate: true,
         behaviors: [
           charts.InitialSelection(selectedDataConfig: [
@@ -739,9 +727,9 @@ class _SensorDetailsState extends State<SensorDetails> {
         ],
         primaryMeasureAxis: new charts.NumericAxisSpec(
             tickProviderSpec:
-            new charts.BasicNumericTickProviderSpec(zeroBound: false),
+                new charts.BasicNumericTickProviderSpec(zeroBound: false),
             tickFormatterSpec: charts.BasicNumericTickFormatterSpec(
-                    (num value) => getFormattedSensorDataForChart(value))),
+                (num value) => getFormattedSensorDataForChart(value))),
         selectionModels: [
           new charts.SelectionModelConfig(
             type: charts.SelectionModelType.info,

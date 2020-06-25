@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
@@ -9,6 +8,7 @@ import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/widgets/text_color.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// allows to enter email and send reset password request
@@ -146,7 +146,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
           setState(() {
             _load = true;
           });
-          final directory = await DownloadsPathProvider.downloadsDirectory;
+          final directory = await getApplicationDocumentsDirectory();
           final path = '${directory.path}/serverAddress.txt';
           final file = File(path);
           await file.writeAsString(_apiAddressController.text);

@@ -14,10 +14,11 @@ import '../../models.dart';
 
 /// signs user up
 class SignUp extends StatefulWidget {
-  SignUp({Key key,
-    @required this.onSignedIn,
-    @required this.api,
-    @required this.onSignedOut})
+  SignUp(
+      {Key key,
+      @required this.onSignedIn,
+      @required this.api,
+      @required this.onSignedOut})
       : super(key: key);
   final Function(String, Account, Api) onSignedIn;
   Api api;
@@ -31,7 +32,7 @@ class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
@@ -141,145 +142,145 @@ class _SignUpState extends State<SignUp> {
       ),
       body: Container(
           child: Column(children: <Widget>[
-            Expanded(
-                flex: 5,
-                child: SingleChildScrollView(
-                    controller: _scrollController,
-                    child: Form(
-                        key: _formKey,
-                        child: FocusScope(
-                            node: _node,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Align(
-                                  child: loadingIndicator(_load),
-                                  alignment: FractionalOffset.center,
-                                ),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 13.5,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Login*",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0.0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: _buildUsername())),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Adres e-mail*",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0.0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: _buildEmail())),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Nr telefonu komórkowego",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0.0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: _buildTelephone())),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Hasło*",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0.0,
-                                        right: 30.0,
-                                        bottom: 0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: _buildPassword())),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Powtórz hasło*",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0.0,
-                                        right: 30.0,
-                                        bottom: 0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: _buildConfirmPassword())),
-                              ],
-                            ))))),
-            Expanded(
-                flex: 1,
-                child: AnimatedContainer(
-                    curve: Curves.easeInToLinear,
-                    duration: Duration(
-                      milliseconds: 10,
-                    ),
-                    alignment: Alignment.bottomCenter,
-                    child: Column(children: <Widget>[
-                      buttonWidget(context, "Zarejestruj się", signUp),
-                    ])))
-          ])),
+        Expanded(
+            flex: 5,
+            child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Form(
+                    key: _formKey,
+                    child: FocusScope(
+                        node: _node,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Align(
+                              child: loadingIndicator(_load),
+                              alignment: FractionalOffset.center,
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 13.5,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Login*",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildUsername())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Adres e-mail*",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildEmail())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Nr telefonu komórkowego",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildTelephone())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Hasło*",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildPassword())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Powtórz hasło*",
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildConfirmPassword())),
+                          ],
+                        ))))),
+        Expanded(
+            flex: 1,
+            child: AnimatedContainer(
+                curve: Curves.easeInToLinear,
+                duration: Duration(
+                  milliseconds: 10,
+                ),
+                alignment: Alignment.bottomCenter,
+                child: Column(children: <Widget>[
+                  buttonWidget(context, "Zarejestruj się", signUp),
+                ])))
+      ])),
     );
   }
 
@@ -318,11 +319,10 @@ class _SignUpState extends State<SignUp> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      SignIn(
-                          api: widget.api,
-                          onSignedIn: widget.onSignedIn,
-                          onSignedOut: widget.onSignedOut)));
+                  builder: (context) => SignIn(
+                      api: widget.api,
+                      onSignedIn: widget.onSignedIn,
+                      onSignedOut: widget.onSignedOut)));
         }
         if (res['body'].contains("Username already exists")) {
           loginExists = true;
@@ -340,14 +340,14 @@ class _SignUpState extends State<SignUp> {
         String errorText;
         if (loginExists && emailExists && telephoneExists)
           errorText =
-          "Konto dla podanego loginu, adresu e-mail i nr telefonu już istnieje.";
+              "Konto dla podanego loginu, adresu e-mail i nr telefonu już istnieje.";
         else if (loginExists && emailExists)
           errorText = "Konto dla podanego loginu i adresu e-mail już istnieje.";
         else if (loginExists && telephoneExists)
           errorText = "Konto dla podanego loginu i nr telefonu już istnieje.";
         else if (emailExists && telephoneExists)
           errorText =
-          "Konto dla podanego adresu e-mail i nr telefonu już istnieje.";
+              "Konto dla podanego adresu e-mail i nr telefonu już istnieje.";
         else if (emailExists)
           errorText = "Konto dla podanego adresu e-mail już istnieje.";
         else if (loginExists)
@@ -374,7 +374,7 @@ class _SignUpState extends State<SignUp> {
               title: "Błąd rejestracji",
               text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
         }
-        if (e.toString().contains("No address associated with hostname")) {
+        if (e.toString().contains("SocketException")) {
           await displayDialog(
               context: context,
               title: "Błąd rejestracji",

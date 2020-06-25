@@ -161,7 +161,7 @@ class _AccountsState extends State<Accounts> {
                   }
                   if (e
                       .toString()
-                      .contains("No address associated with hostname")) {
+                      .contains("SocketException")) {
                     await displayDialog(
                         context: context,
                         title: "Błąd usuwania konta",
@@ -216,7 +216,7 @@ class _AccountsState extends State<Accounts> {
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd wylogowania",

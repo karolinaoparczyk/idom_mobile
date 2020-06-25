@@ -89,7 +89,7 @@ class _SensorsState extends State<Sensors> {
             title: "Błąd pobierania czujników",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd pobierania czujników",
@@ -136,7 +136,7 @@ class _SensorsState extends State<Sensors> {
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd wylogowania",
@@ -215,9 +215,7 @@ class _SensorsState extends State<Sensors> {
                         text:
                             "Sprawdź połączenie z serwerem i spróbuj ponownie.");
                   }
-                  if (e
-                      .toString()
-                      .contains("No address associated with hostname")) {
+                  if (e.toString().contains("SocketException")) {
                     await displayDialog(
                         context: context,
                         title: "Błąd resetu hasła",
@@ -365,23 +363,23 @@ class _SensorsState extends State<Sensors> {
               child: RefreshIndicator(
                   onRefresh: _pullRefresh,
                   child: ListView.separated(
-        separatorBuilder: (context, index) => Divider(
-          color: textColor,
-        ),
-        shrinkWrap: true,
-        itemCount: _sensorList.length,
-        itemBuilder: (context, index) => ListTile(
-            key: Key(_sensorList[index].name),
-            title:
-                Text(_sensorList[index].name, style: TextStyle(fontSize: 20.0)),
-            subtitle: sensorData(_sensorList[index]),
-            onTap: () {
-              navigateToSensorDetails(_sensorList[index]);
-            },
+                    separatorBuilder: (context, index) => Divider(
+                      color: textColor,
+                    ),
+                    shrinkWrap: true,
+                    itemCount: _sensorList.length,
+                    itemBuilder: (context, index) => ListTile(
+                        key: Key(_sensorList[index].name),
+                        title: Text(_sensorList[index].name,
+                            style: TextStyle(fontSize: 20.0)),
+                        subtitle: sensorData(_sensorList[index]),
+                        onTap: () {
+                          navigateToSensorDetails(_sensorList[index]);
+                        },
 
-            /// delete sensor button
-            trailing: deleteButtonTrailing(_sensorList[index])),
-      ))));
+                        /// delete sensor button
+                        trailing: deleteButtonTrailing(_sensorList[index])),
+                  ))));
     }
 
     /// shows progress indicator while fetching data

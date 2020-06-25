@@ -15,12 +15,13 @@ import 'edit_account.dart';
 
 /// displays account details
 class AccountDetail extends StatefulWidget {
-  AccountDetail({Key key,
-    @required this.currentLoggedInToken,
-    @required this.account,
-    @required this.currentUser,
-    @required this.api,
-    @required this.onSignedOut})
+  AccountDetail(
+      {Key key,
+      @required this.currentLoggedInToken,
+      @required this.account,
+      @required this.currentUser,
+      @required this.api,
+      @required this.onSignedOut})
       : super(key: key);
   final String currentLoggedInToken;
   Api api;
@@ -88,7 +89,7 @@ class _AccountDetailState extends State<AccountDetail> {
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd wylogowania",
@@ -106,13 +107,12 @@ class _AccountDetailState extends State<AccountDetail> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  AccountDetail(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      account: widget.currentUser,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
+              builder: (context) => AccountDetail(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  account: widget.currentUser,
+                  currentUser: widget.currentUser,
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -121,12 +121,11 @@ class _AccountDetailState extends State<AccountDetail> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  Accounts(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
+              builder: (context) => Accounts(
+                  currentLoggedInToken: widget.currentLoggedInToken,
+                  currentUser: widget.currentUser,
+                  api: widget.api,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -150,7 +149,6 @@ class _AccountDetailState extends State<AccountDetail> {
             appBar: AppBar(
               title: Text(widget.account.username),
               actions: <Widget>[
-
                 /// menu dropdown button
                 PopupMenuButton(
                     key: Key("menuButton"),
@@ -160,17 +158,17 @@ class _AccountDetailState extends State<AccountDetail> {
                       /// menu choices from utils/menu_items.dart
                       return widget.currentUser.isStaff
                           ? menuChoicesSuperUser.map((String choice) {
-                        return PopupMenuItem(
-                            key: Key(choice),
-                            value: choice,
-                            child: Text(choice));
-                      }).toList()
+                              return PopupMenuItem(
+                                  key: Key(choice),
+                                  value: choice,
+                                  child: Text(choice));
+                            }).toList()
                           : menuChoicesNormalUser.map((String choice) {
-                        return PopupMenuItem(
-                            key: Key(choice),
-                            value: choice,
-                            child: Text(choice));
-                      }).toList();
+                              return PopupMenuItem(
+                                  key: Key(choice),
+                                  value: choice,
+                                  child: Text(choice));
+                            }).toList();
                     })
               ],
             ),
@@ -245,13 +243,12 @@ class _AccountDetailState extends State<AccountDetail> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                EditAccount(
-                    currentLoggedInToken: widget.currentLoggedInToken,
-                    currentUser: widget.currentUser,
-                    account: widget.account,
-                    api: widget.api,
-                    onSignedOut: widget.onSignedOut),
+            builder: (context) => EditAccount(
+                currentLoggedInToken: widget.currentLoggedInToken,
+                currentUser: widget.currentUser,
+                account: widget.account,
+                api: widget.api,
+                onSignedOut: widget.onSignedOut),
             fullscreenDialog: true));
 
     if (result != null && result['dataSaved'] == true) {
@@ -314,7 +311,7 @@ class _AccountDetailState extends State<AccountDetail> {
             title: "Błąd pobierania danych użytkownika",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd pobierania danych użytkownika",

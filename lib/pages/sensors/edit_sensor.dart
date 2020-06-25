@@ -14,13 +14,12 @@ import '../../models.dart';
 
 /// edits sensor
 class EditSensor extends StatefulWidget {
-  EditSensor(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentUser,
-      @required this.sensor,
-      @required this.api,
-      @required this.onSignedOut})
+  EditSensor({Key key,
+    @required this.currentLoggedInToken,
+    @required this.currentUser,
+    @required this.sensor,
+    @required this.api,
+    @required this.onSignedOut})
       : super(key: key);
   final String currentLoggedInToken;
   final Account currentUser;
@@ -126,7 +125,7 @@ class _EditSensorState extends State<EditSensor> {
             title: "Błąd wylogowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd wylogowania",
@@ -143,12 +142,13 @@ class _EditSensorState extends State<EditSensor> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => AccountDetail(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  account: widget.currentUser,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
+              builder: (context) =>
+                  AccountDetail(
+                      currentLoggedInToken: widget.currentLoggedInToken,
+                      account: widget.currentUser,
+                      currentUser: widget.currentUser,
+                      api: widget.api,
+                      onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -157,11 +157,12 @@ class _EditSensorState extends State<EditSensor> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Accounts(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
+              builder: (context) =>
+                  Accounts(
+                      currentLoggedInToken: widget.currentLoggedInToken,
+                      currentUser: widget.currentUser,
+                      api: widget.api,
+                      onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -191,16 +192,16 @@ class _EditSensorState extends State<EditSensor> {
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
         child: DropdownButtonHideUnderline(
             child: DropdownButton(
-          style: TextStyle(fontSize: 17.0, color: Colors.black),
-          key: Key("categoriesButon"),
-          items: categories,
-          onChanged: (val) {
-            setState(() {
-              selectedCategory = val;
-            });
-          },
-          value: selectedCategory,
-        )));
+              style: TextStyle(fontSize: 17.0, color: Colors.black),
+              key: Key("categoriesButon"),
+              items: categories,
+              onChanged: (val) {
+                setState(() {
+                  selectedCategory = val;
+                });
+              },
+              value: selectedCategory,
+            )));
   }
 
   /// builds sensor frequency value form field
@@ -226,16 +227,16 @@ class _EditSensorState extends State<EditSensor> {
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: DropdownButtonHideUnderline(
             child: DropdownButton(
-          style: TextStyle(fontSize: 17.0, color: Colors.black),
-          key: Key("unitsButton"),
-          items: units,
-          onChanged: (val) {
-            setState(() {
-              selectedUnits = val;
-            });
-          },
-          value: selectedUnits,
-        )));
+              style: TextStyle(fontSize: 17.0, color: Colors.black),
+              key: Key("unitsButton"),
+              items: units,
+              onChanged: (val) {
+                setState(() {
+                  selectedUnits = val;
+                });
+              },
+              value: selectedUnits,
+            )));
   }
 
   Future<bool> _onBackButton() async {
@@ -256,6 +257,7 @@ class _EditSensorState extends State<EditSensor> {
             appBar: AppBar(
               title: Text(widget.sensor.name),
               actions: <Widget>[
+
                 /// builds menu dropdown button
                 PopupMenuButton(
                     key: Key("menuButton"),
@@ -264,17 +266,17 @@ class _EditSensorState extends State<EditSensor> {
                     itemBuilder: (BuildContext context) {
                       return widget.currentUser.isStaff
                           ? menuChoicesSuperUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList()
+                        return PopupMenuItem(
+                            key: Key(choice),
+                            value: choice,
+                            child: Text(choice));
+                      }).toList()
                           : menuChoicesNormalUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList();
+                        return PopupMenuItem(
+                            key: Key(choice),
+                            value: choice,
+                            child: Text(choice));
+                      }).toList();
                     })
               ],
             ),
@@ -282,105 +284,108 @@ class _EditSensorState extends State<EditSensor> {
             /// builds form with sensor properties
             body: Container(
                 child: Column(children: <Widget>[
-              Expanded(
-                  flex: 4,
-                  child: SingleChildScrollView(
-                      child: Form(
-                          key: _formKey,
+                  Expanded(
+                      flex: 4,
+                      child: SingleChildScrollView(
+                          child: Form(
+                              key: _formKey,
+                              child: Column(children: <Widget>[
+                                Align(
+                                  child: loadingIndicator(_load),
+                                  alignment: FractionalOffset.center,
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 13.5,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Nazwa",
+                                            style: TextStyle(
+                                                color: textColor,
+                                                fontSize: 13.5,
+                                                fontWeight: FontWeight.bold)))),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 0.0,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: _buildName()),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 0.0,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Kategoria",
+                                            style: TextStyle(
+                                                color: textColor,
+                                                fontSize: 13.5,
+                                                fontWeight: FontWeight.bold)))),
+                                Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 0.0, horizontal: 0.0),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: _buildCategory())),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 0.0,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "Częstotliwość pobierania danych",
+                                            style: TextStyle(
+                                                color: textColor,
+                                                fontSize: 13.5,
+                                                fontWeight: FontWeight.bold)))),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 0.0,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: SizedBox(
+                                        child: Row(children: <Widget>[
+                                          Expanded(
+                                              flex: 8,
+                                              child: _buildFrequencyValue()),
+                                          Expanded(flex: 1, child: SizedBox()),
+                                          Expanded(
+                                              flex: 12,
+                                              child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 0.0,
+                                                      top: 0.0,
+                                                      right: 0.0,
+                                                      bottom: 0.0),
+                                                  child: Align(
+                                                      alignment: Alignment
+                                                          .bottomLeft,
+                                                      child: _buildUnits()))),
+                                        ]))),
+                              ])))),
+                  Expanded(
+                      flex: 1,
+                      child: AnimatedContainer(
+                          curve: Curves.easeInToLinear,
+                          duration: Duration(
+                            milliseconds: 10,
+                          ),
+                          alignment: Alignment.bottomCenter,
                           child: Column(children: <Widget>[
-                            Align(
-                              child: loadingIndicator(_load),
-                              alignment: FractionalOffset.center,
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 13.5,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Nazwa",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: _buildName()),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Kategoria",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildCategory())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                        "Częstotliwość pobierania danych",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: SizedBox(
-                                    child: Row(children: <Widget>[
-                                  Expanded(
-                                      flex: 8, child: _buildFrequencyValue()),
-                                  Expanded(flex: 1, child: SizedBox()),
-                                  Expanded(
-                                      flex: 12,
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 0.0,
-                                              top: 0.0,
-                                              right: 0.0,
-                                              bottom: 0.0),
-                                          child: Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child: _buildUnits()))),
-                                ]))),
-                          ])))),
-              Expanded(
-                  flex: 1,
-                  child: AnimatedContainer(
-                      curve: Curves.easeInToLinear,
-                      duration: Duration(
-                        milliseconds: 10,
-                      ),
-                      alignment: Alignment.bottomCenter,
-                      child: Column(children: <Widget>[
-                        buttonWidget(context, "Zapisz zmiany", _verifyChanges),
-                      ])))
-            ]))));
+                            buttonWidget(
+                                context, "Zapisz zmiany", _verifyChanges),
+                          ])))
+                ]))));
   }
 
   /// saves changes after form fields and dropdown buttons validation
@@ -433,7 +438,7 @@ class _EditSensorState extends State<EditSensor> {
             title: "Błąd edytowania czujnika",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd edytowania czujnika",
@@ -503,14 +508,14 @@ class _EditSensorState extends State<EditSensor> {
 
         /// validates if frequency value is valid for given frequency units
         var validFrequencyValue =
-            SensorFrequencyFieldValidator.isFrequencyValueValid(
-                _frequencyValueController.text, selectedUnits);
+        SensorFrequencyFieldValidator.isFrequencyValueValid(
+            _frequencyValueController.text, selectedUnits);
         if (!validFrequencyValue) {
           await displayDialog(
               context: context,
               title: "Błąd",
               text:
-                  "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
+              "Poprawne wartości dla jednostki: ${englishToPolishUnits[selectedUnits]} to: ${unitsToMinValues[selectedUnits]} - ${unitsToMaxValues[selectedUnits]}");
           return;
         }
 
@@ -530,7 +535,7 @@ class _EditSensorState extends State<EditSensor> {
             changedFrequencyValue, frequencyInSeconds);
       } else {
         var snackBar =
-            SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
+        SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
         _scaffoldKey.currentState.showSnackBar(snackBar);
       }
     }

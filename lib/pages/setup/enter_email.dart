@@ -161,7 +161,7 @@ class _EnterEmailState extends State<EnterEmail> {
             title: "Błąd resetu hasła",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd resetu hasła",

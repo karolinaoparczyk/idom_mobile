@@ -29,9 +29,6 @@ dependencies:
   dio: ^2.1.6
   cookie_jar: ^1.0.0
   charts_flutter:
-  keyboard_visibility: ^0.5.6
-  fl_chart: ^0.10.0
-  downloads_path_provider:
   permission_handler:
 
 

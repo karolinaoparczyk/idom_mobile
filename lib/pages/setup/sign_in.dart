@@ -125,7 +125,7 @@ class _SignInState extends State<SignIn> {
             title: "Błąd logowania",
             text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
       }
-      if (e.toString().contains("No address associated with hostname")) {
+      if (e.toString().contains("SocketException")) {
         await displayDialog(
             context: context,
             title: "Błąd logowania",
@@ -181,7 +181,7 @@ class _SignInState extends State<SignIn> {
                                                     color: textColor,
                                                     fontSize: 13.5,
                                                     fontWeight:
-                                                    FontWeight.bold)))),
+                                                        FontWeight.bold)))),
                                     Padding(
                                         padding: EdgeInsets.only(
                                             left: 30.0,
@@ -204,7 +204,7 @@ class _SignInState extends State<SignIn> {
                                                     color: textColor,
                                                     fontSize: 13.5,
                                                     fontWeight:
-                                                    FontWeight.bold)))),
+                                                        FontWeight.bold)))),
                                     Padding(
                                         padding: EdgeInsets.only(
                                             left: 30.0,

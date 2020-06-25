@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:idom/pages/sensors/sensors.dart';
@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
   }
 
   setApiAddress() async {
-    final directory = await DownloadsPathProvider.downloadsDirectory;
+    final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/serverAddress.txt';
     var apiString;
     try {
