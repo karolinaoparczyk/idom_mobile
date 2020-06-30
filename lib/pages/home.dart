@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
   Api api;
   String currentLoggedInToken;
   Account currentUser;
-  bool apiAddressAdded = true;
+  var apiAddressAdded;
   String apiAddress;
 
   @override

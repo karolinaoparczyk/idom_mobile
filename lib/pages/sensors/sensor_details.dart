@@ -42,7 +42,6 @@ class _SensorDetailsState extends State<SensorDetails> {
   TextEditingController _nameController;
   TextEditingController _frequencyValueController;
   TextEditingController _categoryController;
-  TextEditingController _frequencyUnitsController;
   TextEditingController _currentSensorDataController;
   bool _load;
   List<SensorData> sensorData;
@@ -60,13 +59,6 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
-  Map<String, String> englishToPolishUnits = {
-    "seconds": "sekund",
-    "minutes": "minut",
-    "hours": "godzin",
-    "days": "dni"
-  };
-
   Map<String, String> englishToPolishCategories = {
     "temperature": "temperatura",
     "humidity": "wilgotność",
@@ -82,9 +74,6 @@ class _SensorDetailsState extends State<SensorDetails> {
 
     /// setting current sensor category
     _categoryController = TextEditingController(text: widget.sensor.category);
-
-    /// setting current sensor units
-    _frequencyUnitsController = TextEditingController(text: "seconds");
 
     /// setting current sensor frequency
     _frequencyValueController =
@@ -468,9 +457,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 ]),
                             SizedBox(width: 5.0),
                             Column(children: <Widget>[
-                              Text(
-                                  englishToPolishUnits[
-                                      _frequencyUnitsController.text],
+                              Text(getProperUnitsName(),
                                   style: TextStyle(fontSize: 17.0)),
                             ])
                           ]))),
@@ -589,8 +576,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                           child: _time != null
                               ? Align(
                                   alignment: Alignment.center,
-                                  child: Text(
-                                      "${_time.toString().substring(0, 19)}    ${_measure.toString()} °C",
+                                  child: Text(getSelectedMeasure(),
                                       style: TextStyle(
                                           fontSize: 17.0,
                                           fontWeight: FontWeight.bold)),
@@ -600,6 +586,29 @@ class _SensorDetailsState extends State<SensorDetails> {
                           context, "Edytuj czujnik", _navigateToEditSensor),
                       SizedBox(height: 50)
                     ])))));
+  }
+
+  String getProperUnitsName() {
+    var lastDigitFrequencyValue = _frequencyValueController.text
+        .toString()
+        .substring(_frequencyValueController.text.toString().length - 1);
+    var firstVersion = "sekundy";
+    var secondVersion = "sekund";
+    if (RegExp(r"^[0-1|5-9]").hasMatch(lastDigitFrequencyValue))
+      return secondVersion;
+    else if (RegExp(r"^[2-4]").hasMatch(lastDigitFrequencyValue))
+      return firstVersion;
+    return "";
+  }
+
+  String getSelectedMeasure() {
+    var units = widget.sensor.category == "temperature" ? "°C" : "%";
+    var date = _time.toString().substring(0, 19);
+    var year = date.substring(0, 4);
+    var month = date.substring(5, 7);
+    var day = date.substring(8, 10);
+    var time = date.substring(11, 19);
+    return "$day.$month.$year $time    ${_measure.toString()} $units";
   }
 
   String getSensorLastData() {

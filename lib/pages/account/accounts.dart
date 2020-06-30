@@ -6,7 +6,6 @@ import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/widgets/dialog.dart';
-import 'package:idom/widgets/text_color.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
@@ -330,25 +329,23 @@ class _AccountsState extends State<Accounts> {
           child: Scrollbar(
               child: RefreshIndicator(
                   onRefresh: _pullRefresh,
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) =>
-                        Divider(
-                          color: textColor,
-                        ),
+                  child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: _accountList.length,
                     itemBuilder: (context, index) =>
-                        ListTile(
-                            key: Key(_accountList[index].username),
-                            title: Text(_accountList[index].username,
-                                style: TextStyle(fontSize: 20.0)),
-                            onTap: () {
-                              navigateToAccountDetails(_accountList[index]);
-                            },
+                        Container(
+                            height: 80,
+                            child: Card(child: ListTile(
+                                key: Key(_accountList[index].username),
+                                title: Text(_accountList[index].username,
+                                    style: TextStyle(fontSize: 20.0)),
+                                onTap: () {
+                                  navigateToAccountDetails(_accountList[index]);
+                                },
 
-                            /// delete sensor button
-                            trailing: deleteButtonTrailing(
-                                _accountList[index])),
+                                /// delete sensor button
+                                trailing: deleteButtonTrailing(
+                                    _accountList[index])))),
                   ))));
     }
 

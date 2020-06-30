@@ -19,7 +19,7 @@ class Front extends StatefulWidget {
   Function(String, Account, Api) onSignedIn;
   VoidCallback onSignedOut;
   Api api;
-  bool apiAddressAdded;
+  var apiAddressAdded;
   String apiAddress;
   Function setApiAddress;
 
@@ -105,7 +105,10 @@ class _FrontState extends State<Front> {
   }
 
   apiAddressWarning() {
-    if (!widget.apiAddressAdded) {
+    if (widget.apiAddressAdded == null){
+      return Text("");
+    }
+    else if (!widget.apiAddressAdded) {
       return Padding(
           padding: EdgeInsets.only(
               left: 0.0,

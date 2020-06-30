@@ -362,23 +362,24 @@ class _SensorsState extends State<Sensors> {
           child: Scrollbar(
               child: RefreshIndicator(
                   onRefresh: _pullRefresh,
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) => Divider(
-                      color: textColor,
-                    ),
+                  child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: _sensorList.length,
-                    itemBuilder: (context, index) => ListTile(
-                        key: Key(_sensorList[index].name),
-                        title: Text(_sensorList[index].name,
-                            style: TextStyle(fontSize: 20.0)),
-                        subtitle: sensorData(_sensorList[index]),
-                        onTap: () {
-                          navigateToSensorDetails(_sensorList[index]);
-                        },
+                    itemBuilder: (context, index) => Container(
+                        height: 80,
+                        child: Card(
+                            child: ListTile(
+                                key: Key(_sensorList[index].name),
+                                title: Text(_sensorList[index].name,
+                                    style: TextStyle(fontSize: 20.0)),
+                                subtitle: sensorData(_sensorList[index]),
+                                onTap: () {
+                                  navigateToSensorDetails(_sensorList[index]);
+                                },
 
-                        /// delete sensor button
-                        trailing: deleteButtonTrailing(_sensorList[index])),
+                                /// delete sensor button
+                                trailing:
+                                    deleteButtonTrailing(_sensorList[index])))),
                   ))));
     }
 

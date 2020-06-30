@@ -117,7 +117,7 @@ class UrlFieldValidator{
     var httpMatch = RegExp(r"http://").matchAsPrefix(value) != null;
     var httpsMatch = RegExp(r"https://").matchAsPrefix(value) != null;
     if (!httpMatch && !httpsMatch) {
-      return 'Adres musi rozpoczynać się od "http://"';
+      return 'Adres musi rozpoczynać się od "http://" lub "https://';
     }
     return null;
   }

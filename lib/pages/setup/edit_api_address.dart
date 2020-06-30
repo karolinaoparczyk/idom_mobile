@@ -31,14 +31,11 @@ class _EditApiAddressState extends State<EditApiAddress> {
 
   void initState() {
     super.initState();
-//    if (widget.api == null) {
-//      widget.api = Api();
-//    }
     _load = false;
     if (widget.apiAddress != null) {
       _apiAddressController = TextEditingController(text: widget.api.url);
     } else
-      _apiAddressController = TextEditingController(text: "http://");
+      _apiAddressController = TextEditingController(text: "https://");
   }
 
   /// build api address form field
