@@ -267,19 +267,10 @@ class _SignUpState extends State<SignUp> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildConfirmPassword())),
+                            buttonWidget(context, "Zarejestruj się", signUp),
+
                           ],
                         ))))),
-        Expanded(
-            flex: 1,
-            child: AnimatedContainer(
-                curve: Curves.easeInToLinear,
-                duration: Duration(
-                  milliseconds: 10,
-                ),
-                alignment: Alignment.bottomCenter,
-                child: Column(children: <Widget>[
-                  buttonWidget(context, "Zarejestruj się", signUp),
-                ])))
       ])),
     );
   }

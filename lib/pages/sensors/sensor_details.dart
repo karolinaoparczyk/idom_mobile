@@ -126,11 +126,14 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (widget.sensor != null) {
         var res = await widget.api
             .getSensorData(widget.currentLoggedInToken, widget.sensor.id);
+        if (res == null){
+          noDataForChart = true;
+          dataLoaded = false;
+        }
         if (res['statusSensorData'] == "200") {
           if (res['bodySensorData'] != "[]") {
             List<dynamic> bodySensorData = jsonDecode(res['bodySensorData']);
             sensorData = List<SensorData>();
-
             for (var i = 0; i < bodySensorData.length; i++) {
               sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
             }
@@ -492,16 +495,17 @@ class _SensorDetailsState extends State<SensorDetails> {
                           )),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0, top: 5.0, right: 30.0, bottom: 0.0),
+                              left: 15.0, top: 5.0, right: 15.0, bottom: 0.0),
                           child: SizedBox(
                               child: Row(children: <Widget>[
                             Expanded(
                                 flex: 1,
                                 child: Container(
+                                    width: 120,
                                     margin: EdgeInsets.only(
-                                        left: 10.0,
+                                        left: 5.0,
                                         top: 5.0,
-                                        right: 10.0,
+                                        right: 5.0,
                                         bottom: 0.0),
                                     decoration: BoxDecoration(
                                         border: Border.all(
@@ -519,11 +523,12 @@ class _SensorDetailsState extends State<SensorDetails> {
                             Expanded(
                                 flex: 1,
                                 child: Container(
+                                    width: 120,
                                     margin: EdgeInsets.only(
-                                        left: 10.0,
+                                        left: 5.0,
                                         top: 5.0,
-                                        right: 10.0,
-                                        bottom: 0.0),
+                                        right: 5.0,
+                                        bottom: 5.0),
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: !thisMonthChart
@@ -542,10 +547,11 @@ class _SensorDetailsState extends State<SensorDetails> {
                             Expanded(
                                 flex: 1,
                                 child: Container(
+                                  width: 120,
                                     margin: EdgeInsets.only(
-                                        left: 10.0,
+                                        left: 5.0,
                                         top: 5.0,
-                                        right: 10.0,
+                                        right: 5.0,
                                         bottom: 0.0),
                                     decoration: BoxDecoration(
                                         border: Border.all(

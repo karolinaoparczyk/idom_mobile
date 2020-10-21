@@ -221,7 +221,7 @@ class Api {
       var resFrequency = await http.get('$url/sensors_data/list/$sensorId',
           headers: {
             HttpHeaders.authorizationHeader: "Token $userToken"
-          }).timeout(Duration(seconds: 5));
+          }).timeout(Duration(seconds: 10));
 
       Map<String, String> responses = {
         "bodySensorData": resFrequency.body.toString(),

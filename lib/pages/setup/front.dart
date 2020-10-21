@@ -14,7 +14,12 @@ import 'edit_api_address.dart';
 /// allows signing in or signing up
 class Front extends StatefulWidget {
   Front(
-      {this.api, this.onSignedIn, this.onSignedOut, this.apiAddressAdded, this.apiAddress, this.setApiAddress});
+      {this.api,
+      this.onSignedIn,
+      this.onSignedOut,
+      this.apiAddressAdded,
+      this.apiAddress,
+      this.setApiAddress});
 
   Function(String, Account, Api) onSignedIn;
   VoidCallback onSignedOut;
@@ -36,19 +41,23 @@ class _FrontState extends State<Front> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
+
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
             key: _scaffoldKey,
             appBar:
-            AppBar(automaticallyImplyLeading: false, title: Text('IDOM')),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+                AppBar(automaticallyImplyLeading: false, title: Text('IDOM')),
+            body:SingleChildScrollView(child: Container( alignment: Alignment.center, child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Expanded(
-                    flex: 1,
-                    child: AnimatedContainer(
+                Flexible(flex:1, child: SizedBox(height: queryData.size.height/3, child:
+                AnimatedContainer(
                         curve: Curves.easeInToLinear,
                         duration: Duration(
                           milliseconds: 10,
@@ -72,10 +81,8 @@ class _FrontState extends State<Front> {
                                     fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),
-                            ]))),
-                Expanded(
-                    flex: 2,
-                    child: AnimatedContainer(
+                            ])))),
+                Flexible( flex: 2, child: SizedBox(height: queryData.size.height/3, child: AnimatedContainer(
                         curve: Curves.easeInToLinear,
                         duration: Duration(
                           milliseconds: 10,
@@ -99,22 +106,18 @@ class _FrontState extends State<Front> {
                             child: Text('Zapomniałeś/aś hasła?'),
                             onPressed: navigateToEnterEmail,
                           ),
-                        ]))),
+                        ])))),
               ],
-            )));
+            ))))));
   }
 
   apiAddressWarning() {
-    if (widget.apiAddressAdded == null){
+    if (widget.apiAddressAdded == null) {
       return Text("");
-    }
-    else if (!widget.apiAddressAdded) {
+    } else if (!widget.apiAddressAdded) {
       return Padding(
-          padding: EdgeInsets.only(
-              left: 0.0,
-              top: 0.0,
-              right: 0.0,
-              bottom: 10.0),
+          padding:
+              EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 10.0),
           child: Text('Adres serwera nie został ustawiony',
               style: TextStyle(fontSize: 18, color: Colors.red)));
     }
@@ -126,11 +129,10 @@ class _FrontState extends State<Front> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                EditApiAddress(
-                    api: widget.api,
-                    onSignedOut: widget.onSignedOut,
-                    apiAddress: widget.apiAddress),
+            builder: (context) => EditApiAddress(
+                api: widget.api,
+                onSignedOut: widget.onSignedOut,
+                apiAddress: widget.apiAddress),
             fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
@@ -145,7 +147,7 @@ class _FrontState extends State<Front> {
           widget.apiAddressAdded = true;
         });
         final snackBar =
-        new SnackBar(content: new Text("Adres serwera został zapisany."));
+            new SnackBar(content: new Text("Adres serwera został zapisany."));
 
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
@@ -186,11 +188,10 @@ class _FrontState extends State<Front> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  SignIn(
-                      api: widget.api,
-                      onSignedIn: widget.onSignedIn,
-                      onSignedOut: widget.onSignedOut),
+              builder: (context) => SignIn(
+                  api: widget.api,
+                  onSignedIn: widget.onSignedIn,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;
@@ -204,11 +205,10 @@ class _FrontState extends State<Front> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  SignUp(
-                      api: widget.api,
-                      onSignedIn: widget.onSignedIn,
-                      onSignedOut: widget.onSignedOut),
+              builder: (context) => SignUp(
+                  api: widget.api,
+                  onSignedIn: widget.onSignedIn,
+                  onSignedOut: widget.onSignedOut),
               fullscreenDialog: true));
       setState(() {
         widget.onSignedOut = result;

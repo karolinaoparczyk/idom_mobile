@@ -157,7 +157,7 @@ class _SignInState extends State<SignIn> {
                   flex: 30,
                   child: Column(children: <Widget>[
                     Expanded(
-                        flex: 3,
+                        flex: 2,
                         child: Form(
                             key: _formKey,
                             child: FocusScope(
