@@ -1,26 +1,22 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
+import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
-import 'package:idom/utils/menu_items.dart';
-import 'package:idom/widgets/dialog.dart';
+import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/secure_storage.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
-  Accounts({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentUser,
-    @required this.api,
-    @required this.onSignedOut,
-    this.testAccounts})
-      : super(key: key);
-  final String currentLoggedInToken;
-  final Account currentUser;
-  Api api;
-  final List<Account> testAccounts;
-  VoidCallback onSignedOut;
+  Accounts({@required this.storage, this.testApi});
+
+  final SecureStorage storage;
+  final Api testApi;
 
   @override
   _AccountsState createState() => _AccountsState();
@@ -30,23 +26,46 @@ class _AccountsState extends State<Accounts> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
+  final TextEditingController _searchController = TextEditingController();
+  Api api = Api();
   List<Account> _accountList;
   List<Account> _duplicateAccountList = List<Account>();
   bool zeroFetchedItems = false;
+  String _token;
+  String _isUserStaff;
+  bool _connectionEstablished;
+  bool _isSearching = false;
 
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
+    checkIfUserIsStaff();
     getAccounts();
+    _searchController.addListener(() {
+      filterSearchResults(_searchController.text);
+    });
+  }
+
+  Future<void> getToken() async {
+    _token = await widget.storage.getToken();
+  }
+
+  Future<void> checkIfUserIsStaff() async {
+    _isUserStaff = await widget.storage.getIsUserStaff();
   }
 
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
-    /// if widget is being tested
-    if (widget.testAccounts != null) {
-      return widget.testAccounts;
-    }
+    setState(() {
+      _isSearching = false;
+      _searchController.text = "";
+    });
+
+    await getToken();
     try {
-      var res = await widget.api.getAccounts(widget.currentLoggedInToken);
+      var res = await api.getAccounts(_token);
 
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);
@@ -67,24 +86,27 @@ class _AccountsState extends State<Accounts> {
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+      if (res == null) {
+        _connectionEstablished = false;
+        setState(() {});
+        return null;
       }
     } catch (e) {
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd pobierania kont",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania kont. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("No address associated with hostname")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd pobierania kont",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd pobierania kont. Adres serwera nieprawidłowy."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
     setState(() {
@@ -95,163 +117,85 @@ class _AccountsState extends State<Accounts> {
   }
 
   /// deactivates user after confirmation
-  _deactivateAccount(Account account) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text("Usuwanie konta"),
-          content:
-          Text("Czy na pewno chcesz usunąć konto ${account.username}?"),
-          actions: <Widget>[
-            FlatButton(
-              key: Key("yesButton"),
-              child: Text("Tak"),
-              onPressed: () async {
-                try {
-                  Navigator.of(dialogContext).pop(true);
-                  displayProgressDialog(
-                      context: _scaffoldKey.currentContext,
-                      key: _keyLoader,
-                      text: "Trwa usuwanie konta...");
-                  var statusCode = await widget.api.deactivateAccount(
-                      account.id, widget.currentLoggedInToken);
-                  Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                      .pop();
+  _deactivateAccount(Account account) async {
+    var decision = await confirmActionDialog(context, "Potwierdź",
+        "Czy na pewno chcesz usunąć konto ${account.username}?");
+    if (decision) {
+      try {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoader,
+            text: "Trwa usuwanie konta...");
+        var statusCode = await api.deactivateAccount(account.id, _token);
+        Navigator.of(_scaffoldKey.currentContext).pop();
 
-                  if (statusCode == 200) {
-                    setState(() {
-                      /// refreshes accounts' list
-                      getAccounts();
-                    });
-                  } else if (statusCode == 401) {
-                    displayProgressDialog(
-                        context: _scaffoldKey.currentContext,
-                        key: _keyLoaderInvalidToken,
-                        text:
-                        "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
-                    await new Future.delayed(const Duration(seconds: 3));
-                    Navigator.of(_keyLoaderInvalidToken.currentContext,
-                        rootNavigator: true)
-                        .pop();
-                    widget.onSignedOut();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  } else if (statusCode == null) {
-                    displayDialog(
-                        context: _scaffoldKey.currentContext,
-                        title: "Błąd usuwania konta",
-                        text:
-                        "Sprawdź połączenie z serwerem i spróbuj ponownie.");
-                  } else {
-                    displayDialog(
-                        context: _scaffoldKey.currentContext,
-                        title: "Błąd",
-                        text:
-                        "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
-                  }
-                } catch (e) {
-                  print(e.toString());
-                  if (e.toString().contains("TimeoutException")) {
-                    displayDialog(
-                        context: context,
-                        title: "Błąd usuwania konta",
-                        text:
-                        "Sprawdź połączenie z serwerem i spróbuj ponownie.");
-                  }
-                  if (e
-                      .toString()
-                      .contains("SocketException")) {
-                    await displayDialog(
-                        context: context,
-                        title: "Błąd usuwania konta",
-                        text: "Adres serwera nieprawidłowy.");
-                    widget.onSignedOut();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  }
-                }
-              },
-            ),
-            FlatButton(
-              key: Key("noButton"),
-              child: Text("Nie"),
-              onPressed: () async {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
-        );
+        if (statusCode == 200) {
+          setState(() {
+            /// refreshes accounts' list
+            getAccounts();
+          });
+        } else if (statusCode == 401) {
+          displayProgressDialog(
+              context: _scaffoldKey.currentContext,
+              key: _keyLoaderInvalidToken,
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+          await new Future.delayed(const Duration(seconds: 3));
+          Navigator.of(_keyLoaderInvalidToken.currentContext,
+                  rootNavigator: true)
+              .pop();
+          await widget.storage.resetUserData();
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (statusCode == null) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      } catch (e) {
+        print(e.toString());
+        if (e.toString().contains("TimeoutException")) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+        if (e.toString().contains("SocketException")) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania konta. Adres serwera nieprawidłowy."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      }
+    }
+  }
+
+  _buildSearchField() {
+    return TextField(
+      controller: _searchController,
+      onChanged: (value) {
+        filterSearchResults(value);
       },
+      style: Theme.of(context).appBarTheme.textTheme.headline6,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Wyszukaj...",
+        hintStyle: Theme.of(context).appBarTheme.textTheme.headline6,
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: IdomColors.additionalColor)),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: IdomColors.additionalColor),
+        ),
+      ),
     );
   }
 
-  /// logs the user out of the app
-  _logOut() async {
-    try {
-      displayProgressDialog(
-          context: _scaffoldKey.currentContext,
-          key: _keyLoader,
-          text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowywania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
-      }
-    } catch (e) {
-      print(e);
-      if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      }
-      if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-    }
-  }
-
-  /// navigates according to menu choice
-  /// we are already on accounts page,
-  /// so if user choses accounts in menu, nothing happens
-  void _choiceAction(String choice) async {
-    if (choice == "Moje konto") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  AccountDetail(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      account: widget.currentUser,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Wyloguj") {
-      _logOut();
-    }
-  }
-
   Future<bool> _onBackButton() async {
-    Navigator.of(context).pop(widget.onSignedOut);
+    Navigator.pop(context);
     return true;
   }
 
@@ -262,95 +206,130 @@ class _AccountsState extends State<Accounts> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: Text('IDOM Konta w systemie'),
+              leading: _isSearching
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () {
+                        setState(() {
+                          _isSearching = false;
+                          _searchController.text = "";
+                        });
+                      })
+                  : IconButton(
+                      icon: Icon(Icons.menu),
+                      onPressed: () {
+                        _scaffoldKey.currentState.openDrawer();
+                      },
+                    ),
+              title:
+                  _isSearching ? _buildSearchField() : Text('Wszystkie konta'),
               actions: <Widget>[
-                PopupMenuButton(
-                    key: Key("menuButton"),
-                    offset: Offset(0, 100),
-                    onSelected: _choiceAction,
-                    itemBuilder: (BuildContext context) {
-                      return menuChoicesSuperUser.map((String choice) {
-                        return PopupMenuItem(
-                            key: Key(choice),
-                            value: choice,
-                            child: Text(choice));
-                      }).toList();
-                    })
+                IconButton(
+                  icon: Icon(Icons.search, size: 25.0),
+                  key: Key("searchButton"),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = true;
+                    });
+                  },
+                ),
               ],
             ),
-
+            drawer: IdomDrawer(
+                storage: widget.storage,
+                parentWidgetType: "Accounts",
+                onLogOutFailure: onLogOutFailure),
             /// accounts' list builder
-            body: Container(
-                child: Column(children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 5.0, top: 5.0, right: 5.0, bottom: 5.0),
-                      child: TextField(
-                        onChanged: (value) {
-                          filterSearchResults(value);
-                        },
-                        autofocus: true,
-                        decoration: InputDecoration(
-                            labelText: "Wyszukaj",
-                            hintText: "Wyszukaj",
-                            prefixIcon: Icon(Icons.search),
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(30.0)))),
-                      )),
-                  listSensors()
-                ]))));
+            body:
+                Container(child: Column(children: <Widget>[listAccounts()]))));
   }
 
-  Widget listSensors() {
+  onLogOutFailure(String text) {
+    final snackBar = new SnackBar(content: new Text(text));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  Widget listAccounts() {
     if (zeroFetchedItems) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
                   "Brak kont w systemie \nlub błąd połączenia z serwerem.",
-                  style: TextStyle(fontSize: 13.5),
+                  style: TextStyle(fontSize: 16.5),
+                  textAlign: TextAlign.center)));
+    }
+    if (_connectionEstablished != null &&
+        _connectionEstablished == false &&
+        _accountList == null) {
+      return Padding(
+          padding:
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text("Błąd połączenia z serwerem.",
+                  style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (!zeroFetchedItems &&
         _accountList != null &&
         _accountList.length == 0) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.",
-                  style: TextStyle(fontSize: 13.5),
+                  style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (_accountList != null && _accountList.length > 0) {
       return Expanded(
           child: Scrollbar(
               child: RefreshIndicator(
                   onRefresh: _pullRefresh,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _accountList.length,
-                    itemBuilder: (context, index) =>
-                        Container(
-                            height: 80,
-                            child: Card(child: ListTile(
-                                key: Key(_accountList[index].username),
-                                title: Text(_accountList[index].username,
-                                    style: TextStyle(fontSize: 20.0)),
-                                onTap: () {
-                                  navigateToAccountDetails(_accountList[index]);
-                                },
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _accountList.length,
+                      itemBuilder: (context, index) => Container(
+                          height: 80,
+                          child: Card(
+                              child: ListTile(
+                                  key: Key(_accountList[index].username),
+                                  title: Text(_accountList[index].username,
+                                      style: TextStyle(fontSize: 21.0)),
+                                  onTap: () {
+                                    navigateToAccountDetails(
+                                        _accountList[index]);
+                                  },
+                                  leading: SizedBox(
+                                      width: 35,
+                                      child: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: SvgPicture.asset(
+                                            "assets/icons/man.svg",
+                                            matchTextDirection: false,
+                                            width: 32,
+                                            height: 32,
+                                            color: IdomColors.additionalColor,
+                                          ))),
 
-                                /// delete sensor button
-                                trailing: deleteButtonTrailing(
-                                    _accountList[index])))),
+                                  /// delete sensor button
+                                  trailing: deleteButtonTrailing(
+                                      _accountList[index])))),
+                    ),
                   ))));
     }
 
     /// shows progress indicator while fetching data
-    return Center(child: CircularProgressIndicator());
+    return Padding(
+      padding:
+          const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+      child: Center(child: CircularProgressIndicator()),
+    );
   }
 
   Future<void> _pullRefresh() async {
@@ -385,30 +364,28 @@ class _AccountsState extends State<Accounts> {
   }
 
   navigateToAccountDetails(Account account) async {
-    var result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            AccountDetail(
-                currentLoggedInToken: widget.currentLoggedInToken,
-                account: account,
-                currentUser: widget.currentUser,
-                api: widget.api,
-                onSignedOut: widget.onSignedOut)));
-    setState(() {
-      widget.onSignedOut = result;
-    });
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => AccountDetail(
+            storage: widget.storage, username: account.username)));
     await getAccounts();
   }
 
   /// delete account button
   deleteButtonTrailing(Account account) {
-    if (widget.currentUser.isStaff) {
+    if (_isUserStaff == "true") {
       return SizedBox(
           width: 35,
           child: Container(
-              alignment: Alignment.centerRight,
-              child: FlatButton(
+              alignment: Alignment.bottomCenter,
+              child: TextButton(
                 key: Key("deleteButton"),
-                child: Icon(Icons.delete),
+                child: SvgPicture.asset(
+                  "assets/icons/dustbin.svg",
+                  matchTextDirection: false,
+                  width: 32,
+                  height: 32,
+                  color: IdomColors.mainFill,
+                ),
                 onPressed: () {
                   setState(() {
                     _deactivateAccount(account);

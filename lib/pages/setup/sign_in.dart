@@ -6,17 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/enter_email.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user in
 class SignIn extends StatefulWidget {
-  SignIn({@required this.api, this.onSignedIn, this.onSignedOut});
+  SignIn({@required this.storage});
 
-  final Function(String, Account, Api) onSignedIn;
-  Api api;
-  VoidCallback onSignedOut;
+  final SecureStorage storage;
 
   @override
   _SignInState createState() => new _SignInState();
@@ -28,7 +27,10 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FocusScopeNode _node = FocusScopeNode();
+  final Api api = Api();
   bool _load;
+  IconData _passwordIcon = Icons.visibility_outlined;
+  bool _obscurePassword = true;
 
   void initState() {
     super.initState();
@@ -48,7 +50,7 @@ class _SignInState extends State<SignIn> {
         ),
       ),
       controller: _usernameController,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -62,14 +64,30 @@ class _SignInState extends State<SignIn> {
       decoration: InputDecoration(
         labelText: "Hasło",
         labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon: IconButton(
+            color: Theme.of(context).iconTheme.color,
+            icon: Icon(_passwordIcon),
+            onPressed: () {
+              if (_passwordIcon == Icons.visibility_outlined) {
+                setState(() {
+                  _passwordIcon = Icons.visibility_off_outlined;
+                  _obscurePassword = false;
+                });
+              } else {
+                setState(() {
+                  _passwordIcon = Icons.visibility_outlined;
+                  _obscurePassword = true;
+                });
+              }
+            }),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
       ),
       controller: _passwordController,
       validator: PasswordFieldValidator.validate,
-      style: TextStyle(fontSize: 17.0),
-      obscureText: true,
+      style: TextStyle(fontSize: 21.0),
+      obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.done,
     );
@@ -83,39 +101,52 @@ class _SignInState extends State<SignIn> {
         setState(() {
           _load = true;
         });
-        var result = await widget.api.signIn(
-            _usernameController.value.text, _passwordController.value.text);
+        var result = await api.signIn(
+            _usernameController.text, _passwordController.text);
         if (result[1] == 200 && result[0].toString().contains('token')) {
-          var userResult = await widget.api.getUser(
-              _usernameController.value.text,
+          var userResult = await api.getUser(_usernameController.text,
               result[0].split(':')[1].substring(1, 41));
           if (userResult[1] == 200) {
             dynamic body = jsonDecode(userResult[0]);
             Account account = Account.fromJson(body);
-            setState(() {
-              _load = false;
-            });
-            widget.onSignedIn(
-                result[0].split(':')[1].substring(1, 41), account, widget.api);
-            Navigator.of(context).popUntil((route) => route.isFirst);
+
+            widget.storage.setUserData(
+                account.username,
+                _passwordController.text,
+                account.email,
+                account.telephone,
+                account.id.toString(),
+                account.smsNotifications.toString(),
+                account.appNotifications.toString(),
+                account.isActive.toString(),
+                account.isStaff.toString(),
+                result[0].split(':')[1].substring(1, 41));
+
+            var isSetLoggedIn = await widget.storage.getIsLoggedIn();
+            if (isSetLoggedIn == "true") {
+              setState(() {
+                _load = false;
+              });
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
           }
           if (userResult[1] == 401) {
             setState(() {
               _load = false;
             });
-            displayDialog(
-                context: context,
-                title: "Błąd pobierania danych użytkownika",
-                text: "Spróbuj zalogować się ponownie");
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie."));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         } else if (result[1] == 400) {
           setState(() {
             _load = false;
           });
-          displayDialog(
-              context: context,
-              title: "Błąd logowania",
-              text: "Błędne hasło lub konto z podanym loginem nie istnieje");
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     } catch (e) {
@@ -124,18 +155,15 @@ class _SignInState extends State<SignIn> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd logowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd logowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar = new SnackBar(
+            content: new Text("Błąd logowania. Adres serwera nieprawidłowy."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
@@ -201,10 +229,15 @@ class _SignInState extends State<SignIn> {
                             ),
                             alignment: Alignment.bottomCenter,
                             child: Column(children: <Widget>[
-                              buttonWidget(context, "Zaloguj się", signIn),
-                              FlatButton(
+                              buttonWidget(context, "Zaloguj", Icons.arrow_right_outlined, signIn),
+                              TextButton(
                                 key: Key("passwordReset"),
-                                child: Text('Zapomniałeś/aś hasła?'),
+                                child: Text('Zapomniałeś/aś hasła?',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
                                 onPressed: navigateToEnterEmail,
                               ),
                             ])))
@@ -220,20 +253,13 @@ class _SignInState extends State<SignIn> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                EnterEmail(api: widget.api, onSignedOut: widget.onSignedOut),
-            fullscreenDialog: true));
+            builder: (context) => EnterEmail(), fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
-    if (result != null) {
-      if (result['dataSaved'] == true) {
-        final snackBar = new SnackBar(
-            content: new Text("Email został wysłany. Sprawdź pocztę."));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
-      }
-      setState(() {
-        widget.onSignedOut = result['onSignedOut'];
-      });
+    if (result == true) {
+      final snackBar = new SnackBar(
+          content: new Text("Email został wysłany. Sprawdź pocztę."));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
 }

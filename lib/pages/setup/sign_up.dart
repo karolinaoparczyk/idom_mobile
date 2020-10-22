@@ -3,25 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/sign_in.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-
-import '../../models.dart';
 
 /// signs user up
 class SignUp extends StatefulWidget {
-  SignUp(
-      {Key key,
-      @required this.onSignedIn,
-      @required this.api,
-      @required this.onSignedOut})
-      : super(key: key);
-  final Function(String, Account, Api) onSignedIn;
-  Api api;
-  VoidCallback onSignedOut;
+  SignUp({@required this.storage});
+
+  final SecureStorage storage;
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -29,6 +21,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -37,7 +30,13 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _telephoneController = TextEditingController();
   final FocusScopeNode _node = FocusScopeNode();
   final _scrollController = ScrollController();
+  final Api api = Api();
   bool _load;
+  String fieldsValidationMessage;
+  IconData _passwordIcon = Icons.visibility_outlined;
+  bool _obscurePassword = true;
+  IconData _passwordConfirmIcon = Icons.visibility_outlined;
+  bool _obscureConfirmPassword = true;
 
   void initState() {
     super.initState();
@@ -57,7 +56,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _usernameController,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -71,14 +70,30 @@ class _SignUpState extends State<SignUp> {
       decoration: InputDecoration(
         labelText: "Hasło*",
         labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon: IconButton(
+            color: Theme.of(context).iconTheme.color,
+            icon: Icon(_passwordIcon),
+            onPressed: () {
+              if (_passwordIcon == Icons.visibility_outlined) {
+                setState(() {
+                  _passwordIcon = Icons.visibility_off_outlined;
+                  _obscurePassword = false;
+                });
+              } else {
+                setState(() {
+                  _passwordIcon = Icons.visibility_outlined;
+                  _obscurePassword = true;
+                });
+              }
+            }),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
       ),
       controller: _passwordController,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: PasswordFieldValidator.validate,
-      obscureText: true,
+      obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
     );
@@ -91,19 +106,35 @@ class _SignUpState extends State<SignUp> {
       decoration: InputDecoration(
         labelText: "Powtórz hasło",
         labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon: IconButton(
+            color: Theme.of(context).iconTheme.color,
+            icon: Icon(_passwordConfirmIcon),
+            onPressed: () {
+              if (_passwordConfirmIcon == Icons.visibility_outlined) {
+                setState(() {
+                  _passwordConfirmIcon = Icons.visibility_off_outlined;
+                  _obscureConfirmPassword = false;
+                });
+              } else {
+                setState(() {
+                  _passwordConfirmIcon = Icons.visibility_outlined;
+                  _obscureConfirmPassword = true;
+                });
+              }
+            }),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
       ),
       controller: _confirmPasswordController,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: (String value) {
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić';
         }
         return null;
       },
-      obscureText: true,
+      obscureText: _obscureConfirmPassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.done,
     );
@@ -122,7 +153,7 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: EmailFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -142,87 +173,133 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _telephoneController,
       keyboardType: TextInputType.phone,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: TelephoneFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
     );
   }
 
+  clearFields() {
+    _formKey.currentState.reset();
+    _passwordController.text = "";
+    _confirmPasswordController.text = "";
+    _usernameController.text = "";
+    _emailController.text = "";
+    _telephoneController.text = "";
+    fieldsValidationMessage = "";
+    _passwordIcon = Icons.visibility_outlined;
+    _obscurePassword = true;
+    _passwordConfirmIcon = Icons.visibility_outlined;
+    _obscureConfirmPassword = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Zarejestruj się'),
-      ),
-      body: Container(
-          child: Column(children: <Widget>[
-        Expanded(
-            flex: 5,
-            child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Form(
-                    key: _formKey,
-                    child: FocusScope(
-                        node: _node,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Align(
-                              child: loadingIndicator(_load),
-                              alignment: FractionalOffset.center,
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 13.5,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildUsername())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildEmail())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildTelephone())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildPassword())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 10),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildConfirmPassword())),
-                            buttonWidget(context, "Zarejestruj się", signUp),
-
-                          ],
-                        ))))),
-      ])),
-    );
+        key: _scaffoldKey,
+        appBar: AppBar(title: Text('Zarejestruj się'), actions: [
+          IconButton(
+            icon: Icon(Icons.restore_page_rounded),
+            onPressed: () async {
+              var decision = await confirmActionDialog(
+                context,
+                "Potwierdź",
+                "Czy na pewno wyczyścić wszystkie pola?",
+              );
+              if (decision) clearFields();
+            },
+          ),
+          IconButton(icon: Icon(Icons.check), onPressed: signUp),
+        ]),
+        body: Container(
+            child: Column(
+          children: <Widget>[
+            Expanded(
+                flex: 6,
+                child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Form(
+                        key: _formKey,
+                        child: FocusScope(
+                            node: _node,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Align(
+                                    child: loadingIndicator(_load),
+                                    alignment: FractionalOffset.center,
+                                  ),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 13.5,
+                                          right: 30.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildUsername())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildEmail())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildTelephone())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildPassword())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 10),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildConfirmPassword())),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 30.0),
+                                    child: AnimatedCrossFade(
+                                      crossFadeState:
+                                          fieldsValidationMessage != null
+                                              ? CrossFadeState.showFirst
+                                              : CrossFadeState.showSecond,
+                                      duration: Duration(milliseconds: 300),
+                                      firstChild: fieldsValidationMessage !=
+                                              null
+                                          ? Text(fieldsValidationMessage,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal))
+                                          : SizedBox(),
+                                      secondChild: SizedBox(),
+                                    ),
+                                  ),
+                                ]))))),
+          ],
+        )));
   }
 
   /// signs user up after form validation
@@ -240,8 +317,8 @@ class _SignUpState extends State<SignUp> {
         setState(() {
           _load = true;
         });
-        var res = await widget.api
-            .signUp(username, password1, password2, email, telephone);
+        var res =
+            await api.signUp(username, password1, password2, email, telephone);
         var loginExists = false;
         var emailExists = false;
         var telephoneExists = false;
@@ -250,20 +327,18 @@ class _SignUpState extends State<SignUp> {
         if (res['statusCode'] == "201") {
           setState(() {
             _load = false;
+            fieldsValidationMessage = null;
           });
-          await displayDialog(
-              context: context,
-              title: "Sukces",
-              text: "Konto zostało utworzone. Możesz się zalogować.");
+          final snackBar = new SnackBar(
+              content:
+                  new Text("Konto zostało utworzone. Możesz się zalogować."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
 
           /// navigates to logging in page
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SignIn(
-                      api: widget.api,
-                      onSignedIn: widget.onSignedIn,
-                      onSignedOut: widget.onSignedOut)));
+                  builder: (context) => SignIn(storage: widget.storage)));
         }
         if (res['body'].contains("Username already exists")) {
           loginExists = true;
@@ -281,25 +356,31 @@ class _SignUpState extends State<SignUp> {
         String errorText;
         if (loginExists && emailExists && telephoneExists)
           errorText =
-              "Konto dla podanego loginu, adresu e-mail i nr telefonu już istnieje.";
+              "Konto dla podanego loginu, adresu e-mail i numeru telefonu już istnieje.";
         else if (loginExists && emailExists)
           errorText = "Konto dla podanego loginu i adresu e-mail już istnieje.";
         else if (loginExists && telephoneExists)
-          errorText = "Konto dla podanego loginu i nr telefonu już istnieje.";
+          errorText =
+              "Konto dla podanego loginu i numeru telefonu już istnieje.";
         else if (emailExists && telephoneExists)
           errorText =
-              "Konto dla podanego adresu e-mail i nr telefonu już istnieje.";
+              "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.";
         else if (emailExists)
           errorText = "Konto dla podanego adresu e-mail już istnieje.";
         else if (loginExists)
           errorText = "Konto dla podanego loginu już istnieje.";
         else if (telephoneExists)
-          errorText = "Konto dla podanego nr telefonu już istnieje.";
+          errorText = "Konto dla podanego numeru telefonu już istnieje.";
 
-        if (telephoneInvalid) errorText += " Podaj poprawny nr telefonu.";
+        if (telephoneInvalid) errorText += " Podaj poprawny numeru telefonu.";
 
-        if (errorText != null)
-          displayDialog(context: context, title: "Błąd", text: errorText);
+        if (errorText != null) {
+          FocusScope.of(context).unfocus();
+          setState(() {
+            fieldsValidationMessage = errorText;
+          });
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
 
         setState(() {
           _load = false;
@@ -310,18 +391,16 @@ class _SignUpState extends State<SignUp> {
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {
-          displayDialog(
-              context: context,
-              title: "Błąd rejestracji",
-              text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
-          await displayDialog(
-              context: context,
-              title: "Błąd rejestracji",
-              text: "Adres serwera nieprawidłowy.");
-          widget.onSignedOut();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          final snackBar = new SnackBar(
+              content:
+                  new Text("Błąd rejestracji. Adres serwera nieprawidłowy."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     } else {
