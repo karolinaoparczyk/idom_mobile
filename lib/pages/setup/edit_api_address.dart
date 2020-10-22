@@ -1,25 +1,17 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
 
-import 'package:idom/api.dart';
-import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/dialogs/protocol_dialog.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 /// allows to enter email and send reset password request
 class EditApiAddress extends StatefulWidget {
-  EditApiAddress(
-      {@required this.api, @required this.onSignedOut, this.apiAddress});
+  EditApiAddress({@required this.storage});
 
-  Api api;
-  VoidCallback onSignedOut;
-  String apiAddress;
+  final SecureStorage storage;
 
   @override
   _EditApiAddressState createState() => _EditApiAddressState();
@@ -27,16 +19,71 @@ class EditApiAddress extends StatefulWidget {
 
 class _EditApiAddressState extends State<EditApiAddress> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _apiAddressController = TextEditingController();
+  TextEditingController _apiAddressProtocolController = TextEditingController();
+  TextEditingController _apiAddressPortController = TextEditingController();
+  String currentAddress;
+  String currentAddressProtocol;
+  String currentAddressPort;
+  FocusNode _apiAddressFocusNode = FocusNode();
   bool _load;
+  String _isUserLoggedIn;
 
   void initState() {
     super.initState();
+    _load = true;
+    getApiAddress();
+    checkIfUserIsSignedIn();
+  }
+
+  Future<void> getApiAddress() async {
+    currentAddressProtocol = await widget.storage.getApiServerAddressProtocol();
+    currentAddress = await widget.storage.getApiServerAddress();
+    currentAddressPort = await widget.storage.getApiServerAddressPort();
+    _apiAddressProtocolController =
+        TextEditingController(text: currentAddressProtocol ?? "");
+    _apiAddressController = TextEditingController(text: currentAddress ?? "");
+    _apiAddressPortController =
+        TextEditingController(text: currentAddressPort ?? "");
     _load = false;
-    if (widget.apiAddress != null) {
-      _apiAddressController = TextEditingController(text: widget.api.url);
-    } else
-      _apiAddressController = TextEditingController(text: "https://");
+    setState(() {});
+  }
+
+  Future<void> checkIfUserIsSignedIn() async {
+    _isUserLoggedIn = await widget.storage.getIsLoggedIn();
+    setState(() {});
+  }
+
+  /// build api address protocol field
+  Widget _buildApiAddressProtocol() {
+    return TextFormField(
+        key: Key("apiAddressProtocol"),
+        controller: _apiAddressProtocolController,
+        decoration: InputDecoration(
+          labelText: "Protokół",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          suffixIcon: Icon(Icons.arrow_drop_down),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        onTap: () async {
+          final String selectedProtocol = await showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  child: ProtocolDialog(_apiAddressProtocolController.text),
+                );
+              });
+          if (selectedProtocol != null) {
+            _apiAddressProtocolController.text = selectedProtocol;
+          }
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        readOnly: true,
+        style: TextStyle(fontSize: 21.0),
+        validator: UrlFieldValidator.validate);
   }
 
   /// build api address form field
@@ -44,21 +91,43 @@ class _EditApiAddressState extends State<EditApiAddress> {
     return TextFormField(
         key: Key("apiAddress"),
         controller: _apiAddressController,
-        autofocus: true,
+        focusNode: _apiAddressFocusNode,
         decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Podaj adres serwera",
+          labelText: "Adres serwera",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
-        style: TextStyle(fontSize: 17.0),
+        style: TextStyle(fontSize: 21.0),
         validator: UrlFieldValidator.validate);
   }
 
+  /// build api address port form field
+  Widget _buildApiAddressPort() {
+    return TextFormField(
+        key: Key("apiAddressPort"),
+        controller: _apiAddressPortController,
+        keyboardType: TextInputType.phone,
+        decoration: InputDecoration(
+          labelText: "Port",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        style: TextStyle(fontSize: 21.0),
+        validator: PortFieldValidator.validate);
+  }
+
+  onLogOutFailure(String text) {
+    final snackBar =
+    new SnackBar(content: new Text(text));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
   Future<bool> _onBackButton() async {
-    Map<String, dynamic> result = {
-      'onSignedOut': widget.onSignedOut,
-      'dataSaved': false
-    };
-    Navigator.of(context).pop(result);
+    Navigator.pop(context, false);
     return true;
   }
 
@@ -67,105 +136,109 @@ class _EditApiAddressState extends State<EditApiAddress> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
-            appBar: AppBar(
-              title: Text('Adres serwera'),
-            ),
+          key: _scaffoldKey,
+            appBar: AppBar(title: Text('Adres serwera'), actions: [
+              IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+            ]),
+            drawer: _isUserLoggedIn == "true"
+                ? IdomDrawer(
+                    storage: widget.storage, parentWidgetType: "EditApiAddress", onLogOutFailure: onLogOutFailure)
+                : null,
             body: Row(children: <Widget>[
               Expanded(flex: 1, child: SizedBox(width: 1)),
               Expanded(
                   flex: 30,
-                  child: Column(children: <Widget>[
-                    Expanded(
-                        flex: 3,
-                        child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  child: loadingIndicator(_load),
-                                  alignment: FractionalOffset.center,
-                                ),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 33.5,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Adres serwera*",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 10.0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: _buildApiAddress())),
-                              ],
-                            ))),
-                    Expanded(
-                        flex: 1,
-                        child: AnimatedContainer(
-                            curve: Curves.easeInToLinear,
-                            duration: Duration(
-                              milliseconds: 10,
-                            ),
-                            alignment: Alignment.bottomCenter,
-                            child: Column(children: <Widget>[
-                              buttonWidget(
-                                  context, "Zapisz adres", setApiAddress)
-                            ])))
-                  ])),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 13.5, top: 30, right: 13.5),
+                    child: _load
+                        ? loadingIndicator(true)
+                        : Column(children: <Widget>[
+                            Expanded(
+                                flex: 3,
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    children: [
+                                      _buildApiAddressProtocol(),
+                                      SizedBox(height: 20.0),
+                                      _buildApiAddress(),
+                                      SizedBox(height: 20.0),
+                                      _buildApiAddressPort(),
+                                    ],
+                                  ),
+                                )),
+                          ]),
+                  )),
               Expanded(flex: 1, child: SizedBox(width: 1)),
             ])));
   }
 
-  /// sets api address
-  setApiAddress() async {
-    try {
-      final formState = _formKey.currentState;
-      if (formState.validate()) {
-        if (await Permission.storage.request().isGranted) {
-          setState(() {
-            _load = true;
-          });
-          final directory = await getApplicationDocumentsDirectory();
-          final path = '${directory.path}/serverAddress.txt';
-          final file = File(path);
-          await file.writeAsString(_apiAddressController.text);
+  /// verifies data changes
+  _verifyChanges() async {
+    var protocol = _apiAddressProtocolController.text;
+    var address = _apiAddressController.text;
+    var port = _apiAddressPortController.text;
+    var changedProtocol = false;
+    var changedAddress = false;
+    var changedPort = false;
 
-          setState(() {
-            _load = false;
-          });
-          Map<String, dynamic> result = {
-            'onSignedOut': widget.onSignedOut,
-            'dataSaved': true
-          };
-          Navigator.of(context).pop(result);
-        } else {
-          displayDialog(
-              context: context,
-              title: "Dostęp do plików",
-              text: "Aplikacja wymaga dostępu do plików.");
-        }
+    final formState = _formKey.currentState;
+    if (formState.validate()) {
+      /// sends request only if data has changed
+      if (protocol != currentAddressProtocol) {
+        changedProtocol = true;
       }
-    } catch (e) {
-      print(e.toString());
-      setState(() {
-        _load = false;
-      });
-      if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd zapisu adresu serwera",
-            text: "Spróbuj ponownie.");
+      if (address != currentAddress) {
+        changedAddress = true;
       }
+      if (port != currentAddressPort) {
+        changedPort = true;
+      }
+      if (changedProtocol || changedAddress || changedPort) {
+        await _confirmSavingChanges(
+            changedProtocol, changedAddress, changedPort);
+      } else {
+        final snackBar =
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      }
+    }
+  }
+
+  /// confirms saving api address changes
+  _confirmSavingChanges(
+      bool changedProtocol, bool changedAddress, bool changedPort) async {
+    await confirmActionDialog(
+      context,
+      "Potwierdź",
+      "Czy na pewno zapisać zmiany?",
+      onConfirm: () async {
+        Navigator.pop(context, true);
+        await _saveChanges(changedProtocol, changedAddress, changedPort);
+      },
+    );
+  }
+
+  /// sets api address
+  _saveChanges(
+      bool changedProtocol, bool changedAddress, bool changedPort) async {
+    final formState = _formKey.currentState;
+    if (formState.validate()) {
+      if (changedProtocol)
+        widget.storage
+            .setApiServerAddressProtocol(_apiAddressProtocolController.text);
+      if (changedAddress)
+        widget.storage.setApiServerAddress(_apiAddressController.text);
+      if (changedPort)
+        widget.storage.setApiServerAddressPort(_apiAddressPortController.text);
+      if (_isUserLoggedIn == "true") {
+        final snackBar = new SnackBar(
+            content: new Text("Adres serwera został zapisany."),
+            duration: Duration(seconds: 2));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      }
+      Navigator.pop(context, true);
     }
   }
 }

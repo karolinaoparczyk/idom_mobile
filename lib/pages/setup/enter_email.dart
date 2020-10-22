@@ -3,24 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
 
 /// allows to enter email and send reset password request
 class EnterEmail extends StatefulWidget {
-  EnterEmail({@required this.api, @required this.onSignedOut});
-
-  Api api;
-  VoidCallback onSignedOut;
-
   @override
   _EnterEmailState createState() => _EnterEmailState();
 }
 
 class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _emailController = TextEditingController();
+  final Api api = Api();
   bool _load;
 
   void initState() {
@@ -47,11 +42,7 @@ class _EnterEmailState extends State<EnterEmail> {
   }
 
   Future<bool> _onBackButton() async {
-    Map<String, dynamic> result = {
-      'onSignedOut': widget.onSignedOut,
-      'dataSaved': false
-    };
-    Navigator.of(context).pop(result);
+    Navigator.pop(context, false);
     return true;
   }
 
@@ -60,6 +51,7 @@ class _EnterEmailState extends State<EnterEmail> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
+          key: _scaffoldKey,
             appBar: AppBar(
               title: Text('Reset hasła'),
             ),
@@ -85,8 +77,13 @@ class _EnterEmailState extends State<EnterEmail> {
                                         right: 30.0,
                                         bottom: 0.0),
                                     child: Text(
-                                        "Wprowadź adres e-mail połączony z Twoim kontem",
-                                        style: TextStyle(fontSize: 13.5))),
+                                        "Podaj adres e-mail połączony z Twoim kontem",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                fontWeight:
+                                                    FontWeight.normal))),
                                 Padding(
                                     padding: EdgeInsets.only(
                                         left: 30.0,
@@ -107,7 +104,7 @@ class _EnterEmailState extends State<EnterEmail> {
                             ),
                             alignment: Alignment.bottomCenter,
                             child: Column(children: <Widget>[
-                              buttonWidget(context, "Resetuj hasło",
+                              buttonWidget(context, "Resetuj hasło", Icons.arrow_right_outlined,
                                   sendResetPasswordRequest)
                             ])))
                   ])),
@@ -123,21 +120,20 @@ class _EnterEmailState extends State<EnterEmail> {
         setState(() {
           _load = true;
         });
-        var res = await widget.api.resetPassword(_emailController.value.text);
+        var res = await api.resetPassword(_emailController.value.text);
         setState(() {
           _load = false;
         });
         if (res == 200) {
-          Map<String, dynamic> result = {
-            'onSignedOut': widget.onSignedOut,
-            'dataSaved': true
-          };
-          Navigator.of(context).pop(result);
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Link do resetu hasła zosta wysłany na podany adres e-mail."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         } else if (res == 400) {
-          displayDialog(
-              context: context,
-              title: "Błąd",
-              text: "Konto dla podanego adresu e-mail nie istnieje.");
+          final snackBar = new SnackBar(
+              content:
+                  new Text("Konto dla podanego adresu e-mail nie istnieje."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     } catch (e) {
@@ -146,18 +142,16 @@ class _EnterEmailState extends State<EnterEmail> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd resetu hasła",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd resetu hasła. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd resetu hasła",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd resetu hasła. Adres serwera nieprawidłowy."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }

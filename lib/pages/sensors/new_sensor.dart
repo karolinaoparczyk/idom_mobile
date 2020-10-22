@@ -1,30 +1,23 @@
+import 'package:idom/enums/frequency_units.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
-import 'package:idom/pages/account/account_detail.dart';
-import 'package:idom/pages/account/accounts.dart';
-import 'package:idom/utils/menu_items.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
+import 'package:idom/dialogs/frequency_units_dialog.dart';
+import 'package:idom/dialogs/progress_indicator_dialog.dart';
+import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
-
-import '../../models.dart';
 
 /// adds new sensor
 class NewSensor extends StatefulWidget {
-  NewSensor(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentUser,
-      @required this.api,
-      @required this.onSignedOut})
-      : super(key: key);
-  final String currentLoggedInToken;
-  final Account currentUser;
-  Api api;
-  VoidCallback onSignedOut;
+  NewSensor({@required this.storage, this.testApi});
+
+  final SecureStorage storage;
+  final Api testApi;
 
   @override
   _NewSensorState createState() => new _NewSensorState();
@@ -34,14 +27,18 @@ class _NewSensorState extends State<NewSensor> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _categoryController = TextEditingController();
   TextEditingController _frequencyValueController = TextEditingController();
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  TextEditingController _frequencyUnitsController = TextEditingController();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
-  var selectedCategory;
-  var selectedUnits;
+  Api api = Api();
+  String categoryValue;
+  String frequencyUnitsValue;
   bool _load;
+  String _token;
+  String fieldsValidationMessage;
+  bool canEditFrequency = true;
 
-  List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
     "seconds": "sekundy",
@@ -53,104 +50,15 @@ class _NewSensorState extends State<NewSensor> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
     _load = false;
-
-    /// available sensor categories choices
-    categories = [
-      DropdownMenuItem(
-          child: Text("Temperatura"),
-          value: "temperature",
-          key: Key("temperature")),
-      DropdownMenuItem(
-          child: Text("Wilgotność"), value: "humidity", key: Key("humidity"))
-    ];
-
-    /// available frequency units choices
-    units = [
-      DropdownMenuItem(
-          child: Text("Sekundy"), value: "seconds", key: Key("seconds")),
-      DropdownMenuItem(
-          child: Text("Minuty"), value: "minutes", key: Key("minutes")),
-      DropdownMenuItem(
-          child: Text("Godziny"), value: "hours", key: Key("hours")),
-      DropdownMenuItem(child: Text("Dni"), value: "days", key: Key("days"))
-    ];
+    getToken();
   }
 
-  /// logs the user out of the app
-  _logOut() async {
-    try {
-      displayProgressDialog(
-          context: _scaffoldKey.currentContext,
-          key: _keyLoader,
-          text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowywania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
-      }
-    } catch (e) {
-      print(e);
-      if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      }
-      if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-    }
-  }
-
-  /// navigates according to menu choice
-  void _choiceAction(String choice) async {
-    if (choice == "Moje konto") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AccountDetail(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  account: widget.currentUser,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Konta") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Accounts(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Wyloguj") {
-      _logOut();
-    }
+  Future<void> getToken() async {
+    _token = await widget.storage.getToken();
   }
 
   /// builds sensor name form field
@@ -165,28 +73,54 @@ class _NewSensorState extends State<NewSensor> {
         ),
         autofocus: true,
         key: Key('name'),
+        maxLength: 30,
         style: TextStyle(fontSize: 17.0),
         controller: _nameController,
         validator: SensorNameFieldValidator.validate);
   }
 
-  /// builds sensor category dropdown button
-  Widget _buildCategory() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton(
-          style: TextStyle(fontSize: 17.0, color: Colors.black),
-          hint: Text("Wybierz kategorię..."),
-          key: Key("categoriesButon"),
-          items: categories,
-          onChanged: (val) {
-            setState(() {
-              selectedCategory = val;
-            });
-          },
-          value: selectedCategory,
-        )));
+  /// builds sensor category field
+  Widget _buildCategoryField() {
+    return TextFormField(
+        key: Key("categoriesButton"),
+        controller: _categoryController,
+        decoration: InputDecoration(
+          labelText: "Kategoria",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          suffixIcon: Icon(Icons.arrow_drop_down),
+          prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        onTap: () async {
+          final Map<String, String> selectedCategory = await showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  child: CategoryDialog(currentCategory: categoryValue,),
+                );
+              });
+          if (selectedCategory != null) {
+            _categoryController.text = selectedCategory['text'];
+            categoryValue = selectedCategory['value'];
+            if (selectedCategory['value'] == "rain" || selectedCategory['value'] == "water-temp") {
+              canEditFrequency = false;
+              frequencyUnitsValue = "seconds";
+              _frequencyUnitsController.text = FrequencyUnits.values
+                  .where((element) => element['value'] == "seconds")
+                  .first['text'];
+              _frequencyValueController.text = "30";
+            } else {
+              canEditFrequency = true;
+            }
+            setState(() {});
+          }
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        readOnly: true,
+        style: TextStyle(fontSize: 17.0),
+        validator: UrlFieldValidator.validate);
   }
 
   /// builds sensor frequency value form field
@@ -195,6 +129,7 @@ class _NewSensorState extends State<NewSensor> {
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: TextFormField(
           key: Key('frequencyValue'),
+          enabled: canEditFrequency,
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
           style: TextStyle(fontSize: 17.0),
@@ -203,37 +138,72 @@ class _NewSensorState extends State<NewSensor> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             labelText: "Wartość",
-            labelStyle: Theme.of(context).textTheme.headline5,
+            labelStyle: Theme.of(context).textTheme.headline5.copyWith(
+                color: canEditFrequency
+                    ? IdomColors.additionalColor
+                    : IdomColors.textDark),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
   }
 
-  /// builds frequency units dropdown button
-  Widget _buildUnits() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton(
-          style: TextStyle(fontSize: 17.0, color: Colors.black),
-          key: Key("unitsButton"),
-          items: units,
-          hint: Text("Wybierz jednostki..."),
-          onChanged: (val) {
-            setState(() {
-              selectedUnits = val;
-            });
-          },
-          value: selectedUnits,
-        )));
+  /// builds frequency units field
+  Widget _buildFrequencyUnitsField() {
+    return TextFormField(
+        key: Key("frequencyUnitsButton"),
+        controller: _frequencyUnitsController,
+        enabled: canEditFrequency,
+        decoration: InputDecoration(
+          labelText: "Jednostki",
+          labelStyle: Theme.of(context).textTheme.headline5.copyWith(
+              color: canEditFrequency
+                  ? IdomColors.additionalColor
+                  : IdomColors.textDark),
+          suffixIcon: Icon(Icons.arrow_drop_down),
+          prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        onTap: () async {
+          if (!canEditFrequency) return;
+          final Map<String, String> selectedFrequencyUnits = await showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  child: FrequencyUnitsDialog(),
+                );
+              });
+          if (selectedFrequencyUnits != null) {
+            _frequencyUnitsController.text = selectedFrequencyUnits['text'];
+            frequencyUnitsValue = selectedFrequencyUnits['value'];
+          }
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        readOnly: true,
+        style: TextStyle(fontSize: 17.0),
+        validator: UrlFieldValidator.validate);
+  }
+
+  clearFields() {
+    _formKey.currentState.reset();
+    _nameController.text = "";
+    _categoryController.text = "";
+    _frequencyValueController.text = "";
+    _frequencyUnitsController.text = "";
+    categoryValue = null;
+    frequencyUnitsValue = null;
+    canEditFrequency = true;
+    Navigator.pop(context, true);
+  }
+
+  onLogOutFailure(String text) {
+    final snackBar = new SnackBar(content: new Text(text));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
-    Map<String, dynamic> result = {
-      'onSignedOut': widget.onSignedOut,
-      'dataSaved': false
-    };
-    Navigator.of(context).pop(result);
+    Navigator.pop(context, false);
     return true;
   }
 
@@ -243,31 +213,24 @@ class _NewSensorState extends State<NewSensor> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              title: Text("Dodaj czujnik"),
-              actions: <Widget>[
-                /// builds menu dropdown button
-                PopupMenuButton(
-                    key: Key("menuButton"),
-                    offset: Offset(0, 100),
-                    onSelected: _choiceAction,
-                    itemBuilder: (BuildContext context) {
-                      return widget.currentUser.isStaff
-                          ? menuChoicesSuperUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList()
-                          : menuChoicesNormalUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList();
-                    })
-              ],
-            ),
+            appBar: AppBar(title: Text("Dodaj czujnik"), actions: [
+              IconButton(
+                icon: Icon(Icons.restore_page_rounded),
+                onPressed: () async {
+                  await confirmActionDialog(context, "Potwierdź",
+                      "Czy na pewno wyczyścić wszystkie pola?",
+                      onConfirm: clearFields);
+                },
+              ),
+              IconButton(
+                  key: Key('addSensorButton'),
+                  icon: Icon(Icons.save),
+                  onPressed: _saveChanges),
+            ]),
+            drawer: IdomDrawer(
+                storage: widget.storage,
+                parentWidgetType: "NewSensor",
+                onLogOutFailure: onLogOutFailure),
 
             /// builds form with sensor properties
             body: Container(
@@ -285,30 +248,67 @@ class _NewSensorState extends State<NewSensor> {
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 13.5,
+                                    top: 20.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.info_outline_rounded,
+                                            size: 17.5),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: Text("Ogólne",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal)),
+                                        ),
+                                      ],
+                                    ))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 10.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: _buildName()),
                             Padding(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 0.0),
+                                    vertical: 10.0, horizontal: 30.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: _buildCategory())),
+                                    child: _buildCategoryField())),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 0.0,
+                                    top: 20.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text(
-                                        "Częstotliwość pobierania danych",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.access_time_outlined,
+                                            size: 17.5),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: Text(
+                                              "Częstotliwość pobierania danych",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal)),
+                                        ),
+                                      ],
+                                    ))),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
@@ -327,53 +327,65 @@ class _NewSensorState extends State<NewSensor> {
                                               left: 0.0,
                                               top: 0.0,
                                               right: 0.0,
-                                              bottom: 10.0),
+                                              bottom: 0.0),
                                           child: Align(
                                               alignment: Alignment.bottomLeft,
-                                              child: _buildUnits()))),
+                                              child:
+                                                  _buildFrequencyUnitsField()))),
                                 ]))),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 30.0),
+                              child: AnimatedCrossFade(
+                                crossFadeState: fieldsValidationMessage != null
+                                    ? CrossFadeState.showFirst
+                                    : CrossFadeState.showSecond,
+                                duration: Duration(milliseconds: 300),
+                                firstChild: fieldsValidationMessage != null
+                                    ? Text(fieldsValidationMessage,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                fontWeight: FontWeight.normal))
+                                    : SizedBox(),
+                                secondChild: SizedBox(),
+                              ),
+                            ),
                           ])))),
-              Expanded(
-                  flex: 1,
-                  child: AnimatedContainer(
-                      curve: Curves.easeInToLinear,
-                      duration: Duration(
-                        milliseconds: 10,
-                      ),
-                      alignment: Alignment.bottomCenter,
-                      child: Column(children: <Widget>[
-                        buttonWidget(context, "Dodaj czujnik", _saveChanges),
-                      ])))
             ]))));
   }
 
   /// saves changes after form fields and dropdown buttons validation
   _saveChanges() async {
     final formState = _formKey.currentState;
-    var displayText = "";
-    if (selectedCategory == null) {
-      displayText += "Wybierz kategorię czujnika. \n";
-    }
-    if (selectedUnits == null) {
-      displayText += "Wybierz jednostki częstotliwości pobierania danych.";
-    }
-    if (displayText != "") {
-      await displayDialog(
-          context: context, title: "Brak danych", text: displayText);
-    }
     if (formState.validate()) {
+      int valInt = int.tryParse(_frequencyValueController.text);
+      if (valInt == null) {
+        fieldsValidationMessage =
+            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+        setState(() {});
+        return;
+      }
+
       /// validates if frequency value is valid for given frequency units
       var validFequencyValue =
           SensorFrequencyFieldValidator.isFrequencyValueValid(
-              _frequencyValueController.text, selectedUnits);
+              _frequencyValueController.text, frequencyUnitsValue);
       if (!validFequencyValue) {
         var text =
-            "Maksymalna częstotliwość to co ${unitsToMaxValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}";
-        if (selectedUnits == "seconds")
+            "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
+        if (frequencyUnitsValue == "seconds")
           text =
-              "Minimalna częstotliwość to co ${unitsToMinValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}, a maksymalna to co ${unitsToMaxValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}";
-        await displayDialog(context: context, title: "Błąd", text: text);
+              "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
+        setState(() {
+          fieldsValidationMessage = text;
+        });
         return;
+      } else {
+        setState(() {
+          fieldsValidationMessage = null;
+        });
       }
       setState(() {
         _load = true;
@@ -381,27 +393,23 @@ class _NewSensorState extends State<NewSensor> {
 
       /// converts frequency value to seconds
       var frequencyInSeconds = int.parse(_frequencyValueController.text);
-      if (selectedUnits != "seconds") {
-        if (selectedUnits == "minutes")
+      if (frequencyUnitsValue != "seconds") {
+        if (frequencyUnitsValue == "minutes")
           frequencyInSeconds = frequencyInSeconds * 60;
-        else if (selectedUnits == "hours")
+        else if (frequencyUnitsValue == "hours")
           frequencyInSeconds = frequencyInSeconds * 60 * 60;
-        else if (selectedUnits == "days")
+        else if (frequencyUnitsValue == "days")
           frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
       }
       try {
-        var res = await widget.api.addSensor(_nameController.text,
-            selectedCategory, frequencyInSeconds, widget.currentLoggedInToken);
+        var res = await api.addSensor(
+            _nameController.text, categoryValue, frequencyInSeconds, _token);
 
         if (res['statusCodeSen'] == "201") {
           setState(() {
             _load = false;
           });
-          Map<String, dynamic> result = {
-            'onSignedOut': widget.onSignedOut,
-            'dataSaved': true
-          };
-          Navigator.of(context).pop(result);
+          Navigator.pop(context, true);
         } else if (res['statusCodeSen'] == "401") {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
@@ -411,14 +419,13 @@ class _NewSensorState extends State<NewSensor> {
           Navigator.of(_keyLoaderInvalidToken.currentContext,
                   rootNavigator: true)
               .pop();
-          widget.onSignedOut();
+          await widget.storage.resetUserData();
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
-          displayDialog(
-              context: context,
-              title: "Błąd",
-              text: "Czujnik o podanej nazwie już istnieje.");
+          final snackBar = new SnackBar(
+              content: new Text("Czujnik o podanej nazwie już istnieje."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
           setState(() {
             _load = false;
           });
@@ -429,18 +436,16 @@ class _NewSensorState extends State<NewSensor> {
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {
-          displayDialog(
-              context: context,
-              title: "Błąd dodawania czujnika",
-              text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
-          await displayDialog(
-              context: context,
-              title: "Błąd dodawania czujnika",
-              text: "Adres serwera nieprawidłowy.");
-          widget.onSignedOut();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd dodawania czujnika. Adres serwera nieprawidłowy."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     }

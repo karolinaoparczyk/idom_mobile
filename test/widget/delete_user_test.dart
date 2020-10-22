@@ -1,232 +1,210 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:idom/utils/secure_storage.dart';
+import 'package:idom/pages/account/accounts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:idom/api.dart';
-import 'package:idom/models.dart';
-import 'package:idom/pages/account/accounts.dart';
 
 class MockApi extends Mock implements Api {}
 
+class MockSecureStorage extends Mock implements SecureStorage {}
+
 void main() {
   Widget makeTestableWidget({Widget child}) {
-    return MaterialApp(home: child);
+    return MaterialApp(
+      home: child,
+    );
   }
 
-  /// tests if request to delete account is sent when pressed button after confirmation
-  testWidgets('delete user, confirm', (WidgetTester tester) async {
+
+  /// tests if can delete if is staff, deletes after confirm
+  testWidgets('accounts on list, user is staff, deletes after confirm',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+        List<Map<String, dynamic>> accounts = [
+          {
+            "id": 1,
+            "username": "user1",
+            "email": "user@email.com",
+            "telephone": "",
+            "sms_notifications": true,
+            "app_notifications": true,
+            "is_staff": false,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "username": "user2",
+            "email": "user@2email.com",
+            "telephone": "",
+            "sms_notifications": true,
+            "app_notifications": true,
+            "is_staff": false,
+            "is_active": true
+          }
+        ];
+        when(mockApi.getAccounts("token")).thenAnswer((_) async =>
+            Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
+        when(mockApi.deactivateAccount(1, "token"))
+            .thenAnswer((_) async => Future.value(200));
+
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+        when(mockSecureStorage.getIsUserStaff())
+            .thenAnswer((_) async => Future.value("true"));
+
+        Accounts page = Accounts(
+          storage: mockSecureStorage,
+          testApi: mockApi,
+        );
+
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
+        expect(find.byKey(Key("deleteButton")).evaluate().length, 2);
+        expect(find.text("user1"), findsOneWidget);
+        expect(find.text("user2"), findsOneWidget);
+        await tester.tap(find.byKey(Key("deleteButton")).first);
+        when(mockApi.getAccounts("token")).thenAnswer((_) async => Future.value({
+          "body": jsonEncode([accounts[1]]),
+          "statusCode": "200"
+        }));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(Key("deleteButton")).evaluate().length, 1);
+        expect(find.text("user1"), findsNothing);
+        expect(find.text("user2"), findsOneWidget);
+        verify(await mockApi.deactivateAccount(1, "token")).called(1);
+      });
+
+  /// tests if does not delete after no confirmation
+  testWidgets('does not delete after no confirmation',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+        List<Map<String, dynamic>> accounts = [
+          {
+            "id": 1,
+            "username": "user1",
+            "email": "user@email.com",
+            "telephone": "",
+            "sms_notifications": true,
+            "app_notifications": true,
+            "is_staff": false,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "username": "user2",
+            "email": "user@2email.com",
+            "telephone": "",
+            "sms_notifications": true,
+            "app_notifications": true,
+            "is_staff": false,
+            "is_active": true
+          }
+        ];
+        when(mockApi.getAccounts("token")).thenAnswer((_) async =>
+            Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
+        when(mockApi.deactivateAccount(1, "token"))
+            .thenAnswer((_) async => Future.value(200));
+
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+        when(mockSecureStorage.getIsUserStaff())
+            .thenAnswer((_) async => Future.value("true"));
+
+        Accounts page = Accounts(
+          storage: mockSecureStorage,
+          testApi: mockApi,
+        );
+
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
+        expect(find.byKey(Key("deleteButton")).evaluate().length, 2);
+        expect(find.text("user1"), findsOneWidget);
+        expect(find.text("user2"), findsOneWidget);
+        await tester.tap(find.byKey(Key("deleteButton")).first);
+        when(mockApi.getAccounts("token")).thenAnswer((_) async => Future.value({
+          "body": jsonEncode([accounts[1]]),
+          "statusCode": "200"
+        }));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(Key('noButton')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(Key("deleteButton")).evaluate().length, 2);
+        expect(find.text("user1"), findsOneWidget);
+        expect(find.text("user2"), findsOneWidget);
+        verifyNever(await mockApi.deactivateAccount(1, "token"));
+      });
+
+  /// tests if does not delete after api error
+  testWidgets('does not delete after api error', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.deactivateAccount(1, "token"))
-        .thenAnswer((_) async => Future.value(200));
-    List<Account> accounts = List();
-    accounts.add(Account(
-        id: 1,
-        username: "user1",
-        email: "user@email.com",
-        telephone: "",
-        smsNotifications: "true",
-        appNotifications: "true",
-        isStaff: true,
-        isActive: false));
-    accounts.add(Account(
-        id: 2,
-        username: "user2",
-        email: "user2@email.com",
-        telephone: "",
-        smsNotifications: "true",
-        appNotifications: "true",
-        isStaff: false,
-        isActive: false));
-
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
-    Accounts page = Accounts(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testAccounts: accounts,
-    );
-
-    await tester.pumpWidget(makeTestableWidget(child: page));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(FlatButton).evaluate().length, 2);
-    await tester.tap(find.byType(FlatButton).first);
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byKey(Key('yesButton')));
-    await tester.pumpAndSettle();
-
-    verify(await mockApi.deactivateAccount(1, "token")).called(1);
-  });
-
-  /// tests if request to delete account is not sent when pressed button without confirmation
-  testWidgets('delete user, does not confirm', (WidgetTester tester) async {
-    MockApi mockApi = MockApi();
-    when(mockApi.deactivateAccount(1, "token"))
-        .thenAnswer((_) async => Future.value(200));
-    List<Account> accounts = List();
-    accounts.add(Account(
-        id: 1,
-        username: "user1",
-        email: "user@email.com",
-        telephone: "",
-        smsNotifications: "true",
-        appNotifications: "true",
-        isStaff: true,
-        isActive: false));
-    accounts.add(Account(
-        id: 2,
-        username: "user2",
-        email: "user2@email.com",
-        telephone: "",
-        smsNotifications: "true",
-        appNotifications: "true",
-        isStaff: false,
-        isActive: false));
-
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
-    Accounts page = Accounts(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testAccounts: accounts,
-    );
-
-    await tester.pumpWidget(makeTestableWidget(child: page));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(FlatButton).evaluate().length, 2);
-    await tester.tap(find.byType(FlatButton).first);
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byKey(Key('noButton')));
-    await tester.pumpAndSettle();
-
-    verifyNever(await mockApi.deactivateAccount(1, "token"));
-  });
-
-  /// tests if no delete button when user is not super user
-  testWidgets('no delete button', (WidgetTester tester) async {
-    MockApi mockApi = MockApi();
-    when(mockApi.deactivateAccount(1, "token"))
-        .thenAnswer((_) async => Future.value(200));
-    List<Account> accounts = List();
-    accounts.add(Account(
-        id: 1,
-        username: "user1",
-        email: "user@email.com",
-        telephone: "",
-        smsNotifications: "true",
-        appNotifications: "true",
-        isStaff: true,
-        isActive: false));
-    accounts.add(Account(
-        id: 2,
-        username: "user2",
-        email: "user2@email.com",
-        telephone: "",
-        smsNotifications: "true",
-        appNotifications: "true",
-        isStaff: false,
-        isActive: false));
-
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: false);
-
-    Accounts page = Accounts(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testAccounts: accounts,
-    );
-
-    await tester.pumpWidget(makeTestableWidget(child: page));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(FlatButton).evaluate().length, 0);
-
-    verifyNever(await mockApi.deactivateAccount(1, "token"));
-  });
-
-  /// tests if error message when API error
-  testWidgets('delete user, confirm, api error', (WidgetTester tester) async {
-    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> accounts = [
+      {
+        "id": 1,
+        "username": "user1",
+        "email": "user@email.com",
+        "telephone": "",
+        "sms_notifications": true,
+        "app_notifications": true,
+        "is_staff": false,
+        "is_active": true
+      },
+      {
+        "id": 2,
+        "username": "user2",
+        "email": "user@2email.com",
+        "telephone": "",
+        "sms_notifications": true,
+        "app_notifications": true,
+        "is_staff": false,
+        "is_active": true
+      }
+    ];
+    when(mockApi.getAccounts("token"))
+        .thenAnswer((_) async => Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
     when(mockApi.deactivateAccount(1, "token"))
         .thenAnswer((_) async => Future.value(404));
-    List<Account> accounts = List();
-    accounts.add(Account(
-        id: 1,
-        username: "user1",
-        email: "user@email.com",
-        telephone: "",
-        smsNotifications: "true",
-        appNotifications: "true",
-        isStaff: true,
-        isActive: false));
-    accounts.add(Account(
-        id: 2,
-        username: "user2",
-        email: "user2@email.com",
-        telephone: "",
-        smsNotifications: "true",
-        appNotifications: "true",
-        isStaff: false,
-        isActive: false));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
 
     Accounts page = Accounts(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testAccounts: accounts,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
-
-    expect(find.byType(FlatButton).evaluate().length, 2);
-    await tester.tap(find.byType(FlatButton).first);
+    expect(find.byKey(Key("deleteButton")).evaluate().length, 2);
+    expect(find.text("user1"), findsOneWidget);
+    expect(find.text("user2"), findsOneWidget);
+    await tester.tap(find.byKey(Key("deleteButton")).first);
+    when(mockApi.getAccounts("token")).thenAnswer((_) async => Future.value({
+      "body": jsonEncode([accounts[1]]),
+      "statusCode": "200"
+    }));
     await tester.pumpAndSettle();
-
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
-
-    await tester.tap(find.byKey(Key('ok button')));
-
+    expect(find.byKey(Key("deleteButton")).evaluate().length, 2);
+    expect(find.text("user1"), findsOneWidget);
+    expect(find.text("user2"), findsOneWidget);
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(
+        find.text(
+            "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."),
+        findsOneWidget);
     verify(await mockApi.deactivateAccount(1, "token")).called(1);
   });
 }

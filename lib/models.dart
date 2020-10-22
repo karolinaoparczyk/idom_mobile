@@ -5,8 +5,8 @@ class Account {
   String username;
   String email;
   String telephone;
-  String smsNotifications;
-  String appNotifications;
+  bool smsNotifications;
+  bool appNotifications;
   final bool isStaff;
   bool isActive;
 
@@ -27,8 +27,8 @@ class Account {
         username: json['username'] as String,
         email: json['email'] as String,
         telephone: json['telephone'] as String,
-        smsNotifications: json['sms_notiications'] as String,
-        appNotifications: json['app_notiications'] as String,
+        smsNotifications: json['sms_notifications'] as bool,
+        appNotifications: json['app_notifications'] as bool,
         isStaff: json['is_staff'] as bool,
         isActive: json['is_active'] as bool);
   }
@@ -90,6 +90,8 @@ class SensorData {
         id: id,
         sensorName: json['sensor'] as String,
         data: json['sensor_data'] as String,
-        deliveryTime: DateTime.parse(json['delivery_time'].substring(0, 19).replaceAll("T", " ") as String));
+        deliveryTime: DateTime.parse(json['delivery_time']
+            .substring(0, 19)
+            .replaceAll("T", " ") as String));
   }
 }
