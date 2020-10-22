@@ -727,7 +727,7 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (noDataForChart) {
       return Container(
           child: Text("Brak danych z wybranego okresu.",
-              style: TextStyle(fontSize: 17.0)));
+              style: TextStyle(fontSize: 13.5)));
     } else if (dataLoaded) {
       return charts.TimeSeriesChart(
         _seriesData,

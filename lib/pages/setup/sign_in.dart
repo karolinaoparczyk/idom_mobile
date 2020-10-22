@@ -8,9 +8,7 @@ import 'package:idom/models.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
 
 /// signs user in
 class SignIn extends StatefulWidget {
@@ -40,13 +38,16 @@ class _SignInState extends State<SignIn> {
   /// builds username text field for the form
   Widget _buildUsername() {
     return TextFormField(
-      key: Key('email'),
+      key: Key('username'),
       autofocus: true,
-      controller: _usernameController,
       decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Podaj login",
+        labelText: "Nazwa użytkownika",
+        labelStyle: Theme.of(context).textTheme.headline5,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
+      controller: _usernameController,
       style: TextStyle(fontSize: 17.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
@@ -58,11 +59,14 @@ class _SignInState extends State<SignIn> {
   Widget _buildPassword() {
     return TextFormField(
       key: Key('password'),
-      controller: _passwordController,
       decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Podaj hasło",
+        labelText: "Hasło",
+        labelStyle: Theme.of(context).textTheme.headline5,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
+      controller: _passwordController,
       validator: PasswordFieldValidator.validate,
       style: TextStyle(fontSize: 17.0),
       obscureText: true,
@@ -171,21 +175,7 @@ class _SignInState extends State<SignIn> {
                                     Padding(
                                         padding: EdgeInsets.only(
                                             left: 30.0,
-                                            top: 20,
-                                            right: 30.0,
-                                            bottom: 0.0),
-                                        child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text("Login",
-                                                style: TextStyle(
-                                                    color: textColor,
-                                                    fontSize: 13.5,
-                                                    fontWeight:
-                                                        FontWeight.bold)))),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 30.0,
-                                            top: 0.0,
+                                            top: 20.0,
                                             right: 30.0,
                                             bottom: 0.0),
                                         child: Align(
@@ -194,21 +184,7 @@ class _SignInState extends State<SignIn> {
                                     Padding(
                                         padding: EdgeInsets.only(
                                             left: 30.0,
-                                            top: 0,
-                                            right: 30.0,
-                                            bottom: 0.0),
-                                        child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text("Hasło",
-                                                style: TextStyle(
-                                                    color: textColor,
-                                                    fontSize: 13.5,
-                                                    fontWeight:
-                                                        FontWeight.bold)))),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 30.0,
-                                            top: 0.0,
+                                            top: 20.0,
                                             right: 30.0,
                                             bottom: 13.5),
                                         child: Align(

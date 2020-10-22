@@ -5,6 +5,7 @@ import 'package:idom/api.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/text_color.dart';
 
@@ -48,78 +49,85 @@ class _FrontState extends State<Front> {
         onWillPop: () async => false,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar:
-                AppBar(automaticallyImplyLeading: false, title: Text('IDOM')),
-            body:SingleChildScrollView(child: Container( alignment: Alignment.center, child: Center(
+            body: SingleChildScrollView(
+                child: Container(
+                    alignment: Alignment.center,
+                    child: Center(
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Flexible(flex:1, child: SizedBox(height: queryData.size.height/3, child:
-                AnimatedContainer(
-                        curve: Curves.easeInToLinear,
-                        duration: Duration(
-                          milliseconds: 10,
-                        ),
-                        alignment: Alignment.topCenter,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                'IDOM',
-                                style: TextStyle(
-                                    fontSize: 90, color: Colors.black),
-                                textAlign: TextAlign.center,
-                              ),
-                              Text(
-                                'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: textColor,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ),
-                            ])))),
-                Flexible( flex: 2, child: SizedBox(height: queryData.size.height/3, child: AnimatedContainer(
-                        curve: Curves.easeInToLinear,
-                        duration: Duration(
-                          milliseconds: 10,
-                        ),
-                        alignment: Alignment.topCenter,
-                        child: Column(children: [
-                          FlatButton(
-                            key: Key('editApiServer'),
-                            child: Text('Edytuj adres serwera',
-                                style: TextStyle(fontSize: 18)),
-                            onPressed: navigateToEditApiAddress,
-                          ),
-                          apiAddressWarning(),
-                          buttonWidget(
-                              context, "Zaloguj się", navigateToSignIn),
-                          SizedBox(height: 10),
-                          buttonWidget(
-                              context, "Zarejestruj się", navigateToSignUp),
-                          FlatButton(
-                            key: Key('passwordReset'),
-                            child: Text('Zapomniałeś/aś hasła?'),
-                            onPressed: navigateToEnterEmail,
-                          ),
-                        ])))),
-              ],
-            ))))));
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        SizedBox(
+                            height: queryData.size.height / 15 * 8,
+                            child: AnimatedContainer(
+                                curve: Curves.easeInToLinear,
+                                duration: Duration(
+                                  milliseconds: 10,
+                                ),
+                                alignment: Alignment.topCenter,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'IDOM',
+                                        style: TextStyle(
+                                            fontSize: 100,
+                                            color: IdomColors.textDark),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Text(
+                                        'TWÓJ INTELIGENTNY DOM \nW JEDNYM MIEJSCU',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: textColor,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ]))),
+                        SizedBox(
+                            height: queryData.size.height / 15 * 7,
+                            child: AnimatedContainer(
+                                curve: Curves.easeInToLinear,
+                                duration: Duration(
+                                  milliseconds: 10,
+                                ),
+                                alignment: Alignment.topCenter,
+                                child: Column(children: [
+                                  apiAddressWarning(),
+                                  FlatButton(
+                                    key: Key('editApiServer'),
+                                    child: Text('Edytuj adres serwera',
+                                        style: TextStyle(fontSize: 16)),
+                                    onPressed: navigateToEditApiAddress,
+                                  ),
+                                  buttonWidget(
+                                      context, "Zaloguj się", navigateToSignIn),
+                                  SizedBox(height: 10),
+                                  buttonWidget(context, "Zarejestruj się",
+                                      navigateToSignUp),
+                                  FlatButton(
+                                    key: Key('passwordReset'),
+                                    child: Text('Zapomniałeś/aś hasła?'),
+                                    onPressed: navigateToEnterEmail,
+                                  ),
+                                ]))),
+                      ],
+                    ))))));
   }
 
   apiAddressWarning() {
     if (widget.apiAddressAdded == null) {
-      return Text("");
+      return SizedBox();
     } else if (!widget.apiAddressAdded) {
-      return Padding(
-          padding:
-              EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 10.0),
-          child: Text('Adres serwera nie został ustawiony',
-              style: TextStyle(fontSize: 18, color: Colors.red)));
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+        Icon(Icons.warning_amber_outlined, size: 16, color: IdomColors.error),
+        Text(' Adres serwera nie został ustawiony',
+            style: TextStyle(fontSize: 16, color: IdomColors.error))
+      ]);
     }
     return Text("");
   }

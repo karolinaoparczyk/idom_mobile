@@ -176,8 +176,11 @@ class _EditSensorState extends State<EditSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Podaj nazwę",
+          labelText: "Nazwa",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
         key: Key('name'),
         style: TextStyle(fontSize: 17.0),
@@ -214,8 +217,11 @@ class _EditSensorState extends State<EditSensor> {
           controller: _frequencyValueController,
           style: TextStyle(fontSize: 17.0),
           decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "Podaj wartość",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            labelText: "Wartość",
+            labelStyle: Theme.of(context).textTheme.headline5,
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -300,36 +306,10 @@ class _EditSensorState extends State<EditSensor> {
                                         top: 13.5,
                                         right: 30.0,
                                         bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Nazwa",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0.0,
-                                        right: 30.0,
-                                        bottom: 0.0),
                                     child: _buildName()),
                                 Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0.0,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Kategoria",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 0.0, horizontal: 0.0),
+                                        vertical: 10.0, horizontal: 0.0),
                                     child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: _buildCategory())),
@@ -350,7 +330,7 @@ class _EditSensorState extends State<EditSensor> {
                                 Padding(
                                     padding: EdgeInsets.only(
                                         left: 30.0,
-                                        top: 0.0,
+                                        top: 10.0,
                                         right: 30.0,
                                         bottom: 0.0),
                                     child: SizedBox(

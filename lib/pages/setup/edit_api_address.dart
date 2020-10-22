@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
@@ -90,14 +91,6 @@ class _EditApiAddressState extends State<EditApiAddress> {
                                         top: 33.5,
                                         right: 30.0,
                                         bottom: 0.0),
-                                    child: Text("Wprowadź adres serwera",
-                                        style: TextStyle(fontSize: 13.5))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 33.5,
-                                        right: 30.0,
-                                        bottom: 0.0),
                                     child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text("Adres serwera*",
@@ -108,7 +101,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
                                 Padding(
                                     padding: EdgeInsets.only(
                                         left: 30.0,
-                                        top: 0.0,
+                                        top: 10.0,
                                         right: 30.0,
                                         bottom: 0.0),
                                     child: Align(
@@ -138,7 +131,6 @@ class _EditApiAddressState extends State<EditApiAddress> {
     try {
       final formState = _formKey.currentState;
       if (formState.validate()) {
-
         if (await Permission.storage.request().isGranted) {
           setState(() {
             _load = true;
@@ -148,15 +140,15 @@ class _EditApiAddressState extends State<EditApiAddress> {
           final file = File(path);
           await file.writeAsString(_apiAddressController.text);
 
-        setState(() {
-          _load = false;
-        });
-        Map<String, dynamic> result = {
-          'onSignedOut': widget.onSignedOut,
-          'dataSaved': true
-        };
-        Navigator.of(context).pop(result);}
-        else{
+          setState(() {
+            _load = false;
+          });
+          Map<String, dynamic> result = {
+            'onSignedOut': widget.onSignedOut,
+            'dataSaved': true
+          };
+          Navigator.of(context).pop(result);
+        } else {
           displayDialog(
               context: context,
               title: "Dostęp do plików",

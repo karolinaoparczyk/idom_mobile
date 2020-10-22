@@ -157,10 +157,11 @@ class _NewSensorState extends State<NewSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          contentPadding:
-              EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 0.0),
-          border: InputBorder.none,
-          hintText: "Podaj nazwę",
+          labelText: "Nazwa",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
         autofocus: true,
         key: Key('name'),
@@ -198,8 +199,11 @@ class _NewSensorState extends State<NewSensor> {
           controller: _frequencyValueController,
           style: TextStyle(fontSize: 17.0),
           decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "Podaj wartość",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            labelText: "Wartość",
+            labelStyle: Theme.of(context).textTheme.headline5,
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -284,36 +288,10 @@ class _NewSensorState extends State<NewSensor> {
                                     top: 13.5,
                                     right: 30.0,
                                     bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Nazwa",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
                                 child: _buildName()),
                             Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Kategoria",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 0.0),
+                                    vertical: 10.0, horizontal: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildCategory())),
@@ -334,7 +312,7 @@ class _NewSensorState extends State<NewSensor> {
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 0.0,
+                                    top: 10.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: SizedBox(
@@ -349,7 +327,7 @@ class _NewSensorState extends State<NewSensor> {
                                               left: 0.0,
                                               top: 0.0,
                                               right: 0.0,
-                                              bottom: 0.0),
+                                              bottom: 10.0),
                                           child: Align(
                                               alignment: Alignment.bottomLeft,
                                               child: _buildUnits()))),

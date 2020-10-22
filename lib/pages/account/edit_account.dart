@@ -46,8 +46,11 @@ class _EditAccountState extends State<EditAccount> {
         controller: _emailController,
         autofocus: true,
         decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Podaj adres e-mail",
+          labelText: "Adres e-mail*",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
         keyboardType: TextInputType.emailAddress,
         style: TextStyle(fontSize: 17.0),
@@ -61,8 +64,11 @@ class _EditAccountState extends State<EditAccount> {
         style: TextStyle(fontSize: 17.0),
         controller: _telephoneController,
         decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Podaj nr telefonu komórkowego",
+          labelText: "Nr telefonu komórkowego",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
         keyboardType: TextInputType.phone,
         validator: TelephoneFieldValidator.validate);
@@ -222,37 +228,12 @@ class _EditAccountState extends State<EditAccount> {
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("Adres e-mail",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
                                     child: _buildEmail())),
+
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Nr telefonu",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
+                                    top: 10.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(

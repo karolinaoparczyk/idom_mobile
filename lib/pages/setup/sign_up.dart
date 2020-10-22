@@ -8,7 +8,6 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
 
 import '../../models.dart';
 
@@ -50,11 +49,14 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('username'),
       autofocus: true,
-      controller: _usernameController,
       decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Podaj login",
+        labelText: "Nazwa użytkownika*",
+        labelStyle: Theme.of(context).textTheme.headline5,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
+      controller: _usernameController,
       style: TextStyle(fontSize: 17.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
@@ -66,11 +68,14 @@ class _SignUpState extends State<SignUp> {
   Widget _buildPassword() {
     return TextFormField(
       key: Key('password1'),
-      controller: _passwordController,
       decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Podaj hasło",
+        labelText: "Hasło*",
+        labelStyle: Theme.of(context).textTheme.headline5,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
+      controller: _passwordController,
       style: TextStyle(fontSize: 17.0),
       validator: PasswordFieldValidator.validate,
       obscureText: true,
@@ -83,11 +88,14 @@ class _SignUpState extends State<SignUp> {
   Widget _buildConfirmPassword() {
     return TextFormField(
       key: Key('password2'),
-      controller: _confirmPasswordController,
       decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Powtórz hasło",
+        labelText: "Powtórz hasło",
+        labelStyle: Theme.of(context).textTheme.headline5,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
+      controller: _confirmPasswordController,
       style: TextStyle(fontSize: 17.0),
       validator: (String value) {
         if (value != _passwordController.text) {
@@ -104,11 +112,14 @@ class _SignUpState extends State<SignUp> {
   Widget _buildEmail() {
     return TextFormField(
       key: Key('email'),
-      controller: _emailController,
       decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Podaj adres e-mail",
+        labelText: "Adres e-mail*",
+        labelStyle: Theme.of(context).textTheme.headline5,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
+      controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(fontSize: 17.0),
       validator: EmailFieldValidator.validate,
@@ -121,11 +132,14 @@ class _SignUpState extends State<SignUp> {
   Widget _buildTelephone() {
     return TextFormField(
       key: Key('telephone'),
-      controller: _telephoneController,
       decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Podaj nr telefonu komórkowego",
+        labelText: "Nr telefonu komórkowego",
+        labelStyle: Theme.of(context).textTheme.headline5,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
+      controller: _telephoneController,
       keyboardType: TextInputType.phone,
       style: TextStyle(fontSize: 17.0),
       validator: TelephoneFieldValidator.validate,
@@ -165,37 +179,11 @@ class _SignUpState extends State<SignUp> {
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("Login*",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
                                     child: _buildUsername())),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Adres e-mail*",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
+                                    top: 10.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
@@ -204,20 +192,7 @@ class _SignUpState extends State<SignUp> {
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Nr telefonu komórkowego",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
+                                    top: 10.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
@@ -226,20 +201,7 @@ class _SignUpState extends State<SignUp> {
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Hasło*",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
+                                    top: 10.0,
                                     right: 30.0,
                                     bottom: 0),
                                 child: Align(
@@ -248,22 +210,9 @@ class _SignUpState extends State<SignUp> {
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 0,
+                                    top: 10.0,
                                     right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Powtórz hasło*",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 0.0,
-                                    right: 30.0,
-                                    bottom: 0),
+                                    bottom: 10),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildConfirmPassword())),

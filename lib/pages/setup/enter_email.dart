@@ -33,11 +33,14 @@ class _EnterEmailState extends State<EnterEmail> {
     return TextFormField(
         key: Key("email"),
         controller: _emailController,
-        autofocus: true,
         decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Podaj adres e-mail",
+          labelText: "Adres e-mail",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
+        autofocus: true,
         keyboardType: TextInputType.emailAddress,
         style: TextStyle(fontSize: 17.0),
         validator: EmailFieldValidator.validate);
@@ -87,20 +90,7 @@ class _EnterEmailState extends State<EnterEmail> {
                                 Padding(
                                     padding: EdgeInsets.only(
                                         left: 30.0,
-                                        top: 33.5,
-                                        right: 30.0,
-                                        bottom: 0.0),
-                                    child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Adres e-mail*",
-                                            style: TextStyle(
-                                                color: textColor,
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.bold)))),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        top: 0.0,
+                                        top: 10.0,
                                         right: 30.0,
                                         bottom: 0.0),
                                     child: Align(

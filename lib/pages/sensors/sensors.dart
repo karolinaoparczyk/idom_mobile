@@ -7,6 +7,7 @@ import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/text_color.dart';
@@ -68,8 +69,10 @@ class _SensorsState extends State<Sensors> {
           _sensorList =
               bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
         });
-        if (_sensorList.length == 0) zeroFetchedItems = true;
-        zeroFetchedItems = false;
+        if (_sensorList.length == 0)
+          zeroFetchedItems = true;
+        else
+          zeroFetchedItems = false;
       } else if (res != null && res['statusCodeSensors'] == "401") {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
@@ -281,12 +284,10 @@ class _SensorsState extends State<Sensors> {
 
       /// adds sensor adding button
       floatingActionButton: Container(
-          height: 80.0,
-          width: 80.0,
           child: FittedBox(
               child: FloatingActionButton(
-            backgroundColor: Colors.black,
-            foregroundColor: Colors.white,
+            backgroundColor: IdomColors.mainFill,
+            foregroundColor: IdomColors.additionalColor,
             key: Key("addSensorButton"),
             onPressed: navigateToNewSensor,
             child: Icon(Icons.add, size: 30),
@@ -316,8 +317,8 @@ class _SensorsState extends State<Sensors> {
       body: Container(
           child: Column(children: <Widget>[
         Padding(
-            padding:
-                EdgeInsets.only(left: 5.0, top: 5.0, right: 5.0, bottom: 5.0),
+            padding: EdgeInsets.only(
+                left: 10.0, top: 10.0, right: 10.0, bottom: 10.0),
             child: TextField(
               onChanged: (value) {
                 filterSearchResults(value);
@@ -325,10 +326,11 @@ class _SensorsState extends State<Sensors> {
               autofocus: true,
               decoration: InputDecoration(
                   labelText: "Wyszukaj",
-                  hintText: "Wyszukaj",
-                  prefixIcon: Icon(Icons.search),
+                  labelStyle: Theme.of(context).textTheme.headline5,
+                  prefixIcon: Icon(Icons.search,
+                      color: Theme.of(context).iconTheme.color),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30.0)))),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)))),
             )),
         listSensors()
       ])),
@@ -367,6 +369,7 @@ class _SensorsState extends State<Sensors> {
                     itemCount: _sensorList.length,
                     itemBuilder: (context, index) => Container(
                         height: 80,
+                        padding: EdgeInsets.symmetric(horizontal:10),
                         child: Card(
                             child: ListTile(
                                 key: Key(_sensorList[index].name),
@@ -478,7 +481,7 @@ class _SensorsState extends State<Sensors> {
             alignment: Alignment.centerRight,
             child: FlatButton(
               key: Key("deleteButton"),
-              child: Icon(Icons.delete),
+              child: Icon(Icons.delete, color: Theme.of(context).iconTheme.color),
               onPressed: () {
                 setState(() {
                   _deactivateSensor(sensor);

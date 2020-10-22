@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
   Api api;
   String currentLoggedInToken;
   Account currentUser;
-  var apiAddressAdded;
+  bool apiAddressAdded;
   String apiAddress;
 
   @override
@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
     return apiString;
   }
 
-  /// when user logs in successfully
+  /// when user logs out successfully
   void _signedOut() {
     setState(() {
       authStatus = AuthStatus.notSignedIn;
