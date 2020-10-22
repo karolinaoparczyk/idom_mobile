@@ -52,7 +52,7 @@ class TelephoneFieldValidator {
   static String validate(String value) {
     value = value.replaceAll(' ', '');
     if (value.isNotEmpty && !RegExp(r"^\+\d{11}$").hasMatch(value)) {
-      return 'Numer telefonu musi zawierać kierunkowy postaci +XX oraz 9 cyfr';
+      return 'Podaj numer telefonu postaci +XX XXX XXX XXX';
     }
     return null;
   }
@@ -113,11 +113,6 @@ class UrlFieldValidator{
     }
     if (value.contains(' ')) {
       return 'Adres nie może zawierać spacji';
-    }
-    var httpMatch = RegExp(r"http://").matchAsPrefix(value) != null;
-    var httpsMatch = RegExp(r"https://").matchAsPrefix(value) != null;
-    if (!httpMatch && !httpsMatch) {
-      return 'Adres musi rozpoczynać się od "http://" lub "https://';
     }
     return null;
   }

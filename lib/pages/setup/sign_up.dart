@@ -101,6 +101,7 @@ class _SignUpState extends State<SignUp> {
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić';
         }
+        return null;
       },
       obscureText: true,
       onEditingComplete: _node.nextFocus,

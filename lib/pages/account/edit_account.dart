@@ -322,10 +322,10 @@ class _EditAccountState extends State<EditAccount> {
         errorText = "Konto dla podanego nr telefonu już istnieje.";
 
       if (telephoneInvalid && emailInvalid)
-        errorText += "Podaj poprawny adres e-mail i nr telefonu.";
+        errorText += "Adres e-mail oraz nr telefonu są nieprawidłowe.";
       else if (telephoneInvalid)
-        errorText += "Podaj poprawny nr telefonu.";
-      else if (emailInvalid) errorText += "Podaj poprawny adres e-mail.";
+        errorText += "Nr telefonu jest nieprawidłowy.";
+      else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy";
 
       if (errorText != "")
         displayDialog(context: context, title: "Błąd", text: errorText);
