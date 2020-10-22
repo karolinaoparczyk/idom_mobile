@@ -202,12 +202,11 @@ class _SignUpState extends State<SignUp> {
           IconButton(
             icon: Icon(Icons.restore_page_rounded),
             onPressed: () async {
-              var decision = await confirmActionDialog(
-                context,
-                "Potwierdź",
-                "Czy na pewno wyczyścić wszystkie pola?",
-              );
-              if (decision) clearFields();
+              var decision = await confirmActionDialog(context, "Potwierdź",
+                  "Czy na pewno wyczyścić wszystkie pola?");
+              if (decision){
+                clearFields();
+              }
             },
           ),
           IconButton(icon: Icon(Icons.check), onPressed: signUp),

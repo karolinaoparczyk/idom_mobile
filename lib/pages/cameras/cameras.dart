@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/cameras/camera_stream.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 
@@ -30,7 +32,7 @@ class _CamerasState extends State<Cameras> {
   @override
   void initState() {
     super.initState();
-    if (widget.testApi != null){
+    if (widget.testApi != null) {
       api = widget.testApi;
     }
     getCameras();
@@ -165,14 +167,16 @@ class _CamerasState extends State<Cameras> {
                                     navigateToCameraStream(_cameraList[index]);
                                   },
                                   leading: SizedBox(
-                                    width: 35,
-                                    child: Container(
-                                      alignment: Alignment.centerRight,
-                                      child:Icon(
-                                    Icons.videocam,
-                                    color: Theme.of(context).iconTheme.color,
-                                  size: 30,
-                                  ))),
+                                      width: 35,
+                                      child: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: SvgPicture.asset(
+                                            "assets/icons/video-camera.svg",
+                                            matchTextDirection: false,
+                                            width: 32,
+                                            height: 32,
+                                            color: IdomColors.additionalColor,
+                                          ))),
                                 ),
                               )))))));
     }

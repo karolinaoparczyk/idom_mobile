@@ -296,10 +296,12 @@ class _EditAccountState extends State<EditAccount> {
   /// confirms saving account changes
   _confirmSavingChanges(bool changedEmail, bool changedTelephone) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
-    if (decision) {
-      await _saveChanges(changedEmail, changedTelephone);
-    }
+      context,
+      "Potwierdź",
+      "Czy na pewno zapisać zmiany?");
+     if (decision){
+        await _saveChanges(changedEmail, changedTelephone);
+      }
   }
 
   /// verifies data changes

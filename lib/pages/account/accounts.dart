@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
@@ -238,7 +239,6 @@ class _AccountsState extends State<Accounts> {
                 storage: widget.storage,
                 parentWidgetType: "Accounts",
                 onLogOutFailure: onLogOutFailure),
-
             /// accounts' list builder
             body:
                 Container(child: Column(children: <Widget>[listAccounts()]))));
@@ -309,11 +309,13 @@ class _AccountsState extends State<Accounts> {
                                       width: 35,
                                       child: Container(
                                           alignment: Alignment.centerRight,
-                                          child: Icon(Icons.person,
-                                              color: Theme.of(context)
-                                                  .iconTheme
-                                                  .color,
-                                              size: 30))),
+                                          child: SvgPicture.asset(
+                                            "assets/icons/man.svg",
+                                            matchTextDirection: false,
+                                            width: 32,
+                                            height: 32,
+                                            color: IdomColors.additionalColor,
+                                          ))),
 
                                   /// delete sensor button
                                   trailing: deleteButtonTrailing(
@@ -377,7 +379,13 @@ class _AccountsState extends State<Accounts> {
               alignment: Alignment.bottomCenter,
               child: TextButton(
                 key: Key("deleteButton"),
-                child: Icon(Icons.delete, color: IdomColors.mainFill),
+                child: SvgPicture.asset(
+                  "assets/icons/dustbin.svg",
+                  matchTextDirection: false,
+                  width: 32,
+                  height: 32,
+                  color: IdomColors.mainFill,
+                ),
                 onPressed: () {
                   setState(() {
                     _deactivateAccount(account);

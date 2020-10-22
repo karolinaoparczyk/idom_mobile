@@ -65,10 +65,11 @@ class _EditSensorState extends State<EditSensor> {
 
     /// setting current sensor category
     _categoryController = TextEditingController(
-        text: SensorCategories.values.firstWhere(
+        text: Categories.values.firstWhere(
             (element) => element["value"] == widget.sensor.category)['text']);
     categoryValue = widget.sensor.category;
-    if (categoryValue == "rain_sensor" || categoryValue == "water_temp") {
+    if (categoryValue == "rain_sensor" || categoryValue == "water_temp" ||
+        categoryValue == "breathalyser") {
       canEditFrequency = false;
       frequencyUnitsValue = "seconds";
       _frequencyUnitsController.text = FrequencyUnits.values
@@ -130,15 +131,16 @@ class _EditSensorState extends State<EditSensor> {
               context: context,
               builder: (context) {
                 return Dialog(
-                  child: CategoryDialog(
-                      currentCategory: categoryValue, type: "sensors"),
+                  child: CategoryDialog(currentCategory: categoryValue),
                 );
               });
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
-                selectedCategory['value'] == "water_temp") {
+                selectedCategory['value'] == "water_temp" ||
+                selectedCategory['value'] == "breathalyser"
+            ) {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -154,7 +156,7 @@ class _EditSensorState extends State<EditSensor> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
         style: TextStyle(fontSize: 21.0),
-        validator: CategoryValidator.validate);
+        validator: UrlFieldValidator.validate);
   }
 
   /// builds sensor frequency value form field
@@ -284,62 +286,66 @@ class _EditSensorState extends State<EditSensor> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildCategoryField())),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              children: [
-                                Icon(Icons.access_time_outlined, size: 17.5),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Częstotliwość pobierania danych",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
-                                ),
-                              ],
-                            ))),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
-                        child: SizedBox(
-                            child: Row(children: <Widget>[
-                          Expanded(flex: 8, child: _buildFrequencyValue()),
-                          Expanded(flex: 1, child: SizedBox()),
-                          Expanded(
-                              flex: 12,
-                              child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 0.0,
-                                      top: 0.0,
-                                      right: 0.0,
-                                      bottom: 0.0),
-                                  child: Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: _buildFrequencyUnitsField()))),
-                        ]))),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
-                      child: AnimatedCrossFade(
-                        crossFadeState: fieldsValidationMessage != null
-                            ? CrossFadeState.showFirst
-                            : CrossFadeState.showSecond,
-                        duration: Duration(milliseconds: 300),
-                        firstChild: fieldsValidationMessage != null
-                            ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
-                            : SizedBox(),
-                        secondChild: SizedBox(),
+                    if (categoryValue != "breathalyser")
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.access_time_outlined, size: 17.5),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5.0),
+                                    child: Text(
+                                        "Częstotliwość pobierania danych",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                fontWeight: FontWeight.normal)),
+                                  ),
+                                ],
+                              ))),
+                    if (categoryValue != "breathalyser")
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                          child: SizedBox(
+                              child: Row(children: <Widget>[
+                            Expanded(flex: 8, child: _buildFrequencyValue()),
+                            Expanded(flex: 1, child: SizedBox()),
+                            Expanded(
+                                flex: 12,
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 0.0,
+                                        top: 0.0,
+                                        right: 0.0,
+                                        bottom: 0.0),
+                                    child: Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: _buildFrequencyUnitsField()))),
+                          ]))),
+                    if (categoryValue != "breathalyser")
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 30.0),
+                        child: AnimatedCrossFade(
+                          crossFadeState: fieldsValidationMessage != null
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          duration: Duration(milliseconds: 300),
+                          firstChild: fieldsValidationMessage != null
+                              ? Text(fieldsValidationMessage,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontWeight: FontWeight.normal))
+                              : SizedBox(),
+                          secondChild: SizedBox(),
+                        ),
                       ),
-                    ),
                   ])),
             )));
   }
