@@ -157,7 +157,7 @@ class _FrontState extends State<Front> {
         final snackBar =
             new SnackBar(content: new Text("Adres serwera został zapisany."));
 
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       setState(() {
         widget.onSignedOut = result['onSignedOut'];
@@ -181,7 +181,7 @@ class _FrontState extends State<Front> {
           final snackBar = new SnackBar(
               content: new Text("Email został wysłany. Sprawdź pocztę."));
 
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
         setState(() {
           widget.onSignedOut = result['onSignedOut'];

@@ -251,10 +251,9 @@ class _SignUpState extends State<SignUp> {
           setState(() {
             _load = false;
           });
-          await displayDialog(
-              context: context,
-              title: "Sukces",
-              text: "Konto zostało utworzone. Możesz się zalogować.");
+          final snackBar =
+          new SnackBar(content: new Text("Konto zostało utworzone. Możesz się zalogować."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
 
           /// navigates to logging in page
           Navigator.push(
@@ -310,18 +309,14 @@ class _SignUpState extends State<SignUp> {
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {
-          displayDialog(
-              context: context,
-              title: "Błąd rejestracji",
-              text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+          final snackBar =
+          new SnackBar(content: new Text("Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
-          await displayDialog(
-              context: context,
-              title: "Błąd rejestracji",
-              text: "Adres serwera nieprawidłowy.");
-          widget.onSignedOut();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          final snackBar =
+          new SnackBar(content: new Text("Błąd rejestracji. Adres serwera nieprawidłowy."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
       }
     } else {
