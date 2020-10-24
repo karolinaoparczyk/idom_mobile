@@ -103,16 +103,18 @@ class _SignInState extends State<SignIn> {
             setState(() {
               _load = false;
             });
-            final snackBar =
-            new SnackBar(content: new Text("Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie."));
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie."));
             ScaffoldMessenger.of(context).showSnackBar((snackBar));
           }
         } else if (result[1] == 400) {
           setState(() {
             _load = false;
           });
-          final snackBar =
-          new SnackBar(content: new Text("Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje."));
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje."));
           ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
       }
@@ -122,13 +124,14 @@ class _SignInState extends State<SignIn> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd logowania. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content: new Text("Błąd logowania. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -219,15 +222,10 @@ class _SignInState extends State<SignIn> {
             fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
-    if (result != null) {
-      if (result['dataSaved'] == true) {
-        final snackBar = new SnackBar(
-            content: new Text("Email został wysłany. Sprawdź pocztę."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-      setState(() {
-        widget.onSignedOut = result['onSignedOut'];
-      });
+    if (result == true) {
+      final snackBar = new SnackBar(
+          content: new Text("Email został wysłany. Sprawdź pocztę."));
+      ScaffoldMessenger.of(context).showSnackBar((snackBar));
     }
   }
 }

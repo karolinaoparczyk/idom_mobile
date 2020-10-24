@@ -134,10 +134,9 @@ class _EnterEmailState extends State<EnterEmail> {
           };
           Navigator.of(context).pop(result);
         } else if (res == 400) {
-          displayDialog(
-              context: context,
-              title: "Błąd",
-              text: "Konto dla podanego adresu e-mail nie istnieje.");
+          final snackBar =
+          new SnackBar(content: new Text("Błąd. Konto dla podanego adresu e-mail nie istnieje."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
       }
     } catch (e) {
@@ -146,18 +145,14 @@ class _EnterEmailState extends State<EnterEmail> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd resetu hasła",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd resetu hasła. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd resetu hasła",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar =
+        new SnackBar(content: new Text("Błąd resetu hasła. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }

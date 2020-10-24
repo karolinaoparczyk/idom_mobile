@@ -104,15 +104,13 @@ class _EditSensorState extends State<EditSensor> {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowywania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
@@ -120,18 +118,14 @@ class _EditSensorState extends State<EditSensor> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
@@ -399,10 +393,9 @@ class _EditSensorState extends State<EditSensor> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
           .contains("Sensor with provided name already exists")) {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Czujnik o podanej nazwie już istnieje.");
+        final snackBar =
+        new SnackBar(content: new Text("Czujnik o podanej nazwie już istnieje."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
         setState(() {
           _load = false;
         });
@@ -413,18 +406,14 @@ class _EditSensorState extends State<EditSensor> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd edytowania czujnika",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd edytowania czujnika",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar =
+        new SnackBar(content: new Text("Błąd edytowania czujnika. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
@@ -514,9 +503,9 @@ class _EditSensorState extends State<EditSensor> {
         await _confirmSavingChanges(changedName, changedCategory,
             changedFrequencyValue, frequencyInSeconds);
       } else {
-        var snackBar =
-        SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
-        _scaffoldKey.currentState.showSnackBar(snackBar);
+        final snackBar =
+        new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }

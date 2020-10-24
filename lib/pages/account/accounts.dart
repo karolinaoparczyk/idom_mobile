@@ -73,18 +73,14 @@ class _AccountsState extends State<Accounts> {
     } catch (e) {
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd pobierania kont",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd pobierania kont. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("No address associated with hostname")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd pobierania kont",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar =
+        new SnackBar(content: new Text("Błąd pobierania kont. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
     setState(() {
@@ -137,36 +133,27 @@ class _AccountsState extends State<Accounts> {
                     widget.onSignedOut();
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   } else if (statusCode == null) {
-                    displayDialog(
-                        context: _scaffoldKey.currentContext,
-                        title: "Błąd usuwania konta",
-                        text:
-                        "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                    final snackBar =
+                    new SnackBar(content: new Text("Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
                   } else {
-                    displayDialog(
-                        context: _scaffoldKey.currentContext,
-                        title: "Błąd",
-                        text:
-                        "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.");
+                    final snackBar =
+                    new SnackBar(content: new Text("Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."));
+                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
                   }
                 } catch (e) {
                   print(e.toString());
                   if (e.toString().contains("TimeoutException")) {
-                    displayDialog(
-                        context: context,
-                        title: "Błąd usuwania konta",
-                        text:
-                        "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                    final snackBar =
+                    new SnackBar(content: new Text("Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
                   }
                   if (e
                       .toString()
                       .contains("SocketException")) {
-                    await displayDialog(
-                        context: context,
-                        title: "Błąd usuwania konta",
-                        text: "Adres serwera nieprawidłowy.");
-                    widget.onSignedOut();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    final snackBar =
+                    new SnackBar(content: new Text("Błąd usuwania konta. Adres serwera nieprawidłowy."));
+                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
                   }
                 }
               },
@@ -197,31 +184,25 @@ class _AccountsState extends State<Accounts> {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowywania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }

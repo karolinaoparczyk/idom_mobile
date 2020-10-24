@@ -251,8 +251,9 @@ class _SignUpState extends State<SignUp> {
           setState(() {
             _load = false;
           });
-          final snackBar =
-          new SnackBar(content: new Text("Konto zostało utworzone. Możesz się zalogować."));
+          final snackBar = new SnackBar(
+              content:
+                  new Text("Konto zostało utworzone. Możesz się zalogować."));
           ScaffoldMessenger.of(context).showSnackBar((snackBar));
 
           /// navigates to logging in page
@@ -309,13 +310,15 @@ class _SignUpState extends State<SignUp> {
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {
-          final snackBar =
-          new SnackBar(content: new Text("Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
           ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
-          final snackBar =
-          new SnackBar(content: new Text("Błąd rejestracji. Adres serwera nieprawidłowy."));
+          final snackBar = new SnackBar(
+              content:
+                  new Text("Błąd rejestracji. Adres serwera nieprawidłowy."));
           ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
       }

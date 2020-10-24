@@ -90,31 +90,25 @@ class _NewSensorState extends State<NewSensor> {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowywania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+            new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
@@ -415,10 +409,9 @@ class _NewSensorState extends State<NewSensor> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
-          displayDialog(
-              context: context,
-              title: "Błąd",
-              text: "Czujnik o podanej nazwie już istnieje.");
+          final snackBar =
+          new SnackBar(content: new Text("Czujnik o podanej nazwie już istnieje."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
           setState(() {
             _load = false;
           });
@@ -429,18 +422,14 @@ class _NewSensorState extends State<NewSensor> {
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {
-          displayDialog(
-              context: context,
-              title: "Błąd dodawania czujnika",
-              text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+          final snackBar =
+          new SnackBar(content: new Text("Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
-          await displayDialog(
-              context: context,
-              title: "Błąd dodawania czujnika",
-              text: "Adres serwera nieprawidłowy.");
-          widget.onSignedOut();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          final snackBar =
+          new SnackBar(content: new Text("Błąd dodawania czujnika. Adres serwera nieprawidłowy."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
       }
     }

@@ -71,31 +71,25 @@ class _AccountDetailState extends State<AccountDetail> {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowywania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar =
+        new SnackBar(content: new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
@@ -251,9 +245,10 @@ class _AccountDetailState extends State<AccountDetail> {
                 onSignedOut: widget.onSignedOut),
             fullscreenDialog: true));
 
-    if (result != null && result['dataSaved'] == true) {
-      var snackBar = SnackBar(content: Text("Zapisano dane użytkownika."));
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+    if (result == true) {
+      final snackBar =
+      new SnackBar(content: new Text("Zapisano dane użytkownika."));
+      ScaffoldMessenger.of(context).showSnackBar((snackBar));
     }
 
     setState(() {
@@ -295,10 +290,9 @@ class _AccountDetailState extends State<AccountDetail> {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Odświeżenie danych użytkownika nie powiodło się.");
+        final snackBar =
+        new SnackBar(content: new Text("Odświeżenie danych użytkownika nie powiodło się."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e.toString());
@@ -306,18 +300,14 @@ class _AccountDetailState extends State<AccountDetail> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd pobierania danych użytkownika",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar =
+        new SnackBar(content: new Text("Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd pobierania danych użytkownika",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar =
+        new SnackBar(content: new Text("Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }

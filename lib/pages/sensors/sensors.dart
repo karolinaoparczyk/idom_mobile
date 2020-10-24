@@ -87,18 +87,16 @@ class _SensorsState extends State<Sensors> {
     } catch (e) {
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd pobierania czujników",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd pobierania czujników",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
     setState(() {
@@ -121,31 +119,29 @@ class _SensorsState extends State<Sensors> {
         widget.onSignedOut();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowywania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd",
-            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content:
+                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
@@ -194,17 +190,15 @@ class _SensorsState extends State<Sensors> {
                     widget.onSignedOut();
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   } else if (statusCode == null) {
-                    displayDialog(
-                        context: _scaffoldKey.currentContext,
-                        title: "Błąd usuwania czujnika",
-                        text:
-                            "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                    final snackBar = new SnackBar(
+                        content: new Text(
+                            "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
                   } else {
-                    displayDialog(
-                        context: _scaffoldKey.currentContext,
-                        title: "Błąd",
-                        text:
-                            "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.");
+                    final snackBar = new SnackBar(
+                        content: new Text(
+                            "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
                   }
                 } catch (e) {
                   Navigator.of(_keyLoader.currentContext, rootNavigator: true)
@@ -212,19 +206,16 @@ class _SensorsState extends State<Sensors> {
 
                   print(e.toString());
                   if (e.toString().contains("TimeoutException")) {
-                    displayDialog(
-                        context: _scaffoldKey.currentContext,
-                        title: "Błąd usuwania czujnika",
-                        text:
-                            "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+                    final snackBar = new SnackBar(
+                        content: new Text(
+                            "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
                   }
                   if (e.toString().contains("SocketException")) {
-                    await displayDialog(
-                        context: context,
-                        title: "Błąd resetu hasła",
-                        text: "Adres serwera nieprawidłowy.");
-                    widget.onSignedOut();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    final snackBar = new SnackBar(
+                        content: new Text(
+                            "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
                   }
                 }
               },
@@ -445,14 +436,9 @@ class _SensorsState extends State<Sensors> {
             fullscreenDialog: true));
 
     /// displays success message if sensor added succesfully
-    if (result != null) {
-      if (result['dataSaved'] == true) {
-        var snackBar = SnackBar(content: Text("Dodano nowy czujnik."));
-        _scaffoldKey.currentState.showSnackBar(snackBar);
-      }
-      setState(() {
-        widget.onSignedOut = result['onSignedOut'];
-      });
+    if (result == true) {
+      final snackBar = new SnackBar(content: new Text("Dodano nowy czujnik."));
+      ScaffoldMessenger.of(context).showSnackBar((snackBar));
       await getSensors();
     }
   }
