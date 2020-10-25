@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
 
 import 'package:idom/dialogs/protocol_dialog.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
@@ -22,6 +22,9 @@ class _EditApiAddressState extends State<EditApiAddress> {
   TextEditingController _apiAddressController = TextEditingController();
   TextEditingController _apiAddressProtocolController = TextEditingController();
   TextEditingController _apiAddressPortController = TextEditingController();
+  String currentAddress;
+  String currentAddressProtocol;
+  String currentAddressPort;
   FocusNode _apiAddressFocusNode = FocusNode();
   bool _load;
   String _isUserLoggedIn;
@@ -34,15 +37,15 @@ class _EditApiAddressState extends State<EditApiAddress> {
   }
 
   Future<void> getApiAddress() async {
-    var _apiAddressProtocol =
+    currentAddressProtocol =
     await widget.storage.getApiServerAddressProtocol();
-    var _apiAddress = await widget.storage.getApiServerAddress();
-    var _apiAddressPort = await widget.storage.getApiServerAddressPort();
+    currentAddress = await widget.storage.getApiServerAddress();
+    currentAddressPort = await widget.storage.getApiServerAddressPort();
     _apiAddressProtocolController =
-        TextEditingController(text: _apiAddressProtocol ?? "");
-    _apiAddressController = TextEditingController(text: _apiAddress ?? "");
+        TextEditingController(text: currentAddressProtocol ?? "");
+    _apiAddressController = TextEditingController(text: currentAddress ?? "");
     _apiAddressPortController =
-        TextEditingController(text: _apiAddressPort ?? "");
+        TextEditingController(text: currentAddressPort ?? "");
     _load = false;
     setState(() {});
   }
@@ -170,37 +173,70 @@ class _EditApiAddressState extends State<EditApiAddress> {
                               ],
                             ),
                           )),
-                      Expanded(
-                          flex: 1,
-                          child: AnimatedContainer(
-                              curve: Curves.easeInToLinear,
-                              duration: Duration(
-                                milliseconds: 10,
-                              ),
-                              alignment: Alignment.bottomCenter,
-                              child: Column(children: <Widget>[
-                                buttonWidget(context, "Zapisz adres",
-                                    setApiAddress)
-                              ])))
                     ]),
                   )),
               Expanded(flex: 1, child: SizedBox(width: 1)),
             ])));
   }
 
-  /// sets api address
-  setApiAddress() async {
+  /// verifies data changes
+  _verifyChanges() async {
+    var protocol = _apiAddressProtocolController.text;
+    var address = _apiAddressController.text;
+    var port = _apiAddressPortController.text;
+    var changedProtocol = false;
+    var changedAddress = false;
+    var changedPort = false;
+
     final formState = _formKey.currentState;
     if (formState.validate()) {
+      /// sends request only if data has changed
+      if (protocol != currentAddressProtocol) {
+        changedProtocol = true;
+      }
+      if (address != currentAddress) {
+        changedAddress = true;
+      }
+      if (port != currentAddressPort) {
+        changedPort = true;
+      }
+      if (changedProtocol || changedAddress || changedPort) {
+        await _confirmSavingChanges(changedProtocol, changedAddress, changedPort);
+      } else {
+        final snackBar =
+        new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      }
+    }
+  }
+
+  /// confirms saving api address changes
+  _confirmSavingChanges(bool changedProtocol, bool changedAddress, bool changedPort) async {
+    await confirmActionDialog(
+      context,
+      "Potwierdź",
+      "Czy na pewno zapisać zmiany?",
+          () async {
+        await _saveChanges(changedProtocol, changedAddress, changedPort);
+      },
+    );
+  }
+
+  /// sets api address
+  _saveChanges(bool changedProtocol, bool changedAddress, bool changedPort) async {
+    final formState = _formKey.currentState;
+    if (formState.validate()) {
+      if (changedProtocol)
       widget.storage
           .setApiServerAddressProtocol(_apiAddressProtocolController.text);
-      widget.storage.setApiServerAddress(_apiAddressController.text);
-      widget.storage.setApiServerAddressPort(_apiAddressPortController.text);
+      if (changedAddress)
+        widget.storage.setApiServerAddress(_apiAddressController.text);
+      if (changedPort)
+        widget.storage.setApiServerAddressPort(_apiAddressPortController.text);
       if (_isUserLoggedIn == "true") {
         final snackBar =
         new SnackBar(content: new Text("Adres serwera został zapisany."),
-          duration: Duration(seconds: 2),);
-
+          duration: Duration(seconds: 2));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       Navigator.pop(context, true);
