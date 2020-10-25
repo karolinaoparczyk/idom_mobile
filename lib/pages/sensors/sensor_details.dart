@@ -17,6 +17,7 @@ import 'edit_sensor.dart';
 /// displays sensor details and allows editing them
 class SensorDetails extends StatefulWidget {
   SensorDetails({@required this.storage, @required this.sensor});
+
   final SecureStorage storage;
   Sensor sensor;
 
@@ -75,7 +76,8 @@ class _SensorDetailsState extends State<SensorDetails> {
 
     _seriesData = List<charts.Series<SensorData, DateTime>>();
     dataMeasuresTime = "today";
-    getSensorData().then((value) => setState(() {
+    getSensorData().then((value) =>
+        setState(() {
           if (sensorData != null && sensorData.length > 0) {
             drawPlot();
           }
@@ -122,7 +124,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (widget.sensor != null) {
         var res = await api
             .getSensorData(_token, widget.sensor.id);
-        if (res == null){
+        if (res == null) {
           noDataForChart = true;
           dataLoaded = false;
         }
@@ -155,12 +157,14 @@ class _SensorDetailsState extends State<SensorDetails> {
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
         final snackBar =
-        new SnackBar(content: new Text("Błąd pobierania danych z czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        new SnackBar(content: new Text(
+            "Błąd pobierania danych z czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar =
-        new SnackBar(content: new Text("Błąd pobierania danych z czujnika. Adres serwera nieprawidłowy."));
+        new SnackBar(content: new Text(
+            "Błąd pobierania danych z czujnika. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -174,15 +178,15 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (dataMeasuresTime == "today") {
       data = sensorData
           .where((data) =>
-              data.deliveryTime.year == now.year &&
-              data.deliveryTime.month == now.month &&
-              data.deliveryTime.day == now.day)
+      data.deliveryTime.year == now.year &&
+          data.deliveryTime.month == now.month &&
+          data.deliveryTime.day == now.day)
           .toList();
     } else if (dataMeasuresTime == "thisMonth") {
       data = sensorData
           .where((data) =>
-              data.deliveryTime.year == now.year &&
-              data.deliveryTime.month == now.month)
+      data.deliveryTime.year == now.year &&
+          data.deliveryTime.month == now.month)
           .toList();
     } else if (dataMeasuresTime == "allTime") {
       data = sensorData;
@@ -273,23 +277,27 @@ class _SensorDetailsState extends State<SensorDetails> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
         final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        new SnackBar(content: new Text(
+            "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
         final snackBar =
-        new SnackBar(content: new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        new SnackBar(content: new Text(
+            "Wylogowanie nie powiodło się. Spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
         final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        new SnackBar(content: new Text(
+            "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
+        new SnackBar(content: new Text(
+            "Błąd wylogowywania. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -324,7 +332,9 @@ class _SensorDetailsState extends State<SensorDetails> {
                 ]
             ),
 
-            drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "SensorDetails"),
+            drawer: IdomDrawer(
+                storage: widget.storage, parentWidgetType: "SensorDetails"),
+
             /// builds form with editable and non-editable sensor properties
             body: SingleChildScrollView(
                 child: Form(
@@ -344,14 +354,17 @@ class _SensorDetailsState extends State<SensorDetails> {
                               alignment: Alignment.centerLeft,
                               child: Row(
                                 children: [
-                                  Icon(Icons.info_outline_rounded , size: 17.5),
+                                  Icon(Icons.info_outline_rounded, size: 17.5),
                                   Padding(
-                                    padding: const EdgeInsets.only(left:5.0),
+                                    padding: const EdgeInsets.only(left: 5.0),
                                     child: Text(
                                         "Ogólne",
-                                        style: Theme.of(context)
+                                        style: Theme
+                                            .of(context)
                                             .textTheme
-                                            .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                            .bodyText1
+                                            .copyWith(
+                                            fontWeight: FontWeight.normal)),
                                   ),
                                 ],
                               ))),
@@ -372,7 +385,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                   englishToPolishCategories[
-                                      _categoryController.text],
+                                  _categoryController.text],
                                   style: TextStyle(fontSize: 21.0)))),
                       Padding(
                           padding: EdgeInsets.only(
@@ -386,12 +399,15 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 children: [
                                   Icon(Icons.access_time_outlined, size: 17.5),
                                   Padding(
-                                    padding: const EdgeInsets.only(left:5.0),
+                                    padding: const EdgeInsets.only(left: 5.0),
                                     child: Text(
                                         "Częstotliwość pobierania danych",
-                                        style: Theme.of(context)
+                                        style: Theme
+                                            .of(context)
                                             .textTheme
-                                            .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                            .bodyText1
+                                            .copyWith(
+                                            fontWeight: FontWeight.normal)),
                                   ),
                                 ],
                               ))),
@@ -400,18 +416,19 @@ class _SensorDetailsState extends State<SensorDetails> {
                               left: 52.5, top: 5.0, right: 30.0, bottom: 0.0),
                           child: SizedBox(
                               child: Row(children: <Widget>[
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(_frequencyValueController.text,
+                                Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    children: <Widget>[
+                                      Text(_frequencyValueController.text,
+                                          style: TextStyle(fontSize: 21.0)),
+                                    ]),
+                                SizedBox(width: 5.0),
+                                Column(children: <Widget>[
+                                  Text(getProperUnitsName(),
                                       style: TextStyle(fontSize: 21.0)),
-                                ]),
-                            SizedBox(width: 5.0),
-                            Column(children: <Widget>[
-                              Text(getProperUnitsName(),
-                                  style: TextStyle(fontSize: 21.0)),
-                            ])
-                          ]))),
+                                ])
+                              ]))),
                       Padding(
                           padding: EdgeInsets.only(
                               top: 13.5, left: 52.5, right: 30.0, bottom: 0.0),
@@ -446,95 +463,104 @@ class _SensorDetailsState extends State<SensorDetails> {
                               left: 15.0, top: 5.0, right: 15.0, bottom: 0.0),
                           child: SizedBox(
                               child: Row(children: <Widget>[
-                            Expanded(
-                                flex: 1,
-                                child: Container(
-                                    width: 120,
-                                    margin: EdgeInsets.only(
-                                        left: 5.0,
-                                        top: 5.0,
-                                        right: 5.0,
-                                        bottom: 0.0),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: !todayChart
-                                                ? IdomColors.additionalColor
-                                                : Colors.black),
-                                        borderRadius:
+                                Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                        width: 120,
+                                        margin: EdgeInsets.only(
+                                            left: 5.0,
+                                            top: 5.0,
+                                            right: 5.0,
+                                            bottom: 0.0),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: !todayChart
+                                                    ? IdomColors.additionalColor
+                                                    : Colors.black),
+                                            borderRadius:
                                             BorderRadius.circular(30.0)),
-                                    child: FlatButton(
-                                      key: Key("today"),
-                                      child: Text('Dzisiaj',
-                                          textAlign: TextAlign.center),
-                                      onPressed: !todayChart ? todayPlot : null,
-                                    ))),
-                            Expanded(
-                                flex: 1,
-                                child: Container(
-                                    width: 120,
-                                    margin: EdgeInsets.only(
-                                        left: 5.0,
-                                        top: 5.0,
-                                        right: 5.0,
-                                        bottom: 5.0),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: !thisMonthChart
-                                                ? IdomColors.additionalColor
-                                                : Colors.black),
-                                        borderRadius:
+                                        child: FlatButton(
+                                          key: Key("today"),
+                                          child: Text('Dzisiaj',
+                                              textAlign: TextAlign.center),
+                                          onPressed: !todayChart
+                                              ? todayPlot
+                                              : null,
+                                        ))),
+                                Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                        width: 120,
+                                        margin: EdgeInsets.only(
+                                            left: 5.0,
+                                            top: 5.0,
+                                            right: 5.0,
+                                            bottom: 5.0),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: !thisMonthChart
+                                                    ? IdomColors.additionalColor
+                                                    : Colors.black),
+                                            borderRadius:
                                             BorderRadius.circular(30.0)),
-                                    child: FlatButton(
-                                      key: Key("thisMonth"),
-                                      child: Text('Ten miesiąc',
-                                          textAlign: TextAlign.center),
-                                      onPressed: !thisMonthChart
-                                          ? thisMonthPlot
-                                          : null,
-                                    ))),
-                            Expanded(
-                                flex: 1,
-                                child: Container(
-                                  width: 120,
-                                    margin: EdgeInsets.only(
-                                        left: 5.0,
-                                        top: 5.0,
-                                        right: 5.0,
-                                        bottom: 0.0),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: !allTimeChart
-                                                ? IdomColors.additionalColor
-                                                : Colors.black),
-                                        borderRadius:
+                                        child: FlatButton(
+                                          key: Key("thisMonth"),
+                                          child: Text('Ten miesiąc',
+                                              textAlign: TextAlign.center),
+                                          onPressed: !thisMonthChart
+                                              ? thisMonthPlot
+                                              : null,
+                                        ))),
+                                Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                        width: 120,
+                                        margin: EdgeInsets.only(
+                                            left: 5.0,
+                                            top: 5.0,
+                                            right: 5.0,
+                                            bottom: 0.0),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: !allTimeChart
+                                                    ? IdomColors.additionalColor
+                                                    : Colors.black),
+                                            borderRadius:
                                             BorderRadius.circular(30.0)),
-                                    child: FlatButton(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),splashColor: IdomColors.additionalColor,
-                                      key: Key("allTime"),
-                                      child: Text('Ostatnie \n30 dni',
-                                          textAlign: TextAlign.center),
-                                      onPressed:
+                                        child: FlatButton(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius
+                                                  .circular(30.0)),
+                                          splashColor: IdomColors
+                                              .additionalColor,
+                                          key: Key("allTime"),
+                                          child: Text('Ostatnie \n30 dni',
+                                              textAlign: TextAlign.center),
+                                          onPressed:
                                           !allTimeChart ? allTimePlot : null,
-                                    ))),
-                          ]))),
+                                        ))),
+                              ]))),
                       Padding(
                           padding: EdgeInsets.only(
                               left: 30.0, top: 5.0, right: 17.0, bottom: 0.0),
                           child: Container(
                               child: Center(
                                   child: Column(children: <Widget>[
-                            SizedBox(width: 355, height: 200, child: chartWid)
-                          ])))),
+                                    SizedBox(width: 355,
+                                        height: 200,
+                                        child: chartWid)
+                                  ])))),
                       Padding(
                           padding: EdgeInsets.only(
                               left: 30.0, top: 5.0, right: 30.0, bottom: 10.0),
                           child: _time != null
                               ? Align(
-                                  alignment: Alignment.center,
-                                  child: Text(getSelectedMeasure(),
-                                      style: TextStyle(
-                                          fontSize: 17.0,
-                                          fontWeight: FontWeight.bold)),
-                                )
+                            alignment: Alignment.center,
+                            child: Text(getSelectedMeasure(),
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.bold)),
+                          )
                               : SizedBox()),
                     ])))));
   }
@@ -542,7 +568,9 @@ class _SensorDetailsState extends State<SensorDetails> {
   String getProperUnitsName() {
     var lastDigitFrequencyValue = _frequencyValueController.text
         .toString()
-        .substring(_frequencyValueController.text.toString().length - 1);
+        .substring(_frequencyValueController.text
+        .toString()
+        .length - 1);
     var firstVersion = "sekundy";
     var secondVersion = "sekund";
     if (RegExp(r"^[0-1|5-9]").hasMatch(lastDigitFrequencyValue))
@@ -579,9 +607,10 @@ class _SensorDetailsState extends State<SensorDetails> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EditSensor(
-              storage: widget.storage,
-                sensor: widget.sensor),
+            builder: (context) =>
+                EditSensor(
+                    storage: widget.storage,
+                    sensor: widget.sensor),
             fullscreenDialog: true));
 
     if (result == true) {
@@ -602,7 +631,8 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);
         Sensor refreshedSensor = Sensor.fromJson(body);
-        getSensorData().then((value) => setState(() {
+        getSensorData().then((value) =>
+            setState(() {
               _nameController =
                   TextEditingController(text: refreshedSensor.name);
               _categoryController =
@@ -628,7 +658,8 @@ class _SensorDetailsState extends State<SensorDetails> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final snackBar =
-        new SnackBar(content: new Text("Odświeżenie danych czujnika nie powiodło się."));
+        new SnackBar(
+            content: new Text("Odświeżenie danych czujnika nie powiodło się."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
@@ -638,12 +669,14 @@ class _SensorDetailsState extends State<SensorDetails> {
       });
       if (e.toString().contains("TimeoutException")) {
         final snackBar =
-        new SnackBar(content: new Text("Błąd pobierania danych czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        new SnackBar(content: new Text(
+            "Błąd pobierania danych czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar =
-        new SnackBar(content: new Text("Błąd pobierania danych czujnika. Adres serwera nieprawidłowy."));
+        new SnackBar(content: new Text(
+            "Błąd pobierania danych czujnika. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -664,7 +697,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       return charts.TimeSeriesChart(
         _seriesData,
         defaultRenderer:
-            charts.LineRendererConfig(includeArea: true, stacked: true),
+        charts.LineRendererConfig(includeArea: true, stacked: true),
         animate: true,
         behaviors: [
           charts.InitialSelection(selectedDataConfig: [
@@ -674,9 +707,9 @@ class _SensorDetailsState extends State<SensorDetails> {
         ],
         primaryMeasureAxis: new charts.NumericAxisSpec(
             tickProviderSpec:
-                new charts.BasicNumericTickProviderSpec(zeroBound: false),
+            new charts.BasicNumericTickProviderSpec(zeroBound: false),
             tickFormatterSpec: charts.BasicNumericTickFormatterSpec(
-                (num value) => getFormattedSensorDataForChart(value))),
+                    (num value) => getFormattedSensorDataForChart(value))),
         selectionModels: [
           new charts.SelectionModelConfig(
             type: charts.SelectionModelType.info,

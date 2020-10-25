@@ -42,10 +42,7 @@ class _SignInState extends State<SignIn> {
       autofocus: true,
       decoration: InputDecoration(
         labelText: "Nazwa użytkownika",
-        labelStyle: Theme
-            .of(context)
-            .textTheme
-            .headline5,
+        labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -64,10 +61,7 @@ class _SignInState extends State<SignIn> {
       key: Key('password'),
       decoration: InputDecoration(
         labelText: "Hasło",
-        labelStyle: Theme
-            .of(context)
-            .textTheme
-            .headline5,
+        labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -221,12 +215,11 @@ class _SignInState extends State<SignIn> {
                               FlatButton(
                                 key: Key("passwordReset"),
                                 child: Text('Zapomniałeś/aś hasła?',
-                                    style: Theme
-                                        .of(context)
+                                    style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
-                                        fontWeight: FontWeight.normal)),
+                                            fontWeight: FontWeight.normal)),
                                 onPressed: navigateToEnterEmail,
                               ),
                             ])))

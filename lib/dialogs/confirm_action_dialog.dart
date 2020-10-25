@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 
-Future<bool> confirmActionDialog(BuildContext context, String titleText, String content, Function onConfirm) async {
+Future<bool> confirmActionDialog(BuildContext context, String titleText,
+    String content, Function onConfirm) async {
   return await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(titleText, style: Theme.of(context).textTheme.headline5.copyWith(fontSize: 21.0)),
-          content: Text(content, style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.normal, fontSize: 21.0)),
+          title: Text(titleText,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  .copyWith(fontSize: 21.0)),
+          content: Text(content,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  .copyWith(fontWeight: FontWeight.normal, fontSize: 21.0)),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(

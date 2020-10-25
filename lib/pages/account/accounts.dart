@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
@@ -11,8 +12,8 @@ import 'package:idom/widgets/idom_drawer.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
-  Accounts({@required this.storage,
-    this.testAccounts});
+  Accounts({@required this.storage, this.testAccounts});
+
   final SecureStorage storage;
   final List<Account> testAccounts;
 
@@ -88,7 +89,7 @@ class _AccountsState extends State<Accounts> {
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       }
-      if (res == null){
+      if (res == null) {
         _connectionEstablished = false;
         setState(() {});
         return null;
@@ -96,13 +97,15 @@ class _AccountsState extends State<Accounts> {
     } catch (e) {
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd pobierania kont. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania kont. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("No address associated with hostname")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd pobierania kont. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd pobierania kont. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -188,24 +191,28 @@ class _AccountsState extends State<Accounts> {
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        final snackBar =
-        new SnackBar(content: new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -217,25 +224,17 @@ class _AccountsState extends State<Accounts> {
       onChanged: (value) {
         filterSearchResults(value);
       },
-      style: Theme
-          .of(context)
-          .appBarTheme
-          .textTheme
-          .headline6,
+      style: Theme.of(context).appBarTheme.textTheme.headline6,
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...",
-        hintStyle: Theme
-            .of(context)
-            .appBarTheme
-            .textTheme
-            .headline6,
-        border: UnderlineInputBorder( borderSide: BorderSide(
-            color: IdomColors.additionalColor
-        )),
+        hintStyle: Theme.of(context).appBarTheme.textTheme.headline6,
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: IdomColors.additionalColor),
-        ),),
+        ),
+      ),
     );
   }
 
@@ -251,19 +250,23 @@ class _AccountsState extends State<Accounts> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              leading: _isSearching ? IconButton(
-                  icon: Icon(Icons.arrow_back), onPressed: () {
-                setState(() {
-                  _isSearching = false;
-                  _searchController.text = "";
-                });
-              }) :  IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {
-                  _scaffoldKey.currentState.openDrawer();
-                },
-              ),
-              title: _isSearching ? _buildSearchField() : Text('Wszystkie konta'),
+              leading: _isSearching
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () {
+                        setState(() {
+                          _isSearching = false;
+                          _searchController.text = "";
+                        });
+                      })
+                  : IconButton(
+                      icon: Icon(Icons.menu),
+                      onPressed: () {
+                        _scaffoldKey.currentState.openDrawer();
+                      },
+                    ),
+              title:
+                  _isSearching ? _buildSearchField() : Text('Wszystkie konta'),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.search, size: 25.0),
@@ -276,42 +279,43 @@ class _AccountsState extends State<Accounts> {
                 ),
               ],
             ),
-            drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "Accounts"),
+            drawer: IdomDrawer(
+                storage: widget.storage, parentWidgetType: "Accounts"),
 
             /// accounts' list builder
-            body: Container(
-                child: Column(children: <Widget>[
-                  listAccounts()
-                ]))));
+            body:
+                Container(child: Column(children: <Widget>[listAccounts()]))));
   }
 
   Widget listAccounts() {
     if (zeroFetchedItems) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
                   "Brak kont w systemie \nlub błąd połączenia z serwerem.",
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
-    } if (_connectionEstablished != null && _connectionEstablished == false && _accountList == null) {
+    }
+    if (_connectionEstablished != null &&
+        _connectionEstablished == false &&
+        _accountList == null) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Błąd połączenia z serwerem.",
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
-    }
-    else if (!zeroFetchedItems &&
+    } else if (!zeroFetchedItems &&
         _accountList != null &&
         _accountList.length == 0) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.",
@@ -323,19 +327,21 @@ class _AccountsState extends State<Accounts> {
               child: RefreshIndicator(
                   onRefresh: _pullRefresh,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                    padding: const EdgeInsets.only(
+                        left: 10.0, top: 10, right: 10.0, bottom: 0.0),
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: _accountList.length,
-                      itemBuilder: (context, index) =>
-                          Container(
-                              height: 80,
-                              child: Card(child: ListTile(
+                      itemBuilder: (context, index) => Container(
+                          height: 80,
+                          child: Card(
+                              child: ListTile(
                                   key: Key(_accountList[index].username),
                                   title: Text(_accountList[index].username,
                                       style: TextStyle(fontSize: 21.0)),
                                   onTap: () {
-                                    navigateToAccountDetails(_accountList[index]);
+                                    navigateToAccountDetails(
+                                        _accountList[index]);
                                   },
                                   leading: Icon(
                                     Icons.person,
@@ -351,7 +357,8 @@ class _AccountsState extends State<Accounts> {
 
     /// shows progress indicator while fetching data
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+      padding:
+          const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
       child: Center(child: CircularProgressIndicator()),
     );
   }
@@ -388,10 +395,9 @@ class _AccountsState extends State<Accounts> {
   }
 
   navigateToAccountDetails(Account account) async {
-   await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            AccountDetail(storage: widget.storage,
-                username: account.username)));
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => AccountDetail(
+            storage: widget.storage, username: account.username)));
     await getAccounts();
   }
 

@@ -44,8 +44,10 @@ class MyApp extends StatelessWidget {
               selectionColor: IdomColors.additionalColor),
           appBarTheme: AppBarTheme(
             textTheme: TextTheme(
-                headline6:
-                    TextStyle(color: IdomColors.textLight, fontSize: 20,letterSpacing: 2.0)),
+                headline6: TextStyle(
+                    color: IdomColors.textLight,
+                    fontSize: 20,
+                    letterSpacing: 2.0)),
             iconTheme: IconThemeData(color: IdomColors.iconLight),
             actionsIconTheme: IconThemeData(color: IdomColors.iconLight),
           ),

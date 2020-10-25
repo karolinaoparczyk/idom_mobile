@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class IdomColors{
+class IdomColors {
   static const Color mainFill = Color(0xFF0E1111);
   static const Color error = Color(0xFF9C1F03);
   static const Color mainBackground = Color(0xFFE0E0E0);

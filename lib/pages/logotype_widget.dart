@@ -16,8 +16,8 @@ class LogotypeWidget extends StatelessWidget {
                       size: 50.0, color: IdomColors.mainFill),
                   Text(
                     'IDOM',
-                    style: TextStyle(
-                        fontSize: 100.0, color: IdomColors.textDark),
+                    style:
+                        TextStyle(fontSize: 100.0, color: IdomColors.textDark),
                     textAlign: TextAlign.center,
                   ),
                   Icon(Icons.roofing_rounded,
@@ -34,7 +34,8 @@ class LogotypeWidget extends StatelessWidget {
                 Padding(
                     padding: EdgeInsets.only(top: 20.0),
                     child: Text("Trwa ładowanie...",
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0, fontWeight: FontWeight.normal)))
+                        style: Theme.of(context).textTheme.bodyText1.copyWith(
+                            fontSize: 21.0, fontWeight: FontWeight.normal)))
               ])),
     );
   }

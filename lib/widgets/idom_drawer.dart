@@ -9,7 +9,8 @@ import 'package:idom/utils/secure_storage.dart';
 class IdomDrawer extends StatefulWidget {
   IdomDrawer(
       {@required this.storage,
-      @required this.parentWidgetType, this.onGoBackAction,
+      @required this.parentWidgetType,
+      this.onGoBackAction,
       this.accountUsername});
 
   final SecureStorage storage;
@@ -111,42 +112,43 @@ class _IdomDrawerState extends State<IdomDrawer> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Drawer(
-        child: Container(decoration: BoxDecoration(
-            gradient: RadialGradient(radius: 1.4, center: Alignment(0.1, -0.1), colors: [
-              IdomColors.additionalColor,
-              IdomColors.lightBlack
-            ])),
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: RadialGradient(
+                  radius: 1.4,
+                  center: Alignment(0.1, -0.1),
+                  colors: [IdomColors.additionalColor, IdomColors.lightBlack])),
           child: ListView(children: [
             DrawerHeader(
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Column(
-                        children: [
-                          Row(mainAxisSize: MainAxisSize.min, children: [
-                            Icon(Icons.roofing_rounded,
-                                size: 50.0, color: IdomColors.mainFill),
-                            Text(
-                              'IDOM',
-                              style: TextStyle(
-                                  fontSize: 70.0, color: IdomColors.textDark),
-                              textAlign: TextAlign.center,
-                            ),
-                            Icon(Icons.roofing_rounded,
-                                size: 50.0, color: Colors.transparent),
-                          ]),
-                          Text(
-                            'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
-                            style: TextStyle(
-                                fontSize: 13.0,
-                                color: IdomColors.textDark,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                  Column(
+                    children: [
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        Icon(Icons.roofing_rounded,
+                            size: 50.0, color: IdomColors.mainFill),
+                        Text(
+                          'IDOM',
+                          style: TextStyle(
+                              fontSize: 70.0, color: IdomColors.textDark),
+                          textAlign: TextAlign.center,
+                        ),
+                        Icon(Icons.roofing_rounded,
+                            size: 50.0, color: Colors.transparent),
+                      ]),
+                      Text(
+                        'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
+                        style: TextStyle(
+                            fontSize: 13.0,
+                            color: IdomColors.textDark,
+                            fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
                       ),
-                      userRow(),
-                    ])),
+                    ],
+                  ),
+                  userRow(),
+                ])),
             customMenuTile(Icons.perm_identity_rounded, "Moje konto", () async {
               Navigator.pop(context);
               var toPush = false;
@@ -164,31 +166,30 @@ class _IdomDrawerState extends State<IdomDrawer> {
                         builder: (context) => AccountDetail(
                             storage: widget.storage,
                             username: currentUsername)));
-                if (widget.onGoBackAction != null)
-                  widget.onGoBackAction();
+                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            isUserStaff == "true" ?
-            customMenuTile(Icons.group_outlined, "Wszystkie konta", () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "Accounts") {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Accounts(storage: widget.storage)));
-                if (widget.onGoBackAction != null)
-                  widget.onGoBackAction();
-
-              }
-            }) : SizedBox(),
+            isUserStaff == "true"
+                ? customMenuTile(Icons.group_outlined, "Wszystkie konta",
+                    () async {
+                    Navigator.pop(context);
+                    if (widget.parentWidgetType != "Accounts") {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Accounts(storage: widget.storage)));
+                      if (widget.onGoBackAction != null)
+                        widget.onGoBackAction();
+                    }
+                  })
+                : SizedBox(),
             customMenuTile(Icons.highlight_outlined, "Czujniki", () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Sensors") {
                 await Navigator.of(context).popUntil((route) => route.isFirst);
-                if (widget.onGoBackAction != null)
-                  widget.onGoBackAction();
+                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile(Icons.settings_outlined, "Ustawienia", () async {
@@ -200,9 +201,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             EditApiAddress(storage: widget.storage)));
-                if (widget.onGoBackAction != null)
-                  widget.onGoBackAction();
-
+                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile(Icons.logout, "Wyloguj", () async {

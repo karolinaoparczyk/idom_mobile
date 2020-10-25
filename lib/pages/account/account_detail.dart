@@ -50,11 +50,21 @@ class _AccountDetailState extends State<AccountDetail> {
           id: int.parse(currentUserData['id']),
           username: currentUserData['username'],
           email: currentUserData['email'],
-          telephone: currentUserData['telephone'] != null? currentUserData['telephone'] : "",
-          isStaff: currentUserData['isStaff'] == "true" ? true : currentUserData['isStaff'] == "false" ? false : null,
+          telephone: currentUserData['telephone'] != null
+              ? currentUserData['telephone']
+              : "",
+          isStaff: currentUserData['isStaff'] == "true"
+              ? true
+              : currentUserData['isStaff'] == "false"
+                  ? false
+                  : null,
           smsNotifications: currentUserData['smsNotifications'],
           appNotifications: currentUserData['appNotifications'],
-          isActive: currentUserData['isActive'] == "true" ? true : currentUserData['isActive'] == "false" ? false : null);
+          isActive: currentUserData['isActive'] == "true"
+              ? true
+              : currentUserData['isActive'] == "false"
+                  ? false
+                  : null);
       setState(() {
         _load = false;
       });
@@ -131,12 +141,10 @@ class _AccountDetailState extends State<AccountDetail> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              title: Text(widget.username),
-                actions: [
-                  IconButton(
-                      icon: Icon(Icons.edit), onPressed: _navigateToEditAccount)
-                ]),
+            appBar: AppBar(title: Text(widget.username), actions: [
+              IconButton(
+                  icon: Icon(Icons.edit), onPressed: _navigateToEditAccount)
+            ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
                 parentWidgetType: "AccountDetail",

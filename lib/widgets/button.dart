@@ -9,17 +9,15 @@ Widget buttonWidget(BuildContext context, String text, Function onPressed) {
       SizedBox(
         width: 160,
         child: RaisedButton(
-          elevation: 15,
+            elevation: 15,
             key: Key(text),
             onPressed: onPressed,
-            child: Text(
-              text,
-              style: TextStyle(
-                  color: IdomColors.textLight,
-                  fontSize: 21,
-                  fontWeight: FontWeight.normal),
-              textAlign: TextAlign.center
-            ),
+            child: Text(text,
+                style: TextStyle(
+                    color: IdomColors.textLight,
+                    fontSize: 21,
+                    fontWeight: FontWeight.normal),
+                textAlign: TextAlign.center),
             color: IdomColors.buttonBackground,
             padding: EdgeInsets.symmetric(vertical: 12),
             shape: new RoundedRectangleBorder(

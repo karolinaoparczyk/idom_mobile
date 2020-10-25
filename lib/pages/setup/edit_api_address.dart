@@ -37,8 +37,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
   }
 
   Future<void> getApiAddress() async {
-    currentAddressProtocol =
-    await widget.storage.getApiServerAddressProtocol();
+    currentAddressProtocol = await widget.storage.getApiServerAddressProtocol();
     currentAddress = await widget.storage.getApiServerAddress();
     currentAddressPort = await widget.storage.getApiServerAddressPort();
     _apiAddressProtocolController =
@@ -62,10 +61,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
         controller: _apiAddressProtocolController,
         decoration: InputDecoration(
           labelText: "Protokół",
-          labelStyle: Theme
-              .of(context)
-              .textTheme
-              .headline5,
+          labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -97,10 +93,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
         focusNode: _apiAddressFocusNode,
         decoration: InputDecoration(
           labelText: "Adres serwera",
-          labelStyle: Theme
-              .of(context)
-              .textTheme
-              .headline5,
+          labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -117,10 +110,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
           labelText: "Port",
-          labelStyle: Theme
-              .of(context)
-              .textTheme
-              .headline5,
+          labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -139,15 +129,12 @@ class _EditApiAddressState extends State<EditApiAddress> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
-            appBar: AppBar(
-              title: Text('Adres serwera'),
-                actions: [
-                  IconButton(
-                      icon: Icon(Icons.save), onPressed: _verifyChanges)
-                ]),
+            appBar: AppBar(title: Text('Adres serwera'), actions: [
+              IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+            ]),
             drawer: _isUserLoggedIn == "true"
                 ? IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditApiAddress")
+                    storage: widget.storage, parentWidgetType: "EditApiAddress")
                 : null,
             body: Row(children: <Widget>[
               Expanded(flex: 1, child: SizedBox(width: 1)),
@@ -155,25 +142,25 @@ class _EditApiAddressState extends State<EditApiAddress> {
                   flex: 30,
                   child: Padding(
                     padding:
-                    const EdgeInsets.only(left: 13.5, top: 30, right: 13.5),
+                        const EdgeInsets.only(left: 13.5, top: 30, right: 13.5),
                     child: _load
                         ? loadingIndicator(true)
                         : Column(children: <Widget>[
-                      Expanded(
-                          flex: 3,
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                _buildApiAddressProtocol(),
-                                SizedBox(height: 20.0),
-                                _buildApiAddress(),
-                                SizedBox(height: 20.0),
-                                _buildApiAddressPort(),
-                              ],
-                            ),
-                          )),
-                    ]),
+                            Expanded(
+                                flex: 3,
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    children: [
+                                      _buildApiAddressProtocol(),
+                                      SizedBox(height: 20.0),
+                                      _buildApiAddress(),
+                                      SizedBox(height: 20.0),
+                                      _buildApiAddressPort(),
+                                    ],
+                                  ),
+                                )),
+                          ]),
                   )),
               Expanded(flex: 1, child: SizedBox(width: 1)),
             ])));
@@ -201,42 +188,45 @@ class _EditApiAddressState extends State<EditApiAddress> {
         changedPort = true;
       }
       if (changedProtocol || changedAddress || changedPort) {
-        await _confirmSavingChanges(changedProtocol, changedAddress, changedPort);
+        await _confirmSavingChanges(
+            changedProtocol, changedAddress, changedPort);
       } else {
         final snackBar =
-        new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
 
   /// confirms saving api address changes
-  _confirmSavingChanges(bool changedProtocol, bool changedAddress, bool changedPort) async {
+  _confirmSavingChanges(
+      bool changedProtocol, bool changedAddress, bool changedPort) async {
     await confirmActionDialog(
       context,
       "Potwierdź",
       "Czy na pewno zapisać zmiany?",
-          () async {
+      () async {
         await _saveChanges(changedProtocol, changedAddress, changedPort);
       },
     );
   }
 
   /// sets api address
-  _saveChanges(bool changedProtocol, bool changedAddress, bool changedPort) async {
+  _saveChanges(
+      bool changedProtocol, bool changedAddress, bool changedPort) async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       if (changedProtocol)
-      widget.storage
-          .setApiServerAddressProtocol(_apiAddressProtocolController.text);
+        widget.storage
+            .setApiServerAddressProtocol(_apiAddressProtocolController.text);
       if (changedAddress)
         widget.storage.setApiServerAddress(_apiAddressController.text);
       if (changedPort)
         widget.storage.setApiServerAddressPort(_apiAddressPortController.text);
       if (_isUserLoggedIn == "true") {
-        final snackBar =
-        new SnackBar(content: new Text("Adres serwera został zapisany."),
-          duration: Duration(seconds: 2));
+        final snackBar = new SnackBar(
+            content: new Text("Adres serwera został zapisany."),
+            duration: Duration(seconds: 2));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       Navigator.pop(context, true);

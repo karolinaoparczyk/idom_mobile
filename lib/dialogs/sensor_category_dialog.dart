@@ -31,57 +31,59 @@ class _CategoryDialogState extends State<CategoryDialog> {
       child: SizedBox(
           height: 450,
           width: size.width * 2 / 3,
-          child:
-          Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-            child: Text("Kategoria",
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5
-                    .copyWith(fontSize: 21.0)),
-          ),
-          Divider(),
-          SizedBox(
-            height: 320.0,
-            width: size.width * 2 / 3,
-            child: ListView.builder(
-              itemCount: categories.length,
-              itemBuilder: (BuildContext context, int index) {
-                return RadioListTile(
-                  title: Text(categories[index]['text'], style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.normal, fontSize: 21.0)),
-                  value: categories[index],
-                  groupValue: _selectedCategory,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedCategory = value;
-                    });
-                  },
-                );
-              },
-            ),
-          ),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextButton(
-                  child: Text("Anuluj",
-                      style: Theme.of(context).textTheme.headline5),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              TextButton(
-                  child: Text("OK", style: Theme.of(context).textTheme.headline5),
-                  onPressed: () {
-                    Navigator.pop(context, _selectedCategory);
-                  }),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
+                child: Text("Kategoria",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5
+                        .copyWith(fontSize: 21.0)),
+              ),
+              Divider(),
+              SizedBox(
+                height: 320.0,
+                width: size.width * 2 / 3,
+                child: ListView.builder(
+                  itemCount: categories.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return RadioListTile(
+                      title: Text(categories[index]['text'],
+                          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                              fontWeight: FontWeight.normal, fontSize: 21.0)),
+                      value: categories[index],
+                      groupValue: _selectedCategory,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedCategory = value;
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+              Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      child: Text("Anuluj",
+                          style: Theme.of(context).textTheme.headline5),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
+                  TextButton(
+                      child: Text("OK",
+                          style: Theme.of(context).textTheme.headline5),
+                      onPressed: () {
+                        Navigator.pop(context, _selectedCategory);
+                      }),
+                ],
+              ),
             ],
-          ),
-        ],
-      )),
+          )),
     );
   }
 }

@@ -4,11 +4,13 @@ import 'package:idom/utils/secure_storage.dart';
 
 class Api {
   SecureStorage storage;
+
   /// sets api url in constructor
   Api() {
-    httpClient =  Client();
+    httpClient = Client();
     storage = SecureStorage();
   }
+
   String url;
   Client httpClient;
 
@@ -156,7 +158,8 @@ class Api {
       body = {"frequency": frequencyString};
     }
     var res = await httpClient
-        .put('$url/sensors/update/$id',
+        .put(
+          '$url/sensors/update/$id',
           headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
           body: body,
         )
@@ -172,7 +175,8 @@ class Api {
   Future<Map<String, String>> addSensor(
       String name, String category, int frequency, String userToken) async {
     await getApiAddress();
-    var resSen = await httpClient.post('$url/sensors/add',
+    var resSen = await httpClient.post(
+      '$url/sensors/add',
       headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
       body: {
         "name": name,
@@ -245,10 +249,10 @@ class Api {
       String userToken, int sensorId) async {
     await getApiAddress();
     try {
-      var resFrequency = await httpClient.get('$url/sensors_data/list/$sensorId',
-          headers: {
-            HttpHeaders.authorizationHeader: "Token $userToken"
-          }).timeout(Duration(seconds: 10));
+      var resFrequency = await httpClient
+          .get('$url/sensors_data/list/$sensorId', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 10));
 
       Map<String, String> responses = {
         "bodySensorData": resFrequency.body.toString(),

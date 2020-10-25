@@ -90,6 +90,8 @@ class SensorData {
         id: id,
         sensorName: json['sensor'] as String,
         data: json['sensor_data'] as String,
-        deliveryTime: DateTime.parse(json['delivery_time'].substring(0, 19).replaceAll("T", " ") as String));
+        deliveryTime: DateTime.parse(json['delivery_time']
+            .substring(0, 19)
+            .replaceAll("T", " ") as String));
   }
 }

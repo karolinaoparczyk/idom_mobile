@@ -213,8 +213,9 @@ class _NewSensorState extends State<NewSensor> {
             appBar: AppBar(
               title: Text("Dodaj czujnik"),
             ),
+            drawer: IdomDrawer(
+                storage: widget.storage, parentWidgetType: "NewSensor"),
 
-            drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "NewSensor"),
             /// builds form with sensor properties
             body: Container(
                 child: Column(children: <Widget>[
@@ -238,14 +239,18 @@ class _NewSensorState extends State<NewSensor> {
                                     alignment: Alignment.centerLeft,
                                     child: Row(
                                       children: [
-                                        Icon(Icons.info_outline_rounded , size: 17.5),
+                                        Icon(Icons.info_outline_rounded,
+                                            size: 17.5),
                                         Padding(
-                                          padding: const EdgeInsets.only(left:5.0),
-                                          child: Text(
-                                              "Ogólne",
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: Text("Ogólne",
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal)),
                                         ),
                                       ],
                                     ))),
@@ -272,14 +277,19 @@ class _NewSensorState extends State<NewSensor> {
                                     alignment: Alignment.centerLeft,
                                     child: Row(
                                       children: [
-                                        Icon(Icons.access_time_outlined, size: 17.5),
+                                        Icon(Icons.access_time_outlined,
+                                            size: 17.5),
                                         Padding(
-                                          padding: const EdgeInsets.only(left:5.0),
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
                                           child: Text(
                                               "Częstotliwość pobierania danych",
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal)),
                                         ),
                                       ],
                                     ))),

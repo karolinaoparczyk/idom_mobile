@@ -134,7 +134,7 @@ class _SensorsState extends State<Sensors> {
       } else {
         final snackBar = new SnackBar(
             content:
-            new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
@@ -148,7 +148,7 @@ class _SensorsState extends State<Sensors> {
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content:
-            new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
+                new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -160,89 +160,78 @@ class _SensorsState extends State<Sensors> {
       context,
       "Potwierdź",
       "Czy na pewno chcesz usunąć czujnik ${sensor.name}?",
-          () async {
-            try {
-              Navigator.of(context).pop(true);
-              displayProgressDialog(
-                  context: _scaffoldKey.currentContext,
-                  key: _keyLoader,
-                  text: "Trwa usuwanie czujnika...");
+      () async {
+        try {
+          Navigator.of(context).pop(true);
+          displayProgressDialog(
+              context: _scaffoldKey.currentContext,
+              key: _keyLoader,
+              text: "Trwa usuwanie czujnika...");
 
-              int statusCode =
-              await api.deactivateSensor(sensor.id, _token);
-              Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                  .pop();
-              if (statusCode == 200) {
-                setState(() {
-                  /// refreshes sensors' list
-                  getSensors();
-                });
-              } else if (statusCode == 401) {
-                displayProgressDialog(
-                    context: _scaffoldKey.currentContext,
-                    key: _keyLoaderInvalidToken,
-                    text:
-                    "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
-                await new Future.delayed(const Duration(seconds: 3));
-                Navigator.of(_keyLoaderInvalidToken.currentContext,
+          int statusCode = await api.deactivateSensor(sensor.id, _token);
+          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+          if (statusCode == 200) {
+            setState(() {
+              /// refreshes sensors' list
+              getSensors();
+            });
+          } else if (statusCode == 401) {
+            displayProgressDialog(
+                context: _scaffoldKey.currentContext,
+                key: _keyLoaderInvalidToken,
+                text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            await new Future.delayed(const Duration(seconds: 3));
+            Navigator.of(_keyLoaderInvalidToken.currentContext,
                     rootNavigator: true)
-                    .pop();
-                await widget.storage.resetUserData();
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              } else if (statusCode == null) {
-                final snackBar = new SnackBar(
-                    content: new Text(
-                        "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-                ScaffoldMessenger.of(context).showSnackBar((snackBar));
-              } else {
-                final snackBar = new SnackBar(
-                    content: new Text(
-                        "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-                ScaffoldMessenger.of(context).showSnackBar((snackBar));
-              }
-            } catch (e) {
-              Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                  .pop();
+                .pop();
+            await widget.storage.resetUserData();
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          } else if (statusCode == null) {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          } else {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          }
+        } catch (e) {
+          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
 
-              print(e.toString());
-              if (e.toString().contains("TimeoutException")) {
-                final snackBar = new SnackBar(
-                    content: new Text(
-                        "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-                ScaffoldMessenger.of(context).showSnackBar((snackBar));
-              }
-              if (e.toString().contains("SocketException")) {
-                final snackBar = new SnackBar(
-                    content: new Text(
-                        "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-                ScaffoldMessenger.of(context).showSnackBar((snackBar));
-              }
-            }
+          print(e.toString());
+          if (e.toString().contains("TimeoutException")) {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          }
+          if (e.toString().contains("SocketException")) {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          }
+        }
       },
     );
   }
+
   _buildSearchField() {
     return TextField(
       controller: _searchController,
-      style: Theme
-          .of(context)
-          .appBarTheme
-          .textTheme
-          .headline6,
+      style: Theme.of(context).appBarTheme.textTheme.headline6,
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...",
-        hintStyle: Theme
-            .of(context)
-            .appBarTheme
-            .textTheme
-            .headline6,
-        border: UnderlineInputBorder(borderSide: BorderSide(
-            color: IdomColors.additionalColor
-        )),
+        hintStyle: Theme.of(context).appBarTheme.textTheme.headline6,
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: IdomColors.additionalColor),
-        ),),
+        ),
+      ),
     );
   }
 
@@ -261,18 +250,21 @@ class _SensorsState extends State<Sensors> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          leading: _isSearching ? IconButton(
-              icon: Icon(Icons.arrow_back), onPressed: () {
-            setState(() {
-              _isSearching = false;
-              _searchController.text = "";
-            });
-          }) : IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              _scaffoldKey.currentState.openDrawer();
-            },
-          ),
+          leading: _isSearching
+              ? IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = false;
+                      _searchController.text = "";
+                    });
+                  })
+              : IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                ),
           title: _isSearching ? _buildSearchField() : Text('Czujniki'),
           actions: <Widget>[
             IconButton(
@@ -287,10 +279,10 @@ class _SensorsState extends State<Sensors> {
             _isSearching
                 ? SizedBox()
                 : IconButton(
-              icon: Icon(Icons.add, size: 30.0),
-              key: Key("addSensorButton"),
-              onPressed: navigateToNewSensor,
-            )
+                    icon: Icon(Icons.add, size: 30.0),
+                    key: Key("addSensorButton"),
+                    onPressed: navigateToNewSensor,
+                  )
           ],
         ),
         drawer: IdomDrawer(
@@ -301,10 +293,7 @@ class _SensorsState extends State<Sensors> {
             }),
 
         /// builds sensor's list
-        body: Container(
-            child: Column(children: <Widget>[
-              listSensors()
-            ])),
+        body: Container(child: Column(children: <Widget>[listSensors()])),
       ),
     );
   }
@@ -313,7 +302,7 @@ class _SensorsState extends State<Sensors> {
     if (zeroFetchedItems) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak czujników w systemie.",
@@ -325,7 +314,7 @@ class _SensorsState extends State<Sensors> {
         _sensorList == null) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Błąd połączenia z serwerem.",
@@ -336,7 +325,7 @@ class _SensorsState extends State<Sensors> {
         _sensorList.length == 0) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.",
@@ -353,44 +342,38 @@ class _SensorsState extends State<Sensors> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: _sensorList.length,
-                      itemBuilder: (context, index) =>
-                          Container(
-                              height: 80,
-                              child: Card(
-                                  child: ListTile(
-                                      key: Key(_sensorList[index].name),
-                                      title: Text(_sensorList[index].name,
-                                          style: TextStyle(fontSize: 21.0)),
-                                      subtitle: Text(
-                                          "ostatnia dana: " +
-                                              sensorData(_sensorList[index]),
-                                          style: TextStyle(
-                                              fontSize: 16.5,
-                                              color: IdomColors.textDark)),
-                                      onTap: () {
-                                        navigateToSensorDetails(
-                                            _sensorList[index]);
-                                      },
-                                      leading: Icon(
-                                        getSensorIcon(_sensorList[index]),
-                                        color: Theme
-                                            .of(context)
-                                            .iconTheme
-                                            .color,
-                                      ),
+                      itemBuilder: (context, index) => Container(
+                          height: 80,
+                          child: Card(
+                              child: ListTile(
+                                  key: Key(_sensorList[index].name),
+                                  title: Text(_sensorList[index].name,
+                                      style: TextStyle(fontSize: 21.0)),
+                                  subtitle: Text(
+                                      "ostatnia dana: " +
+                                          sensorData(_sensorList[index]),
+                                      style: TextStyle(
+                                          fontSize: 16.5,
+                                          color: IdomColors.textDark)),
+                                  onTap: () {
+                                    navigateToSensorDetails(_sensorList[index]);
+                                  },
+                                  leading: Icon(
+                                    getSensorIcon(_sensorList[index]),
+                                    color: Theme.of(context).iconTheme.color,
+                                  ),
 
-                                      /// delete sensor button
-                                      trailing:
-                                      deleteButtonTrailing(
-                                          _sensorList[index])))),
+                                  /// delete sensor button
+                                  trailing: deleteButtonTrailing(
+                                      _sensorList[index])))),
                     ),
                   ))));
     }
 
     /// shows progress indicator while fetching data
     return Padding(
-      padding: const EdgeInsets.only(
-          left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+      padding:
+          const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
       child: Center(child: CircularProgressIndicator()),
     );
   }

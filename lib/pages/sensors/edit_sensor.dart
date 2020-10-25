@@ -120,6 +120,7 @@ class _EditSensorState extends State<EditSensor> {
       }
     }
   }
+
   /// builds sensor name form field
   Widget _buildName() {
     return TextFormField(
@@ -235,14 +236,11 @@ class _EditSensorState extends State<EditSensor> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              title: Text(widget.sensor.name),
-                actions: [
-                  IconButton(
-                      icon: Icon(Icons.save), onPressed: _verifyChanges)
-                ]
-            ),
-            drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "EditSensor"),
+            appBar: AppBar(title: Text(widget.sensor.name), actions: [
+              IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+            ]),
+            drawer: IdomDrawer(
+                storage: widget.storage, parentWidgetType: "EditSensor"),
 
             /// builds form with sensor properties
             body: Container(
@@ -265,14 +263,17 @@ class _EditSensorState extends State<EditSensor> {
                                 alignment: Alignment.centerLeft,
                                 child: Row(
                                   children: [
-                                    Icon(Icons.info_outline_rounded , size: 17.5),
+                                    Icon(Icons.info_outline_rounded,
+                                        size: 17.5),
                                     Padding(
-                                      padding: const EdgeInsets.only(left:5.0),
-                                      child: Text(
-                                          "Ogólne",
+                                      padding: const EdgeInsets.only(left: 5.0),
+                                      child: Text("Ogólne",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                              .bodyText1
+                                              .copyWith(
+                                                  fontWeight:
+                                                      FontWeight.normal)),
                                     ),
                                   ],
                                 ))),
@@ -299,14 +300,18 @@ class _EditSensorState extends State<EditSensor> {
                                 alignment: Alignment.centerLeft,
                                 child: Row(
                                   children: [
-                                    Icon(Icons.access_time_outlined, size: 17.5),
+                                    Icon(Icons.access_time_outlined,
+                                        size: 17.5),
                                     Padding(
-                                      padding: const EdgeInsets.only(left:5.0),
+                                      padding: const EdgeInsets.only(left: 5.0),
                                       child: Text(
                                           "Częstotliwość pobierania danych",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                              .bodyText1
+                                              .copyWith(
+                                                  fontWeight:
+                                                      FontWeight.normal)),
                                     ),
                                   ],
                                 ))),
@@ -318,8 +323,7 @@ class _EditSensorState extends State<EditSensor> {
                                 bottom: 0.0),
                             child: SizedBox(
                                 child: Row(children: <Widget>[
-                              Expanded(
-                                  flex: 8, child: _buildFrequencyValue()),
+                              Expanded(flex: 8, child: _buildFrequencyValue()),
                               Expanded(flex: 1, child: SizedBox()),
                               Expanded(
                                   flex: 12,
@@ -331,8 +335,7 @@ class _EditSensorState extends State<EditSensor> {
                                           bottom: 0.0),
                                       child: Align(
                                           alignment: Alignment.bottomLeft,
-                                          child:
-                                              _buildFrequencyUnitsField()))),
+                                          child: _buildFrequencyUnitsField()))),
                             ]))),
                       ]))),
             ]))));

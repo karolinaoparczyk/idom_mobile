@@ -135,7 +135,6 @@ class _EditAccountState extends State<EditAccount> {
     }
   }
 
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -147,12 +146,9 @@ class _EditAccountState extends State<EditAccount> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              title: Text(widget.account.username),
-                actions: [
-                  IconButton(
-                      icon: Icon(Icons.save), onPressed: _verifyChanges)
-                ]),
+            appBar: AppBar(title: Text(widget.account.username), actions: [
+              IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+            ]),
             drawer: IdomDrawer(
                 storage: widget.storage, parentWidgetType: "EditAccount"),
             body: Container(
@@ -178,8 +174,7 @@ class _EditAccountState extends State<EditAccount> {
                                     Icon(Icons.info_outline_rounded,
                                         size: 17.5),
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 5.0),
+                                      padding: const EdgeInsets.only(left: 5.0),
                                       child: Text("Ogólne",
                                           style: Theme.of(context)
                                               .textTheme
