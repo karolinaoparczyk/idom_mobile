@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
-import 'package:idom/pages/account/account_detail.dart';
-import 'package:idom/pages/account/accounts.dart';
-import 'package:idom/utils/menu_items.dart';
+import 'package:idom/dialogs/frequency_units_dialog.dart';
+import 'package:idom/dialogs/progress_indicator_dialog.dart';
+import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/dialog.dart';
@@ -34,14 +36,16 @@ class _NewSensorState extends State<NewSensor> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _categoryController = TextEditingController();
   TextEditingController _frequencyValueController = TextEditingController();
+  TextEditingController _frequencyUnitsController = TextEditingController();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
-  var selectedCategory;
-  var selectedUnits;
+  final Api api = Api();
+  String categoryValue;
+  String frequencyUnitsValue;
   bool _load;
 
-  List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
     "seconds": "sekundy",
@@ -55,26 +59,8 @@ class _NewSensorState extends State<NewSensor> {
     super.initState();
     _load = false;
 
-    /// available sensor categories choices
-    categories = [
-      DropdownMenuItem(
-          child: Text("Temperatura"),
-          value: "temperature",
-          key: Key("temperature")),
-      DropdownMenuItem(
-          child: Text("Wilgotność"), value: "humidity", key: Key("humidity"))
-    ];
-
-    /// available frequency units choices
-    units = [
-      DropdownMenuItem(
-          child: Text("Sekundy"), value: "seconds", key: Key("seconds")),
-      DropdownMenuItem(
-          child: Text("Minuty"), value: "minutes", key: Key("minutes")),
-      DropdownMenuItem(
-          child: Text("Godziny"), value: "hours", key: Key("hours")),
-      DropdownMenuItem(child: Text("Dni"), value: "days", key: Key("days"))
-    ];
+  Future<void> getToken() async {
+    _token = await widget.storage.getToken();
   }
 
   /// logs the user out of the app
@@ -164,23 +150,37 @@ class _NewSensorState extends State<NewSensor> {
         validator: SensorNameFieldValidator.validate);
   }
 
-  /// builds sensor category dropdown button
-  Widget _buildCategory() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton(
-          style: TextStyle(fontSize: 17.0, color: Colors.black),
-          hint: Text("Wybierz kategorię..."),
-          key: Key("categoriesButon"),
-          items: categories,
-          onChanged: (val) {
-            setState(() {
-              selectedCategory = val;
-            });
-          },
-          value: selectedCategory,
-        )));
+  /// builds sensor category field
+  Widget _buildCategoryField() {
+    return TextFormField(
+        key: Key("categoriesButton"),
+        controller: _categoryController,
+        decoration: InputDecoration(
+          labelText: "Kategoria",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          suffixIcon: Icon(Icons.arrow_drop_down),
+          prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        onTap: () async {
+          final Map<String, String> selectedCategory = await showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  child: CategoryDialog(),
+                );
+              });
+          if (selectedCategory != null) {
+            _categoryController.text = selectedCategory['text'];
+            categoryValue = selectedCategory['value'];
+          }
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        readOnly: true,
+        style: TextStyle(fontSize: 17.0),
+        validator: UrlFieldValidator.validate);
   }
 
   /// builds sensor frequency value form field
@@ -203,23 +203,37 @@ class _NewSensorState extends State<NewSensor> {
         ));
   }
 
-  /// builds frequency units dropdown button
-  Widget _buildUnits() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton(
-          style: TextStyle(fontSize: 17.0, color: Colors.black),
-          key: Key("unitsButton"),
-          items: units,
-          hint: Text("Wybierz jednostki..."),
-          onChanged: (val) {
-            setState(() {
-              selectedUnits = val;
-            });
-          },
-          value: selectedUnits,
-        )));
+  /// builds frequency units field
+  Widget _buildFrequencyUnitsField() {
+    return TextFormField(
+        key: Key("frequencyUnitsButton"),
+        controller: _frequencyUnitsController,
+        decoration: InputDecoration(
+          labelText: "Jednostki",
+          labelStyle: Theme.of(context).textTheme.headline5,
+          suffixIcon: Icon(Icons.arrow_drop_down),
+          prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        onTap: () async {
+          final Map<String, String> selectedFrequencyUnits = await showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  child: FrequencyUnitsDialog(),
+                );
+              });
+          if (selectedFrequencyUnits != null) {
+            _frequencyUnitsController.text = selectedFrequencyUnits['text'];
+            frequencyUnitsValue = selectedFrequencyUnits['value'];
+          }
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        readOnly: true,
+        style: TextStyle(fontSize: 17.0),
+        validator: UrlFieldValidator.validate);
   }
 
   Future<bool> _onBackButton() async {
@@ -288,7 +302,7 @@ class _NewSensorState extends State<NewSensor> {
                                     vertical: 10.0, horizontal: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: _buildCategory())),
+                                    child: _buildCategoryField())),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
@@ -324,7 +338,8 @@ class _NewSensorState extends State<NewSensor> {
                                               bottom: 10.0),
                                           child: Align(
                                               alignment: Alignment.bottomLeft,
-                                              child: _buildUnits()))),
+                                              child:
+                                                  _buildFrequencyUnitsField()))),
                                 ]))),
                           ])))),
               Expanded(
@@ -345,10 +360,10 @@ class _NewSensorState extends State<NewSensor> {
   _saveChanges() async {
     final formState = _formKey.currentState;
     var displayText = "";
-    if (selectedCategory == null) {
+    if (categoryValue == null) {
       displayText += "Wybierz kategorię czujnika. \n";
     }
-    if (selectedUnits == null) {
+    if (frequencyUnitsValue == null) {
       displayText += "Wybierz jednostki częstotliwości pobierania danych.";
     }
     if (displayText != "") {
@@ -359,13 +374,13 @@ class _NewSensorState extends State<NewSensor> {
       /// validates if frequency value is valid for given frequency units
       var validFequencyValue =
           SensorFrequencyFieldValidator.isFrequencyValueValid(
-              _frequencyValueController.text, selectedUnits);
+              _frequencyValueController.text, frequencyUnitsValue);
       if (!validFequencyValue) {
         var text =
-            "Maksymalna częstotliwość to co ${unitsToMaxValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}";
-        if (selectedUnits == "seconds")
+            "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
+        if (frequencyUnitsValue == "seconds")
           text =
-              "Minimalna częstotliwość to co ${unitsToMinValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}, a maksymalna to co ${unitsToMaxValues[selectedUnits]} ${englishToPolishUnits[selectedUnits]}";
+              "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
         await displayDialog(context: context, title: "Błąd", text: text);
         return;
       }
@@ -375,17 +390,17 @@ class _NewSensorState extends State<NewSensor> {
 
       /// converts frequency value to seconds
       var frequencyInSeconds = int.parse(_frequencyValueController.text);
-      if (selectedUnits != "seconds") {
-        if (selectedUnits == "minutes")
+      if (frequencyUnitsValue != "seconds") {
+        if (frequencyUnitsValue == "minutes")
           frequencyInSeconds = frequencyInSeconds * 60;
-        else if (selectedUnits == "hours")
+        else if (frequencyUnitsValue == "hours")
           frequencyInSeconds = frequencyInSeconds * 60 * 60;
-        else if (selectedUnits == "days")
+        else if (frequencyUnitsValue == "days")
           frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
       }
       try {
-        var res = await widget.api.addSensor(_nameController.text,
-            selectedCategory, frequencyInSeconds, widget.currentLoggedInToken);
+        var res = await api.addSensor(
+            _nameController.text, categoryValue, frequencyInSeconds, _token);
 
         if (res['statusCodeSen'] == "201") {
           setState(() {

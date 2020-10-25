@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
+import 'package:idom/dialogs/progress_indicator_dialog.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
@@ -8,9 +11,10 @@ import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/utils/idom_colors.dart';
-import 'package:idom/utils/menu_items.dart';
-import 'package:idom/widgets/dialog.dart';
-import 'package:idom/widgets/text_color.dart';
+import 'package:idom/utils/secure_storage.dart';
+import 'package:idom/widgets/idom_drawer.dart';
+
+import '../../api.dart';
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
