@@ -330,7 +330,7 @@ class _SensorsState extends State<Sensors> {
     if (zeroFetchedItems) {
       return Padding(
           padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
@@ -342,11 +342,11 @@ class _SensorsState extends State<Sensors> {
         _sensorList.length == 0) {
       return Padding(
           padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.",
-                  style: TextStyle(fontSize: 13.5),
+                  style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (_sensorList != null && _sensorList.length > 0) {
       return Expanded(
@@ -438,15 +438,17 @@ class _SensorsState extends State<Sensors> {
     }
   }
 
-  Widget sensorData(Sensor sensor) {
-    if (sensor.lastData == null) return Text("");
-    return sensor.category == "temperature"
-        ? Text("${sensor.lastData} °C",
-            style: TextStyle(
-                fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold))
-        : Text("${sensor.lastData} %",
-            style: TextStyle(
-                fontSize: 17.0, color: textColor, fontWeight: FontWeight.bold));
+  String sensorData(Sensor sensor) {
+    if (sensor.lastData == null) return "-";
+    switch (sensor.category) {
+      case "temperature":
+        return "${sensor.lastData} °C";
+        break;
+      case "humidity":
+        return "${sensor.lastData} %";
+        break;
+    }
+    return "-";
   }
 
   /// navigates to adding sensor page
@@ -493,7 +495,7 @@ class _SensorsState extends State<Sensors> {
             alignment: Alignment.centerRight,
             child: FlatButton(
               key: Key("deleteButton"),
-              child: Icon(Icons.delete, color: Theme.of(context).iconTheme.color),
+              child: Icon(Icons.delete, color: IdomColors.mainFill),
               onPressed: () {
                 setState(() {
                   _deactivateSensor(sensor);

@@ -13,7 +13,6 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
 
 import '../../models.dart';
 
@@ -136,7 +135,7 @@ class _EditSensorState extends State<EditSensor> {
           ),
         ),
         key: Key('name'),
-        style: TextStyle(fontSize: 17.0),
+        style: TextStyle(fontSize: 21.0),
         autofocus: true,
         controller: _nameController,
         validator: SensorNameFieldValidator.validate);
@@ -182,7 +181,7 @@ class _EditSensorState extends State<EditSensor> {
           key: Key('frequencyValue'),
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
-          style: TextStyle(fontSize: 17.0),
+          style: TextStyle(fontSize: 21.0),
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),

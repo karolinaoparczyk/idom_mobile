@@ -4,7 +4,6 @@ import 'package:idom/api.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
 
 /// allows to enter email and send reset password request
 class EnterEmail extends StatefulWidget {

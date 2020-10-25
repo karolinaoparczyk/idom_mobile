@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:idom/api.dart';
-import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/dialogs/protocol_dialog.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -60,7 +60,10 @@ class _EditApiAddressState extends State<EditApiAddress> {
         controller: _apiAddressProtocolController,
         decoration: InputDecoration(
           labelText: "Protokół",
-          labelStyle: Theme.of(context).textTheme.headline5,
+          labelStyle: Theme
+              .of(context)
+              .textTheme
+              .headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -92,7 +95,10 @@ class _EditApiAddressState extends State<EditApiAddress> {
         focusNode: _apiAddressFocusNode,
         decoration: InputDecoration(
           labelText: "Adres serwera",
-          labelStyle: Theme.of(context).textTheme.headline5,
+          labelStyle: Theme
+              .of(context)
+              .textTheme
+              .headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -109,7 +115,10 @@ class _EditApiAddressState extends State<EditApiAddress> {
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
           labelText: "Port",
-          labelStyle: Theme.of(context).textTheme.headline5,
+          labelStyle: Theme
+              .of(context)
+              .textTheme
+              .headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -145,37 +154,37 @@ class _EditApiAddressState extends State<EditApiAddress> {
                   flex: 30,
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(left: 13.5, top: 30, right: 13.5),
+                    const EdgeInsets.only(left: 13.5, top: 30, right: 13.5),
                     child: _load
                         ? loadingIndicator(true)
                         : Column(children: <Widget>[
-                            Expanded(
-                                flex: 3,
-                                child: Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    children: [
-                                      _buildApiAddressProtocol(),
-                                      SizedBox(height: 20.0),
-                                      _buildApiAddress(),
-                                      SizedBox(height: 20.0),
-                                      _buildApiAddressPort(),
-                                    ],
-                                  ),
-                                )),
-                            Expanded(
-                                flex: 1,
-                                child: AnimatedContainer(
-                                    curve: Curves.easeInToLinear,
-                                    duration: Duration(
-                                      milliseconds: 10,
-                                    ),
-                                    alignment: Alignment.bottomCenter,
-                                    child: Column(children: <Widget>[
-                                      buttonWidget(context, "Zapisz adres",
-                                          setApiAddress)
-                                    ])))
-                          ]),
+                      Expanded(
+                          flex: 3,
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                _buildApiAddressProtocol(),
+                                SizedBox(height: 20.0),
+                                _buildApiAddress(),
+                                SizedBox(height: 20.0),
+                                _buildApiAddressPort(),
+                              ],
+                            ),
+                          )),
+                      Expanded(
+                          flex: 1,
+                          child: AnimatedContainer(
+                              curve: Curves.easeInToLinear,
+                              duration: Duration(
+                                milliseconds: 10,
+                              ),
+                              alignment: Alignment.bottomCenter,
+                              child: Column(children: <Widget>[
+                                buttonWidget(context, "Zapisz adres",
+                                    setApiAddress)
+                              ])))
+                    ]),
                   )),
               Expanded(flex: 1, child: SizedBox(width: 1)),
             ])));

@@ -16,7 +16,7 @@ Widget buttonWidget(BuildContext context, String text, Function onPressed) {
               text,
               style: TextStyle(
                   color: IdomColors.textLight,
-                  fontSize: 16,
+                  fontSize: 21,
                   fontWeight: FontWeight.normal),
               textAlign: TextAlign.center
             ),

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
-import 'package:idom/utils/menu_items.dart';
+import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
 
 import 'accounts.dart';
 import 'edit_account.dart';
@@ -151,68 +151,116 @@ class _AccountDetailState extends State<AccountDetail> {
             body: SingleChildScrollView(
                 child: Form(
                     key: _formKey,
-                    child: Column(children: <Widget>[
-                      Align(
-                        child: loadingIndicator(_load),
-                        alignment: FractionalOffset.center,
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Login",
-                                  style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 13.5,
-                                      fontWeight: FontWeight.bold)))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(widget.account.username,
-                                  style: TextStyle(fontSize: 17.0)))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 10, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Adres E-mail",
-                                  style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 13.5,
-                                      fontWeight: FontWeight.bold)))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 14, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(_emailController.text,
-                                  style: TextStyle(fontSize: 17.0)))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 14, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Nr telefonu komórkowego",
-                                  style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 13.5,
-                                      fontWeight: FontWeight.bold)))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 13.5, right: 30.0, bottom: 15.5),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                  _telephoneController.text != ""
-                                      ? _telephoneController.text
-                                      : "brak nr telefonu",
-                                  style: TextStyle(fontSize: 17.0)))),
-                      buttonWidget(
-                          context, "Edytuj konto", _navigateToEditAccount)
-                    ])))));
+                    child: account == null
+                        ? Align(
+                            child: loadingIndicator(_load),
+                            alignment: FractionalOffset.center,
+                          )
+                        : Column(children: <Widget>[
+                            Align(
+                              child: loadingIndicator(_load),
+                              alignment: FractionalOffset.center,
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 20.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.info_outline_rounded,
+                                            size: 17.5),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: Text("Ogólne",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal)),
+                                        ),
+                                      ],
+                                    ))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 10.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Login",
+                                        style: TextStyle(
+                                            color: IdomColors.additionalColor,
+                                            fontSize: 16.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 0.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(account.username,
+                                        style: TextStyle(fontSize: 21.0)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 10,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Adres e-mail",
+                                        style: TextStyle(
+                                            color: IdomColors.additionalColor,
+                                            fontSize: 16.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(account.email,
+                                        style: TextStyle(fontSize: 21.0)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 10,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Nr telefonu komórkowego",
+                                        style: TextStyle(
+                                            color: IdomColors.additionalColor,
+                                            fontSize: 16.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 0,
+                                    right: 30.0,
+                                    bottom: 15.5),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                        account.telephone != ""
+                                            ? account.telephone
+                                            : "-",
+                                        style: TextStyle(fontSize: 21.0)))),
+                            buttonWidget(
+                                context, "Edytuj konto", _navigateToEditAccount)
+                          ])))));
   }
 
   _navigateToEditAccount() async {

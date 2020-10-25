@@ -57,7 +57,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _usernameController,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -76,7 +76,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _passwordController,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: PasswordFieldValidator.validate,
       obscureText: true,
       onEditingComplete: _node.nextFocus,
@@ -96,7 +96,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _confirmPasswordController,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: (String value) {
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić';
@@ -122,7 +122,7 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: EmailFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -142,7 +142,7 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _telephoneController,
       keyboardType: TextInputType.phone,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: TelephoneFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -217,6 +217,17 @@ class _SignUpState extends State<SignUp> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildConfirmPassword())),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                              child: AnimatedCrossFade(
+                                crossFadeState: fieldsValidationMessage != null
+                                    ? CrossFadeState.showFirst
+                                    : CrossFadeState.showSecond,
+                                duration: Duration(milliseconds: 300),
+                                firstChild: fieldsValidationMessage != null ? Text(fieldsValidationMessage) : SizedBox(),
+                                secondChild: SizedBox(),
+                              ),
+                            ),
                             buttonWidget(context, "Zarejestruj się", signUp),
 
                           ],

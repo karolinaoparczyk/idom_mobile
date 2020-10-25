@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
+import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/utils/validators.dart';
@@ -53,7 +55,7 @@ class _EditAccountState extends State<EditAccount> {
           ),
         ),
         keyboardType: TextInputType.emailAddress,
-        style: TextStyle(fontSize: 17.0),
+        style: TextStyle(fontSize: 21.0),
         validator: EmailFieldValidator.validate);
   }
 
@@ -61,7 +63,7 @@ class _EditAccountState extends State<EditAccount> {
   Widget _buildTelephone() {
     return TextFormField(
         key: Key('telephone'),
-        style: TextStyle(fontSize: 17.0),
+        style: TextStyle(fontSize: 21.0),
         controller: _telephoneController,
         decoration: InputDecoration(
           labelText: "Nr telefonu komórkowego",
@@ -199,6 +201,31 @@ class _EditAccountState extends State<EditAccount> {
                               child: loadingIndicator(_load),
                               alignment: FractionalOffset.center,
                             ),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 20.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.info_outline_rounded,
+                                            size: 17.5),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: Text("Ogólne",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal)),
+                                        ),
+                                      ],
+                                    ))),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,

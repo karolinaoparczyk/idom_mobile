@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/text_color.dart';
 
 import '../../models.dart';
 import 'edit_api_address.dart';
@@ -45,75 +45,82 @@ class _FrontState extends State<Front> {
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
 
-    return WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
-            key: _scaffoldKey,
-            body: SingleChildScrollView(
-                child: Container(
-                    alignment: Alignment.center,
-                    child: Center(
-                        child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        SizedBox(
-                            height: queryData.size.height / 15 * 8,
-                            child: AnimatedContainer(
-                                curve: Curves.easeInToLinear,
-                                duration: Duration(
-                                  milliseconds: 10,
-                                ),
-                                alignment: Alignment.topCenter,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'IDOM',
-                                        style: TextStyle(
-                                            fontSize: 100,
-                                            color: IdomColors.textDark),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      Text(
-                                        'TWÓJ INTELIGENTNY DOM \nW JEDNYM MIEJSCU',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: textColor,
-                                            fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ]))),
-                        SizedBox(
-                            height: queryData.size.height / 15 * 7,
-                            child: AnimatedContainer(
-                                curve: Curves.easeInToLinear,
-                                duration: Duration(
-                                  milliseconds: 10,
-                                ),
-                                alignment: Alignment.topCenter,
-                                child: Column(children: [
-                                  apiAddressWarning(),
-                                  FlatButton(
-                                    key: Key('editApiServer'),
-                                    child: Text('Edytuj adres serwera',
-                                        style: TextStyle(fontSize: 16)),
-                                    onPressed: navigateToEditApiAddress,
+    return Scaffold(
+        key: _scaffoldKey,
+        body: SingleChildScrollView(
+            child: Container(
+                alignment: Alignment.center,
+                child: Center(
+                    child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    SizedBox(
+                        height: queryData.size.height / 15 * 8,
+                        child: AnimatedContainer(
+                            curve: Curves.easeInToLinear,
+                            duration: Duration(
+                              milliseconds: 10,
+                            ),
+                            alignment: Alignment.topCenter,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'IDOM',
+                                    style: TextStyle(
+                                        fontSize: 100,
+                                        color: IdomColors.textDark),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  buttonWidget(
-                                      context, "Zaloguj się", navigateToSignIn),
-                                  SizedBox(height: 10),
-                                  buttonWidget(context, "Zarejestruj się",
-                                      navigateToSignUp),
-                                  FlatButton(
-                                    key: Key('passwordReset'),
-                                    child: Text('Zapomniałeś/aś hasła?'),
-                                    onPressed: navigateToEnterEmail,
+                                  Text(
+                                    'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU',
+                                    style: TextStyle(
+                                        fontSize: 21,
+                                        color: IdomColors.additionalColor,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ]))),
-                      ],
-                    ))))));
+                    SizedBox(
+                        height: queryData.size.height / 15 * 7,
+                        child: AnimatedContainer(
+                            curve: Curves.easeInToLinear,
+                            duration: Duration(
+                              milliseconds: 10,
+                            ),
+                            alignment: Alignment.topCenter,
+                            child: Column(children: [
+                              setApiAddressEmptyMessage(),
+                              FlatButton(
+                                key: Key('editApiServer'),
+                                child: Text('Edytuj adres serwera',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                onPressed: navigateToEditApiAddress,
+                              ),
+                              buttonWidget(
+                                  context, "Zaloguj się", navigateToSignIn),
+                              SizedBox(height: 10),
+                              buttonWidget(context, "Zarejestruj się",
+                                  navigateToSignUp),
+                              FlatButton(
+                                key: Key('passwordReset'),
+                                child: Text('Zapomniałeś/aś hasła?',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                onPressed: navigateToEnterEmail,
+                              ),
+                            ]))),
+                  ],
+                )))));
   }
 
   apiAddressWarning() {

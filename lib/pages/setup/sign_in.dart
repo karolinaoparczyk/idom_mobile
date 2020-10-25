@@ -42,13 +42,16 @@ class _SignInState extends State<SignIn> {
       autofocus: true,
       decoration: InputDecoration(
         labelText: "Nazwa użytkownika",
-        labelStyle: Theme.of(context).textTheme.headline5,
+        labelStyle: Theme
+            .of(context)
+            .textTheme
+            .headline5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
       ),
       controller: _usernameController,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -61,14 +64,17 @@ class _SignInState extends State<SignIn> {
       key: Key('password'),
       decoration: InputDecoration(
         labelText: "Hasło",
-        labelStyle: Theme.of(context).textTheme.headline5,
+        labelStyle: Theme
+            .of(context)
+            .textTheme
+            .headline5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
       ),
       controller: _passwordController,
       validator: PasswordFieldValidator.validate,
-      style: TextStyle(fontSize: 17.0),
+      style: TextStyle(fontSize: 21.0),
       obscureText: true,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.done,
@@ -201,7 +207,13 @@ class _SignInState extends State<SignIn> {
                               buttonWidget(context, "Zaloguj się", signIn),
                               FlatButton(
                                 key: Key("passwordReset"),
-                                child: Text('Zapomniałeś/aś hasła?'),
+                                child: Text('Zapomniałeś/aś hasła?',
+                                    style: Theme
+                                        .of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                        fontWeight: FontWeight.normal)),
                                 onPressed: navigateToEnterEmail,
                               ),
                             ])))

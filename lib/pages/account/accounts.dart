@@ -301,7 +301,7 @@ class _AccountsState extends State<Accounts> {
               alignment: Alignment.topCenter,
               child: Text(
                   "Brak kont w systemie \nlub błąd połączenia z serwerem.",
-                  style: TextStyle(fontSize: 13.5),
+                  style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (!zeroFetchedItems &&
         _accountList != null &&
@@ -312,7 +312,7 @@ class _AccountsState extends State<Accounts> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.",
-                  style: TextStyle(fontSize: 13.5),
+                  style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (_accountList != null && _accountList.length > 0) {
       return Expanded(

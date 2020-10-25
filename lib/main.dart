@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
 
         /// default app theme and colors
         theme: ThemeData(
+          fontFamily: "BarlowCondensed",
           primaryColor: IdomColors.mainFill,
           primaryColorLight: IdomColors.additionalColor,
           accentColor: IdomColors.additionalColor,
@@ -20,11 +21,31 @@ class MyApp extends StatelessWidget {
           cardTheme: CardTheme(elevation: 15, color: IdomColors.mainBackground),
           errorColor: IdomColors.error,
           iconTheme: IconThemeData(color: IdomColors.additionalColor),
-          textTheme: TextTheme(headline5: TextStyle(color: IdomColors.additionalColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
+          dialogTheme: DialogTheme(
+              elevation: 20,
+              backgroundColor: IdomColors.mainBackground,
+              titleTextStyle: TextStyle(
+                  color: IdomColors.additionalColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold)),
+          textTheme: TextTheme(
+              headline5: TextStyle(
+                  color: IdomColors.additionalColor,
+                  fontSize: 16.5,
+                  fontWeight: FontWeight.bold),
+              bodyText1: TextStyle(
+                  color: IdomColors.textDark,
+                  fontSize: 16.5,
+                  fontWeight: FontWeight.bold)),
+          textSelectionTheme: TextSelectionThemeData(
+              cursorColor: IdomColors.additionalColor,
+              selectionHandleColor: IdomColors.additionalColor,
+              selectionColor: IdomColors.additionalColor),
           appBarTheme: AppBarTheme(
             textTheme: TextTheme(
                 headline6:
-                    TextStyle(color: IdomColors.textLight, fontSize: 20)),
+                    TextStyle(color: IdomColors.textLight, fontSize: 20,letterSpacing: 2.0)),
             iconTheme: IconThemeData(color: IdomColors.iconLight),
             actionsIconTheme: IconThemeData(color: IdomColors.iconLight),
           ),

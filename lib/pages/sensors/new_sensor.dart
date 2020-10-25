@@ -10,9 +10,6 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
-
-import '../../models.dart';
 
 /// adds new sensor
 class NewSensor extends StatefulWidget {
@@ -272,30 +269,58 @@ class _NewSensorState extends State<NewSensor> {
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 13.5,
+                                    top: 20.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.info_outline_rounded , size: 17.5),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left:5.0),
+                                          child: Text(
+                                              "Ogólne",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                        ),
+                                      ],
+                                    ))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 10.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: _buildName()),
                             Padding(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 0.0),
+                                    vertical: 10.0, horizontal: 30.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildCategoryField())),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 0.0,
+                                    top: 20.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text(
-                                        "Częstotliwość pobierania danych",
-                                        style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.bold)))),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.access_time_outlined, size: 17.5),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left:5.0),
+                                          child: Text(
+                                              "Częstotliwość pobierania danych",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                        ),
+                                      ],
+                                    ))),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
@@ -314,7 +339,7 @@ class _NewSensorState extends State<NewSensor> {
                                               left: 0.0,
                                               top: 0.0,
                                               right: 0.0,
-                                              bottom: 10.0),
+                                              bottom: 0.0),
                                           child: Align(
                                               alignment: Alignment.bottomLeft,
                                               child:

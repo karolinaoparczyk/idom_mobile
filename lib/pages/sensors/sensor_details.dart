@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
-import 'package:idom/pages/account/account_detail.dart';
-import 'package:idom/pages/account/accounts.dart';
-import 'package:idom/utils/menu_items.dart';
+import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -337,94 +337,109 @@ class _SensorDetailsState extends State<SensorDetails> {
                       ),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
+                              left: 30.0,
+                              top: 20.0,
+                              right: 30.0,
+                              bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Nazwa",
-                                  style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 13.5,
-                                      fontWeight: FontWeight.bold)))),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.info_outline_rounded , size: 17.5),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left:5.0),
+                                    child: Text(
+                                        "Ogólne",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                  ),
+                                ],
+                              ))),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(_nameController.text,
-                                  style: TextStyle(fontSize: 17.0)))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 14, right: 30.0, bottom: 0.0),
+                              left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text("Kategoria",
                                   style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 13.5,
+                                      color: IdomColors.additionalColor,
+                                      fontSize: 16.5,
                                       fontWeight: FontWeight.bold)))),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0, top: 14, right: 30.0, bottom: 0.0),
+                              left: 52.5, top: 0, right: 30.0, bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                   englishToPolishCategories[
                                       _categoryController.text],
-                                  style: TextStyle(fontSize: 17.0)))),
+                                  style: TextStyle(fontSize: 21.0)))),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
+                              left: 30.0,
+                              top: 20.0,
+                              right: 30.0,
+                              bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Częstotliwość pobierania danych",
-                                  style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 13.5,
-                                      fontWeight: FontWeight.bold)))),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.access_time_outlined, size: 17.5),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left:5.0),
+                                    child: Text(
+                                        "Częstotliwość pobierania danych",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                  ),
+                                ],
+                              ))),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
+                              left: 52.5, top: 5.0, right: 30.0, bottom: 0.0),
                           child: SizedBox(
                               child: Row(children: <Widget>[
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(_frequencyValueController.text,
-                                      style: TextStyle(fontSize: 17.0)),
+                                      style: TextStyle(fontSize: 21.0)),
                                 ]),
                             SizedBox(width: 5.0),
                             Column(children: <Widget>[
                               Text(getProperUnitsName(),
-                                  style: TextStyle(fontSize: 17.0)),
+                                  style: TextStyle(fontSize: 21.0)),
                             ])
                           ]))),
                       Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 13.5, horizontal: 30.0),
+                          padding: EdgeInsets.only(
+                              top: 13.5, left: 52.5, right: 30.0, bottom: 0.0),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(getSensorLastDataLabel(),
                                 style: TextStyle(
-                                    color: textColor,
-                                    fontSize: 13.5,
+                                    color: IdomColors.additionalColor,
+                                    fontSize: 16.5,
                                     fontWeight: FontWeight.bold)),
                           )),
                       Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 0.0, horizontal: 30.0),
+                              vertical: 0.0, horizontal: 52.5),
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(getSensorLastData(),
-                                  style: TextStyle(fontSize: 17.0)))),
+                                  style: TextStyle(fontSize: 21.0)))),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0, top: 13.5, right: 30.0, bottom: 0.0),
+                              left: 52.5, top: 13.5, right: 30.0, bottom: 0.0),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text("Okres wyświetlanych danych:",
                                 style: TextStyle(
-                                    color: textColor,
-                                    fontSize: 13.5,
+                                    color: IdomColors.additionalColor,
+                                    fontSize: 16.5,
                                     fontWeight: FontWeight.bold)),
                           )),
                       Padding(
@@ -444,7 +459,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: !todayChart
-                                                ? textColor
+                                                ? IdomColors.additionalColor
                                                 : Colors.black),
                                         borderRadius:
                                             BorderRadius.circular(30.0)),
@@ -466,7 +481,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: !thisMonthChart
-                                                ? textColor
+                                                ? IdomColors.additionalColor
                                                 : Colors.black),
                                         borderRadius:
                                             BorderRadius.circular(30.0)),
@@ -490,11 +505,11 @@ class _SensorDetailsState extends State<SensorDetails> {
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: !allTimeChart
-                                                ? textColor
+                                                ? IdomColors.additionalColor
                                                 : Colors.black),
                                         borderRadius:
                                             BorderRadius.circular(30.0)),
-                                    child: FlatButton(
+                                    child: FlatButton(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),splashColor: IdomColors.additionalColor,
                                       key: Key("allTime"),
                                       child: Text('Ostatnie \n30 dni',
                                           textAlign: TextAlign.center),
@@ -552,7 +567,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   String getSensorLastData() {
-    if (_currentSensorDataController.text == "null") return "Brak danych";
+    if (_currentSensorDataController.text == "null") return "-";
     return widget.sensor.category == "temperature"
         ? "${_currentSensorDataController.text} °C"
         : "${_currentSensorDataController.text} %";
@@ -657,8 +672,11 @@ class _SensorDetailsState extends State<SensorDetails> {
   Widget chartWidget() {
     if (noDataForChart) {
       return Container(
-          child: Text("Brak danych z wybranego okresu.",
-              style: TextStyle(fontSize: 13.5)));
+          child: Padding(
+            padding: const EdgeInsets.only(left: 22.5),
+            child: Text("Brak danych z wybranego okresu.",
+                style: TextStyle(fontSize: 16.5)),
+          ));
     } else if (dataLoaded) {
       return charts.TimeSeriesChart(
         _seriesData,
