@@ -237,113 +237,104 @@ class _EditSensorState extends State<EditSensor> {
             key: _scaffoldKey,
             appBar: AppBar(
               title: Text(widget.sensor.name),
+                actions: [
+                  IconButton(
+                      icon: Icon(Icons.save), onPressed: _verifyChanges)
+                ]
             ),
             drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "EditSensor"),
 
             /// builds form with sensor properties
             body: Container(
                 child: Column(children: <Widget>[
-              Expanded(
-                  flex: 4,
-                  child: SingleChildScrollView(
-                      child: Form(
-                          key: _formKey,
-                          child: Column(children: <Widget>[
-                            Align(
-                              child: loadingIndicator(_load),
-                              alignment: FractionalOffset.center,
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 20.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.info_outline_rounded , size: 17.5),
-                                        Padding(
-                                          padding: const EdgeInsets.only(left:5.0),
-                                          child: Text(
-                                              "Ogólne",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1.copyWith(fontWeight: FontWeight.normal)),
-                                        ),
-                                      ],
-                                    ))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: _buildName()),
-                            Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 30.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildCategoryField())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 20.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.access_time_outlined, size: 17.5),
-                                        Padding(
-                                          padding: const EdgeInsets.only(left:5.0),
-                                          child: Text(
-                                              "Częstotliwość pobierania danych",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1.copyWith(fontWeight: FontWeight.normal)),
-                                        ),
-                                      ],
-                                    ))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: SizedBox(
-                                    child: Row(children: <Widget>[
-                                  Expanded(
-                                      flex: 8, child: _buildFrequencyValue()),
-                                  Expanded(flex: 1, child: SizedBox()),
-                                  Expanded(
-                                      flex: 12,
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 0.0,
-                                              top: 0.0,
-                                              right: 0.0,
-                                              bottom: 0.0),
-                                          child: Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child:
-                                                  _buildFrequencyUnitsField()))),
-                                ]))),
-                          ])))),
-              Expanded(
-                  flex: 1,
-                  child: AnimatedContainer(
-                      curve: Curves.easeInToLinear,
-                      duration: Duration(
-                        milliseconds: 10,
-                      ),
-                      alignment: Alignment.bottomCenter,
+              SingleChildScrollView(
+                  child: Form(
+                      key: _formKey,
                       child: Column(children: <Widget>[
-                        buttonWidget(context, "Zapisz zmiany", _verifyChanges),
-                      ])))
+                        Align(
+                          child: loadingIndicator(_load),
+                          alignment: FractionalOffset.center,
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 20.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.info_outline_rounded , size: 17.5),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left:5.0),
+                                      child: Text(
+                                          "Ogólne",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                    ),
+                                  ],
+                                ))),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 10.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: _buildName()),
+                        Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 30.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: _buildCategoryField())),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 20.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.access_time_outlined, size: 17.5),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left:5.0),
+                                      child: Text(
+                                          "Częstotliwość pobierania danych",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1.copyWith(fontWeight: FontWeight.normal)),
+                                    ),
+                                  ],
+                                ))),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 10.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: SizedBox(
+                                child: Row(children: <Widget>[
+                              Expanded(
+                                  flex: 8, child: _buildFrequencyValue()),
+                              Expanded(flex: 1, child: SizedBox()),
+                              Expanded(
+                                  flex: 12,
+                                  child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 0.0,
+                                          top: 0.0,
+                                          right: 0.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.bottomLeft,
+                                          child:
+                                              _buildFrequencyUnitsField()))),
+                            ]))),
+                      ]))),
             ]))));
   }
 

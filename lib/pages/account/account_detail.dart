@@ -134,7 +134,10 @@ class _AccountDetailState extends State<AccountDetail> {
             key: _scaffoldKey,
             appBar: AppBar(
               title: Text(widget.username),
-            ),
+                actions: [
+                  IconButton(
+                      icon: Icon(Icons.edit), onPressed: _navigateToEditAccount)
+                ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
                 parentWidgetType: "AccountDetail",
@@ -249,8 +252,6 @@ class _AccountDetailState extends State<AccountDetail> {
                                             ? account.telephone
                                             : "-",
                                         style: TextStyle(fontSize: 21.0)))),
-                            buttonWidget(
-                                context, "Edytuj konto", _navigateToEditAccount)
                           ])))));
   }
 

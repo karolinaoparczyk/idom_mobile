@@ -317,7 +317,11 @@ class _SensorDetailsState extends State<SensorDetails> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: Text(widget.sensor.name),
+                title: Text(widget.sensor.name),
+                actions: [
+                  IconButton(
+                      icon: Icon(Icons.edit), onPressed: _navigateToEditSensor)
+                ]
             ),
 
             drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "SensorDetails"),
@@ -532,9 +536,6 @@ class _SensorDetailsState extends State<SensorDetails> {
                                           fontWeight: FontWeight.bold)),
                                 )
                               : SizedBox()),
-                      buttonWidget(
-                          context, "Edytuj czujnik", _navigateToEditSensor),
-                      SizedBox(height: 50)
                     ])))));
   }
 

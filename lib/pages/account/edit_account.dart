@@ -155,71 +155,58 @@ class _EditAccountState extends State<EditAccount> {
                 storage: widget.storage, parentWidgetType: "EditAccount"),
             body: Container(
                 child: Column(children: <Widget>[
-              Expanded(
-                  flex: 4,
-                  child: SingleChildScrollView(
-                      child: Form(
-                          key: _formKey,
-                          child: Column(children: <Widget>[
-                            Align(
-                              child: loadingIndicator(_load),
-                              alignment: FractionalOffset.center,
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 20.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.info_outline_rounded,
-                                            size: 17.5),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5.0),
-                                          child: Text("Ogólne",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal)),
-                                        ),
-                                      ],
-                                    ))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 13.5,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildEmail())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildTelephone())),
-                          ])))),
-              Expanded(
-                  flex: 1,
-                  child: AnimatedContainer(
-                      curve: Curves.easeInToLinear,
-                      duration: Duration(
-                        milliseconds: 10,
-                      ),
-                      alignment: Alignment.bottomCenter,
+              SingleChildScrollView(
+                  child: Form(
+                      key: _formKey,
                       child: Column(children: <Widget>[
-                        buttonWidget(context, "Zapisz zmiany", _verifyChanges),
-                      ])))
+                        Align(
+                          child: loadingIndicator(_load),
+                          alignment: FractionalOffset.center,
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 20.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.info_outline_rounded,
+                                        size: 17.5),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 5.0),
+                                      child: Text("Ogólne",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(
+                                                  fontWeight:
+                                                      FontWeight.normal)),
+                                    ),
+                                  ],
+                                ))),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 13.5,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: _buildEmail())),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 10.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: _buildTelephone())),
+                      ]))),
             ]))));
   }
 
