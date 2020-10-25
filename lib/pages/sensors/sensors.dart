@@ -38,23 +38,25 @@ class Sensors extends StatefulWidget {
 
 class _SensorsState extends State<Sensors> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
+  final GlobalKey<State> _keyLoader = GlobalKey<State>();
+  final GlobalKey<State> _keyLoaderInvalidToken = GlobalKey<State>();
+  final TextEditingController _searchController = TextEditingController();
+  final Api api = Api();
   List<String> menuItems;
   List<Sensor> _sensorList;
   List<Sensor> _duplicateSensorList = List<Sensor>();
   bool zeroFetchedItems = false;
+  String _token;
+  bool _connectionEstablished;
+  bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
-
-    /// displays appropriate menu choices according to user data
-    menuItems = widget.currentUser.isStaff
-        ? menuChoicesSuperUser
-        : menuChoicesNormalUser;
-
     getSensors();
+    _searchController.addListener(() {
+      filterSearchResults(_searchController.text);
+    });
   }
 
   /// returns list of sensors
@@ -236,99 +238,91 @@ class _SensorsState extends State<Sensors> {
       },
     );
   }
+  _buildSearchField() {
+    return TextField(
+      controller: _searchController,
+      style: Theme
+          .of(context)
+          .appBarTheme
+          .textTheme
+          .headline6,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Wyszukaj...",
+        hintStyle: Theme
+            .of(context)
+            .appBarTheme
+            .textTheme
+            .headline6,
+        border: UnderlineInputBorder(borderSide: BorderSide(
+            color: IdomColors.additionalColor
+        )),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: IdomColors.additionalColor),
+        ),),
+    );
+  }
 
-  /// navigates according to menu choice
-  void _choiceAction(String choice) async {
-    if (choice == "Moje konto") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AccountDetail(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  account: widget.currentUser,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    }
-    if (choice == "Konta") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Accounts(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Wyloguj") {
-      _logOut();
-    }
+  Future<bool> _onBackButton() async {
+    var decision = await confirmActionDialog(
+        context, "Potwierdź", "Na pewno wyjść z aplikacji?", () {
+      Navigator.pop(context, true);
+    });
+    return Future.value(decision);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-
-      /// adds sensor adding button
-      floatingActionButton: Container(
-          child: FittedBox(
-              child: FloatingActionButton(
-            backgroundColor: IdomColors.mainFill,
-            foregroundColor: IdomColors.additionalColor,
-            key: Key("addSensorButton"),
-            onPressed: navigateToNewSensor,
-            child: Icon(Icons.add, size: 30),
-            //backgroundColor: Colors.green,
-          ))),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('IDOM Czujniki'),
-        actions: <Widget>[
-          /// menu dropdown button
-          PopupMenuButton(
-              key: Key("menuButton"),
-              offset: Offset(0, 100),
-              onSelected: _choiceAction,
-
-              /// menu choices from utils/menu_items.dart
-              itemBuilder: (BuildContext context) {
-                return menuItems.map((String choice) {
-                  return PopupMenuItem(
-                      key: Key(choice), value: choice, child: Text(choice));
-                }).toList();
-              })
-        ],
-      ),
-
-      /// builds sensor's list
-      body: Container(
-          child: Column(children: <Widget>[
-        Padding(
-            padding: EdgeInsets.only(
-                left: 10.0, top: 10.0, right: 10.0, bottom: 10.0),
-            child: TextField(
-              onChanged: (value) {
-                filterSearchResults(value);
+    return WillPopScope(
+      onWillPop: _onBackButton,
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          leading: _isSearching ? IconButton(
+              icon: Icon(Icons.arrow_back), onPressed: () {
+            setState(() {
+              _isSearching = false;
+              _searchController.text = "";
+            });
+          }) : IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {
+              _scaffoldKey.currentState.openDrawer();
+            },
+          ),
+          title: _isSearching ? _buildSearchField() : Text('Czujniki'),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.search, size: 25.0),
+              key: Key("searchButton"),
+              onPressed: () {
+                setState(() {
+                  _isSearching = true;
+                });
               },
-              autofocus: true,
-              decoration: InputDecoration(
-                  labelText: "Wyszukaj",
-                  labelStyle: Theme.of(context).textTheme.headline5,
-                  prefixIcon: Icon(Icons.search,
-                      color: Theme.of(context).iconTheme.color),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)))),
-            )),
-        listSensors()
-      ])),
+            ),
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+              icon: Icon(Icons.add, size: 30.0),
+              key: Key("addSensorButton"),
+              onPressed: navigateToNewSensor,
+            )
+          ],
+        ),
+        drawer: IdomDrawer(
+            storage: widget.storage,
+            parentWidgetType: "Sensors",
+            onGoBackAction: () async {
+              await getSensors();
+            }),
+
+        /// builds sensor's list
+        body: Container(
+            child: Column(children: <Widget>[
+              listSensors()
+            ])),
+      ),
     );
   }
 
@@ -359,30 +353,58 @@ class _SensorsState extends State<Sensors> {
           child: Scrollbar(
               child: RefreshIndicator(
                   onRefresh: _pullRefresh,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _sensorList.length,
-                    itemBuilder: (context, index) => Container(
-                        height: 80,
-                        padding: EdgeInsets.symmetric(horizontal:10),
-                        child: Card(
-                            child: ListTile(
-                                key: Key(_sensorList[index].name),
-                                title: Text(_sensorList[index].name,
-                                    style: TextStyle(fontSize: 20.0)),
-                                subtitle: sensorData(_sensorList[index]),
-                                onTap: () {
-                                  navigateToSensorDetails(_sensorList[index]);
-                                },
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _sensorList.length,
+                      itemBuilder: (context, index) =>
+                          Container(
+                              height: 80,
+                              child: Card(
+                                  child: ListTile(
+                                      key: Key(_sensorList[index].name),
+                                      title: Text(_sensorList[index].name,
+                                          style: TextStyle(fontSize: 21.0)),
+                                      subtitle: Text(
+                                          "ostatnia dana: " +
+                                              sensorData(_sensorList[index]),
+                                          style: TextStyle(
+                                              fontSize: 16.5,
+                                              color: IdomColors.textDark)),
+                                      onTap: () {
+                                        navigateToSensorDetails(
+                                            _sensorList[index]);
+                                      },
+                                      leading: Icon(
+                                        getSensorIcon(_sensorList[index]),
+                                        color: Theme
+                                            .of(context)
+                                            .iconTheme
+                                            .color,
+                                      ),
 
-                                /// delete sensor button
-                                trailing:
-                                    deleteButtonTrailing(_sensorList[index])))),
+                                      /// delete sensor button
+                                      trailing:
+                                      deleteButtonTrailing(
+                                          _sensorList[index])))),
+                    ),
                   ))));
     }
 
     /// shows progress indicator while fetching data
-    return Center(child: CircularProgressIndicator());
+    return Padding(
+      padding: const EdgeInsets.only(
+          left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+      child: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  IconData getSensorIcon(Sensor sensor) {
+    if (sensor.category == "temperature")
+      return Icons.thermostat_outlined;
+    else if (sensor.category == "humidity") return Icons.spa_rounded;
   }
 
   Future<void> _pullRefresh() async {

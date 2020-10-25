@@ -32,13 +32,22 @@ class _AccountsState extends State<Accounts> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
+  final TextEditingController _searchController = TextEditingController();
+  final Api api = Api();
   List<Account> _accountList;
   List<Account> _duplicateAccountList = List<Account>();
   bool zeroFetchedItems = false;
+  String _token;
+  String _isUserStaff;
+  bool _connectionEstablished;
+  bool _isSearching = false;
 
   void initState() {
     super.initState();
     getAccounts();
+    _searchController.addListener(() {
+      filterSearchResults(_searchController.text);
+    });
   }
 
   /// returns list of accounts
@@ -209,28 +218,32 @@ class _AccountsState extends State<Accounts> {
     }
   }
 
-  /// navigates according to menu choice
-  /// we are already on accounts page,
-  /// so if user choses accounts in menu, nothing happens
-  void _choiceAction(String choice) async {
-    if (choice == "Moje konto") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  AccountDetail(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      account: widget.currentUser,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Wyloguj") {
-      _logOut();
-    }
+  _buildSearchField() {
+    return TextField(
+      controller: _searchController,
+      onChanged: (value) {
+        filterSearchResults(value);
+      },
+      style: Theme
+          .of(context)
+          .appBarTheme
+          .textTheme
+          .headline6,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Wyszukaj...",
+        hintStyle: Theme
+            .of(context)
+            .appBarTheme
+            .textTheme
+            .headline6,
+        border: UnderlineInputBorder( borderSide: BorderSide(
+            color: IdomColors.additionalColor
+        )),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: IdomColors.additionalColor),
+        ),),
+    );
   }
 
   Future<bool> _onBackButton() async {
@@ -245,20 +258,29 @@ class _AccountsState extends State<Accounts> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: Text('IDOM Konta w systemie'),
+              leading: _isSearching ? IconButton(
+                  icon: Icon(Icons.arrow_back), onPressed: () {
+                setState(() {
+                  _isSearching = false;
+                  _searchController.text = "";
+                });
+              }) :  IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () {
+                  _scaffoldKey.currentState.openDrawer();
+                },
+              ),
+              title: _isSearching ? _buildSearchField() : Text('Wszystkie konta'),
               actions: <Widget>[
-                PopupMenuButton(
-                    key: Key("menuButton"),
-                    offset: Offset(0, 100),
-                    onSelected: _choiceAction,
-                    itemBuilder: (BuildContext context) {
-                      return menuChoicesSuperUser.map((String choice) {
-                        return PopupMenuItem(
-                            key: Key(choice),
-                            value: choice,
-                            child: Text(choice));
-                      }).toList();
-                    })
+                IconButton(
+                  icon: Icon(Icons.search, size: 25.0),
+                  key: Key("searchButton"),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = true;
+                    });
+                  },
+                ),
               ],
             ),
             drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "Accounts"),
@@ -266,27 +288,11 @@ class _AccountsState extends State<Accounts> {
             /// accounts' list builder
             body: Container(
                 child: Column(children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 5.0, top: 5.0, right: 5.0, bottom: 5.0),
-                      child: TextField(
-                        onChanged: (value) {
-                          filterSearchResults(value);
-                        },
-                        autofocus: true,
-                        decoration: InputDecoration(
-                            labelText: "Wyszukaj",
-                            hintText: "Wyszukaj",
-                            prefixIcon: Icon(Icons.search),
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(30.0)))),
-                      )),
-                  listSensors()
+                  listAccounts()
                 ]))));
   }
 
-  Widget listSensors() {
+  Widget listAccounts() {
     if (zeroFetchedItems) {
       return Padding(
           padding:
@@ -313,28 +319,38 @@ class _AccountsState extends State<Accounts> {
           child: Scrollbar(
               child: RefreshIndicator(
                   onRefresh: _pullRefresh,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _accountList.length,
-                    itemBuilder: (context, index) =>
-                        Container(
-                            height: 80,
-                            child: Card(child: ListTile(
-                                key: Key(_accountList[index].username),
-                                title: Text(_accountList[index].username,
-                                    style: TextStyle(fontSize: 20.0)),
-                                onTap: () {
-                                  navigateToAccountDetails(_accountList[index]);
-                                },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _accountList.length,
+                      itemBuilder: (context, index) =>
+                          Container(
+                              height: 80,
+                              child: Card(child: ListTile(
+                                  key: Key(_accountList[index].username),
+                                  title: Text(_accountList[index].username,
+                                      style: TextStyle(fontSize: 21.0)),
+                                  onTap: () {
+                                    navigateToAccountDetails(_accountList[index]);
+                                  },
+                                  leading: Icon(
+                                    Icons.person,
+                                    color: Theme.of(context).iconTheme.color,
+                                  ),
 
-                                /// delete sensor button
-                                trailing: deleteButtonTrailing(
-                                    _accountList[index])))),
+                                  /// delete sensor button
+                                  trailing: deleteButtonTrailing(
+                                      _accountList[index])))),
+                    ),
                   ))));
     }
 
     /// shows progress indicator while fetching data
-    return Center(child: CircularProgressIndicator());
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+      child: Center(child: CircularProgressIndicator()),
+    );
   }
 
   Future<void> _pullRefresh() async {
