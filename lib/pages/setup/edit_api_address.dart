@@ -6,6 +6,7 @@ import 'package:idom/api.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/widgets/text_color.dart';
 import 'package:path_provider/path_provider.dart';
@@ -134,6 +135,10 @@ class _EditApiAddressState extends State<EditApiAddress> {
             appBar: AppBar(
               title: Text('Adres serwera'),
             ),
+            drawer: _isUserLoggedIn == "true"
+                ? IdomDrawer(
+                storage: widget.storage, parentWidgetType: "EditApiAddress")
+                : null,
             body: Row(children: <Widget>[
               Expanded(flex: 1, child: SizedBox(width: 1)),
               Expanded(

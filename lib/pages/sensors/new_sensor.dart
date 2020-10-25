@@ -8,7 +8,7 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/widgets/text_color.dart';
 
@@ -253,30 +253,9 @@ class _NewSensorState extends State<NewSensor> {
             key: _scaffoldKey,
             appBar: AppBar(
               title: Text("Dodaj czujnik"),
-              actions: <Widget>[
-                /// builds menu dropdown button
-                PopupMenuButton(
-                    key: Key("menuButton"),
-                    offset: Offset(0, 100),
-                    onSelected: _choiceAction,
-                    itemBuilder: (BuildContext context) {
-                      return widget.currentUser.isStaff
-                          ? menuChoicesSuperUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList()
-                          : menuChoicesNormalUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList();
-                    })
-              ],
             ),
 
+            drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "NewSensor"),
             /// builds form with sensor properties
             body: Container(
                 child: Column(children: <Widget>[

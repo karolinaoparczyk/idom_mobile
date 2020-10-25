@@ -5,8 +5,9 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
-import 'package:idom/utils/menu_items.dart';
-import 'package:idom/widgets/dialog.dart';
+import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/secure_storage.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
@@ -260,6 +261,7 @@ class _AccountsState extends State<Accounts> {
                     })
               ],
             ),
+            drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "Accounts"),
 
             /// accounts' list builder
             body: Container(

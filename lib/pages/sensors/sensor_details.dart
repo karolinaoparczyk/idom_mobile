@@ -9,7 +9,7 @@ import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/widgets/text_color.dart';
 
@@ -299,40 +299,6 @@ class _SensorDetailsState extends State<SensorDetails> {
     }
   }
 
-  /// navigates according to menu choice
-  void _choiceAction(String choice) async {
-    if (choice == "Moje konto") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AccountDetail(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  account: widget.currentUser,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Konta") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Accounts(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Wyloguj") {
-      _logOut();
-    }
-  }
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -357,31 +323,9 @@ class _SensorDetailsState extends State<SensorDetails> {
             key: _scaffoldKey,
             appBar: AppBar(
               title: Text(widget.sensor.name),
-              actions: <Widget>[
-                /// menu dropdown button
-                PopupMenuButton(
-                    key: Key("menuButton"),
-                    offset: Offset(0, 100),
-                    onSelected: _choiceAction,
-                    itemBuilder: (BuildContext context) {
-                      /// menu choices from utils/menu_items.dart
-                      return widget.currentUser.isStaff
-                          ? menuChoicesSuperUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList()
-                          : menuChoicesNormalUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList();
-                    })
-              ],
             ),
 
+            drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "SensorDetails"),
             /// builds form with editable and non-editable sensor properties
             body: SingleChildScrollView(
                 child: Form(

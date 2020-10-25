@@ -11,6 +11,7 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/widgets/text_color.dart';
 
@@ -124,43 +125,6 @@ class _EditSensorState extends State<EditSensor> {
       }
     }
   }
-
-  /// navigates according to menu choice
-  void _choiceAction(String choice) async {
-    if (choice == "Moje konto") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  AccountDetail(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      account: widget.currentUser,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Konta") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  Accounts(
-                      currentLoggedInToken: widget.currentLoggedInToken,
-                      currentUser: widget.currentUser,
-                      api: widget.api,
-                      onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Wyloguj") {
-      _logOut();
-    }
-  }
-
   /// builds sensor name form field
   Widget _buildName() {
     return TextFormField(
@@ -281,30 +245,8 @@ class _EditSensorState extends State<EditSensor> {
             key: _scaffoldKey,
             appBar: AppBar(
               title: Text(widget.sensor.name),
-              actions: <Widget>[
-
-                /// builds menu dropdown button
-                PopupMenuButton(
-                    key: Key("menuButton"),
-                    offset: Offset(0, 100),
-                    onSelected: _choiceAction,
-                    itemBuilder: (BuildContext context) {
-                      return widget.currentUser.isStaff
-                          ? menuChoicesSuperUser.map((String choice) {
-                        return PopupMenuItem(
-                            key: Key(choice),
-                            value: choice,
-                            child: Text(choice));
-                      }).toList()
-                          : menuChoicesNormalUser.map((String choice) {
-                        return PopupMenuItem(
-                            key: Key(choice),
-                            value: choice,
-                            child: Text(choice));
-                      }).toList();
-                    })
-              ],
             ),
+            drawer: IdomDrawer(storage: widget.storage, parentWidgetType: "EditSensor"),
 
             /// builds form with sensor properties
             body: Container(

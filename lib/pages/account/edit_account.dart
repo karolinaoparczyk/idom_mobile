@@ -5,7 +5,7 @@ import 'package:idom/models.dart';
 import 'package:idom/utils/menu_items.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
+import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/widgets/text_color.dart';
 
@@ -184,30 +184,9 @@ class _EditAccountState extends State<EditAccount> {
             key: _scaffoldKey,
             appBar: AppBar(
               title: Text(widget.account.username),
-              actions: <Widget>[
-                /// menu dropdown button
-                PopupMenuButton(
-                    key: Key("menuButton"),
-                    offset: Offset(0, 100),
-                    onSelected: _choiceAction,
-                    itemBuilder: (BuildContext context) {
-                      /// menu choices from utils/menu_items.dart
-                      return widget.account.isStaff
-                          ? menuChoicesSuperUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList()
-                          : menuChoicesNormalUser.map((String choice) {
-                              return PopupMenuItem(
-                                  key: Key(choice),
-                                  value: choice,
-                                  child: Text(choice));
-                            }).toList();
-                    })
-              ],
             ),
+            drawer: IdomDrawer(
+                storage: widget.storage, parentWidgetType: "EditAccount"),
             body: Container(
                 child: Column(children: <Widget>[
               Expanded(
