@@ -138,7 +138,10 @@ class _EditApiAddressState extends State<EditApiAddress> {
         child: Scaffold(
             appBar: AppBar(
               title: Text('Adres serwera'),
-            ),
+                actions: [
+                  IconButton(
+                      icon: Icon(Icons.save), onPressed: _verifyChanges)
+                ]),
             drawer: _isUserLoggedIn == "true"
                 ? IdomDrawer(
                 storage: widget.storage, parentWidgetType: "EditApiAddress")

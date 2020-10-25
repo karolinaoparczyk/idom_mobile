@@ -7,7 +7,6 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
-import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
@@ -314,5 +313,8 @@ class _AccountDetailState extends State<AccountDetail> {
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
+    setState(() {
+      _load = false;
+    });
   }
 }

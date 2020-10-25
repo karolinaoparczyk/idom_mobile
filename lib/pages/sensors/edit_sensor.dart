@@ -9,7 +9,6 @@ import 'package:idom/enums/categories.dart';
 import 'package:idom/enums/frequency_units.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
@@ -134,6 +133,7 @@ class _EditSensorState extends State<EditSensor> {
         key: Key('name'),
         style: TextStyle(fontSize: 21.0),
         autofocus: true,
+        maxLength: 30,
         controller: _nameController,
         validator: SensorNameFieldValidator.validate);
   }

@@ -111,15 +111,13 @@ class _IdomDrawerState extends State<IdomDrawer> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Drawer(
-        child: Container(
-          color: IdomColors.mainBackground,
+        child: Container(decoration: BoxDecoration(
+            gradient: RadialGradient(radius: 1.4, center: Alignment(0.1, -0.1), colors: [
+              IdomColors.additionalColor,
+              IdomColors.lightBlack
+            ])),
           child: ListView(children: [
             DrawerHeader(
-                decoration: BoxDecoration(
-                    gradient: RadialGradient(radius: 0.99, colors: [
-                  IdomColors.additionalColor,
-                  IdomColors.lightBlack
-                ])),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [

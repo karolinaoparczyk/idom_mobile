@@ -11,11 +11,18 @@ class LogotypeWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'IDOM',
-                  style: TextStyle(fontSize: 100, color: IdomColors.textDark),
-                  textAlign: TextAlign.center,
-                ),
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(Icons.roofing_rounded,
+                      size: 50.0, color: IdomColors.mainFill),
+                  Text(
+                    'IDOM',
+                    style: TextStyle(
+                        fontSize: 100.0, color: IdomColors.textDark),
+                    textAlign: TextAlign.center,
+                  ),
+                  Icon(Icons.roofing_rounded,
+                      size: 50.0, color: Colors.transparent),
+                ]),
                 Text(
                   'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU',
                   style: TextStyle(

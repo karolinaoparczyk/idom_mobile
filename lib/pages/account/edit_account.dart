@@ -6,7 +6,6 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
@@ -150,7 +149,10 @@ class _EditAccountState extends State<EditAccount> {
             key: _scaffoldKey,
             appBar: AppBar(
               title: Text(widget.account.username),
-            ),
+                actions: [
+                  IconButton(
+                      icon: Icon(Icons.save), onPressed: _verifyChanges)
+                ]),
             drawer: IdomDrawer(
                 storage: widget.storage, parentWidgetType: "EditAccount"),
             body: Container(

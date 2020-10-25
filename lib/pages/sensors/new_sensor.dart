@@ -107,6 +107,7 @@ class _NewSensorState extends State<NewSensor> {
         ),
         autofocus: true,
         key: Key('name'),
+        maxLength: 30,
         style: TextStyle(fontSize: 17.0),
         controller: _nameController,
         validator: SensorNameFieldValidator.validate);

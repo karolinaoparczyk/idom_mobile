@@ -146,87 +146,108 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Zarejestruj się'),
-      ),
-      body: Container(
-          child: Column(children: <Widget>[
-        Expanded(
-            flex: 5,
-            child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Form(
-                    key: _formKey,
-                    child: FocusScope(
-                        node: _node,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Align(
-                              child: loadingIndicator(_load),
-                              alignment: FractionalOffset.center,
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 13.5,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildUsername())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildEmail())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildTelephone())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildPassword())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 10),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _buildConfirmPassword())),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                              child: AnimatedCrossFade(
-                                crossFadeState: fieldsValidationMessage != null
-                                    ? CrossFadeState.showFirst
-                                    : CrossFadeState.showSecond,
-                                duration: Duration(milliseconds: 300),
-                                firstChild: fieldsValidationMessage != null ? Text(fieldsValidationMessage) : SizedBox(),
-                                secondChild: SizedBox(),
-                              ),
-                            ),
-                            buttonWidget(context, "Zarejestruj się", signUp),
-                          ],
-                        ))))),
-      ])),
-    );
+        appBar: AppBar(
+          title: Text('Zarejestruj się'),
+        ),
+        body: Container(
+            child: Column(
+          children: <Widget>[
+            Expanded(
+                flex: 4,
+                child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Form(
+                        key: _formKey,
+                        child: FocusScope(
+                            node: _node,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Align(
+                                    child: loadingIndicator(_load),
+                                    alignment: FractionalOffset.center,
+                                  ),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 13.5,
+                                          right: 30.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildUsername())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildEmail())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildTelephone())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildPassword())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 10),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: _buildConfirmPassword())),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 30.0),
+                                    child: AnimatedCrossFade(
+                                      crossFadeState:
+                                          fieldsValidationMessage != null
+                                              ? CrossFadeState.showFirst
+                                              : CrossFadeState.showSecond,
+                                      duration: Duration(milliseconds: 300),
+                                      firstChild: fieldsValidationMessage !=
+                                              null
+                                          ? Text(fieldsValidationMessage,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal))
+                                          : SizedBox(),
+                                      secondChild: SizedBox(),
+                                    ),
+                                  ),
+                                ]))))),
+            Expanded(
+                flex: 1,
+                child: AnimatedContainer(
+                    curve: Curves.easeInToLinear,
+                    duration: Duration(
+                      milliseconds: 10,
+                    ),
+                    alignment: Alignment.bottomCenter,
+                    child: Center(
+                        child:
+                            buttonWidget(context, "Zarejestruj się", signUp))))
+          ],
+        )));
   }
 
   /// signs user up after form validation
