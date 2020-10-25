@@ -41,7 +41,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                 style: Theme.of(context)
                     .textTheme
                     .headline5
-                    .copyWith(fontSize: 20.0)),
+                    .copyWith(fontSize: 21.0)),
           ),
           Divider(),
           SizedBox(
@@ -51,7 +51,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
               itemCount: categories.length,
               itemBuilder: (BuildContext context, int index) {
                 return RadioListTile(
-                  title: Text(categories[index]['text']),
+                  title: Text(categories[index]['text'], style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.normal, fontSize: 21.0)),
                   value: categories[index],
                   groupValue: _selectedCategory,
                   onChanged: (value) {

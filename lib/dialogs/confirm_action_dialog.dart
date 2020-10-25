@@ -11,12 +11,12 @@ Future<bool> confirmActionDialog(BuildContext context, String titleText, String 
             // usually buttons at the bottom of the dialog
             FlatButton(
               key: Key("yesButton"),
-              child: Text("Tak", style: Theme.of(context).textTheme.headline5.copyWith(fontSize: 21.0)),
+              child: Text("Tak", style: Theme.of(context).textTheme.headline5),
               onPressed: onConfirm,
             ),
             FlatButton(
               key: Key("noButton"),
-              child: Text("Nie", style: Theme.of(context).textTheme.headline5.copyWith(fontSize: 21.0)),
+              child: Text("Nie", style: Theme.of(context).textTheme.headline5),
               onPressed: () async {
                 Navigator.of(context).pop(false);
               },

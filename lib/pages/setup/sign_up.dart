@@ -301,9 +301,11 @@ class _SignUpState extends State<SignUp> {
         if (telephoneInvalid) errorText += " Podaj poprawny nr telefonu.";
 
         if (errorText != null) {
+          FocusScope.of(context).unfocus();
           setState(() {
             fieldsValidationMessage = errorText;
           });
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
         }
 
         setState(() {

@@ -114,82 +114,63 @@ class _AccountsState extends State<Accounts> {
   }
 
   /// deactivates user after confirmation
-  _deactivateAccount(Account account) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text("Usuwanie konta"),
-          content:
-          Text("Czy na pewno chcesz usunąć konto ${account.username}?"),
-          actions: <Widget>[
-            FlatButton(
-              key: Key("yesButton"),
-              child: Text("Tak"),
-              onPressed: () async {
-                try {
-                  Navigator.of(dialogContext).pop(true);
-                  displayProgressDialog(
-                      context: _scaffoldKey.currentContext,
-                      key: _keyLoader,
-                      text: "Trwa usuwanie konta...");
-                  var statusCode = await api.deactivateAccount(
-                      account.id, _token);
-                  Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                      .pop();
+  _deactivateAccount(Account account) async {
+    await confirmActionDialog(
+      context,
+      "Potwierdź",
+      "Czy na pewno chcesz usunąć konto ${account.username}?",
+      () async {
+        try {
+          Navigator.of(context).pop(true);
+          displayProgressDialog(
+              context: _scaffoldKey.currentContext,
+              key: _keyLoader,
+              text: "Trwa usuwanie konta...");
+          var statusCode = await api.deactivateAccount(account.id, _token);
+          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
 
-                  if (statusCode == 200) {
-                    setState(() {
-                      /// refreshes accounts' list
-                      getAccounts();
-                    });
-                  } else if (statusCode == 401) {
-                    displayProgressDialog(
-                        context: _scaffoldKey.currentContext,
-                        key: _keyLoaderInvalidToken,
-                        text:
-                        "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
-                    await new Future.delayed(const Duration(seconds: 3));
-                    Navigator.of(_keyLoaderInvalidToken.currentContext,
-                        rootNavigator: true)
-                        .pop();
-                    await widget.storage.resetUserData();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  } else if (statusCode == null) {
-                    final snackBar =
-                    new SnackBar(content: new Text("Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
-                  } else {
-                    final snackBar =
-                    new SnackBar(content: new Text("Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."));
-                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
-                  }
-                } catch (e) {
-                  print(e.toString());
-                  if (e.toString().contains("TimeoutException")) {
-                    final snackBar =
-                    new SnackBar(content: new Text("Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
-                  }
-                  if (e
-                      .toString()
-                      .contains("SocketException")) {
-                    final snackBar =
-                    new SnackBar(content: new Text("Błąd usuwania konta. Adres serwera nieprawidłowy."));
-                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
-                  }
-                }
-              },
-            ),
-            FlatButton(
-              key: Key("noButton"),
-              child: Text("Nie"),
-              onPressed: () async {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
-        );
+          if (statusCode == 200) {
+            setState(() {
+              /// refreshes accounts' list
+              getAccounts();
+            });
+          } else if (statusCode == 401) {
+            displayProgressDialog(
+                context: _scaffoldKey.currentContext,
+                key: _keyLoaderInvalidToken,
+                text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            await new Future.delayed(const Duration(seconds: 3));
+            Navigator.of(_keyLoaderInvalidToken.currentContext,
+                    rootNavigator: true)
+                .pop();
+            await widget.storage.resetUserData();
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          } else if (statusCode == null) {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          } else {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."));
+            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          }
+        } catch (e) {
+          print(e.toString());
+          if (e.toString().contains("TimeoutException")) {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          }
+          if (e.toString().contains("SocketException")) {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Błąd usuwania konta. Adres serwera nieprawidłowy."));
+            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          }
+        }
       },
     );
   }

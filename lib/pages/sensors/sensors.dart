@@ -156,87 +156,68 @@ class _SensorsState extends State<Sensors> {
 
   /// deactivates sensor after confirmation
   _deactivateSensor(Sensor sensor) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: Text("Usuwanie czujnika"),
-          content: Text("Czy na pewno chcesz usunąć czujnik ${sensor.name}?"),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            FlatButton(
-              key: Key("yesButton"),
-              child: Text("Tak"),
-              onPressed: () async {
-                try {
-                  Navigator.of(context).pop(true);
-                  displayProgressDialog(
-                      context: _scaffoldKey.currentContext,
-                      key: _keyLoader,
-                      text: "Trwa usuwanie czujnika...");
+    await confirmActionDialog(
+      context,
+      "Potwierdź",
+      "Czy na pewno chcesz usunąć czujnik ${sensor.name}?",
+          () async {
+            try {
+              Navigator.of(context).pop(true);
+              displayProgressDialog(
+                  context: _scaffoldKey.currentContext,
+                  key: _keyLoader,
+                  text: "Trwa usuwanie czujnika...");
 
-                  int statusCode =
-                  await api.deactivateSensor(sensor.id, _token);
-                  Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                      .pop();
-                  if (statusCode == 200) {
-                    setState(() {
-                      /// refreshes sensors' list
-                      getSensors();
-                    });
-                  } else if (statusCode == 401) {
-                    displayProgressDialog(
-                        context: _scaffoldKey.currentContext,
-                        key: _keyLoaderInvalidToken,
-                        text:
-                        "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
-                    await new Future.delayed(const Duration(seconds: 3));
-                    Navigator.of(_keyLoaderInvalidToken.currentContext,
-                        rootNavigator: true)
-                        .pop();
-                    await widget.storage.resetUserData();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  } else if (statusCode == null) {
-                    final snackBar = new SnackBar(
-                        content: new Text(
-                            "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
-                  } else {
-                    final snackBar = new SnackBar(
-                        content: new Text(
-                            "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
-                  }
-                } catch (e) {
-                  Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                      .pop();
+              int statusCode =
+              await api.deactivateSensor(sensor.id, _token);
+              Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+                  .pop();
+              if (statusCode == 200) {
+                setState(() {
+                  /// refreshes sensors' list
+                  getSensors();
+                });
+              } else if (statusCode == 401) {
+                displayProgressDialog(
+                    context: _scaffoldKey.currentContext,
+                    key: _keyLoaderInvalidToken,
+                    text:
+                    "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+                await new Future.delayed(const Duration(seconds: 3));
+                Navigator.of(_keyLoaderInvalidToken.currentContext,
+                    rootNavigator: true)
+                    .pop();
+                await widget.storage.resetUserData();
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              } else if (statusCode == null) {
+                final snackBar = new SnackBar(
+                    content: new Text(
+                        "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                ScaffoldMessenger.of(context).showSnackBar((snackBar));
+              } else {
+                final snackBar = new SnackBar(
+                    content: new Text(
+                        "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+                ScaffoldMessenger.of(context).showSnackBar((snackBar));
+              }
+            } catch (e) {
+              Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+                  .pop();
 
-                  print(e.toString());
-                  if (e.toString().contains("TimeoutException")) {
-                    final snackBar = new SnackBar(
-                        content: new Text(
-                            "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
-                  }
-                  if (e.toString().contains("SocketException")) {
-                    final snackBar = new SnackBar(
-                        content: new Text(
-                            "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-                    ScaffoldMessenger.of(context).showSnackBar((snackBar));
-                  }
-                }
-              },
-            ),
-            FlatButton(
-              key: Key("noButton"),
-              child: Text("Nie"),
-              onPressed: () async {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
-        );
+              print(e.toString());
+              if (e.toString().contains("TimeoutException")) {
+                final snackBar = new SnackBar(
+                    content: new Text(
+                        "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                ScaffoldMessenger.of(context).showSnackBar((snackBar));
+              }
+              if (e.toString().contains("SocketException")) {
+                final snackBar = new SnackBar(
+                    content: new Text(
+                        "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+                ScaffoldMessenger.of(context).showSnackBar((snackBar));
+              }
+            }
       },
     );
   }

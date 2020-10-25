@@ -45,7 +45,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                     .of(context)
                     .textTheme
                     .headline5
-                    .copyWith(fontSize: 20.0)),
+                    .copyWith(fontSize: 21.0)),
           ),
           Divider(),
           SizedBox(
@@ -55,7 +55,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
               itemCount: frequencyUnitsList.length,
               itemBuilder: (BuildContext context, int index) {
                 return RadioListTile(
-                  title: Text(frequencyUnitsList[index]['text']),
+                  title: Text(frequencyUnitsList[index]['text'], style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.normal, fontSize: 21.0)),
                   value: frequencyUnitsList[index],
                   groupValue: _selectedFrequencyUnits,
                   onChanged: (value) {

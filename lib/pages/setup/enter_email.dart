@@ -75,8 +75,13 @@ class _EnterEmailState extends State<EnterEmail> {
                                         right: 30.0,
                                         bottom: 0.0),
                                     child: Text(
-                                        "Wprowadź adres e-mail połączony z Twoim kontem",
-                                        style: TextStyle(fontSize: 13.5))),
+                                        "Podaj adres e-mail połączony z Twoim kontem",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                fontWeight:
+                                                    FontWeight.normal))),
                                 Padding(
                                     padding: EdgeInsets.only(
                                         left: 30.0,
@@ -118,10 +123,14 @@ class _EnterEmailState extends State<EnterEmail> {
           _load = false;
         });
         if (res == 200) {
-          Navigator.pop(context, true);
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Link do resetu hasła zosta wysłany na podany adres e-mail."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
         } else if (res == 400) {
-          final snackBar =
-          new SnackBar(content: new Text("Błąd. Konto dla podanego adresu e-mail nie istnieje."));
+          final snackBar = new SnackBar(
+              content:
+                  new Text("Konto dla podanego adresu e-mail nie istnieje."));
           ScaffoldMessenger.of(context).showSnackBar((snackBar));
         }
       }

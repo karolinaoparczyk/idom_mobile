@@ -47,7 +47,7 @@ class _ProtocolDialogState extends State<ProtocolDialog> {
                   itemCount: protocols.length,
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
-                      title: Text(protocols[index], style: TextStyle(fontSize: 21.0)),
+                      title: Text(protocols[index], style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.normal, fontSize: 21.0)),
                       value: protocols[index],
                       groupValue: _selectedProtocol,
                       onChanged: (value) {
