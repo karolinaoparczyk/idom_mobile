@@ -2,32 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
-import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/enter_email.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/button.dart';
 
-import '../../models.dart';
 import 'edit_api_address.dart';
 
 /// allows signing in or signing up
 class Front extends StatefulWidget {
-  Front(
-      {this.api,
-      this.onSignedIn,
-      this.onSignedOut,
-      this.apiAddressAdded,
-      this.apiAddress,
-      this.setApiAddress});
+  Front({@required this.storage});
 
-  Function(String, Account, Api) onSignedIn;
-  VoidCallback onSignedOut;
-  Api api;
-  var apiAddressAdded;
-  String apiAddress;
-  Function setApiAddress;
+  final SecureStorage storage;
 
   @override
   _FrontState createState() => _FrontState();
@@ -35,9 +23,34 @@ class Front extends StatefulWidget {
 
 class _FrontState extends State<Front> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final Api api = Api();
+  bool apiAddressSet;
 
   void initState() {
+    checkApiAddressSet();
     super.initState();
+  }
+
+  Future<void> checkApiAddressSet() async {
+    var _apiServerAddress = await widget.storage.getApiServerAddress();
+    if (_apiServerAddress != null) apiAddressSet = true;
+    setState(() {});
+  }
+
+  setApiAddressEmptyMessage() {
+    if (apiAddressSet != null && apiAddressSet) {
+      return SizedBox();
+    } else {
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.warning_amber_outlined,
+                size: 16, color: IdomColors.error),
+            Text(' Adres serwera nie został ustawiony',
+                style: TextStyle(fontSize: 16, color: IdomColors.error))
+          ]);
+    }
   }
 
   @override
@@ -123,111 +136,60 @@ class _FrontState extends State<Front> {
                 )))));
   }
 
-  apiAddressWarning() {
-    if (widget.apiAddressAdded == null) {
-      return SizedBox();
-    } else if (!widget.apiAddressAdded) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-        Icon(Icons.warning_amber_outlined, size: 16, color: IdomColors.error),
-        Text(' Adres serwera nie został ustawiony',
-            style: TextStyle(fontSize: 16, color: IdomColors.error))
-      ]);
-    }
-    return Text("");
-  }
-
-  /// navigates to sending reset password request page
+  /// navigates to editing api server address
   navigateToEditApiAddress() async {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EditApiAddress(
-                api: widget.api,
-                onSignedOut: widget.onSignedOut,
-                apiAddress: widget.apiAddress),
+            builder: (context) => EditApiAddress(storage: widget.storage),
             fullscreenDialog: true));
 
-    /// displays success message when the email is successfully sent
-    if (result != null) {
-      if (result['dataSaved'] == true) {
-        var apiString = await widget.setApiAddress();
+    /// displays success message when server address is set
+    if (result == true) {
+      final snackBar =
+          new SnackBar(content: new Text("Adres serwera został zapisany."));
 
-        setState(() {
-          if (apiString != null) {
-            widget.apiAddress = apiString;
-          }
-          widget.apiAddressAdded = true;
-        });
-        final snackBar =
-            new SnackBar(content: new Text("Adres serwera został zapisany."));
-
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-      setState(() {
-        widget.onSignedOut = result['onSignedOut'];
-      });
+      ScaffoldMessenger.of(context).showSnackBar((snackBar));
     }
   }
 
   /// navigates to sending reset password request page
   navigateToEnterEmail() async {
-    if (widget.apiAddressAdded) {
+    if (apiAddressSet != null && apiAddressSet) {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  EnterEmail(api: widget.api, onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
+              builder: (context) => EnterEmail(), fullscreenDialog: true));
 
       /// displays success message when the email is successfully sent
-      if (result != null) {
-        if (result['dataSaved'] == true) {
-          final snackBar = new SnackBar(
-              content: new Text("Email został wysłany. Sprawdź pocztę."));
+      if (result == true) {
+        final snackBar = new SnackBar(
+            content: new Text("Email został wysłany. Sprawdź pocztę."));
 
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
-        }
-        setState(() {
-          widget.onSignedOut = result['onSignedOut'];
-        });
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
 
   /// navigates to signing in page
   void navigateToSignIn() async {
-    if (widget.apiAddressAdded) {
-      var result = await Navigator.push(
+    if (apiAddressSet != null && apiAddressSet) {
+      Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => SignIn(
-                  api: widget.api,
-                  onSignedIn: widget.onSignedIn,
-                  onSignedOut: widget.onSignedOut),
+              builder: (context) => SignIn(storage: widget.storage),
               fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
     }
   }
 
   /// navigates to signing up page
   void navigateToSignUp() async {
-    if (widget.apiAddressAdded) {
-      var result = await Navigator.push(
+    if (apiAddressSet != null && apiAddressSet) {
+      Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => SignUp(
-                  api: widget.api,
-                  onSignedIn: widget.onSignedIn,
-                  onSignedOut: widget.onSignedOut),
+              builder: (context) => SignUp(storage: widget.storage),
               fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
     }
   }
 }

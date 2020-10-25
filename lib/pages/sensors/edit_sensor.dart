@@ -7,7 +7,6 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/sensor_category_dialog.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:idom/enums/frequency_units.dart';
-import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
@@ -18,18 +17,10 @@ import '../../models.dart';
 
 /// edits sensor
 class EditSensor extends StatefulWidget {
-  EditSensor({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentUser,
-    @required this.sensor,
-    @required this.api,
-    @required this.onSignedOut})
-      : super(key: key);
-  final String currentLoggedInToken;
-  final Account currentUser;
+  EditSensor({@required this.storage, @required this.sensor});
+
+  final SecureStorage storage;
   final Sensor sensor;
-  Api api;
-  VoidCallback onSignedOut;
 
   @override
   _EditSensorState createState() => new _EditSensorState();
@@ -48,6 +39,7 @@ class _EditSensorState extends State<EditSensor> {
   String frequencyUnitsValue;
   final Api api = Api();
   bool _load;
+  String _token;
 
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
@@ -61,6 +53,7 @@ class _EditSensorState extends State<EditSensor> {
   void initState() {
     super.initState();
     _load = false;
+    getToken();
 
     /// seting current sensor name
     _nameController = TextEditingController(text: widget.sensor.name);
@@ -93,18 +86,20 @@ class _EditSensorState extends State<EditSensor> {
           context: _scaffoldKey.currentContext,
           key: _keyLoader,
           text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      var statusCode = await api.logOut(_token);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        final snackBar =
-        new SnackBar(content: new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
@@ -113,13 +108,15 @@ class _EditSensorState extends State<EditSensor> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -228,11 +225,7 @@ class _EditSensorState extends State<EditSensor> {
   }
 
   Future<bool> _onBackButton() async {
-    Map<String, dynamic> result = {
-      'onSignedOut': widget.onSignedOut,
-      'dataSaved': false
-    };
-    Navigator.of(context).pop(result);
+    Navigator.pop(context, false);
     return true;
   }
 
@@ -365,14 +358,10 @@ class _EditSensorState extends State<EditSensor> {
     });
     try {
       Navigator.of(context).pop(true);
-      var res = await widget.api.editSensor(widget.sensor.id, name, category,
-          frequencyValue, widget.currentLoggedInToken);
+      var res = await api.editSensor(
+          widget.sensor.id, name, category, frequencyValue, _token);
       if (res['statusCode'] == "200") {
-        Map<String, dynamic> result = {
-          'onSignedOut': widget.onSignedOut,
-          'dataSaved': true
-        };
-        Navigator.of(context).pop(result);
+        Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
@@ -381,12 +370,12 @@ class _EditSensorState extends State<EditSensor> {
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
           .contains("Sensor with provided name already exists")) {
-        final snackBar =
-        new SnackBar(content: new Text("Czujnik o podanej nazwie już istnieje."));
+        final snackBar = new SnackBar(
+            content: new Text("Czujnik o podanej nazwie już istnieje."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
         setState(() {
           _load = false;
@@ -398,13 +387,15 @@ class _EditSensorState extends State<EditSensor> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd edytowania czujnika. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd edytowania czujnika. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -477,7 +468,7 @@ class _EditSensorState extends State<EditSensor> {
             changedFrequencyValue, frequencyInSeconds);
       } else {
         final snackBar =
-        new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }

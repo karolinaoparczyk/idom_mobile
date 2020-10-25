@@ -11,18 +11,10 @@ import 'package:idom/widgets/idom_drawer.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
-  Accounts({Key key,
-    @required this.currentLoggedInToken,
-    @required this.currentUser,
-    @required this.api,
-    @required this.onSignedOut,
-    this.testAccounts})
-      : super(key: key);
-  final String currentLoggedInToken;
-  final Account currentUser;
-  Api api;
+  Accounts({@required this.storage,
+    this.testAccounts});
+  final SecureStorage storage;
   final List<Account> testAccounts;
-  VoidCallback onSignedOut;
 
   @override
   _AccountsState createState() => _AccountsState();
@@ -44,20 +36,35 @@ class _AccountsState extends State<Accounts> {
 
   void initState() {
     super.initState();
+    checkIfUserIsStaff();
     getAccounts();
     _searchController.addListener(() {
       filterSearchResults(_searchController.text);
     });
   }
 
+  Future<void> getToken() async {
+    _token = await widget.storage.getToken();
+  }
+
+  Future<void> checkIfUserIsStaff() async {
+    _isUserStaff = await widget.storage.getIsUserStaff();
+  }
+
   /// returns list of accounts
   Future<List<Account>> getAccounts() async {
+    setState(() {
+      _isSearching = false;
+      _searchController.text = "";
+    });
+
     /// if widget is being tested
     if (widget.testAccounts != null) {
       return widget.testAccounts;
     }
+    await getToken();
     try {
-      var res = await widget.api.getAccounts(widget.currentLoggedInToken);
+      var res = await api.getAccounts(_token);
 
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);
@@ -78,8 +85,13 @@ class _AccountsState extends State<Accounts> {
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+      if (res == null){
+        _connectionEstablished = false;
+        setState(() {});
+        return null;
       }
     } catch (e) {
       print(e.toString());
@@ -121,8 +133,8 @@ class _AccountsState extends State<Accounts> {
                       context: _scaffoldKey.currentContext,
                       key: _keyLoader,
                       text: "Trwa usuwanie konta...");
-                  var statusCode = await widget.api.deactivateAccount(
-                      account.id, widget.currentLoggedInToken);
+                  var statusCode = await api.deactivateAccount(
+                      account.id, _token);
                   Navigator.of(_keyLoader.currentContext, rootNavigator: true)
                       .pop();
 
@@ -141,7 +153,7 @@ class _AccountsState extends State<Accounts> {
                     Navigator.of(_keyLoaderInvalidToken.currentContext,
                         rootNavigator: true)
                         .pop();
-                    widget.onSignedOut();
+                    await widget.storage.resetUserData();
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   } else if (statusCode == null) {
                     final snackBar =
@@ -189,10 +201,10 @@ class _AccountsState extends State<Accounts> {
           context: _scaffoldKey.currentContext,
           key: _keyLoader,
           text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      var statusCode = await api.logOut(_token);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
         final snackBar =
@@ -247,7 +259,7 @@ class _AccountsState extends State<Accounts> {
   }
 
   Future<bool> _onBackButton() async {
-    Navigator.of(context).pop(widget.onSignedOut);
+    Navigator.pop(context);
     return true;
   }
 
@@ -303,7 +315,17 @@ class _AccountsState extends State<Accounts> {
                   "Brak kont w systemie \nlub błąd połączenia z serwerem.",
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
-    } else if (!zeroFetchedItems &&
+    } if (_connectionEstablished != null && _connectionEstablished == false && _accountList == null) {
+      return Padding(
+          padding:
+          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text("Błąd połączenia z serwerem.",
+                  style: TextStyle(fontSize: 16.5),
+                  textAlign: TextAlign.center)));
+    }
+    else if (!zeroFetchedItems &&
         _accountList != null &&
         _accountList.length == 0) {
       return Padding(
@@ -385,23 +407,16 @@ class _AccountsState extends State<Accounts> {
   }
 
   navigateToAccountDetails(Account account) async {
-    var result = await Navigator.of(context).push(MaterialPageRoute(
+   await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
-            AccountDetail(
-                currentLoggedInToken: widget.currentLoggedInToken,
-                account: account,
-                currentUser: widget.currentUser,
-                api: widget.api,
-                onSignedOut: widget.onSignedOut)));
-    setState(() {
-      widget.onSignedOut = result;
-    });
+            AccountDetail(storage: widget.storage,
+                username: account.username)));
     await getAccounts();
   }
 
   /// delete account button
   deleteButtonTrailing(Account account) {
-    if (widget.currentUser.isStaff) {
+    if (_isUserStaff == "true") {
       return SizedBox(
           width: 35,
           child: Container(

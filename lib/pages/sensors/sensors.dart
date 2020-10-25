@@ -1,13 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 
-import 'package:idom/api.dart';
 import 'package:idom/models.dart';
-import 'package:idom/pages/account/account_detail.dart';
-import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/utils/idom_colors.dart';
@@ -18,19 +14,10 @@ import '../../api.dart';
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
-  Sensors(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentUser,
-      @required this.api,
-      @required this.onSignedOut,
-      this.testSensors})
-      : super(key: key);
-  final String currentLoggedInToken;
-  final Account currentUser;
-  Api api;
+  Sensors({@required this.storage, this.testSensors});
+
+  final SecureStorage storage;
   final List<Sensor> testSensors;
-  VoidCallback onSignedOut;
 
   @override
   _SensorsState createState() => _SensorsState();
@@ -59,15 +46,25 @@ class _SensorsState extends State<Sensors> {
     });
   }
 
+  Future<void> getUserToken() async {
+    _token = await widget.storage.getToken();
+  }
+
   /// returns list of sensors
   Future<List<Sensor>> getSensors() async {
+    setState(() {
+      _isSearching = false;
+      _searchController.text = "";
+    });
+
     /// if statement for testing
     if (widget.testSensors != null) {
       return widget.testSensors;
     }
+    await getUserToken();
     try {
       /// gets sensors
-      var res = await widget.api.getSensors(widget.currentLoggedInToken);
+      var res = await api.getSensors(_token);
 
       if (res != null && res['statusCodeSensors'] == "200") {
         List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
@@ -87,8 +84,13 @@ class _SensorsState extends State<Sensors> {
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+      if (res == null) {
+        _connectionEstablished = false;
+        setState(() {});
+        return null;
       }
     } catch (e) {
       print(e.toString());
@@ -119,10 +121,10 @@ class _SensorsState extends State<Sensors> {
           context: _scaffoldKey.currentContext,
           key: _keyLoader,
           text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      var statusCode = await api.logOut(_token);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
         final snackBar = new SnackBar(
@@ -132,7 +134,7 @@ class _SensorsState extends State<Sensors> {
       } else {
         final snackBar = new SnackBar(
             content:
-                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+            new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
@@ -146,7 +148,7 @@ class _SensorsState extends State<Sensors> {
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content:
-                new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
+            new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -174,8 +176,8 @@ class _SensorsState extends State<Sensors> {
                       key: _keyLoader,
                       text: "Trwa usuwanie czujnika...");
 
-                  int statusCode = await widget.api
-                      .deactivateSensor(sensor.id, widget.currentLoggedInToken);
+                  int statusCode =
+                  await api.deactivateSensor(sensor.id, _token);
                   Navigator.of(_keyLoader.currentContext, rootNavigator: true)
                       .pop();
                   if (statusCode == 200) {
@@ -188,12 +190,12 @@ class _SensorsState extends State<Sensors> {
                         context: _scaffoldKey.currentContext,
                         key: _keyLoaderInvalidToken,
                         text:
-                            "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+                        "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
                     await new Future.delayed(const Duration(seconds: 3));
                     Navigator.of(_keyLoaderInvalidToken.currentContext,
-                            rootNavigator: true)
+                        rootNavigator: true)
                         .pop();
-                    widget.onSignedOut();
+                    await widget.storage.resetUserData();
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   } else if (statusCode == null) {
                     final snackBar = new SnackBar(
@@ -333,9 +335,20 @@ class _SensorsState extends State<Sensors> {
           EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text(
-                  "Brak czujników w systemie \nlub błąd połączenia z serwerem.",
-                  style: TextStyle(fontSize: 13.5),
+              child: Text("Brak czujników w systemie.",
+                  style: TextStyle(fontSize: 16.5),
+                  textAlign: TextAlign.center)));
+    }
+    if (_connectionEstablished != null &&
+        _connectionEstablished == false &&
+        _sensorList == null) {
+      return Padding(
+          padding:
+          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text("Błąd połączenia z serwerem.",
+                  style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (!zeroFetchedItems &&
         _sensorList != null &&
@@ -456,11 +469,7 @@ class _SensorsState extends State<Sensors> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => NewSensor(
-                currentLoggedInToken: widget.currentLoggedInToken,
-                currentUser: widget.currentUser,
-                api: widget.api,
-                onSignedOut: widget.onSignedOut),
+            builder: (context) => NewSensor(storage: widget.storage),
             fullscreenDialog: true));
 
     /// displays success message if sensor added succesfully
@@ -473,17 +482,9 @@ class _SensorsState extends State<Sensors> {
 
   /// navigates to sensor's details
   navigateToSensorDetails(Sensor sensor) async {
-    var result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => SensorDetails(
-            currentLoggedInToken: widget.currentLoggedInToken,
-            currentUser: widget.currentUser,
-            sensor: sensor,
-            api: widget.api,
-            onSignedOut: widget.onSignedOut)));
-
-    setState(() {
-      widget.onSignedOut = result;
-    });
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            SensorDetails(storage: widget.storage, sensor: sensor)));
     await getSensors();
   }
 

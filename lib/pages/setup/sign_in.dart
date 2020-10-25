@@ -6,17 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/enter_email.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user in
 class SignIn extends StatefulWidget {
-  SignIn({@required this.api, this.onSignedIn, this.onSignedOut});
+  SignIn({@required this.storage});
 
-  final Function(String, Account, Api) onSignedIn;
-  Api api;
-  VoidCallback onSignedOut;
+  final SecureStorage storage;
 
   @override
   _SignInState createState() => new _SignInState();
@@ -28,6 +27,7 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FocusScopeNode _node = FocusScopeNode();
+  final Api api = Api();
   bool _load;
 
   void initState() {
@@ -89,21 +89,34 @@ class _SignInState extends State<SignIn> {
         setState(() {
           _load = true;
         });
-        var result = await widget.api.signIn(
-            _usernameController.value.text, _passwordController.value.text);
+        var result = await api.signIn(
+            _usernameController.text, _passwordController.text);
         if (result[1] == 200 && result[0].toString().contains('token')) {
-          var userResult = await widget.api.getUser(
-              _usernameController.value.text,
+          var userResult = await api.getUser(_usernameController.text,
               result[0].split(':')[1].substring(1, 41));
           if (userResult[1] == 200) {
             dynamic body = jsonDecode(userResult[0]);
             Account account = Account.fromJson(body);
-            setState(() {
-              _load = false;
-            });
-            widget.onSignedIn(
-                result[0].split(':')[1].substring(1, 41), account, widget.api);
-            Navigator.of(context).popUntil((route) => route.isFirst);
+
+            widget.storage.setUserData(
+                account.username,
+                _passwordController.text,
+                account.email,
+                account.telephone,
+                account.id.toString(),
+                account.smsNotifications,
+                account.appNotifications,
+                account.isActive.toString(),
+                account.isStaff.toString(),
+                result[0].split(':')[1].substring(1, 41));
+
+            var isSetLoggedIn = await widget.storage.getIsLoggedIn();
+            if (isSetLoggedIn == "true") {
+              setState(() {
+                _load = false;
+              });
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
           }
           if (userResult[1] == 401) {
             setState(() {
@@ -229,9 +242,7 @@ class _SignInState extends State<SignIn> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                EnterEmail(api: widget.api, onSignedOut: widget.onSignedOut),
-            fullscreenDialog: true));
+            builder: (context) => EnterEmail(), fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
     if (result == true) {

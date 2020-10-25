@@ -11,25 +11,14 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
 
 import 'edit_sensor.dart';
 
 /// displays sensor details and allows editing them
 class SensorDetails extends StatefulWidget {
-  SensorDetails(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.currentUser,
-      @required this.sensor,
-      @required this.api,
-      @required this.onSignedOut})
-      : super(key: key);
-  final String currentLoggedInToken;
-  final Account currentUser;
-  Api api;
+  SensorDetails({@required this.storage, @required this.sensor});
+  final SecureStorage storage;
   Sensor sensor;
-  VoidCallback onSignedOut;
 
   @override
   _SensorDetailsState createState() => new _SensorDetailsState();
@@ -39,6 +28,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final Api api = Api();
   TextEditingController _nameController;
   TextEditingController _frequencyValueController;
   TextEditingController _categoryController;
@@ -56,6 +46,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   bool dataLoaded = false;
   Widget chartWid = Text("");
   DateTime firstDeliveryTime;
+  String _token;
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
@@ -95,6 +86,10 @@ class _SensorDetailsState extends State<SensorDetails> {
         }));
   }
 
+  Future<void> getToken() async {
+    _token = await widget.storage.getToken();
+  }
+
   @override
   void setState(fn) {
     if (mounted) {
@@ -122,10 +117,11 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   getSensorData() async {
+    await getToken();
     try {
       if (widget.sensor != null) {
-        var res = await widget.api
-            .getSensorData(widget.currentLoggedInToken, widget.sensor.id);
+        var res = await api
+            .getSensorData(_token, widget.sensor.id);
         if (res == null){
           noDataForChart = true;
           dataLoaded = false;
@@ -151,7 +147,7 @@ class _SensorDetailsState extends State<SensorDetails> {
               text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-          widget.onSignedOut();
+          await widget.storage.resetUserData();
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
       }
@@ -270,10 +266,10 @@ class _SensorDetailsState extends State<SensorDetails> {
           context: _scaffoldKey.currentContext,
           key: _keyLoader,
           text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut("");
+      var statusCode = await api.logOut("");
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
         final snackBar =
@@ -305,13 +301,12 @@ class _SensorDetailsState extends State<SensorDetails> {
     _categoryController.dispose();
     _frequencyValueController.dispose();
     _currentSensorDataController.dispose();
-    widget.sensor = null;
     chartWid = null;
     super.dispose();
   }
 
   Future<bool> _onBackButton() async {
-    Navigator.of(context).pop(widget.onSignedOut);
+    Navigator.pop(context);
     return true;
   }
 
@@ -584,31 +579,16 @@ class _SensorDetailsState extends State<SensorDetails> {
         context,
         MaterialPageRoute(
             builder: (context) => EditSensor(
-                currentLoggedInToken: widget.currentLoggedInToken,
-                currentUser: widget.currentUser,
-                sensor: widget.sensor,
-                api: widget.api,
-                onSignedOut: widget.onSignedOut),
+              storage: widget.storage,
+                sensor: widget.sensor),
             fullscreenDialog: true));
 
     if (result == true) {
       final snackBar =
       new SnackBar(content: new Text("Zapisano dane czujnika."));
       ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      await _refreshSensorDetails();
     }
-
-    setState(() {
-      if (result != null) {
-        widget.onSignedOut = result['onSignedOut'];
-      }
-      _load = true;
-    });
-
-    await _refreshSensorDetails();
-
-    setState(() {
-      _load = false;
-    });
   }
 
   _refreshSensorDetails() async {
@@ -616,8 +596,8 @@ class _SensorDetailsState extends State<SensorDetails> {
       setState(() {
         _load = true;
       });
-      var res = await widget.api
-          .getSensorDetails(widget.sensor.id, widget.currentLoggedInToken);
+      var res = await api
+          .getSensorDetails(widget.sensor.id, _token);
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);
         Sensor refreshedSensor = Sensor.fromJson(body);
@@ -643,13 +623,12 @@ class _SensorDetailsState extends State<SensorDetails> {
             text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Odświeżenie danych czujnika nie powiodło się.");
+        final snackBar =
+        new SnackBar(content: new Text("Odświeżenie danych czujnika nie powiodło się."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e.toString());
@@ -667,6 +646,9 @@ class _SensorDetailsState extends State<SensorDetails> {
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
+    setState(() {
+      _load = false;
+    });
   }
 
   Widget chartWidget() {

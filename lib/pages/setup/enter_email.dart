@@ -7,11 +7,6 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 /// allows to enter email and send reset password request
 class EnterEmail extends StatefulWidget {
-  EnterEmail({@required this.api, @required this.onSignedOut});
-
-  Api api;
-  VoidCallback onSignedOut;
-
   @override
   _EnterEmailState createState() => _EnterEmailState();
 }
@@ -19,6 +14,7 @@ class EnterEmail extends StatefulWidget {
 class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final Api api = Api();
   bool _load;
 
   void initState() {
@@ -45,11 +41,7 @@ class _EnterEmailState extends State<EnterEmail> {
   }
 
   Future<bool> _onBackButton() async {
-    Map<String, dynamic> result = {
-      'onSignedOut': widget.onSignedOut,
-      'dataSaved': false
-    };
-    Navigator.of(context).pop(result);
+    Navigator.pop(context, false);
     return true;
   }
 
@@ -121,16 +113,12 @@ class _EnterEmailState extends State<EnterEmail> {
         setState(() {
           _load = true;
         });
-        var res = await widget.api.resetPassword(_emailController.value.text);
+        var res = await api.resetPassword(_emailController.value.text);
         setState(() {
           _load = false;
         });
         if (res == 200) {
-          Map<String, dynamic> result = {
-            'onSignedOut': widget.onSignedOut,
-            'dataSaved': true
-          };
-          Navigator.of(context).pop(result);
+          Navigator.pop(context, true);
         } else if (res == 400) {
           final snackBar =
           new SnackBar(content: new Text("Błąd. Konto dla podanego adresu e-mail nie istnieje."));

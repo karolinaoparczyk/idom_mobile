@@ -4,28 +4,18 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
-import 'package:idom/utils/menu_items.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
 
 /// allows editing account
 class EditAccount extends StatefulWidget {
-  EditAccount(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.account,
-      @required this.currentUser,
-      @required this.api,
-      @required this.onSignedOut})
-      : super(key: key);
-  final String currentLoggedInToken;
-  Api api;
+  EditAccount({@required this.storage, @required this.account});
+
+  final SecureStorage storage;
   final Account account;
-  final Account currentUser;
-  VoidCallback onSignedOut;
 
   @override
   _EditAccountState createState() => new _EditAccountState();
@@ -36,6 +26,8 @@ class _EditAccountState extends State<EditAccount> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
+  final Api api = Api();
+  String _token;
   bool _load;
 
   TextEditingController _emailController;
@@ -80,9 +72,14 @@ class _EditAccountState extends State<EditAccount> {
   void initState() {
     super.initState();
     _load = false;
+    getUserToken();
     _emailController = TextEditingController(text: widget.account.email);
     _telephoneController =
         TextEditingController(text: widget.account.telephone);
+  }
+
+  Future<void> getUserToken() async {
+    _token = await widget.storage.getToken();
   }
 
   @override
@@ -106,75 +103,42 @@ class _EditAccountState extends State<EditAccount> {
           context: _scaffoldKey.currentContext,
           key: _keyLoader,
           text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      var statusCode = await api.logOut(_token);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        displayDialog(
-            context: _scaffoldKey.currentContext,
-            title: "Błąd wylogowywania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        displayDialog(
-            context: context,
-            title: "Błąd",
-            text: "Wylogowanie nie powiodło się. Spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content:
+                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd wylogowania",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
 
-  /// navigates according to menu choice
-  void _choiceAction(String choice) async {
-    if (choice == "Moje konto" &&
-        widget.currentUser.username != widget.account.username) {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EditAccount(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  account: widget.currentUser,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Konta") {
-      Map<String, dynamic> result = {
-        'onSignedOut': widget.onSignedOut,
-        'dataSaved': false
-      };
-      Navigator.of(context).pop(result);
-    } else if (choice == "Wyloguj") {
-      _logOut();
-    }
-  }
 
   Future<bool> _onBackButton() async {
-    Map<String, dynamic> result = {
-      'onSignedOut': widget.onSignedOut,
-      'dataSaved': false
-    };
-    Navigator.of(context).pop(result);
+    Navigator.pop(context, false);
     return true;
   }
 
@@ -235,7 +199,6 @@ class _EditAccountState extends State<EditAccount> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildEmail())),
-
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
@@ -269,8 +232,8 @@ class _EditAccountState extends State<EditAccount> {
     });
     try {
       Navigator.of(context).pop(true);
-      var res = await widget.api.editAccount(
-          widget.account.id, email, telephone, widget.currentLoggedInToken);
+      var res =
+          await api.editAccount(widget.account.id, email, telephone, _token);
       var loginExists = false;
       var emailExists = false;
       var emailInvalid = false;
@@ -278,11 +241,7 @@ class _EditAccountState extends State<EditAccount> {
       var telephoneInvalid = false;
 
       if (res['statusCode'] == "200") {
-        Map<String, dynamic> result = {
-          'onSignedOut': widget.onSignedOut,
-          'dataSaved': true
-        };
-        Navigator.of(context).pop(result);
+        Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
@@ -291,7 +250,7 @@ class _EditAccountState extends State<EditAccount> {
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       }
       if (res['body'].contains("Username already exists")) {
@@ -345,49 +304,28 @@ class _EditAccountState extends State<EditAccount> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        displayDialog(
-            context: context,
-            title: "Błąd edycji użytkownika",
-            text: "Sprawdź połączenie z serwerem i spróbuj ponownie.");
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd edycji użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        await displayDialog(
-            context: context,
-            title: "Błąd edycji użytkownika",
-            text: "Adres serwera nieprawidłowy.");
-        widget.onSignedOut();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd edycji użytkownika. Adres serwera nieprawidłowy."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }
 
   /// confirms saving account changes
-  _confirmSavingChanges(bool changedEmail, bool changedTelephone) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: Text("Potwierdź"),
-          content: Text("Czy na pewno zapisać zmiany?"),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            FlatButton(
-              key: Key("yesButton"),
-              child: Text("Tak"),
-              onPressed: () async {
-                await _saveChanges(changedEmail, changedTelephone);
-              },
-            ),
-            FlatButton(
-              key: Key("noButton"),
-              child: Text("Nie"),
-              onPressed: () async {
-                Navigator.of(context).pop(false);
-              },
-            ),
-          ],
-        );
+  _confirmSavingChanges(bool changedEmail, bool changedTelephone) async {
+    await confirmActionDialog(
+      context,
+      "Potwierdź",
+      "Czy na pewno zapisać zmiany?",
+      () async {
+        await _saveChanges(changedEmail, changedTelephone);
       },
     );
   }
@@ -411,9 +349,9 @@ class _EditAccountState extends State<EditAccount> {
       if (changedEmail || changedTelephone) {
         await _confirmSavingChanges(changedEmail, changedTelephone);
       } else {
-        var snackBar =
-            SnackBar(content: Text("Nie wprowadzono żadnych zmian."));
-        _scaffoldKey.currentState.showSnackBar(snackBar);
+        final snackBar =
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
   }

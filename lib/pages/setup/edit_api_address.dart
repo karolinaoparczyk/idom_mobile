@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import 'package:idom/dialogs/protocol_dialog.dart';
@@ -8,18 +6,12 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-import 'package:idom/widgets/text_color.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 /// allows to enter email and send reset password request
 class EditApiAddress extends StatefulWidget {
-  EditApiAddress(
-      {@required this.api, @required this.onSignedOut, this.apiAddress});
+  EditApiAddress({@required this.storage});
 
-  Api api;
-  VoidCallback onSignedOut;
-  String apiAddress;
+  final SecureStorage storage;
 
   @override
   _EditApiAddressState createState() => _EditApiAddressState();
@@ -32,16 +24,18 @@ class _EditApiAddressState extends State<EditApiAddress> {
   TextEditingController _apiAddressPortController = TextEditingController();
   FocusNode _apiAddressFocusNode = FocusNode();
   bool _load;
+  String _isUserLoggedIn;
 
   void initState() {
     super.initState();
     _load = true;
     getApiAddress();
+    checkIfUserIsSignedIn();
   }
 
   Future<void> getApiAddress() async {
     var _apiAddressProtocol =
-        await widget.storage.getApiServerAddressProtocol();
+    await widget.storage.getApiServerAddressProtocol();
     var _apiAddress = await widget.storage.getApiServerAddress();
     var _apiAddressPort = await widget.storage.getApiServerAddressPort();
     _apiAddressProtocolController =
@@ -50,6 +44,11 @@ class _EditApiAddressState extends State<EditApiAddress> {
     _apiAddressPortController =
         TextEditingController(text: _apiAddressPort ?? "");
     _load = false;
+    setState(() {});
+  }
+
+  Future<void> checkIfUserIsSignedIn() async {
+    _isUserLoggedIn = await widget.storage.getIsLoggedIn();
     setState(() {});
   }
 
@@ -128,11 +127,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
   }
 
   Future<bool> _onBackButton() async {
-    Map<String, dynamic> result = {
-      'onSignedOut': widget.onSignedOut,
-      'dataSaved': false
-    };
-    Navigator.of(context).pop(result);
+    Navigator.pop(context, false);
     return true;
   }
 
@@ -198,6 +193,13 @@ class _EditApiAddressState extends State<EditApiAddress> {
           .setApiServerAddressProtocol(_apiAddressProtocolController.text);
       widget.storage.setApiServerAddress(_apiAddressController.text);
       widget.storage.setApiServerAddressPort(_apiAddressPortController.text);
+      if (_isUserLoggedIn == "true") {
+        final snackBar =
+        new SnackBar(content: new Text("Adres serwera został zapisany."),
+          duration: Duration(seconds: 2),);
+
+        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      }
       Navigator.pop(context, true);
     }
   }

@@ -11,24 +11,14 @@ import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
-import 'accounts.dart';
 import 'edit_account.dart';
 
 /// displays account details
 class AccountDetail extends StatefulWidget {
-  AccountDetail(
-      {Key key,
-      @required this.currentLoggedInToken,
-      @required this.account,
-      @required this.currentUser,
-      @required this.api,
-      @required this.onSignedOut})
-      : super(key: key);
-  final String currentLoggedInToken;
-  Api api;
-  Account account;
-  final Account currentUser;
-  VoidCallback onSignedOut;
+  AccountDetail({@required this.storage, @required this.username});
+
+  final SecureStorage storage;
+  String username;
 
   @override
   _AccountDetailState createState() => new _AccountDetailState();
@@ -38,25 +28,57 @@ class _AccountDetailState extends State<AccountDetail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final Api api = Api();
+  Account account;
   bool _load;
-
-  TextEditingController _emailController;
-  TextEditingController _telephoneController;
+  Map<String, dynamic> currentUserData;
 
   @override
   void initState() {
     super.initState();
-    _load = false;
-    _emailController = TextEditingController(text: widget.account.email);
-    _telephoneController =
-        TextEditingController(text: widget.account.telephone);
+    _load = true;
+    getCurrentUserData();
   }
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _telephoneController.dispose();
-    super.dispose();
+  Future<void> getCurrentUserData() async {
+    currentUserData = await widget.storage.getCurrentUserData();
+    await getUser();
+  }
+
+  Future<void> getUser() async {
+    if (widget.username == currentUserData['username']) {
+      account = Account(
+          id: int.parse(currentUserData['id']),
+          username: currentUserData['username'],
+          email: currentUserData['email'],
+          telephone: currentUserData['telephone'] != null? currentUserData['telephone'] : "",
+          isStaff: currentUserData['isStaff'] == "true" ? true : currentUserData['isStaff'] == "false" ? false : null,
+          smsNotifications: currentUserData['smsNotifications'],
+          appNotifications: currentUserData['appNotifications'],
+          isActive: currentUserData['isActive'] == "true" ? true : currentUserData['isActive'] == "false" ? false : null);
+      setState(() {
+        _load = false;
+      });
+      return;
+    }
+    var userResult =
+        await api.getUser(widget.username, currentUserData['token']);
+    if (userResult[1] == 200) {
+      dynamic body = jsonDecode(userResult[0]);
+      account = Account.fromJson(body);
+
+      setState(() {
+        _load = false;
+      });
+    }
+    if (userResult[1] == 401) {
+      setState(() {
+        _load = false;
+      });
+      final snackBar = new SnackBar(
+          content: new Text("Błąd pobierania danych użytkownika."));
+      ScaffoldMessenger.of(context).showSnackBar((snackBar));
+    }
   }
 
   /// logs the user out from the app
@@ -66,72 +88,41 @@ class _AccountDetailState extends State<AccountDetail> {
           context: _scaffoldKey.currentContext,
           key: _keyLoader,
           text: "Trwa wylogowywanie...");
-      var statusCode = await widget.api.logOut(widget.currentLoggedInToken);
+      var statusCode = await api.logOut(currentUserData['token']);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        final snackBar =
-        new SnackBar(content: new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
-    }
-  }
-
-  /// navigates according to menu choice
-  void _choiceAction(String choice) async {
-    if (choice == "Moje konto" &&
-        widget.currentUser.username != widget.account.username) {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AccountDetail(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  account: widget.currentUser,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Konta") {
-      var result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Accounts(
-                  currentLoggedInToken: widget.currentLoggedInToken,
-                  currentUser: widget.currentUser,
-                  api: widget.api,
-                  onSignedOut: widget.onSignedOut),
-              fullscreenDialog: true));
-      setState(() {
-        widget.onSignedOut = result;
-      });
-    } else if (choice == "Wyloguj") {
-      _logOut();
     }
   }
 
   Future<bool> _onBackButton() async {
-    Navigator.of(context).pop(widget.onSignedOut);
+    Navigator.pop(context);
     return true;
   }
 
@@ -267,32 +258,16 @@ class _AccountDetailState extends State<AccountDetail> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EditAccount(
-                currentLoggedInToken: widget.currentLoggedInToken,
-                currentUser: widget.currentUser,
-                account: widget.account,
-                api: widget.api,
-                onSignedOut: widget.onSignedOut),
+            builder: (context) =>
+                EditAccount(storage: widget.storage, account: account),
             fullscreenDialog: true));
 
     if (result == true) {
       final snackBar =
-      new SnackBar(content: new Text("Zapisano dane użytkownika."));
+          new SnackBar(content: new Text("Zapisano dane użytkownika."));
       ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      await _refreshAccountDetails();
     }
-
-    setState(() {
-      if (result != null) {
-        widget.onSignedOut = result['onSignedOut'];
-      }
-      _load = true;
-    });
-
-    await _refreshAccountDetails();
-
-    setState(() {
-      _load = false;
-    });
   }
 
   _refreshAccountDetails() async {
@@ -300,16 +275,11 @@ class _AccountDetailState extends State<AccountDetail> {
       setState(() {
         _load = true;
       });
-      var res = await widget.api
-          .getUser(widget.account.username, widget.currentLoggedInToken);
+      var res = await api.getUser(widget.username, currentUserData['token']);
       if (res[1] == 200) {
         dynamic body = jsonDecode(res[0]);
-        Account account = Account.fromJson(body);
-        setState(() {
-          _emailController = TextEditingController(text: account.email);
-          _telephoneController = TextEditingController(text: account.telephone);
-          widget.account = account;
-        });
+        account = Account.fromJson(body);
+        setState(() {});
       } else if (res[1] == 401) {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
@@ -317,11 +287,12 @@ class _AccountDetailState extends State<AccountDetail> {
             text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        widget.onSignedOut();
+        await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        final snackBar =
-        new SnackBar(content: new Text("Odświeżenie danych użytkownika nie powiodło się."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Odświeżenie danych użytkownika nie powiodło się."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
@@ -330,13 +301,15 @@ class _AccountDetailState extends State<AccountDetail> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text("Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }

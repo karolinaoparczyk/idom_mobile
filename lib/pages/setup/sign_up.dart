@@ -4,24 +4,16 @@ import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/sign_in.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
-import 'package:idom/widgets/dialog.dart';
 import 'package:idom/widgets/loading_indicator.dart';
-
-import '../../models.dart';
 
 /// signs user up
 class SignUp extends StatefulWidget {
-  SignUp(
-      {Key key,
-      @required this.onSignedIn,
-      @required this.api,
-      @required this.onSignedOut})
-      : super(key: key);
-  final Function(String, Account, Api) onSignedIn;
-  Api api;
-  VoidCallback onSignedOut;
+  SignUp({@required this.storage});
+
+  final SecureStorage storage;
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -37,7 +29,9 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _telephoneController = TextEditingController();
   final FocusScopeNode _node = FocusScopeNode();
   final _scrollController = ScrollController();
+  final Api api = Api();
   bool _load;
+  String fieldsValidationMessage;
 
   void initState() {
     super.initState();
@@ -229,7 +223,6 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                             buttonWidget(context, "Zarejestruj się", signUp),
-
                           ],
                         ))))),
       ])),
@@ -251,8 +244,8 @@ class _SignUpState extends State<SignUp> {
         setState(() {
           _load = true;
         });
-        var res = await widget.api
-            .signUp(username, password1, password2, email, telephone);
+        var res =
+            await api.signUp(username, password1, password2, email, telephone);
         var loginExists = false;
         var emailExists = false;
         var telephoneExists = false;
@@ -261,6 +254,7 @@ class _SignUpState extends State<SignUp> {
         if (res['statusCode'] == "201") {
           setState(() {
             _load = false;
+            fieldsValidationMessage = null;
           });
           final snackBar = new SnackBar(
               content:
@@ -271,10 +265,7 @@ class _SignUpState extends State<SignUp> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SignIn(
-                      api: widget.api,
-                      onSignedIn: widget.onSignedIn,
-                      onSignedOut: widget.onSignedOut)));
+                  builder: (context) => SignIn(storage: widget.storage)));
         }
         if (res['body'].contains("Username already exists")) {
           loginExists = true;
@@ -309,8 +300,11 @@ class _SignUpState extends State<SignUp> {
 
         if (telephoneInvalid) errorText += " Podaj poprawny nr telefonu.";
 
-        if (errorText != null)
-          displayDialog(context: context, title: "Błąd", text: errorText);
+        if (errorText != null) {
+          setState(() {
+            fieldsValidationMessage = errorText;
+          });
+        }
 
         setState(() {
           _load = false;
