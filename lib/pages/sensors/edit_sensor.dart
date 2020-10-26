@@ -39,6 +39,7 @@ class _EditSensorState extends State<EditSensor> {
   final Api api = Api();
   bool _load;
   String _token;
+  String fieldsValidationMessage;
 
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
@@ -337,6 +338,25 @@ class _EditSensorState extends State<EditSensor> {
                                           alignment: Alignment.bottomLeft,
                                           child: _buildFrequencyUnitsField()))),
                             ]))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 30.0),
+                          child: AnimatedCrossFade(
+                            crossFadeState: fieldsValidationMessage != null
+                                ? CrossFadeState.showFirst
+                                : CrossFadeState.showSecond,
+                            duration: Duration(milliseconds: 300),
+                            firstChild: fieldsValidationMessage != null
+                                ? Text(fieldsValidationMessage,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal))
+                                : SizedBox(),
+                            secondChild: SizedBox(),
+                          ),
+                        ),
                       ]))),
             ]))));
   }
@@ -438,12 +458,14 @@ class _EditSensorState extends State<EditSensor> {
             SensorFrequencyFieldValidator.isFrequencyValueValid(
                 _frequencyValueController.text, frequencyUnitsValue);
         if (!validFrequencyValue) {
-          await displayDialog(
-              context: context,
-              title: "Błąd",
-              text:
-                  "Poprawne wartości dla jednostki: ${englishToPolishUnits[frequencyUnitsValue]} to: ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}");
-          return;
+          setState(() {
+            fieldsValidationMessage =
+                "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
+          });
+        } else {
+          setState(() {
+            fieldsValidationMessage = null;
+          });
         }
 
         /// converts frequency value to seconds
@@ -457,13 +479,15 @@ class _EditSensorState extends State<EditSensor> {
             frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
         }
       }
-      if (changedName || changedCategory || changedFrequencyValue) {
-        await _confirmSavingChanges(changedName, changedCategory,
-            changedFrequencyValue, frequencyInSeconds);
-      } else {
-        final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      if (fieldsValidationMessage == null) {
+        if (changedName || changedCategory || changedFrequencyValue) {
+          await _confirmSavingChanges(changedName, changedCategory,
+              changedFrequencyValue, frequencyInSeconds);
+        } else {
+          final snackBar =
+              new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        }
       }
     }
   }

@@ -28,6 +28,7 @@ class _EditAccountState extends State<EditAccount> {
   final Api api = Api();
   String _token;
   bool _load;
+  String fieldsValidationMessage;
 
   TextEditingController _emailController;
   TextEditingController _telephoneController;
@@ -203,6 +204,28 @@ class _EditAccountState extends State<EditAccount> {
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: _buildTelephone())),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 30.0),
+                          child: AnimatedCrossFade(
+                            crossFadeState:
+                            fieldsValidationMessage != null
+                                ? CrossFadeState.showFirst
+                                : CrossFadeState.showSecond,
+                            duration: Duration(milliseconds: 300),
+                            firstChild: fieldsValidationMessage !=
+                                null
+                                ? Text(fieldsValidationMessage,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(
+                                    fontWeight:
+                                    FontWeight.normal))
+                                : SizedBox(),
+                            secondChild: SizedBox(),
+                          ),
+                        ),
                       ]))),
             ]))));
   }
@@ -225,6 +248,10 @@ class _EditAccountState extends State<EditAccount> {
       var telephoneInvalid = false;
 
       if (res['statusCode'] == "200") {
+        setState(() {
+          _load = false;
+          fieldsValidationMessage = null;
+        });
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         displayProgressDialog(
@@ -255,29 +282,29 @@ class _EditAccountState extends State<EditAccount> {
       String errorText = "";
       if (loginExists && emailExists && telephoneExists)
         errorText =
-            "Konto dla podanego loginu, adresu e-mail i nr telefonu już istnieje.";
+            "Konto dla podanego loginu, adresu e-mail i numeru telefonu już istnieje.";
       else if (loginExists && emailExists)
         errorText = "Konto dla podanego loginu i adresu e-mail już istnieje.";
       else if (loginExists && telephoneExists)
-        errorText = "Konto dla podanego loginu i nr telefonu już istnieje.";
+        errorText = "Konto dla podanego loginu i numeru telefonu już istnieje.";
       else if (emailExists && telephoneExists)
         errorText =
-            "Konto dla podanego adresu e-mail i nr telefonu już istnieje.";
+            "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.";
       else if (emailExists)
         errorText = "Konto dla podanego adresu e-mail już istnieje.";
       else if (loginExists)
         errorText = "Konto dla podanego loginu już istnieje.";
       else if (telephoneExists)
-        errorText = "Konto dla podanego nr telefonu już istnieje.";
+        errorText = "Konto dla podanego numeru telefonu już istnieje.";
 
       if (telephoneInvalid && emailInvalid)
-        errorText += "Adres e-mail oraz nr telefonu są nieprawidłowe.";
+        errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.";
       else if (telephoneInvalid)
-        errorText += "Nr telefonu jest nieprawidłowy.";
+        errorText += "Numer telefonu jest nieprawidłowy.";
       else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy";
 
       if (errorText != "")
-        displayDialog(context: context, title: "Błąd", text: errorText);
+        fieldsValidationMessage = errorText;
 
       setState(() {
         _load = false;

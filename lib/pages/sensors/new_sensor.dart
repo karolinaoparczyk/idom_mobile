@@ -35,6 +35,7 @@ class _NewSensorState extends State<NewSensor> {
   String frequencyUnitsValue;
   bool _load;
   String _token;
+  String fieldsValidationMessage;
 
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
@@ -317,6 +318,25 @@ class _NewSensorState extends State<NewSensor> {
                                               child:
                                                   _buildFrequencyUnitsField()))),
                                 ]))),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 30.0),
+                              child: AnimatedCrossFade(
+                                crossFadeState: fieldsValidationMessage != null
+                                    ? CrossFadeState.showFirst
+                                    : CrossFadeState.showSecond,
+                                duration: Duration(milliseconds: 300),
+                                firstChild: fieldsValidationMessage != null
+                                    ? Text(fieldsValidationMessage,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                        fontWeight: FontWeight.normal))
+                                    : SizedBox(),
+                                secondChild: SizedBox(),
+                              ),
+                            ),
                           ])))),
               Expanded(
                   flex: 1,
@@ -326,7 +346,8 @@ class _NewSensorState extends State<NewSensor> {
                         milliseconds: 10,
                       ),
                       alignment: Alignment.bottomCenter,
-                      child: Column(children: <Widget>[
+                      child: Column(
+                          children: <Widget>[
                         buttonWidget(context, "Dodaj czujnik", _saveChanges),
                       ])))
             ]))));
@@ -335,17 +356,6 @@ class _NewSensorState extends State<NewSensor> {
   /// saves changes after form fields and dropdown buttons validation
   _saveChanges() async {
     final formState = _formKey.currentState;
-    var displayText = "";
-    if (categoryValue == null) {
-      displayText += "Wybierz kategorię czujnika. \n";
-    }
-    if (frequencyUnitsValue == null) {
-      displayText += "Wybierz jednostki częstotliwości pobierania danych.";
-    }
-    if (displayText != "") {
-      await displayDialog(
-          context: context, title: "Brak danych", text: displayText);
-    }
     if (formState.validate()) {
       /// validates if frequency value is valid for given frequency units
       var validFequencyValue =
@@ -357,8 +367,15 @@ class _NewSensorState extends State<NewSensor> {
         if (frequencyUnitsValue == "seconds")
           text =
               "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
-        await displayDialog(context: context, title: "Błąd", text: text);
+        setState(() {
+          fieldsValidationMessage = text;
+        });
         return;
+      }
+      else{
+        setState(() {
+          fieldsValidationMessage = null;
+        });
       }
       setState(() {
         _load = true;

@@ -304,22 +304,23 @@ class _SignUpState extends State<SignUp> {
         String errorText;
         if (loginExists && emailExists && telephoneExists)
           errorText =
-              "Konto dla podanego loginu, adresu e-mail i nr telefonu już istnieje.";
+              "Konto dla podanego loginu, adresu e-mail i numeru telefonu już istnieje.";
         else if (loginExists && emailExists)
           errorText = "Konto dla podanego loginu i adresu e-mail już istnieje.";
         else if (loginExists && telephoneExists)
-          errorText = "Konto dla podanego loginu i nr telefonu już istnieje.";
+          errorText =
+              "Konto dla podanego loginu i numeru telefonu już istnieje.";
         else if (emailExists && telephoneExists)
           errorText =
-              "Konto dla podanego adresu e-mail i nr telefonu już istnieje.";
+              "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.";
         else if (emailExists)
           errorText = "Konto dla podanego adresu e-mail już istnieje.";
         else if (loginExists)
           errorText = "Konto dla podanego loginu już istnieje.";
         else if (telephoneExists)
-          errorText = "Konto dla podanego nr telefonu już istnieje.";
+          errorText = "Konto dla podanego numeru telefonu już istnieje.";
 
-        if (telephoneInvalid) errorText += " Podaj poprawny nr telefonu.";
+        if (telephoneInvalid) errorText += " Podaj poprawny numeru telefonu.";
 
         if (errorText != null) {
           FocusScope.of(context).unfocus();
