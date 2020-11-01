@@ -8,7 +8,6 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
-import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
@@ -39,12 +38,9 @@ class _SensorDetailsState extends State<SensorDetails> {
   List<charts.Series<SensorData, DateTime>> _seriesData;
   DateTime _time;
   String _measure;
-  String dataMeasuresTime;
-  bool todayChart = true;
-  bool thisMonthChart = false;
-  bool allTimeChart = false;
-  bool noDataForChart = false;
-  bool dataLoaded = false;
+  List<bool> measurementTimeSelected;
+  bool noDataForChart;
+  bool dataLoaded;
   Widget chartWid = Text("");
   DateTime firstDeliveryTime;
   String _token;
@@ -60,7 +56,8 @@ class _SensorDetailsState extends State<SensorDetails> {
   void initState() {
     super.initState();
     _load = true;
-
+    noDataForChart = false;
+    dataLoaded = false;
     /// seting current sensor name
     _nameController = TextEditingController(text: widget.sensor.name);
 
@@ -75,9 +72,8 @@ class _SensorDetailsState extends State<SensorDetails> {
         TextEditingController(text: widget.sensor.lastData.toString());
 
     _seriesData = List<charts.Series<SensorData, DateTime>>();
-    dataMeasuresTime = "today";
-    getSensorData().then((value) =>
-        setState(() {
+    measurementTimeSelected = [true, false, false];
+    getSensorData().then((value) => setState(() {
           if (sensorData != null && sensorData.length > 0) {
             drawPlot();
           }
@@ -122,8 +118,7 @@ class _SensorDetailsState extends State<SensorDetails> {
     await getToken();
     try {
       if (widget.sensor != null) {
-        var res = await api
-            .getSensorData(_token, widget.sensor.id);
+        var res = await api.getSensorData(_token, widget.sensor.id);
         if (res == null) {
           noDataForChart = true;
           dataLoaded = false;
@@ -156,15 +151,15 @@ class _SensorDetailsState extends State<SensorDetails> {
     } catch (e) {
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text(
-            "Błąd pobierania danych z czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania danych z czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text(
-            "Błąd pobierania danych z czujnika. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania danych z czujnika. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -175,20 +170,23 @@ class _SensorDetailsState extends State<SensorDetails> {
     var now = DateTime.now();
     var data;
 
-    if (dataMeasuresTime == "today") {
+    /// today
+    if (measurementTimeSelected[0] == true) {
       data = sensorData
           .where((data) =>
-      data.deliveryTime.year == now.year &&
-          data.deliveryTime.month == now.month &&
-          data.deliveryTime.day == now.day)
+              data.deliveryTime.year == now.year &&
+              data.deliveryTime.month == now.month &&
+              data.deliveryTime.day == now.day)
           .toList();
-    } else if (dataMeasuresTime == "thisMonth") {
+      /// this month
+    } else if (measurementTimeSelected[1] == true) {
       data = sensorData
           .where((data) =>
-      data.deliveryTime.year == now.year &&
-          data.deliveryTime.month == now.month)
+              data.deliveryTime.year == now.year &&
+              data.deliveryTime.month == now.month)
           .toList();
-    } else if (dataMeasuresTime == "allTime") {
+      /// last 30 days
+    } else if (measurementTimeSelected[2] == true) {
       data = sensorData;
     }
 
@@ -218,51 +216,6 @@ class _SensorDetailsState extends State<SensorDetails> {
     });
   }
 
-  todayPlot() {
-    setState(() {
-      dataMeasuresTime = "today";
-      todayChart = true;
-      thisMonthChart = false;
-      allTimeChart = false;
-      _time = null;
-      _measure = null;
-      if (sensorData != null && sensorData.length > 0) {
-        drawPlot();
-      }
-      chartWid = chartWidget();
-    });
-  }
-
-  thisMonthPlot() {
-    setState(() {
-      dataMeasuresTime = "thisMonth";
-      todayChart = false;
-      thisMonthChart = true;
-      allTimeChart = false;
-      _time = null;
-      _measure = null;
-      if (sensorData != null && sensorData.length > 0) {
-        drawPlot();
-      }
-      chartWid = chartWidget();
-    });
-  }
-
-  allTimePlot() {
-    setState(() {
-      dataMeasuresTime = "allTime";
-      todayChart = false;
-      thisMonthChart = false;
-      allTimeChart = true;
-      _time = null;
-      _measure = null;
-      if (sensorData != null && sensorData.length > 0) {
-        drawPlot();
-      }
-      chartWid = chartWidget();
-    });
-  }
-
   /// logs the user out of the app
   _logOut() async {
     try {
@@ -276,28 +229,28 @@ class _SensorDetailsState extends State<SensorDetails> {
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (statusCode == null) {
-        final snackBar =
-        new SnackBar(content: new Text(
-            "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       } else {
-        final snackBar =
-        new SnackBar(content: new Text(
-            "Wylogowanie nie powiodło się. Spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     } catch (e) {
       print(e);
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text(
-            "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text(
-            "Błąd wylogowywania. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content:
+                new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -324,14 +277,10 @@ class _SensorDetailsState extends State<SensorDetails> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-                title: Text(widget.sensor.name),
-                actions: [
-                  IconButton(
-                      icon: Icon(Icons.edit), onPressed: _navigateToEditSensor)
-                ]
-            ),
-
+            appBar: AppBar(title: Text(widget.sensor.name), actions: [
+              IconButton(
+                  icon: Icon(Icons.edit), onPressed: _navigateToEditSensor)
+            ]),
             drawer: IdomDrawer(
                 storage: widget.storage, parentWidgetType: "SensorDetails"),
 
@@ -346,10 +295,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                       ),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0,
-                              top: 20.0,
-                              right: 30.0,
-                              bottom: 0.0),
+                              left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Row(
@@ -357,14 +303,12 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   Icon(Icons.info_outline_rounded, size: 17.5),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
-                                    child: Text(
-                                        "Ogólne",
-                                        style: Theme
-                                            .of(context)
+                                    child: Text("Ogólne",
+                                        style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
                                             .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                                fontWeight: FontWeight.normal)),
                                   ),
                                 ],
                               ))),
@@ -385,14 +329,11 @@ class _SensorDetailsState extends State<SensorDetails> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                   englishToPolishCategories[
-                                  _categoryController.text],
+                                      _categoryController.text],
                                   style: TextStyle(fontSize: 21.0)))),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0,
-                              top: 20.0,
-                              right: 30.0,
-                              bottom: 0.0),
+                              left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Row(
@@ -401,37 +342,46 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
                                     child: Text(
-                                        "Częstotliwość pobierania danych",
-                                        style: Theme
-                                            .of(context)
+                                        "Dane z czujnika",
+                                        style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
                                             .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                                fontWeight: FontWeight.normal)),
                                   ),
                                 ],
                               ))),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 52.5, top: 5.0, right: 30.0, bottom: 0.0),
-                          child: SizedBox(
-                              child: Row(children: <Widget>[
-                                Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
-                                    children: <Widget>[
-                                      Text(_frequencyValueController.text,
-                                          style: TextStyle(fontSize: 21.0)),
-                                    ]),
-                                SizedBox(width: 5.0),
-                                Column(children: <Widget>[
-                                  Text(getProperUnitsName(),
-                                      style: TextStyle(fontSize: 21.0)),
-                                ])
-                              ]))),
+                              top: 10, left: 52.5, right: 30.0, bottom: 0.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Częstotliwość pobierania danych",
+                                style: TextStyle(
+                                    color: IdomColors.additionalColor,
+                                    fontSize: 16.5,
+                                    fontWeight: FontWeight.bold)),
+                          )),
                       Padding(
                           padding: EdgeInsets.only(
-                              top: 13.5, left: 52.5, right: 30.0, bottom: 0.0),
+                              left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),
+                          child: SizedBox(
+                              child: Row(children: <Widget>[
+                            Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(_frequencyValueController.text,
+                                      style: TextStyle(fontSize: 21.0)),
+                                ]),
+                            SizedBox(width: 5.0),
+                            Column(children: <Widget>[
+                              Text(getProperUnitsName(),
+                                  style: TextStyle(fontSize: 21.0)),
+                            ])
+                          ]))),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              top: 10, left: 52.5, right: 30.0, bottom: 0.0),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(getSensorLastDataLabel(),
@@ -449,118 +399,107 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   style: TextStyle(fontSize: 21.0)))),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 52.5, top: 13.5, right: 30.0, bottom: 0.0),
+                              left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
                           child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_today_outlined, size: 17.5),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5.0),
+                                    child: Text(
+                                        "Okres wyświetlanych danych",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                  ),
+                                ],
+                              ))),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 52.5, top: 13.5, right: 30.0, bottom: 13.5),
+                        child: ToggleButtons(
+                            borderRadius: BorderRadius.circular(30),
+                            borderColor: IdomColors.additionalColor,
+                            splashColor:Colors.transparent,
+                            fillColor: IdomColors.lighten(IdomColors.additionalColor, 0.2),
+                            selectedColor: IdomColors.textDark,
+                            children: [
+                              Container(
+                                  child: Center(
+                                      child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text("Dzisiaj")))),
+                              Container(
+                                  child: Center(
+                                      child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text("Ten miesiąc")))),
+                              Container(
+                                  child: Center(
+                                      child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text("Ostatnie 30 dni")))),
+                            ],
+                            isSelected: measurementTimeSelected,
+                            onPressed: (int index) {
+                              setState(() {
+                                if (measurementTimeSelected[index] == false) {
+                                  for (int i = 0;
+                                  i < measurementTimeSelected.length;
+                                  i++) {
+                                    if (i == index) {
+                                      measurementTimeSelected[i] = true;
+                                    } else {
+                                      measurementTimeSelected[i] = false;
+                                    }
+                                  }
+                                  _time = null;
+                                  _measure = null;
+                                  if (sensorData != null && sensorData.length > 0) {
+                                    drawPlot();
+                                  }
+                                  chartWid = chartWidget();
+                                }
+
+                              });
+                            }),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 30.0, top: 0.0, right: 17.0, bottom: 0.0),
+                          child: Container(
+                              child: Center(
+                                  child: Column(children: <Widget>[
+                            SizedBox(width: 355, height: 200, child: chartWid)
+                          ])))),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 52.5, top: 20.0, right: 30.0, bottom: 0.0),
+                          child: _time != null
+                              ? Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Okres wyświetlanych danych:",
+                            child: Text("Wybrany pomiar z wykresu",
                                 style: TextStyle(
                                     color: IdomColors.additionalColor,
                                     fontSize: 16.5,
                                     fontWeight: FontWeight.bold)),
-                          )),
+                          )
+                              : SizedBox()),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 15.0, top: 5.0, right: 15.0, bottom: 0.0),
-                          child: SizedBox(
-                              child: Row(children: <Widget>[
-                                Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                        width: 120,
-                                        margin: EdgeInsets.only(
-                                            left: 5.0,
-                                            top: 5.0,
-                                            right: 5.0,
-                                            bottom: 0.0),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: !todayChart
-                                                    ? IdomColors.additionalColor
-                                                    : Colors.black),
-                                            borderRadius:
-                                            BorderRadius.circular(30.0)),
-                                        child: FlatButton(
-                                          key: Key("today"),
-                                          child: Text('Dzisiaj',
-                                              textAlign: TextAlign.center),
-                                          onPressed: !todayChart
-                                              ? todayPlot
-                                              : null,
-                                        ))),
-                                Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                        width: 120,
-                                        margin: EdgeInsets.only(
-                                            left: 5.0,
-                                            top: 5.0,
-                                            right: 5.0,
-                                            bottom: 5.0),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: !thisMonthChart
-                                                    ? IdomColors.additionalColor
-                                                    : Colors.black),
-                                            borderRadius:
-                                            BorderRadius.circular(30.0)),
-                                        child: FlatButton(
-                                          key: Key("thisMonth"),
-                                          child: Text('Ten miesiąc',
-                                              textAlign: TextAlign.center),
-                                          onPressed: !thisMonthChart
-                                              ? thisMonthPlot
-                                              : null,
-                                        ))),
-                                Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                        width: 120,
-                                        margin: EdgeInsets.only(
-                                            left: 5.0,
-                                            top: 5.0,
-                                            right: 5.0,
-                                            bottom: 0.0),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: !allTimeChart
-                                                    ? IdomColors.additionalColor
-                                                    : Colors.black),
-                                            borderRadius:
-                                            BorderRadius.circular(30.0)),
-                                        child: FlatButton(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius
-                                                  .circular(30.0)),
-                                          splashColor: IdomColors
-                                              .additionalColor,
-                                          key: Key("allTime"),
-                                          child: Text('Ostatnie \n30 dni',
-                                              textAlign: TextAlign.center),
-                                          onPressed:
-                                          !allTimeChart ? allTimePlot : null,
-                                        ))),
-                              ]))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 5.0, right: 17.0, bottom: 0.0),
-                          child: Container(
-                              child: Center(
-                                  child: Column(children: <Widget>[
-                                    SizedBox(width: 355,
-                                        height: 200,
-                                        child: chartWid)
-                                  ])))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 5.0, right: 30.0, bottom: 10.0),
+                              left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),
                           child: _time != null
                               ? Align(
-                            alignment: Alignment.center,
-                            child: Text(getSelectedMeasure(),
-                                style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold)),
-                          )
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(getSelectedMeasure(),
+                                      style: TextStyle(fontSize: 21.0)),
+                                )
                               : SizedBox()),
                     ])))));
   }
@@ -568,9 +507,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   String getProperUnitsName() {
     var lastDigitFrequencyValue = _frequencyValueController.text
         .toString()
-        .substring(_frequencyValueController.text
-        .toString()
-        .length - 1);
+        .substring(_frequencyValueController.text.toString().length - 1);
     var firstVersion = "sekundy";
     var secondVersion = "sekund";
     if (RegExp(r"^[0-1|5-9]").hasMatch(lastDigitFrequencyValue))
@@ -587,7 +524,7 @@ class _SensorDetailsState extends State<SensorDetails> {
     var month = date.substring(5, 7);
     var day = date.substring(8, 10);
     var time = date.substring(11, 19);
-    return "$day.$month.$year $time    ${_measure.toString()} $units";
+    return "$day.$month.$year $time  -  ${_measure.toString()} $units";
   }
 
   String getSensorLastData() {
@@ -608,14 +545,12 @@ class _SensorDetailsState extends State<SensorDetails> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                EditSensor(
-                    storage: widget.storage,
-                    sensor: widget.sensor),
+                EditSensor(storage: widget.storage, sensor: widget.sensor),
             fullscreenDialog: true));
 
     if (result == true) {
       final snackBar =
-      new SnackBar(content: new Text("Zapisano dane czujnika."));
+          new SnackBar(content: new Text("Zapisano dane czujnika."));
       ScaffoldMessenger.of(context).showSnackBar((snackBar));
       await _refreshSensorDetails();
     }
@@ -626,13 +561,11 @@ class _SensorDetailsState extends State<SensorDetails> {
       setState(() {
         _load = true;
       });
-      var res = await api
-          .getSensorDetails(widget.sensor.id, _token);
+      var res = await api.getSensorDetails(widget.sensor.id, _token);
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);
         Sensor refreshedSensor = Sensor.fromJson(body);
-        getSensorData().then((value) =>
-            setState(() {
+        getSensorData().then((value) => setState(() {
               _nameController =
                   TextEditingController(text: refreshedSensor.name);
               _categoryController =
@@ -657,8 +590,7 @@ class _SensorDetailsState extends State<SensorDetails> {
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        final snackBar =
-        new SnackBar(
+        final snackBar = new SnackBar(
             content: new Text("Odświeżenie danych czujnika nie powiodło się."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
@@ -668,15 +600,15 @@ class _SensorDetailsState extends State<SensorDetails> {
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
-        final snackBar =
-        new SnackBar(content: new Text(
-            "Błąd pobierania danych czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania danych czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
-        final snackBar =
-        new SnackBar(content: new Text(
-            "Błąd pobierania danych czujnika. Adres serwera nieprawidłowy."));
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd pobierania danych czujnika. Adres serwera nieprawidłowy."));
         ScaffoldMessenger.of(context).showSnackBar((snackBar));
       }
     }
@@ -689,15 +621,15 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (noDataForChart) {
       return Container(
           child: Padding(
-            padding: const EdgeInsets.only(left: 22.5),
-            child: Text("Brak danych z wybranego okresu.",
-                style: TextStyle(fontSize: 16.5)),
-          ));
+        padding: const EdgeInsets.only(left: 22.5),
+        child: Text("Brak danych z wybranego okresu.",
+            style: TextStyle(fontSize: 16.5)),
+      ));
     } else if (dataLoaded) {
       return charts.TimeSeriesChart(
         _seriesData,
         defaultRenderer:
-        charts.LineRendererConfig(includeArea: true, stacked: true),
+            charts.LineRendererConfig(includeArea: true, stacked: true),
         animate: true,
         behaviors: [
           charts.InitialSelection(selectedDataConfig: [
@@ -707,9 +639,9 @@ class _SensorDetailsState extends State<SensorDetails> {
         ],
         primaryMeasureAxis: new charts.NumericAxisSpec(
             tickProviderSpec:
-            new charts.BasicNumericTickProviderSpec(zeroBound: false),
+                new charts.BasicNumericTickProviderSpec(zeroBound: false),
             tickFormatterSpec: charts.BasicNumericTickFormatterSpec(
-                    (num value) => getFormattedSensorDataForChart(value))),
+                (num value) => getFormattedSensorDataForChart(value))),
         selectionModels: [
           new charts.SelectionModelConfig(
             type: charts.SelectionModelType.info,
