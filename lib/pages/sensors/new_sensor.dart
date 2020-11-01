@@ -28,7 +28,6 @@ class _NewSensorState extends State<NewSensor> {
   TextEditingController _categoryController = TextEditingController();
   TextEditingController _frequencyValueController = TextEditingController();
   TextEditingController _frequencyUnitsController = TextEditingController();
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   final Api api = Api();
   String categoryValue;
@@ -93,7 +92,7 @@ class _NewSensorState extends State<NewSensor> {
               context: context,
               builder: (context) {
                 return Dialog(
-                  child: CategoryDialog(),
+                  child: CategoryDialog(currentCategory: categoryValue,),
                 );
               });
           if (selectedCategory != null) {
