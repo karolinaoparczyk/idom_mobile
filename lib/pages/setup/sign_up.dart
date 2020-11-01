@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
@@ -179,12 +180,35 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  clearFields() {
+    _formKey.currentState.reset();
+    _passwordController.text = "";
+    _confirmPasswordController.text = "";
+    _usernameController.text = "";
+    _emailController.text = "";
+    _telephoneController.text = "";
+    fieldsValidationMessage = "";
+    _passwordIcon = Icons.visibility_outlined;
+    _obscurePassword = true;
+    _passwordConfirmIcon = Icons.visibility_outlined;
+    _obscureConfirmPassword = true;
+    Navigator.of(context).pop(true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Zarejestruj się'),
-        ),
+        appBar: AppBar(title: Text('Zarejestruj się'), actions: [
+          IconButton(
+            icon: Icon(Icons.restore_page_rounded),
+            onPressed: () async {
+              await confirmActionDialog(context, "Potwierdź",
+                  "Czy na pewno wyczyścić wszystkie pola?", clearFields);
+            },
+          ),
+          IconButton(icon: Icon(Icons.check), onPressed: signUp),
+
+        ]),
         body: Container(
             child: Column(
           children: <Widget>[
