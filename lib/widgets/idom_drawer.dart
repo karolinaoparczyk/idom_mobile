@@ -117,38 +117,40 @@ class _IdomDrawerState extends State<IdomDrawer> {
               gradient: RadialGradient(
                   radius: 1.4,
                   center: Alignment(0.1, -0.1),
-                  colors: [IdomColors.additionalColor, IdomColors.lightBlack])),
+                  colors: [IdomColors.darken(IdomColors.additionalColor, 0.1), IdomColors.darken(IdomColors.additionalColor, 0.1)])),
           child: ListView(children: [
             DrawerHeader(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                  Column(
-                    children: [
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Icon(Icons.roofing_rounded,
-                            size: 50.0, color: IdomColors.mainFill),
+                child: Container(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                    Column(
+                      children: [
+                        Row(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(Icons.roofing_rounded,
+                              size: 50.0, color: IdomColors.mainFill),
+                          Text(
+                            'IDOM',
+                            style: TextStyle(
+                                fontSize: 70.0, color: IdomColors.textDark),
+                            textAlign: TextAlign.center,
+                          ),
+                          Icon(Icons.roofing_rounded,
+                              size: 50.0, color: Colors.transparent),
+                        ]),
                         Text(
-                          'IDOM',
+                          'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
                           style: TextStyle(
-                              fontSize: 70.0, color: IdomColors.textDark),
+                              fontSize: 13.0,
+                              color: IdomColors.textDark,
+                              fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
-                        Icon(Icons.roofing_rounded,
-                            size: 50.0, color: Colors.transparent),
-                      ]),
-                      Text(
-                        'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
-                        style: TextStyle(
-                            fontSize: 13.0,
-                            color: IdomColors.textDark,
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                  userRow(),
-                ])),
+                      ],
+                    ),
+                    userRow(),
+                  ]),
+                )),
             customMenuTile(Icons.perm_identity_rounded, "Moje konto", () async {
               Navigator.pop(context);
               var toPush = false;

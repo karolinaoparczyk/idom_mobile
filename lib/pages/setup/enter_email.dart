@@ -102,7 +102,7 @@ class _EnterEmailState extends State<EnterEmail> {
                             ),
                             alignment: Alignment.bottomCenter,
                             child: Column(children: <Widget>[
-                              buttonWidget(context, "Resetuj hasło",
+                              buttonWidget(context, "Resetuj hasło", Icons.arrow_right_outlined,
                                   sendResetPasswordRequest)
                             ])))
                   ])),

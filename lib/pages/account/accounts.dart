@@ -408,7 +408,7 @@ class _AccountsState extends State<Accounts> {
           width: 35,
           child: Container(
               alignment: Alignment.centerRight,
-              child: FlatButton(
+              child: TextButton(
                 key: Key("deleteButton"),
                 child: Icon(Icons.delete),
                 onPressed: () {

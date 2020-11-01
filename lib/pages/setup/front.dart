@@ -70,7 +70,7 @@ class _FrontState extends State<Front> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     SizedBox(
-                        height: queryData.size.height / 15 * 8,
+                        height: queryData.size.height / 15 * 7,
                         child: AnimatedContainer(
                             curve: Curves.easeInToLinear,
                             duration: Duration(
@@ -107,7 +107,7 @@ class _FrontState extends State<Front> {
                                   ),
                                 ]))),
                     SizedBox(
-                        height: queryData.size.height / 15 * 7,
+                        height: queryData.size.height / 15 * 6,
                         child: AnimatedContainer(
                             curve: Curves.easeInToLinear,
                             duration: Duration(
@@ -116,7 +116,7 @@ class _FrontState extends State<Front> {
                             alignment: Alignment.topCenter,
                             child: Column(children: [
                               setApiAddressEmptyMessage(),
-                              FlatButton(
+                              TextButton(
                                 key: Key('editApiServer'),
                                 child: Text('Edytuj adres serwera',
                                     style: Theme.of(context)
@@ -127,11 +127,11 @@ class _FrontState extends State<Front> {
                                 onPressed: navigateToEditApiAddress,
                               ),
                               buttonWidget(
-                                  context, "Zaloguj się", navigateToSignIn),
+                                  context, "Zaloguj", Icons.arrow_right_outlined, navigateToSignIn),
                               SizedBox(height: 10),
                               buttonWidget(
-                                  context, "Zarejestruj się", navigateToSignUp),
-                              FlatButton(
+                                  context, "Zarejestruj", Icons.arrow_right_outlined, navigateToSignUp),
+                              TextButton(
                                 key: Key('passwordReset'),
                                 child: Text('Zapomniałeś/aś hasła?',
                                     style: Theme.of(context)
