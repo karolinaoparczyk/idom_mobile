@@ -32,7 +32,6 @@ class _EditSensorState extends State<EditSensor> {
   TextEditingController _categoryController = TextEditingController();
   TextEditingController _frequencyValueController = TextEditingController();
   TextEditingController _frequencyUnitsController = TextEditingController();
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   String categoryValue;
   String frequencyUnitsValue;
@@ -77,49 +76,6 @@ class _EditSensorState extends State<EditSensor> {
 
   Future<void> getToken() async {
     _token = await widget.storage.getToken();
-  }
-
-  /// logs the user out of the app
-  _logOut() async {
-    try {
-      displayProgressDialog(
-          context: _scaffoldKey.currentContext,
-          key: _keyLoader,
-          text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut(_token);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      } else {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    } catch (e) {
-      print(e);
-      setState(() {
-        _load = false;
-      });
-      if (e.toString().contains("TimeoutException")) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-      if (e.toString().contains("SocketException")) {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    }
   }
 
   /// builds sensor name form field
@@ -226,6 +182,12 @@ class _EditSensorState extends State<EditSensor> {
         validator: UrlFieldValidator.validate);
   }
 
+  onLogOutFailure(String text) {
+    final snackBar =
+    new SnackBar(content: new Text(text));
+    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+  }
+
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -241,7 +203,7 @@ class _EditSensorState extends State<EditSensor> {
               IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditSensor"),
+                storage: widget.storage, parentWidgetType: "EditSensor", onLogOutFailure: onLogOutFailure),
 
             /// builds form with sensor properties
             body: Container(

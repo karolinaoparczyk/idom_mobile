@@ -216,46 +216,6 @@ class _SensorDetailsState extends State<SensorDetails> {
     });
   }
 
-  /// logs the user out of the app
-  _logOut() async {
-    try {
-      displayProgressDialog(
-          context: _scaffoldKey.currentContext,
-          key: _keyLoader,
-          text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut("");
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      } else {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    } catch (e) {
-      print(e);
-      if (e.toString().contains("TimeoutException")) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-      if (e.toString().contains("SocketException")) {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    }
-  }
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -264,6 +224,12 @@ class _SensorDetailsState extends State<SensorDetails> {
     _currentSensorDataController.dispose();
     chartWid = null;
     super.dispose();
+  }
+
+  onLogOutFailure(String text) {
+    final snackBar =
+    new SnackBar(content: new Text(text));
+    ScaffoldMessenger.of(context).showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -282,7 +248,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                   icon: Icon(Icons.edit), onPressed: _navigateToEditSensor)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "SensorDetails"),
+                storage: widget.storage, parentWidgetType: "SensorDetails", onLogOutFailure: onLogOutFailure),
 
             /// builds form with editable and non-editable sensor properties
             body: SingleChildScrollView(

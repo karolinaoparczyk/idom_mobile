@@ -1,21 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/setup/edit_api_address.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 
+import '../api.dart';
+
 class IdomDrawer extends StatefulWidget {
-  IdomDrawer(
-      {@required this.storage,
-      @required this.parentWidgetType,
-      this.onGoBackAction,
-      this.accountUsername});
+  IdomDrawer({
+    @required this.storage,
+    @required this.parentWidgetType,
+    @required this.onLogOutFailure,
+    this.onGoBackAction,
+    this.accountUsername,
+  });
 
   final SecureStorage storage;
   final String parentWidgetType;
   final Function onGoBackAction;
+  final Function onLogOutFailure;
   final String accountUsername;
 
   @override
@@ -23,18 +29,26 @@ class IdomDrawer extends StatefulWidget {
 }
 
 class _IdomDrawerState extends State<IdomDrawer> {
+  final Api api = Api();
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   String isUserStaff;
   List<String> menuItems;
   int currentUserId;
   String currentUsername;
+  String token;
 
   @override
   void initState() {
+    getCurrentUserToken();
     checkIfUserIsStaff();
     getCurrentUserId();
     getCurrentUserName();
-
     super.initState();
+  }
+
+  Future<void> getCurrentUserToken() async {
+    token = await widget.storage.getToken();
+    setState(() {});
   }
 
   Future<void> checkIfUserIsStaff() async {
@@ -114,16 +128,13 @@ class _IdomDrawerState extends State<IdomDrawer> {
       child: Drawer(
         child: Container(
           decoration: BoxDecoration(
-              gradient: RadialGradient(
-                  radius: 1.4,
-                  center: Alignment(0.1, -0.1),
-                  colors: [IdomColors.darken(IdomColors.additionalColor, 0.1), IdomColors.darken(IdomColors.additionalColor, 0.1)])),
+            color:IdomColors.darken(IdomColors.additionalColor, 0.1)),
           child: ListView(children: [
             DrawerHeader(
                 child: Container(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
                     Column(
                       children: [
                         Row(mainAxisSize: MainAxisSize.min, children: [
@@ -150,7 +161,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     ),
                     userRow(),
                   ]),
-                )),
+            )),
             customMenuTile(Icons.perm_identity_rounded, "Moje konto", () async {
               Navigator.pop(context);
               var toPush = false;
@@ -207,13 +218,43 @@ class _IdomDrawerState extends State<IdomDrawer> {
               }
             }),
             customMenuTile(Icons.logout, "Wyloguj", () async {
-              await widget.storage.resetUserData();
               Navigator.pop(context);
-              Navigator.of(context).popUntil((route) => route.isFirst);
+               await _logOut();
             }),
           ]),
         ),
       ),
     );
+  }
+
+  /// logs the user out of the app
+  Future<void> _logOut() async {
+    try {
+      displayProgressDialog(context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
+      var statusCode = await api.logOut(token);
+      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
+        await widget.storage.resetUserData();
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      } else if (statusCode == null) {
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        widget.onLogOutFailure(
+            "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      } else {
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        widget
+            .onLogOutFailure("Wylogowanie nie powiodło się. Spróbuj ponownie.");
+      }
+    } catch (e) {
+      print(e);
+      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+      if (e.toString().contains("TimeoutException")) {
+        widget.onLogOutFailure(
+            "Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie.");
+      }
+      if (e.toString().contains("SocketException")) {
+        widget
+            .onLogOutFailure("Błąd wylogowania. Adres serwera nieprawidłowy.");
+      }
+    }
   }
 }

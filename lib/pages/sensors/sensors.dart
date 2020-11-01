@@ -114,46 +114,6 @@ class _SensorsState extends State<Sensors> {
     return _sensorList;
   }
 
-  /// logs the user out of the app
-  _logOut() async {
-    try {
-      displayProgressDialog(
-          context: _scaffoldKey.currentContext,
-          key: _keyLoader,
-          text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut(_token);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      } else {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    } catch (e) {
-      print(e);
-      if (e.toString().contains("TimeoutException")) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-      if (e.toString().contains("SocketException")) {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Błąd wylogowania. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    }
-  }
-
   /// deactivates sensor after confirmation
   _deactivateSensor(Sensor sensor) async {
     await confirmActionDialog(
@@ -235,6 +195,11 @@ class _SensorsState extends State<Sensors> {
     );
   }
 
+  onLogOutFailure(String text) {
+    final snackBar = new SnackBar(content: new Text(text));
+    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+  }
+
   Future<bool> _onBackButton() async {
     var decision = await confirmActionDialog(
         context, "Potwierdź", "Na pewno wyjść z aplikacji?", () {
@@ -289,8 +254,11 @@ class _SensorsState extends State<Sensors> {
             storage: widget.storage,
             parentWidgetType: "Sensors",
             onGoBackAction: () async {
-              await getSensors();
-            }),
+              if (_token != null && _token.isNotEmpty) {
+                await getSensors();
+              }
+            },
+            onLogOutFailure: onLogOutFailure),
 
         /// builds sensor's list
         body: Container(child: Column(children: <Widget>[listSensors()])),

@@ -119,6 +119,12 @@ class _EditApiAddressState extends State<EditApiAddress> {
         validator: PortFieldValidator.validate);
   }
 
+  onLogOutFailure(String text) {
+    final snackBar =
+    new SnackBar(content: new Text(text));
+    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+  }
+
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -134,7 +140,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
             ]),
             drawer: _isUserLoggedIn == "true"
                 ? IdomDrawer(
-                    storage: widget.storage, parentWidgetType: "EditApiAddress")
+                    storage: widget.storage, parentWidgetType: "EditApiAddress", onLogOutFailure: onLogOutFailure)
                 : null,
             body: Row(children: <Widget>[
               Expanded(flex: 1, child: SizedBox(width: 1)),

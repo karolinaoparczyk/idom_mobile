@@ -212,6 +212,12 @@ class _NewSensorState extends State<NewSensor> {
     Navigator.pop(context, true);
   }
 
+  onLogOutFailure(String text) {
+    final snackBar =
+    new SnackBar(content: new Text(text));
+    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+  }
+
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -235,7 +241,7 @@ class _NewSensorState extends State<NewSensor> {
 
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "NewSensor"),
+                storage: widget.storage, parentWidgetType: "NewSensor", onLogOutFailure: onLogOutFailure),
 
             /// builds form with sensor properties
             body: Container(

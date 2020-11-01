@@ -23,7 +23,6 @@ class EditAccount extends StatefulWidget {
 class _EditAccountState extends State<EditAccount> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   final Api api = Api();
   String _token;
@@ -96,44 +95,10 @@ class _EditAccountState extends State<EditAccount> {
     super.dispose();
   }
 
-  /// logs the user out from the app
-  _logOut() async {
-    try {
-      displayProgressDialog(
-          context: _scaffoldKey.currentContext,
-          key: _keyLoader,
-          text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut(_token);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      } else {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    } catch (e) {
-      print(e);
-      if (e.toString().contains("TimeoutException")) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-      if (e.toString().contains("SocketException")) {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    }
+  onLogOutFailure(String text) {
+    final snackBar =
+    new SnackBar(content: new Text(text));
+    ScaffoldMessenger.of(context).showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -151,7 +116,7 @@ class _EditAccountState extends State<EditAccount> {
               IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditAccount"),
+                storage: widget.storage, parentWidgetType: "EditAccount", onLogOutFailure: onLogOutFailure),
             body: Container(
                 child: Column(children: <Widget>[
               SingleChildScrollView(
