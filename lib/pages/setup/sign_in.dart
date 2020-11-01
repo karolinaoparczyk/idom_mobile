@@ -137,7 +137,7 @@ class _SignInState extends State<SignIn> {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         } else if (result[1] == 400) {
           setState(() {
@@ -146,7 +146,7 @@ class _SignInState extends State<SignIn> {
           final snackBar = new SnackBar(
               content: new Text(
                   "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     } catch (e) {
@@ -158,12 +158,12 @@ class _SignInState extends State<SignIn> {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text("Błąd logowania. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
@@ -259,7 +259,7 @@ class _SignInState extends State<SignIn> {
     if (result == true) {
       final snackBar = new SnackBar(
           content: new Text("Email został wysłany. Sprawdź pocztę."));
-      ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
 }

@@ -19,6 +19,7 @@ class EditApiAddress extends StatefulWidget {
 
 class _EditApiAddressState extends State<EditApiAddress> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _apiAddressController = TextEditingController();
   TextEditingController _apiAddressProtocolController = TextEditingController();
   TextEditingController _apiAddressPortController = TextEditingController();
@@ -122,7 +123,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
   onLogOutFailure(String text) {
     final snackBar =
     new SnackBar(content: new Text(text));
-    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -135,6 +136,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
+          key: _scaffoldKey,
             appBar: AppBar(title: Text('Adres serwera'), actions: [
               IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
             ]),
@@ -199,7 +201,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
       } else {
         final snackBar =
             new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
@@ -233,7 +235,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
         final snackBar = new SnackBar(
             content: new Text("Adres serwera został zapisany."),
             duration: Duration(seconds: 2));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       Navigator.pop(context, true);
     }

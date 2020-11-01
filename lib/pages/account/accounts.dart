@@ -100,13 +100,13 @@ class _AccountsState extends State<Accounts> {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd pobierania kont. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("No address associated with hostname")) {
         final snackBar = new SnackBar(
             content:
                 new Text("Błąd pobierania kont. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
     setState(() {
@@ -152,12 +152,12 @@ class _AccountsState extends State<Accounts> {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           } else {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         } catch (e) {
           print(e.toString());
@@ -165,13 +165,13 @@ class _AccountsState extends State<Accounts> {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           }
           if (e.toString().contains("SocketException")) {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Błąd usuwania konta. Adres serwera nieprawidłowy."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         }
       },
@@ -250,7 +250,7 @@ class _AccountsState extends State<Accounts> {
   onLogOutFailure(String text) {
     final snackBar =
     new SnackBar(content: new Text(text));
-    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Widget listAccounts() {

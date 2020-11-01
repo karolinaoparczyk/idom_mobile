@@ -185,7 +185,7 @@ class _EditSensorState extends State<EditSensor> {
   onLogOutFailure(String text) {
     final snackBar =
     new SnackBar(content: new Text(text));
-    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -352,7 +352,7 @@ class _EditSensorState extends State<EditSensor> {
           .contains("Sensor with provided name already exists")) {
         final snackBar = new SnackBar(
             content: new Text("Czujnik o podanej nazwie już istnieje."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
         setState(() {
           _load = false;
         });
@@ -366,13 +366,13 @@ class _EditSensorState extends State<EditSensor> {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd edytowania czujnika. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
@@ -448,7 +448,7 @@ class _EditSensorState extends State<EditSensor> {
         } else {
           final snackBar =
               new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     }

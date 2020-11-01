@@ -7,7 +7,6 @@ import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user up
@@ -22,6 +21,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -198,6 +198,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
         appBar: AppBar(title: Text('Zarejestruj się'), actions: [
           IconButton(
             icon: Icon(Icons.restore_page_rounded),
@@ -329,7 +330,7 @@ class _SignUpState extends State<SignUp> {
           final snackBar = new SnackBar(
               content:
                   new Text("Konto zostało utworzone. Możesz się zalogować."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
 
           /// navigates to logging in page
           Navigator.push(
@@ -391,13 +392,13 @@ class _SignUpState extends State<SignUp> {
           final snackBar = new SnackBar(
               content: new Text(
                   "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content:
                   new Text("Błąd rejestracji. Adres serwera nieprawidłowy."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     } else {

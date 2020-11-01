@@ -86,14 +86,14 @@ class _AccountDetailState extends State<AccountDetail> {
       });
       final snackBar = new SnackBar(
           content: new Text("Błąd pobierania danych użytkownika."));
-      ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
 
   onLogOutFailure(String text) {
     final snackBar =
     new SnackBar(content: new Text(text));
-    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -240,7 +240,7 @@ class _AccountDetailState extends State<AccountDetail> {
     if (result == true) {
       final snackBar =
           new SnackBar(content: new Text("Zapisano dane użytkownika."));
-      ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshAccountDetails();
     }
   }
@@ -268,7 +268,7 @@ class _AccountDetailState extends State<AccountDetail> {
         final snackBar = new SnackBar(
             content:
                 new Text("Odświeżenie danych użytkownika nie powiodło się."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
       print(e.toString());
@@ -279,13 +279,14 @@ class _AccountDetailState extends State<AccountDetail> {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
     setState(() {

@@ -13,6 +13,7 @@ class EnterEmail extends StatefulWidget {
 
 class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _emailController = TextEditingController();
   final Api api = Api();
   bool _load;
@@ -50,6 +51,7 @@ class _EnterEmailState extends State<EnterEmail> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
+          key: _scaffoldKey,
             appBar: AppBar(
               title: Text('Reset hasła'),
             ),
@@ -126,12 +128,12 @@ class _EnterEmailState extends State<EnterEmail> {
           final snackBar = new SnackBar(
               content: new Text(
                   "Link do resetu hasła zosta wysłany na podany adres e-mail."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         } else if (res == 400) {
           final snackBar = new SnackBar(
               content:
                   new Text("Konto dla podanego adresu e-mail nie istnieje."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     } catch (e) {
@@ -143,13 +145,13 @@ class _EnterEmailState extends State<EnterEmail> {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd resetu hasła. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content:
                 new Text("Błąd resetu hasła. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }

@@ -98,7 +98,7 @@ class _EditAccountState extends State<EditAccount> {
   onLogOutFailure(String text) {
     final snackBar =
     new SnackBar(content: new Text(text));
-    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -283,13 +283,13 @@ class _EditAccountState extends State<EditAccount> {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd edycji użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd edycji użytkownika. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
@@ -327,7 +327,7 @@ class _EditAccountState extends State<EditAccount> {
       } else {
         final snackBar =
             new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }

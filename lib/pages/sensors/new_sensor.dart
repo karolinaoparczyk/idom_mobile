@@ -8,7 +8,6 @@ import 'package:idom/dialogs/sensor_category_dialog.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
-import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
@@ -55,46 +54,6 @@ class _NewSensorState extends State<NewSensor> {
 
   Future<void> getToken() async {
     _token = await widget.storage.getToken();
-  }
-
-  /// logs the user out of the app
-  _logOut() async {
-    try {
-      displayProgressDialog(
-          context: _scaffoldKey.currentContext,
-          key: _keyLoader,
-          text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut(_token);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      } else {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Wylogowanie nie powiodło się. Spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    } catch (e) {
-      print(e);
-      if (e.toString().contains("TimeoutException")) {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-      if (e.toString().contains("SocketException")) {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Błąd wylogowywania. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
-      }
-    }
   }
 
   /// builds sensor name form field
@@ -215,7 +174,7 @@ class _NewSensorState extends State<NewSensor> {
   onLogOutFailure(String text) {
     final snackBar =
     new SnackBar(content: new Text(text));
-    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -429,7 +388,7 @@ class _NewSensorState extends State<NewSensor> {
             .contains("Sensor with provided name already exists")) {
           final snackBar = new SnackBar(
               content: new Text("Czujnik o podanej nazwie już istnieje."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
           setState(() {
             _load = false;
           });
@@ -443,13 +402,13 @@ class _NewSensorState extends State<NewSensor> {
           final snackBar = new SnackBar(
               content: new Text(
                   "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
                   "Błąd dodawania czujnika. Adres serwera nieprawidłowy."));
-          ScaffoldMessenger.of(context).showSnackBar((snackBar));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     }

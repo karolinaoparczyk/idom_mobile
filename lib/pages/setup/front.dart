@@ -159,7 +159,7 @@ class _FrontState extends State<Front> {
       final snackBar =
           new SnackBar(content: new Text("Adres serwera został zapisany."));
 
-      ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
 
@@ -176,7 +176,7 @@ class _FrontState extends State<Front> {
         final snackBar = new SnackBar(
             content: new Text("Email został wysłany. Sprawdź pocztę."));
 
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }

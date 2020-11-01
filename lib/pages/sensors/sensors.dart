@@ -98,13 +98,13 @@ class _SensorsState extends State<Sensors> {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
-        ScaffoldMessenger.of(context).showSnackBar((snackBar));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
     setState(() {
@@ -150,12 +150,12 @@ class _SensorsState extends State<Sensors> {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           } else {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         } catch (e) {
           Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
@@ -165,13 +165,14 @@ class _SensorsState extends State<Sensors> {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
           }
           if (e.toString().contains("SocketException")) {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-            ScaffoldMessenger.of(context).showSnackBar((snackBar));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
+
           }
         }
       },
@@ -197,7 +198,7 @@ class _SensorsState extends State<Sensors> {
 
   onLogOutFailure(String text) {
     final snackBar = new SnackBar(content: new Text(text));
-    ScaffoldMessenger.of(context).showSnackBar((snackBar));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -407,7 +408,7 @@ class _SensorsState extends State<Sensors> {
     /// displays success message if sensor added succesfully
     if (result == true) {
       final snackBar = new SnackBar(content: new Text("Dodano nowy czujnik."));
-      ScaffoldMessenger.of(context).showSnackBar((snackBar));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
       await getSensors();
     }
   }
