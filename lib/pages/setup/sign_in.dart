@@ -29,6 +29,8 @@ class _SignInState extends State<SignIn> {
   final FocusScopeNode _node = FocusScopeNode();
   final Api api = Api();
   bool _load;
+  IconData _passwordIcon = Icons.visibility_outlined;
+  bool _obscurePassword = true;
 
   void initState() {
     super.initState();
@@ -62,6 +64,22 @@ class _SignInState extends State<SignIn> {
       decoration: InputDecoration(
         labelText: "Hasło",
         labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon: IconButton(
+            color: Theme.of(context).iconTheme.color,
+            icon: Icon(_passwordIcon),
+            onPressed: () {
+              if (_passwordIcon == Icons.visibility_outlined) {
+                setState(() {
+                  _passwordIcon = Icons.visibility_off_outlined;
+                  _obscurePassword = false;
+                });
+              } else {
+                setState(() {
+                  _passwordIcon = Icons.visibility_outlined;
+                  _obscurePassword = true;
+                });
+              }
+            }),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -69,7 +87,7 @@ class _SignInState extends State<SignIn> {
       controller: _passwordController,
       validator: PasswordFieldValidator.validate,
       style: TextStyle(fontSize: 21.0),
-      obscureText: true,
+      obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.done,
     );
@@ -211,8 +229,8 @@ class _SignInState extends State<SignIn> {
                             ),
                             alignment: Alignment.bottomCenter,
                             child: Column(children: <Widget>[
-                              buttonWidget(context, "Zaloguj się", signIn),
-                              FlatButton(
+                              buttonWidget(context, "Zaloguj", Icons.arrow_right_outlined, signIn),
+                              TextButton(
                                 key: Key("passwordReset"),
                                 child: Text('Zapomniałeś/aś hasła?',
                                     style: Theme.of(context)

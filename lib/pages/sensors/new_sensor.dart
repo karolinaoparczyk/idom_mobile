@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/frequency_units_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/sensor_category_dialog.dart';
@@ -200,6 +201,17 @@ class _NewSensorState extends State<NewSensor> {
         validator: UrlFieldValidator.validate);
   }
 
+  clearFields(){
+    _formKey.currentState.reset();
+    _nameController.text = "";
+    _categoryController.text = "";
+    _frequencyValueController.text = "";
+    _frequencyUnitsController.text = "";
+    categoryValue = null;
+    frequencyUnitsValue = null;
+    Navigator.pop(context, true);
+  }
+
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -211,9 +223,17 @@ class _NewSensorState extends State<NewSensor> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              title: Text("Dodaj czujnik"),
-            ),
+            appBar: AppBar(title: Text("Dodaj czujnik"), actions: [
+              IconButton(
+                icon: Icon(Icons.restore_page_rounded),
+                onPressed: () async {
+                  await confirmActionDialog(context, "Potwierdź",
+                      "Czy na pewno wyczyścić wszystkie pola?", clearFields);
+                },
+              ),
+              IconButton(icon: Icon(Icons.save), onPressed: _saveChanges),
+
+            ]),
             drawer: IdomDrawer(
                 storage: widget.storage, parentWidgetType: "NewSensor"),
 
@@ -338,18 +358,6 @@ class _NewSensorState extends State<NewSensor> {
                               ),
                             ),
                           ])))),
-              Expanded(
-                  flex: 1,
-                  child: AnimatedContainer(
-                      curve: Curves.easeInToLinear,
-                      duration: Duration(
-                        milliseconds: 10,
-                      ),
-                      alignment: Alignment.bottomCenter,
-                      child: Column(
-                          children: <Widget>[
-                        buttonWidget(context, "Dodaj czujnik", _saveChanges),
-                      ])))
             ]))));
   }
 

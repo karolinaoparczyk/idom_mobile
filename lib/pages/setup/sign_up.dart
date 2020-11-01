@@ -32,6 +32,10 @@ class _SignUpState extends State<SignUp> {
   final Api api = Api();
   bool _load;
   String fieldsValidationMessage;
+  IconData _passwordIcon = Icons.visibility_outlined;
+  bool _obscurePassword = true;
+  IconData _passwordConfirmIcon = Icons.visibility_outlined;
+  bool _obscureConfirmPassword = true;
 
   void initState() {
     super.initState();
@@ -65,6 +69,22 @@ class _SignUpState extends State<SignUp> {
       decoration: InputDecoration(
         labelText: "Hasło*",
         labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon: IconButton(
+            color: Theme.of(context).iconTheme.color,
+            icon: Icon(_passwordIcon),
+            onPressed: () {
+              if (_passwordIcon == Icons.visibility_outlined) {
+                setState(() {
+                  _passwordIcon = Icons.visibility_off_outlined;
+                  _obscurePassword = false;
+                });
+              } else {
+                setState(() {
+                  _passwordIcon = Icons.visibility_outlined;
+                  _obscurePassword = true;
+                });
+              }
+            }),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -72,7 +92,7 @@ class _SignUpState extends State<SignUp> {
       controller: _passwordController,
       style: TextStyle(fontSize: 21.0),
       validator: PasswordFieldValidator.validate,
-      obscureText: true,
+      obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
     );
@@ -85,6 +105,22 @@ class _SignUpState extends State<SignUp> {
       decoration: InputDecoration(
         labelText: "Powtórz hasło",
         labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon: IconButton(
+            color: Theme.of(context).iconTheme.color,
+            icon: Icon(_passwordConfirmIcon),
+            onPressed: () {
+              if (_passwordConfirmIcon == Icons.visibility_outlined) {
+                setState(() {
+                  _passwordConfirmIcon = Icons.visibility_off_outlined;
+                  _obscureConfirmPassword = false;
+                });
+              } else {
+                setState(() {
+                  _passwordConfirmIcon = Icons.visibility_outlined;
+                  _obscureConfirmPassword = true;
+                });
+              }
+            }),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -97,7 +133,7 @@ class _SignUpState extends State<SignUp> {
         }
         return null;
       },
-      obscureText: true,
+      obscureText: _obscureConfirmPassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.done,
     );
@@ -153,7 +189,7 @@ class _SignUpState extends State<SignUp> {
             child: Column(
           children: <Widget>[
             Expanded(
-                flex: 4,
+                flex: 6,
                 child: SingleChildScrollView(
                     controller: _scrollController,
                     child: Form(
@@ -235,17 +271,6 @@ class _SignUpState extends State<SignUp> {
                                     ),
                                   ),
                                 ]))))),
-            Expanded(
-                flex: 1,
-                child: AnimatedContainer(
-                    curve: Curves.easeInToLinear,
-                    duration: Duration(
-                      milliseconds: 10,
-                    ),
-                    alignment: Alignment.bottomCenter,
-                    child: Center(
-                        child:
-                            buttonWidget(context, "Zarejestruj się", signUp))))
           ],
         )));
   }
