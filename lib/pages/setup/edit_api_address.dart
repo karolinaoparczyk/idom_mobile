@@ -214,6 +214,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
       "Potwierdź",
       "Czy na pewno zapisać zmiany?",
       () async {
+        Navigator.pop(context, true);
         await _saveChanges(changedProtocol, changedAddress, changedPort);
       },
     );
