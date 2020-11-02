@@ -123,7 +123,7 @@ class _NewSensorState extends State<NewSensor> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
         style: TextStyle(fontSize: 17.0),
-        validator: UrlFieldValidator.validate);
+        validator: CategoryFieldValidator.validate);
   }
 
   /// builds sensor frequency value form field
@@ -169,7 +169,6 @@ class _NewSensorState extends State<NewSensor> {
           ),
         ),
         onTap: () async {
-          if (!canEditFrequency) return;
           final Map<String, String> selectedFrequencyUnits = await showDialog(
               context: context,
               builder: (context) {
@@ -185,7 +184,7 @@ class _NewSensorState extends State<NewSensor> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
         style: TextStyle(fontSize: 17.0),
-        validator: UrlFieldValidator.validate);
+        validator: FrequencyUnitsFieldValidator.validate);
   }
 
   clearFields() {
@@ -374,10 +373,10 @@ class _NewSensorState extends State<NewSensor> {
       }
 
       /// validates if frequency value is valid for given frequency units
-      var validFequencyValue =
+      var validFrequencyValue =
           SensorFrequencyFieldValidator.isFrequencyValueValid(
               _frequencyValueController.text, frequencyUnitsValue);
-      if (!validFequencyValue) {
+      if (!validFrequencyValue) {
         var text =
             "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
         if (frequencyUnitsValue == "seconds")

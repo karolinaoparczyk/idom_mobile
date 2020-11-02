@@ -376,12 +376,12 @@ class _SensorsState extends State<Sensors> {
             padding: EdgeInsets.only(top: 5),
             alignment: Alignment.topRight,
             child: SvgPicture.asset(
-              imageUrl,
-              matchTextDirection: false,
-              width: 32,
-              height: 32,
-              color: Theme.of(context).iconTheme.color,
-              key: Key(imageUrl)
+                imageUrl,
+                matchTextDirection: false,
+                width: 32,
+                height: 32,
+                color: Theme.of(context).iconTheme.color,
+                key: Key(imageUrl)
             )));
   }
 
@@ -442,7 +442,7 @@ class _SensorsState extends State<Sensors> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => NewSensor(storage: widget.storage),
+            builder: (context) => NewSensor(storage: widget.storage, testApi: widget.testApi),
             fullscreenDialog: true));
 
     /// displays success message if sensor added succesfully
@@ -457,7 +457,7 @@ class _SensorsState extends State<Sensors> {
   navigateToSensorDetails(Sensor sensor) async {
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
-            SensorDetails(storage: widget.storage, sensor: sensor)));
+            SensorDetails(storage: widget.storage, sensor: sensor, testApi: widget.testApi)));
     await getSensors();
   }
 

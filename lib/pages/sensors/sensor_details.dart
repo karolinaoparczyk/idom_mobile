@@ -247,7 +247,7 @@ class _SensorDetailsState extends State<SensorDetails> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(title: Text(widget.sensor.name), actions: [
-              IconButton(
+              IconButton(key: Key("editSensor"),
                   icon: Icon(Icons.edit), onPressed: _navigateToEditSensor)
             ]),
             drawer: IdomDrawer(
@@ -586,7 +586,7 @@ class _SensorDetailsState extends State<SensorDetails> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                EditSensor(storage: widget.storage, sensor: widget.sensor),
+                EditSensor(storage: widget.storage, sensor: widget.sensor, testApi: widget.testApi),
             fullscreenDialog: true));
     if (result == true) {
       final snackBar =

@@ -26,7 +26,7 @@ class PasswordFieldValidator {
       return 'Hasło musi zawierać przynajmniej 8 znaków';
     }
     if (value.length > 25) {
-      return 'Hasło nie może zawierać więcej niż 20 znaków';
+      return 'Hasło nie może zawierać więcej niż 25 znaków';
     }
     return null;
   }
@@ -88,6 +88,10 @@ class SensorFrequencyFieldValidator {
     if (value.isEmpty) {
       return 'Pole wymagane';
     }
+    var intVal = int.tryParse(value);
+    if (intVal == null || intVal <= 0) {
+      return 'Podaj ilczbę całkowitą większą od zera';
+    }
     return null;
   }
 
@@ -107,6 +111,26 @@ class SensorFrequencyFieldValidator {
 
 /// validates url field
 class UrlFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane';
+    }
+    return null;
+  }
+}
+
+/// validates category field
+class CategoryFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane';
+    }
+    return null;
+  }
+}
+
+/// validates frequency units field
+class FrequencyUnitsFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane';

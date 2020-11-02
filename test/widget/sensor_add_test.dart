@@ -56,8 +56,8 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
 
-    Finder emailField = find.byKey(Key('name'));
-    await tester.enterText(emailField, 'sensor');
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'sensor');
 
     await tester.tap(find.byKey(Key('addSensorButton')));
     await tester.pump();
@@ -99,6 +99,46 @@ void main() {
     verifyNever(await mockApi.addSensor('', 'humidity', null, "token"));
   });
 
+  /// tests if does not save with only category smoke
+  testWidgets('only category smoke, does not save',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addSensor('', "smoke", null, "token")).thenAnswer((_) async =>
+        Future.value({"bodySen": '"id": 3', "statusCodeSen": "201"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+    when(mockSecureStorage.resetUserData())
+        .thenAnswer((_) async => Future.value());
+
+    NewSensor page = NewSensor(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.tap(find.byKey(Key('addSensorButton')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('categoriesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.text("stanu powietrza").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('addSensorButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(NewSensor), findsOneWidget);
+    expect(find.text("Pole wymagane"), findsNWidgets(3));
+
+    verifyNever(await mockApi.addSensor('', 'smoke', null, "token"));
+  });
+
   /// tests if saves with name, category, frequency value and frequency units
   testWidgets(
       'non empty name, category, frequency value and frequency units, saves',
@@ -117,8 +157,8 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
 
-    Finder emailField = find.byKey(Key('name'));
-    await tester.enterText(emailField, 'sensor');
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'sensor');
 
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
