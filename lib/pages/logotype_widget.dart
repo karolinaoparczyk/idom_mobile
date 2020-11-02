@@ -12,8 +12,8 @@ class LogotypeWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.roofing_rounded,
-                      size: 50.0, color: IdomColors.mainFill),
+                  Image.asset('assets/home.png', height: 70.0, width: 70.0),
+
                   Text(
                     'IDOM',
                     style:
@@ -21,7 +21,7 @@ class LogotypeWidget extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   Icon(Icons.roofing_rounded,
-                      size: 50.0, color: Colors.transparent),
+                      size: 70.0, color: Colors.transparent),
                 ]),
                 Text(
                   'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU',
