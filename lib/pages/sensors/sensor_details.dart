@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:idom/enums/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
+import 'package:idom/enums/categories.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -53,10 +53,9 @@ class _SensorDetailsState extends State<SensorDetails> {
   @override
   void initState() {
     super.initState();
-    if (widget.testApi != null){
+    if (widget.testApi != null) {
       api = widget.testApi;
     }
-
     _load = true;
     noDataForChart = false;
     dataLoaded = false;
@@ -116,7 +115,9 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   getSensorData() async {
-    if (widget.sensor.category == "rain_sensor") return;
+    if (widget.sensor.category == "smoke" || widget.sensor.category == "rain_sensor") {
+      return;
+    }
     await getToken();
     try {
       if (widget.sensor != null) {
@@ -247,8 +248,10 @@ class _SensorDetailsState extends State<SensorDetails> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(title: Text(widget.sensor.name), actions: [
-              IconButton(key: Key("editSensor"),
-                  icon: Icon(Icons.edit), onPressed: _navigateToEditSensor)
+              IconButton(
+                  key: Key("editSensor"),
+                  icon: Icon(Icons.edit),
+                  onPressed: _navigateToEditSensor)
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
@@ -376,7 +379,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 style: TextStyle(fontSize: 21.0)),
                           ])
                         ]))),
-                  if (widget.sensor.category != "rain_sensor")
+                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             top: 10, left: 52.5, right: 30.0, bottom: 0.0),
@@ -388,7 +391,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   fontSize: 16.5,
                                   fontWeight: FontWeight.bold)),
                         )),
-                  if (widget.sensor.category != "rain_sensor")
+                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 0.0, horizontal: 52.5),
@@ -396,7 +399,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                             alignment: Alignment.centerLeft,
                             child: Text(getSensorLastData(),
                                 style: TextStyle(fontSize: 21.0)))),
-                  if (widget.sensor.category != "rain_sensor")
+                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
@@ -416,7 +419,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 ),
                               ],
                             ))),
-                  if (widget.sensor.category != "rain_sensor")
+                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
                     Padding(
                       padding: EdgeInsets.only(
                           left: 52.5, top: 13.5, right: 30.0, bottom: 0),
@@ -471,7 +474,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                             });
                           }),
                     ),
-                  if (widget.sensor.category != "rain_sensor")
+                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 30.0, top: 0.0, right: 17.0, bottom: 0.0),
@@ -480,7 +483,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 child: Column(children: <Widget>[
                           SizedBox(width: 355, height: 200, child: chartWid)
                         ])))),
-                  if (widget.sensor.category != "rain_sensor")
+                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 52.5, top: 20.0, right: 30.0, bottom: 0.0),
@@ -494,7 +497,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         fontWeight: FontWeight.bold)),
                               )
                             : SizedBox()),
-                  if (widget.sensor.category != "rain_sensor")
+                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),
@@ -585,8 +588,10 @@ class _SensorDetailsState extends State<SensorDetails> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                EditSensor(storage: widget.storage, sensor: widget.sensor, testApi: widget.testApi),
+            builder: (context) => EditSensor(
+                storage: widget.storage,
+                sensor: widget.sensor,
+                testApi: widget.testApi),
             fullscreenDialog: true));
     if (result == true) {
       final snackBar =

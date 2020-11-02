@@ -14,7 +14,7 @@ import android.media.AudioAttributes;
 import android.content.ContentResolver;
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "projectidom.com/sensors_notifications"
+    private val CHANNEL = "flutter.idom/notifications"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

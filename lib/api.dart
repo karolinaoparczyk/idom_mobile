@@ -197,14 +197,23 @@ class Api {
   Future<Map<String, String>> addSensor(
       String name, String category, int frequency, String userToken) async {
     await getApiAddress();
-    var resSen = await httpClient.post(
-      '$url/sensors/add',
-      headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
-      body: {
+    var body;
+    if (frequency == null) {
+      body = {
+        "name": name,
+        "category": category,
+      };
+    } else {
+      body = {
         "name": name,
         "category": category,
         "frequency": frequency.toString()
-      },
+      };
+    }
+    var resSen = await httpClient.post(
+      '$url/sensors/add',
+      headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+      body: body,
     ).timeout(Duration(seconds: 5));
     var resDict = {
       "bodySen": resSen.body.toString(),

@@ -12,7 +12,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  static const MethodChannel _channel = MethodChannel('projectidom.com/sensors_notifications');
+  static const MethodChannel _channel = MethodChannel('flutter.idom/notifications');
   Map<String, String> channelMap = {
     "id": "SENSORS_NOTIFICATIONS",
     "name": "Sensors",

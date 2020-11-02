@@ -39,12 +39,6 @@ class _NewSensorState extends State<NewSensor> {
   String fieldsValidationMessage;
   bool canEditFrequency = true;
   List<DropdownMenuItem<String>> units;
-  Map<String, String> englishToPolishUnits = {
-    "seconds": "sekundy",
-    "minutes": "minuty",
-    "hours": "godziny",
-    "days": "dni"
-  };
 
   @override
   void initState() {
@@ -107,7 +101,8 @@ class _NewSensorState extends State<NewSensor> {
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
-                selectedCategory['value'] == "breathalyser") {
+                selectedCategory['value'] == "breathalyser" ||
+                selectedCategory['value'] == "smoke") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -378,10 +373,10 @@ class _NewSensorState extends State<NewSensor> {
               _frequencyValueController.text, frequencyUnitsValue);
       if (!validFrequencyValue) {
         var text =
-            "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
+            "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}";
         if (frequencyUnitsValue == "seconds")
           text =
-              "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
+              "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}";
         setState(() {
           fieldsValidationMessage = text;
         });

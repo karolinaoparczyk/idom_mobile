@@ -69,7 +69,8 @@ class _EditSensorState extends State<EditSensor> {
             (element) => element["value"] == widget.sensor.category)['text']);
     categoryValue = widget.sensor.category;
     if (categoryValue == "rain_sensor" || categoryValue == "water_temp" ||
-        categoryValue == "breathalyser") {
+        categoryValue == "breathalyser" ||
+        categoryValue == "smoke") {
       canEditFrequency = false;
       frequencyUnitsValue = "seconds";
       _frequencyUnitsController.text = FrequencyUnits.values
@@ -435,8 +436,9 @@ class _EditSensorState extends State<EditSensor> {
       if (category != widget.sensor.category) {
         changedCategory = true;
       }
-      if (frequencyUnits != 'seconds' ||
-          frequencyValue != widget.sensor.frequency.toString()) {
+      if (widget.sensor.category != "smoke" &&
+          (frequencyUnits != 'seconds' ||
+              frequencyValue != widget.sensor.frequency.toString())) {
         changedFrequencyValue = true;
 
         int valInt = int.tryParse(_frequencyValueController.text);

@@ -317,7 +317,7 @@ class _SensorsState extends State<Sensors> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: _sensorList.length,
-                      itemBuilder: (context, index) => Container(
+                      itemBuilder: (BuildContext buildContext, index) => Container(
                           height: 80,
                           child: Card(
                               child: ListTile(
@@ -334,8 +334,8 @@ class _SensorsState extends State<Sensors> {
                                   leading: getCategoryImage(_sensorList[index]),
 
                                   /// delete sensor button
-                                  trailing: deleteButtonTrailing(
-                                      _sensorList[index])))),
+                                      trailing: deleteButtonTrailing(
+                                          buildContext, _sensorList[index])))),
                     ),
                   ))));
     }
@@ -442,7 +442,8 @@ class _SensorsState extends State<Sensors> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => NewSensor(storage: widget.storage, testApi: widget.testApi),
+            builder: (context) =>
+                NewSensor(storage: widget.storage, testApi: widget.testApi),
             fullscreenDialog: true));
 
     /// displays success message if sensor added succesfully
@@ -456,13 +457,13 @@ class _SensorsState extends State<Sensors> {
   /// navigates to sensor's details
   navigateToSensorDetails(Sensor sensor) async {
     await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            SensorDetails(storage: widget.storage, sensor: sensor, testApi: widget.testApi)));
+        builder: (context) => SensorDetails(
+            storage: widget.storage, sensor: sensor, testApi: widget.testApi)));
     await getSensors();
   }
 
   /// deletes sensor
-  deleteButtonTrailing(Sensor sensor) {
+  deleteButtonTrailing(BuildContext buildContext, Sensor sensor) {
     return SizedBox(
         width: 35,
         child: Container(
@@ -483,7 +484,7 @@ class _SensorsState extends State<Sensors> {
                       ))),
               onPressed: () {
                 setState(() {
-                  _deactivateSensor(sensor);
+                  _deactivateSensor(buildContext, sensor);
                 });
               },
             )));

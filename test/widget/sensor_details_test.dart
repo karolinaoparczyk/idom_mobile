@@ -239,4 +239,45 @@ void main() {
     expect(find.text("Ostatni pomiar"), findsOneWidget);
     expect(find.text("1.0 ‰"), findsOneWidget);
   });
+      /// tests if displays smoke correctly
+      testWidgets('displays smoke correctly', (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockSecureStorage.getToken()).thenAnswer(
+                (_) async => Future.value("token"));
+        when(mockSecureStorage.resetUserData()).thenAnswer(
+                (_) async => Future.value());
+
+        List<Sensor> sensors = List();
+        sensors.add(Sensor(
+            id: 1,
+            name: "sensor1",
+            category: "smoke",
+            frequency: null,
+            lastData: null));
+        sensors.add(Sensor(
+            id: 2,
+            name: "sensor2",
+            category: "temperature",
+            frequency: 300,
+            lastData: "27.0"));
+
+        Sensors page = Sensors(
+          storage: mockSecureStorage,
+          testApi: mockApi,
+          testSensors: sensors,
+        );
+
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(Key('sensor1')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+
+        expect(find.byType(SensorDetails), findsOneWidget);
+        expect(find.text("Dane z czujnika"), findsNothing);
+
+        verifyNever(await mockApi.editSensor(1, '', null, null, "token"));
+      });
 }
