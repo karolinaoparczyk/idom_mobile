@@ -384,7 +384,7 @@ class _EditSensorState extends State<EditSensor> {
       context,
       "Potwierdź",
       "Czy na pewno zapisać zmiany?",
-      () async {
+      onConfirm: () async {
         await _saveChanges(changedName, changedCategory, changedFrequencyValue,
             frequencyInSeconds);
       },

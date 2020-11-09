@@ -193,7 +193,7 @@ class _NewSensorState extends State<NewSensor> {
                 icon: Icon(Icons.restore_page_rounded),
                 onPressed: () async {
                   await confirmActionDialog(context, "Potwierdź",
-                      "Czy na pewno wyczyścić wszystkie pola?", clearFields);
+                      "Czy na pewno wyczyścić wszystkie pola?", onConfirm: clearFields);
                 },
               ),
               IconButton(icon: Icon(Icons.save), onPressed: _saveChanges),

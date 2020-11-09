@@ -116,8 +116,8 @@ class _SignInState extends State<SignIn> {
                 account.email,
                 account.telephone,
                 account.id.toString(),
-                account.smsNotifications,
-                account.appNotifications,
+                account.smsNotifications.toString(),
+                account.appNotifications.toString(),
                 account.isActive.toString(),
                 account.isStaff.toString(),
                 result[0].split(':')[1].substring(1, 41));

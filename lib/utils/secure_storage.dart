@@ -144,6 +144,22 @@ class SecureStorage {
     return storage.read(key: _userId);
   }
 
+  void setAppNotifications(String appNotifications) {
+    storage.write(key: _appNotifications, value: appNotifications);
+  }
+
+  Future<String> getAppNotifications() {
+    return storage.read(key: _appNotifications);
+  }
+
+  void setSmsNotifications(String smsNotifications) {
+    storage.write(key: _smsNotifications, value: smsNotifications);
+  }
+
+  Future<String> getSmsNotifications() {
+    return storage.read(key: _smsNotifications);
+  }
+
   void setToken(String token) {
     storage.write(key: _token, value: token);
   }

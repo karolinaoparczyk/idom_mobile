@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Future<bool> confirmActionDialog(BuildContext context, String titleText,
-    String content, Function onConfirm) async {
+    String content, {Function onConfirm}) async {
   return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -20,8 +20,9 @@ Future<bool> confirmActionDialog(BuildContext context, String titleText,
             TextButton(
               key: Key("yesButton"),
               child: Text("Tak", style: Theme.of(context).textTheme.headline5),
-              onPressed: onConfirm,
-            ),
+              onPressed: () async {
+                Navigator.of(context).pop(true);
+              },),
             TextButton(
               key: Key("noButton"),
               child: Text("Nie", style: Theme.of(context).textTheme.headline5),
