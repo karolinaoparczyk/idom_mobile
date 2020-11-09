@@ -227,47 +227,125 @@ void main() {
     verify(await mockApi.addSensor('sensor', 'humidity', 7200, "token")).called(1);
   });
 
-  /// tests if can choose rain sensor
+  /// tests if can choose rain sensor, frequency read only
   testWidgets(
-      'can choose rain sensor',
-      (WidgetTester tester) async {
-    MockApi mockApi = MockApi();
-    when(mockApi.addSensor('sensor', 'rain', 7200, "token")).thenAnswer(
-        (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
-    MockSecureStorage mockSecureStorage = MockSecureStorage();
-    List<Sensor> sensors = List();
-    sensors.add(Sensor(
-        id: 1,
-        name: "sensor1",
-        category: "temperature",
-        frequency: 300,
-        lastData: "27.0"));
-    sensors.add(Sensor(
-        id: 2,
-        name: "sensor2",
-        category: "rain",
-        frequency: 300,
-        lastData: "27.0"));
+      'can add rain sensor, frequency read only',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+        when(mockApi.addSensor('sensor', 'rain', 30, "token")).thenAnswer(
+                (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+        NewSensor page = NewSensor(
+          storage: mockSecureStorage,
+          testApi: mockApi,
+        );
 
-    Sensors page = Sensors(
-      storage: mockSecureStorage,
-      testApi: mockApi,
-    );
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
-    await tester.tap(find.byKey(Key('addSensorButton')));
-    await tester.pumpAndSettle();
+        Finder emailField = find.byKey(Key('name'));
+        await tester.enterText(emailField, 'sensor');
 
-    Finder emailField = find.byKey(Key('name'));
-    await tester.enterText(emailField, 'sensor');
+        Finder frequencyValueField = find.byKey(Key('frequencyValue'));
+        await tester.enterText(frequencyValueField, '2');
 
-    await tester.tap(find.byKey(Key('categoriesButton')));
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
+        await tester.tap(find.byKey(Key('frequencyUnitsButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
 
-    await tester.tap(find.text("opady atmosferyczne").last);
-    await tester.pump();
-  });
+        await tester.tap(find.text("godziny").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        expect(find.text("godziny"), findsNWidgets(2));
+        expect(find.text("2"), findsOneWidget);
+        expect(find.text("sensor"), findsOneWidget);
+
+        await tester.tap(find.byKey(Key('categoriesButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+
+        await tester.tap(find.text("opady atmosferyczne").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        expect(find.text("sekundy"), findsOneWidget);
+        expect(find.text("30"), findsOneWidget);
+        expect(find.text("sensor"), findsOneWidget);
+
+        await tester.tap(find.byKey(Key('addSensorButton')));
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 5));
+
+        verify(await mockApi.addSensor('sensor', 'rain', 30, "token"))
+            .called(1);
+      });
+
+  /// tests if can choose rain sensor, choose another category - frequency not read only
+  testWidgets(
+      'can add rain sensor, choose another category - frequency not read only',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+        when(mockApi.addSensor('sensor', 'humidity', 7200, "token")).thenAnswer(
+                (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+        NewSensor page = NewSensor(
+          storage: mockSecureStorage,
+          testApi: mockApi,
+        );
+
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
+
+        Finder emailField = find.byKey(Key('name'));
+        await tester.enterText(emailField, 'sensor');
+
+        await tester.tap(find.byKey(Key('categoriesButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tap(find.text("opady atmosferyczne").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        expect(find.text("sekundy"), findsOneWidget);
+        expect(find.text("30"), findsOneWidget);
+        expect(find.text("sensor"), findsOneWidget);
+
+        await tester.tap(find.byKey(Key('categoriesButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tap(find.text("wilgotność").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        Finder frequencyValueField = find.byKey(Key('frequencyValue'));
+        await tester.enterText(frequencyValueField, '2');
+
+        await tester.tap(find.byKey(Key('frequencyUnitsButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+
+        await tester.tap(find.text("godziny").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        expect(find.text("godziny"), findsNWidgets(2));
+        expect(find.text("2"), findsOneWidget);
+        expect(find.text("sensor"), findsOneWidget);
+
+        await tester.tap(find.byKey(Key('addSensorButton')));
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 5));
+
+        verify(await mockApi.addSensor('sensor', 'humidity', 7200, "token"))
+            .called(1);
+      });
 
   /// tests if does not save when name exists
   testWidgets('valid data, name exists, does not save',

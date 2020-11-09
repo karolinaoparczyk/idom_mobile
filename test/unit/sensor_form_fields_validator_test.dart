@@ -8,7 +8,7 @@ void main() {
   /// tests if empty name is not validated
   test('empty name returns error string', () {
     var result = SensorNameFieldValidator.validate('');
-    expect(result, 'Podaj nazwę');
+    expect(result, 'Pole wymagane');
   });
 
   /// tests if non-empty name is validated
@@ -22,4 +22,17 @@ void main() {
     var result = SensorNameFieldValidator.validate('name with spaces');
     expect(result, null);
   });
+
+  /// tests if empty frequency value incorrect
+  test('empty frequency value incorrect', () {
+    var result = SensorFrequencyFieldValidator.validate('');
+    expect(result, 'Pole wymagane');
+  });
+
+  /// tests if not empty frequency value correct
+  test('not empty frequency value correct', () {
+    var result = SensorFrequencyFieldValidator.validate('45');
+    expect(result, null);
+  });
+
 }

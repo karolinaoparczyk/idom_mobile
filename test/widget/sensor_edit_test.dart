@@ -1,3 +1,5 @@
+import 'package:idom/pages/sensors/edit_sensor.dart';
+import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:idom/pages/sensors/sensors.dart';
@@ -9,6 +11,8 @@ import 'package:idom/pages/sensors/sensor_details.dart';
 
 class MockApi extends Mock implements Api {}
 
+class MockSecureStorage extends Mock implements SecureStorage {}
+
 void main() {
   Widget makeTestableWidget({Widget child}) {
     return MaterialApp(home: child);
@@ -17,6 +21,7 @@ void main() {
   /// tests if does not save with empty name
   testWidgets('name is empty, does not save', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     List<Sensor> sensors = List();
     sensors.add(Sensor(
         id: 1,
@@ -31,21 +36,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -72,6 +65,7 @@ void main() {
   /// tests if displays humidity correctly
   testWidgets('displays humidity correctly', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     List<Sensor> sensors = List();
     sensors.add(Sensor(
         id: 1,
@@ -86,23 +80,10 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
-
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key('sensor1')));
@@ -126,6 +107,7 @@ void main() {
   /// tests if does not save with no change
   testWidgets('no change, does not save', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     List<Sensor> sensors = List();
     sensors.add(Sensor(
         id: 1,
@@ -140,21 +122,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -179,6 +149,7 @@ void main() {
   /// tests if saves with name changed
   testWidgets('changed name, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.editSensor(1, 'newname', null, null, "token")).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "200"}));
     List<Sensor> sensors = List();
@@ -195,21 +166,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -238,6 +197,7 @@ void main() {
   /// tests if saves with category changed
   testWidgets('changed category, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.editSensor(1, null, "humidity", null, "token")).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "200"}));
     List<Sensor> sensors = List();
@@ -254,21 +214,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -300,6 +248,7 @@ void main() {
   /// tests if saves with frequency value changed
   testWidgets('changed frequency value, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.editSensor(1, null, null, 3000, "token")).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
     List<Sensor> sensors = List();
@@ -316,21 +265,10 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
 
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -358,6 +296,7 @@ void main() {
   /// tests if saves with frequency units changed
   testWidgets('changed frequency units, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.editSensor(1, null, null, 18000, "token")).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
     List<Sensor> sensors = List();
@@ -374,21 +313,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -421,6 +348,7 @@ void main() {
   /// tests if saves with name, category, frequency value and frequency units changed
   testWidgets('changed name, category frequency value, frequency units, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.editSensor(1, 'newname', 'humidity', 86400, "token")).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "200"}));
     List<Sensor> sensors = List();
@@ -437,21 +365,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -498,6 +414,7 @@ void main() {
   testWidgets('changed data, no confirmation, does not save',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.editSensor(1, 'newname', 'humidity', 86400, 'token')).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "200"}));
     List<Sensor> sensors = List();
@@ -514,21 +431,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -571,6 +476,7 @@ void main() {
   testWidgets('changed data, name exists, does not save',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.editSensor(1, 'sensor2', null, null, 'token')).thenAnswer(
         (_) async => Future.value({
               "body": "Sensor with provided name already exists",
@@ -590,21 +496,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -628,5 +522,54 @@ void main() {
     await tester.pump();
     expect(find.byType(SensorDetails), findsOneWidget);
     verify(await mockApi.editSensor(1, 'sensor2', null, null, 'token')).called(1);
+  });
+
+  /// tests if when category rain, cannot change frequency
+  testWidgets('when category rain, cannot change frequency', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+    when(mockApi.editSensor(1, 'newname', 'rain', 30, "token")).thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "200"}));
+
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "temperature",
+        frequency: 300,
+        lastData: "27.0");
+
+    EditSensor page = EditSensor(
+      storage: mockSecureStorage,
+      sensor: sensor,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    await tester.tap(find.byKey(Key('categoriesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("opady atmosferyczne").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    expect(find.text("sekundy"), findsOneWidget);
+    expect(find.text("30"), findsOneWidget);
+    expect(find.text("newname"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('editSensorButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editSensor(1, 'newname', 'rain', 30, "token"))
+        .called(1);
   });
 }
