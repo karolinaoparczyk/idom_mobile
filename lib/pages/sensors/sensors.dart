@@ -14,10 +14,10 @@ import '../../api.dart';
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
-  Sensors({@required this.storage, this.testSensors});
+  Sensors({@required this.storage, this.testApi});
 
   final SecureStorage storage;
-  final List<Sensor> testSensors;
+  final Api testApi;
 
   @override
   _SensorsState createState() => _SensorsState();
@@ -28,7 +28,7 @@ class _SensorsState extends State<Sensors> {
   final GlobalKey<State> _keyLoader = GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = GlobalKey<State>();
   final TextEditingController _searchController = TextEditingController();
-  final Api api = Api();
+  Api api = Api();
   List<String> menuItems;
   List<Sensor> _sensorList;
   List<Sensor> _duplicateSensorList = List<Sensor>();
@@ -40,6 +40,9 @@ class _SensorsState extends State<Sensors> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     getSensors();
     _searchController.addListener(() {
       filterSearchResults(_searchController.text);
@@ -57,10 +60,6 @@ class _SensorsState extends State<Sensors> {
       _searchController.text = "";
     });
 
-    /// if statement for testing
-    if (widget.testSensors != null) {
-      return widget.testSensors;
-    }
     await getUserToken();
     try {
       /// gets sensors
