@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -123,6 +124,30 @@ class Api {
       body = {"email": email};
     } else if (telephone != null) {
       body = {"telephone": telephone};
+    }
+    var res = await httpClient
+        .put('$url/users/update/$id',
+            headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+            body: body)
+        .timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// edits users notifications
+  Future<Map<String, String>> editNotifications(
+      int id, String appNotifications, String smsNotifications, String userToken) async {
+    await getApiAddress();
+    var body;
+    if (appNotifications != null && smsNotifications != null) {
+      body = {"app_notifications": appNotifications, "sms_notifications": smsNotifications};
+    } else if (appNotifications != null) {
+      body = {"app_notifications": appNotifications};
+    } else if (smsNotifications != null) {
+      body = {"sms_notifications": smsNotifications};
     }
     var res = await httpClient
         .put('$url/users/update/$id',

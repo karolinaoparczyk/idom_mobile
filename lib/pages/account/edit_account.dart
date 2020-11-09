@@ -217,6 +217,8 @@ class _EditAccountState extends State<EditAccount> {
           _load = false;
           fieldsValidationMessage = null;
         });
+        widget.storage.setEmail(_emailController.text);
+        widget.storage.setTelephone(_telephoneController.text);
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         displayProgressDialog(
@@ -300,7 +302,7 @@ class _EditAccountState extends State<EditAccount> {
       context,
       "Potwierdź",
       "Czy na pewno zapisać zmiany?",
-      () async {
+      onConfirm: () async {
         await _saveChanges(changedEmail, changedTelephone);
       },
     );

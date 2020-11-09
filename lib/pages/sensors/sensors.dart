@@ -120,7 +120,7 @@ class _SensorsState extends State<Sensors> {
       context,
       "Potwierdź",
       "Czy na pewno chcesz usunąć czujnik ${sensor.name}?",
-      () async {
+      onConfirm: () async {
         try {
           Navigator.of(context).pop(true);
           displayProgressDialog(
@@ -203,7 +203,7 @@ class _SensorsState extends State<Sensors> {
 
   Future<bool> _onBackButton() async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Na pewno wyjść z aplikacji?", () {
+        context, "Potwierdź", "Na pewno wyjść z aplikacji?", onConfirm: () {
       Navigator.pop(context, true);
     });
     return Future.value(decision);

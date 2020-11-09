@@ -14,10 +14,11 @@ import 'edit_account.dart';
 
 /// displays account details
 class AccountDetail extends StatefulWidget {
-  AccountDetail({@required this.storage, @required this.username});
+  AccountDetail({@required this.storage, @required this.username, this.testApi});
 
   final SecureStorage storage;
   String username;
+  final Api testApi;
 
   @override
   _AccountDetailState createState() => new _AccountDetailState();
@@ -27,14 +28,19 @@ class _AccountDetailState extends State<AccountDetail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  final Api api = Api();
+  Api api = Api();
   Account account;
   bool _load;
   Map<String, dynamic> currentUserData;
+  bool appNotificationsOn;
+  bool smsNotificationsOn;
 
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     _load = true;
     getCurrentUserData();
   }
@@ -58,8 +64,10 @@ class _AccountDetailState extends State<AccountDetail> {
               : currentUserData['isStaff'] == "false"
                   ? false
                   : null,
-          smsNotifications: currentUserData['smsNotifications'],
-          appNotifications: currentUserData['appNotifications'],
+          smsNotifications:
+              currentUserData['smsNotifications'] == "true" ? true : false,
+          appNotifications:
+              currentUserData['appNotifications'] == "true" ? true : false,
           isActive: currentUserData['isActive'] == "true"
               ? true
               : currentUserData['isActive'] == "false"
@@ -67,6 +75,8 @@ class _AccountDetailState extends State<AccountDetail> {
                   : null);
       setState(() {
         _load = false;
+        appNotificationsOn = account.appNotifications;
+        smsNotificationsOn = account.smsNotifications;
       });
       return;
     }
@@ -78,6 +88,8 @@ class _AccountDetailState extends State<AccountDetail> {
 
       setState(() {
         _load = false;
+        appNotificationsOn = account.appNotifications;
+        smsNotificationsOn = account.smsNotifications;
       });
     }
     if (userResult[1] == 401) {
@@ -91,8 +103,7 @@ class _AccountDetailState extends State<AccountDetail> {
   }
 
   onLogOutFailure(String text) {
-    final snackBar =
-    new SnackBar(content: new Text(text));
+    final snackBar = new SnackBar(content: new Text(text));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
@@ -216,9 +227,9 @@ class _AccountDetailState extends State<AccountDetail> {
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 52.5,
-                                    top: 0,
+                                    top: 0.0,
                                     right: 30.0,
-                                    bottom: 15.5),
+                                    bottom: 0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
@@ -226,7 +237,100 @@ class _AccountDetailState extends State<AccountDetail> {
                                             ? account.telephone
                                             : "-",
                                         style: TextStyle(fontSize: 21.0)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 20.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                            Icons.notifications_active_outlined,
+                                            size: 17.5),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: Text("Powiadomienia",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal)),
+                                        ),
+                                      ],
+                                    ))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 0.0,
+                                    right: 0.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text("Aplikacja",
+                                                style: TextStyle(
+                                                    color: IdomColors.textDark,
+                                                    fontSize: 16.5,
+                                                    fontWeight:
+                                                        FontWeight.normal)),
+                                            Switch(
+                                              key: Key("appNotifications"),
+                                              value: appNotificationsOn,
+                                              onChanged: (value) async {
+                                                setState(() {
+                                                  appNotificationsOn = value;
+                                                });
+                                                await _updateNotifications();
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text("Sms",
+                                                style: TextStyle(
+                                                    color: IdomColors.textDark,
+                                                    fontSize: 16.5,
+                                                    fontWeight:
+                                                        FontWeight.normal)),
+                                            Switch(
+                                              key: Key("smsNotifications"),
+                                              value: smsNotificationsOn,
+                                              onChanged: (value) async {
+                                                setState(() {
+                                                  smsNotificationsOn = value;
+                                                });
+                                                await _updateNotifications();
+                                              },
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ))),
                           ])))));
+  }
+
+  _updateNotifications() async {
+    var result = await api.editNotifications(
+        account.id, appNotificationsOn.toString(), smsNotificationsOn.toString(), currentUserData['token']);
+    if (result != null && result['statusCode'] != "200") {
+      final snackBar = new SnackBar(
+          content: new Text("Błąd edycji powiadomień. Spróbuj ponownie."));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
+    widget.storage.setAppNotifications(appNotificationsOn.toString());
+    widget.storage.setSmsNotifications(smsNotificationsOn.toString());
   }
 
   _navigateToEditAccount() async {
@@ -280,7 +384,6 @@ class _AccountDetailState extends State<AccountDetail> {
             content: new Text(
                 "Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
-
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
