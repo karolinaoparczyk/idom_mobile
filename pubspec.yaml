@@ -31,6 +31,7 @@ dependencies:
   charts_flutter:
   permission_handler:
   shared_preferences:
+  weather_icons:
 
 
 dev_dependencies:
