@@ -1,3 +1,4 @@
+import 'package:idom/enums/frequency_units.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
@@ -13,9 +14,10 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 /// adds new sensor
 class NewSensor extends StatefulWidget {
-  NewSensor({@required this.storage});
+  NewSensor({@required this.storage, this.testApi});
 
   final SecureStorage storage;
+  final Api testApi;
 
   @override
   _NewSensorState createState() => new _NewSensorState();
@@ -28,14 +30,14 @@ class _NewSensorState extends State<NewSensor> {
   TextEditingController _categoryController = TextEditingController();
   TextEditingController _frequencyValueController = TextEditingController();
   TextEditingController _frequencyUnitsController = TextEditingController();
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
-  final Api api = Api();
+  Api api = Api();
   String categoryValue;
   String frequencyUnitsValue;
   bool _load;
   String _token;
   String fieldsValidationMessage;
+  bool canEditFrequency = true;
 
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
@@ -48,6 +50,9 @@ class _NewSensorState extends State<NewSensor> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
     _load = false;
     getToken();
   }
@@ -99,6 +104,17 @@ class _NewSensorState extends State<NewSensor> {
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
+            if (selectedCategory['value'] == "humidity") {
+              canEditFrequency = false;
+              frequencyUnitsValue = "seconds";
+              _frequencyUnitsController.text = FrequencyUnits.values
+                  .where((element) => element['value'] == "seconds")
+                  .first['text'];
+              _frequencyValueController.text = "30";
+            } else {
+              canEditFrequency = true;
+            }
+            setState(() {});
           }
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -113,6 +129,7 @@ class _NewSensorState extends State<NewSensor> {
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: TextFormField(
           key: Key('frequencyValue'),
+          enabled: canEditFrequency,
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
           style: TextStyle(fontSize: 17.0),
@@ -121,7 +138,10 @@ class _NewSensorState extends State<NewSensor> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             labelText: "Wartość",
-            labelStyle: Theme.of(context).textTheme.headline5,
+            labelStyle: Theme.of(context).textTheme.headline5.copyWith(
+                color: canEditFrequency
+                    ? IdomColors.additionalColor
+                    : IdomColors.textDark),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -132,9 +152,13 @@ class _NewSensorState extends State<NewSensor> {
     return TextFormField(
         key: Key("frequencyUnitsButton"),
         controller: _frequencyUnitsController,
+        enabled: canEditFrequency,
         decoration: InputDecoration(
           labelText: "Jednostki",
-          labelStyle: Theme.of(context).textTheme.headline5,
+          labelStyle: Theme.of(context).textTheme.headline5.copyWith(
+              color: canEditFrequency
+                  ? IdomColors.additionalColor
+                  : IdomColors.textDark),
           suffixIcon: Icon(Icons.arrow_drop_down),
           prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
           border: OutlineInputBorder(
@@ -142,6 +166,7 @@ class _NewSensorState extends State<NewSensor> {
           ),
         ),
         onTap: () async {
+          if (!canEditFrequency) return;
           final Map<String, String> selectedFrequencyUnits = await showDialog(
               context: context,
               builder: (context) {
@@ -160,7 +185,7 @@ class _NewSensorState extends State<NewSensor> {
         validator: UrlFieldValidator.validate);
   }
 
-  clearFields(){
+  clearFields() {
     _formKey.currentState.reset();
     _nameController.text = "";
     _categoryController.text = "";
@@ -168,12 +193,12 @@ class _NewSensorState extends State<NewSensor> {
     _frequencyUnitsController.text = "";
     categoryValue = null;
     frequencyUnitsValue = null;
+    canEditFrequency = true;
     Navigator.pop(context, true);
   }
 
   onLogOutFailure(String text) {
-    final snackBar =
-    new SnackBar(content: new Text(text));
+    final snackBar = new SnackBar(content: new Text(text));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
@@ -193,14 +218,19 @@ class _NewSensorState extends State<NewSensor> {
                 icon: Icon(Icons.restore_page_rounded),
                 onPressed: () async {
                   await confirmActionDialog(context, "Potwierdź",
-                      "Czy na pewno wyczyścić wszystkie pola?", onConfirm: clearFields);
+                      "Czy na pewno wyczyścić wszystkie pola?",
+                      onConfirm: clearFields);
                 },
               ),
-              IconButton(icon: Icon(Icons.save), onPressed: _saveChanges),
-
+              IconButton(
+                  key: Key('addSensorButton'),
+                  icon: Icon(Icons.save),
+                  onPressed: _saveChanges),
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "NewSensor", onLogOutFailure: onLogOutFailure),
+                storage: widget.storage,
+                parentWidgetType: "NewSensor",
+                onLogOutFailure: onLogOutFailure),
 
             /// builds form with sensor properties
             body: Container(
@@ -313,11 +343,11 @@ class _NewSensorState extends State<NewSensor> {
                                 duration: Duration(milliseconds: 300),
                                 firstChild: fieldsValidationMessage != null
                                     ? Text(fieldsValidationMessage,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                        fontWeight: FontWeight.normal))
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                fontWeight: FontWeight.normal))
                                     : SizedBox(),
                                 secondChild: SizedBox(),
                               ),
@@ -330,6 +360,14 @@ class _NewSensorState extends State<NewSensor> {
   _saveChanges() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
+      int valInt = int.tryParse(_frequencyValueController.text);
+      if (valInt == null) {
+        fieldsValidationMessage =
+            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+        setState(() {});
+        return;
+      }
+
       /// validates if frequency value is valid for given frequency units
       var validFequencyValue =
           SensorFrequencyFieldValidator.isFrequencyValueValid(
@@ -344,8 +382,7 @@ class _NewSensorState extends State<NewSensor> {
           fieldsValidationMessage = text;
         });
         return;
-      }
-      else{
+      } else {
         setState(() {
           fieldsValidationMessage = null;
         });

@@ -9,15 +9,16 @@ import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 import '../../api.dart';
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
-  Sensors({@required this.storage, this.testSensors});
+  Sensors({@required this.storage, this.testApi});
 
   final SecureStorage storage;
-  final List<Sensor> testSensors;
+  final Api testApi;
 
   @override
   _SensorsState createState() => _SensorsState();
@@ -28,7 +29,7 @@ class _SensorsState extends State<Sensors> {
   final GlobalKey<State> _keyLoader = GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = GlobalKey<State>();
   final TextEditingController _searchController = TextEditingController();
-  final Api api = Api();
+  Api api = Api();
   List<String> menuItems;
   List<Sensor> _sensorList;
   List<Sensor> _duplicateSensorList = List<Sensor>();
@@ -40,6 +41,9 @@ class _SensorsState extends State<Sensors> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
     getSensors();
     _searchController.addListener(() {
       filterSearchResults(_searchController.text);
@@ -57,10 +61,6 @@ class _SensorsState extends State<Sensors> {
       _searchController.text = "";
     });
 
-    /// if statement for testing
-    if (widget.testSensors != null) {
-      return widget.testSensors;
-    }
     await getUserToken();
     try {
       /// gets sensors
@@ -172,7 +172,6 @@ class _SensorsState extends State<Sensors> {
                 content: new Text(
                     "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
             _scaffoldKey.currentState.showSnackBar((snackBar));
-
           }
         }
       },
@@ -318,9 +317,7 @@ class _SensorsState extends State<Sensors> {
                                   key: Key(_sensorList[index].name),
                                   title: Text(_sensorList[index].name,
                                       style: TextStyle(fontSize: 21.0)),
-                                  subtitle: Text(
-                                      "ostatnia dana: " +
-                                          sensorData(_sensorList[index]),
+                                  subtitle: Text(sensorData(_sensorList[index]),
                                       style: TextStyle(
                                           fontSize: 16.5,
                                           color: IdomColors.textDark)),
@@ -348,9 +345,20 @@ class _SensorsState extends State<Sensors> {
   }
 
   IconData getSensorIcon(Sensor sensor) {
-    if (sensor.category == "temperature")
-      return Icons.thermostat_outlined;
-    else if (sensor.category == "humidity") return Icons.spa_rounded;
+    switch (sensor.category) {
+      case "temperature":
+        return WeatherIcons.thermometer;
+        break;
+      case "humidity":
+        return WeatherIcons.humidity;
+        break;
+      case "smoke":
+        return WeatherIcons.smog;
+        break;
+      case "rain":
+        return WeatherIcons.showers;
+        break;
+    }
   }
 
   Future<void> _pullRefresh() async {
@@ -385,16 +393,19 @@ class _SensorsState extends State<Sensors> {
   }
 
   String sensorData(Sensor sensor) {
-    if (sensor.lastData == null) return "-";
     switch (sensor.category) {
       case "temperature":
-        return "${sensor.lastData} °C";
+        if (sensor.lastData == null) return "ostatnia dana: -";
+        return "ostatnia dana: " + "${sensor.lastData} °C";
         break;
       case "humidity":
-        return "${sensor.lastData} %";
+        if (sensor.lastData == null) return "ostatnia dana: -";
+        return "ostatnia dana: " + "${sensor.lastData} %";
         break;
+      case "smoke":
+      case "rain":
+        return "";
     }
-    return "-";
   }
 
   /// navigates to adding sensor page
