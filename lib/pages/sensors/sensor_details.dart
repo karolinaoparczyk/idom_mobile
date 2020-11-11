@@ -76,7 +76,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             drawPlot();
           }
           chartWid = chartWidget();
-            _load = false;
+          _load = false;
         }));
   }
 
@@ -254,242 +254,316 @@ class _SensorDetailsState extends State<SensorDetails> {
             body: SingleChildScrollView(
                 child: Form(
                     key: _formKey,
-                    child: Column(children: <Widget>[
-                      Align(
-                        child: loadingIndicator(_load),
-                        alignment: FractionalOffset.center,
+                    child: AnimatedContainer(
+                      curve: Curves.easeInToLinear,
+                      duration: Duration(
+                        milliseconds: 10,
                       ),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.info_outline_rounded, size: 17.5),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 5.0),
-                                    child: Text("Ogólne",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal)),
-                                  ),
-                                ],
-                              ))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Kategoria",
-                                  style: TextStyle(
-                                      color: IdomColors.additionalColor,
-                                      fontSize: 16.5,
-                                      fontWeight: FontWeight.bold)))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 52.5, top: 0, right: 30.0, bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                  Categories.values.where((element) => element['value'] ==
-                                      _categoryController.text).first['text'],
-                                  style: TextStyle(fontSize: 21.0)))),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 20.0,
-                                right: 30.0,
-                                bottom: 0.0),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.access_time_outlined,
-                                        size: 17.5),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Dane z czujnika",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1
-                                              .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                    ),
-                                  ],
-                                ))),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: 10, left: 52.5, right: 30.0, bottom: 0.0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Częstotliwość pobierania danych",
-                                  style: TextStyle(
-                                      color: IdomColors.additionalColor,
-                                      fontSize: 16.5,
-                                      fontWeight: FontWeight.bold)),
-                            )),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),
-                            child: SizedBox(
-                                child: Row(children: <Widget>[
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(_frequencyValueController.text,
-                                        style: TextStyle(fontSize: 21.0)),
-                                  ]),
-                              SizedBox(width: 5.0),
-                              Column(children: <Widget>[
-                                Text(getProperUnitsName(),
-                                    style: TextStyle(fontSize: 21.0)),
-                              ])
-                            ]))),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: 10, left: 52.5, right: 30.0, bottom: 0.0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(getSensorLastDataLabel(),
-                                  style: TextStyle(
-                                      color: IdomColors.additionalColor,
-                                      fontSize: 16.5,
-                                      fontWeight: FontWeight.bold)),
-                            )),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 0.0, horizontal: 52.5),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(getSensorLastData(),
-                                    style: TextStyle(fontSize: 21.0)))),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 20.0,
-                                right: 30.0,
-                                bottom: 0.0),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.calendar_today_outlined,
-                                        size: 17.5),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Okres wyświetlanych danych",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1
-                                              .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                    ),
-                                  ],
-                                ))),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 52.5, top: 13.5, right: 30.0, bottom: 13.5),
-                          child: ToggleButtons(
-                              borderRadius: BorderRadius.circular(30),
-                              borderColor: IdomColors.additionalColor,
-                              splashColor: Colors.transparent,
-                              fillColor: IdomColors.lighten(
-                                  IdomColors.additionalColor, 0.2),
-                              selectedColor: IdomColors.textDark,
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
-                                    child: Center(
-                                        child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: Text("Dzisiaj")))),
-                                Container(
-                                    child: Center(
-                                        child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: Text("Ten miesiąc")))),
-                                Container(
-                                    child: Center(
-                                        child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: Text("Ostatnie 30 dni")))),
-                              ],
-                              isSelected: measurementTimeSelected,
-                              onPressed: (int index) {
-                                setState(() {
-                                  if (measurementTimeSelected[index] == false) {
-                                    for (int i = 0;
-                                        i < measurementTimeSelected.length;
-                                        i++) {
-                                      if (i == index) {
-                                        measurementTimeSelected[i] = true;
-                                      } else {
-                                        measurementTimeSelected[i] = false;
-                                      }
-                                    }
-                                    _time = null;
-                                    _measure = null;
-                                    if (sensorData != null &&
-                                        sensorData.length > 0) {
-                                      drawPlot();
-                                    }
-                                    chartWid = chartWidget();
-                                  }
-                                });
-                              }),
-                        ),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 30.0, top: 0.0, right: 17.0, bottom: 0.0),
-                            child: Container(
-                                child: Center(
-                                    child: Column(children: <Widget>[
-                              SizedBox(width: 355, height: 200, child: chartWid)
-                            ])))),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 52.5,
-                                top: 20.0,
-                                right: 30.0,
-                                bottom: 0.0),
-                            child: _time != null
-                                ? Align(
+                            Align(
+                              child: loadingIndicator(_load),
+                              alignment: FractionalOffset.center,
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 20.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("Wybrany pomiar z wykresu",
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.info_outline_rounded,
+                                            size: 17.5),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: Text("Ogólne",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal)),
+                                        ),
+                                      ],
+                                    ))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 10.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Nazwa",
+                                        style: TextStyle(
+                                            color: IdomColors.additionalColor,
+                                            fontSize: 16.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(widget.sensor.name,
+                                        style: TextStyle(fontSize: 21.0)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 10.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Kategoria",
+                                        style: TextStyle(
+                                            color: IdomColors.additionalColor,
+                                            fontSize: 16.5,
+                                            fontWeight: FontWeight.bold)))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                        Categories.values
+                                            .where((element) =>
+                                                element['value'] ==
+                                                _categoryController.text)
+                                            .first['text'],
+                                        style: TextStyle(fontSize: 21.0)))),
+                            if (widget.sensor.category != "rain")
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 20.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.access_time_outlined,
+                                              size: 17.5),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 5.0),
+                                            child: Text("Dane z czujnika",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                          ),
+                                        ],
+                                      ))),
+                            if (widget.sensor.category != "rain")
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10,
+                                      left: 52.5,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Częstotliwość pobierania danych",
                                         style: TextStyle(
                                             color: IdomColors.additionalColor,
                                             fontSize: 16.5,
                                             fontWeight: FontWeight.bold)),
-                                  )
-                                : SizedBox()),
-                      if (widget.sensor.category != "rain")
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),
-                            child: _time != null
-                                ? Align(
+                                  )),
+                            if (widget.sensor.category != "rain")
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 52.5,
+                                      top: 0.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: SizedBox(
+                                      child: Row(children: <Widget>[
+                                    Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(_frequencyValueController.text,
+                                              style: TextStyle(fontSize: 21.0)),
+                                        ]),
+                                    SizedBox(width: 5.0),
+                                    Column(children: <Widget>[
+                                      Text(getProperUnitsName(),
+                                          style: TextStyle(fontSize: 21.0)),
+                                    ])
+                                  ]))),
+                            if (widget.sensor.category != "rain")
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10,
+                                      left: 52.5,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text(getSelectedMeasure(),
-                                        style: TextStyle(fontSize: 21.0)),
-                                  )
-                                : SizedBox()),
-                    ])))));
+                                    child: Text(getSensorLastDataLabel(),
+                                        style: TextStyle(
+                                            color: IdomColors.additionalColor,
+                                            fontSize: 16.5,
+                                            fontWeight: FontWeight.bold)),
+                                  )),
+                            if (widget.sensor.category != "rain")
+                              Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0.0, horizontal: 52.5),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(getSensorLastData(),
+                                          style: TextStyle(fontSize: 21.0)))),
+            if (widget.sensor.category != "rain")
+
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 20.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.calendar_today_outlined,
+                                              size: 17.5),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 5.0),
+                                            child: Text(
+                                                "Okres wyświetlanych danych",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                          ),
+                                        ],
+                                      ))),
+                                if (widget.sensor.category != "rain")
+                                  Padding(
+                                padding: EdgeInsets.only(
+                                    left: 52.5,
+                                    top: 13.5,
+                                    right: 30.0,
+                                    bottom: 0),
+                                child: ToggleButtons(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderColor: IdomColors.additionalColor,
+                                    splashColor: Colors.transparent,
+                                    fillColor: IdomColors.lighten(
+                                        IdomColors.additionalColor, 0.2),
+                                    selectedColor: IdomColors.textDark,
+                                    children: [
+                                      Container(
+                                          child: Center(
+                                              child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                                  child: Text("Dzisiaj")))),
+                                      Container(
+                                          child: Center(
+                                              child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                                  child: Text("Ten miesiąc")))),
+                                      Container(
+                                          child: Center(
+                                              child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                                  child:
+                                                      Text("Ostatnie 30 dni")))),
+                                    ],
+                                    isSelected: measurementTimeSelected,
+                                    onPressed: (int index) {
+                                      setState(() {
+                                        if (measurementTimeSelected[index] ==
+                                            false) {
+                                          for (int i = 0;
+                                              i < measurementTimeSelected.length;
+                                              i++) {
+                                            if (i == index) {
+                                              measurementTimeSelected[i] = true;
+                                            } else {
+                                              measurementTimeSelected[i] = false;
+                                            }
+                                          }
+                                          _time = null;
+                                          _measure = null;
+                                          if (sensorData != null &&
+                                              sensorData.length > 0) {
+                                            drawPlot();
+                                          }
+                                          chartWid = chartWidget();
+                                        }
+                                      });
+                                    }),
+                              ),
+                                if (widget.sensor.category != "rain")
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 0.0,
+                                        right: 17.0,
+                                        bottom: 0.0),
+                                    child: Container(
+                                        child: Center(
+                                            child: Column(children: <Widget>[
+                                      SizedBox(
+                                          width: 355,
+                                          height: 200,
+                                          child: chartWid)
+                                    ])))),
+                                if (widget.sensor.category != "rain")
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 52.5,
+                                        top: 20.0,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: _time != null
+                                        ? Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                                "Wybrany pomiar z wykresu",
+                                                style: TextStyle(
+                                                    color: IdomColors
+                                                        .additionalColor,
+                                                    fontSize: 16.5,
+                                                    fontWeight: FontWeight.bold)),
+                                          )
+                                        : SizedBox()),
+                                if (widget.sensor.category != "rain")
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 52.5,
+                                        top: 0.0,
+                                        right: 30.0,
+                                        bottom: 0.0),
+                                    child: _time != null
+                                        ? Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(getSelectedMeasure(),
+                                                style: TextStyle(fontSize: 21.0)),
+                                          )
+                                        : SizedBox()),
+                                SizedBox(height: 30)
+                              ]),
+                            ),
+                          )
+            )));
   }
 
   String getProperUnitsName() {
@@ -506,7 +580,10 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   String getSelectedMeasure() {
-    var units = widget.sensor.category == "temperature"  || widget.sensor.category == "water-temp" ? "°C" : "%";
+    var units = widget.sensor.category == "temperature" ||
+            widget.sensor.category == "water_temp"
+        ? "°C"
+        : "%";
     var date = _time.toString().substring(0, 19);
     var year = date.substring(0, 4);
     var month = date.substring(5, 7);
@@ -517,13 +594,15 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   String getSensorLastData() {
     if (_currentSensorDataController.text == "null") return "-";
-    return widget.sensor.category == "temperature"  || widget.sensor.category == "water-temp"
+    return widget.sensor.category == "temperature" ||
+            widget.sensor.category == "water_temp"
         ? "${_currentSensorDataController.text} °C"
         : "${_currentSensorDataController.text} %";
   }
 
   String getSensorLastDataLabel() {
-    return widget.sensor.category == "temperature"  || widget.sensor.category == "water-temp"
+    return widget.sensor.category == "temperature" ||
+            widget.sensor.category == "water_temp"
         ? "Aktualna temperatura"
         : "Aktualna wilgotność";
   }
@@ -535,7 +614,6 @@ class _SensorDetailsState extends State<SensorDetails> {
             builder: (context) =>
                 EditSensor(storage: widget.storage, sensor: widget.sensor),
             fullscreenDialog: true));
-
     if (result == true) {
       final snackBar =
           new SnackBar(content: new Text("Zapisano dane czujnika."));
@@ -650,6 +728,9 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   String getFormattedSensorDataForChart(num value) {
-    return widget.sensor.category == "temperature"  || widget.sensor.category == "water-temp" ? "$value °C" : "$value %";
+    return widget.sensor.category == "temperature" ||
+            widget.sensor.category == "water_temp"
+        ? "$value °C"
+        : "$value %";
   }
 }

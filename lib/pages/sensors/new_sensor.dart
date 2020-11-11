@@ -98,13 +98,16 @@ class _NewSensorState extends State<NewSensor> {
               context: context,
               builder: (context) {
                 return Dialog(
-                  child: CategoryDialog(currentCategory: categoryValue,),
+                  child: CategoryDialog(
+                    currentCategory: categoryValue,
+                  ),
                 );
               });
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
-            if (selectedCategory['value'] == "rain" || selectedCategory['value'] == "water-temp") {
+            if (selectedCategory['value'] == "rain" ||
+                selectedCategory['value'] == "water_temp") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -217,9 +220,9 @@ class _NewSensorState extends State<NewSensor> {
               IconButton(
                 icon: Icon(Icons.restore_page_rounded),
                 onPressed: () async {
-                  await confirmActionDialog(context, "Potwierdź",
-                      "Czy na pewno wyczyścić wszystkie pola?",
-                      onConfirm: clearFields);
+                  var decision = await confirmActionDialog(context, "Potwierdź",
+                      "Czy na pewno wyczyścić wszystkie pola?");
+                  if (decision) clearFields();
                 },
               ),
               IconButton(
