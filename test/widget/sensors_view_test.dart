@@ -7,7 +7,6 @@ import 'package:mockito/mockito.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/pages/sensors/sensors.dart';
-import 'package:weather_icons/weather_icons.dart';
 
 class MockApi extends Mock implements Api {}
 
@@ -276,9 +275,9 @@ void main() {
 
         await tester.pumpWidget(makeTestableWidget(child: page));
         await tester.pumpAndSettle();
-        expect(find.byIcon(WeatherIcons.showers), findsOneWidget);
-        expect(find.byIcon(WeatherIcons.thermometer), findsOneWidget);
-        expect(find.byIcon(WeatherIcons.humidity), findsOneWidget);
-        expect(find.byIcon(WeatherIcons.smog), findsOneWidget);
+        expect(find.byKey(Key("assets/icons/thermometer.svg")), findsOneWidget);
+        expect(find.byKey(Key("assets/icons/rain.svg")), findsOneWidget);
+        expect(find.byKey(Key("assets/icons/humidity.svg")), findsOneWidget);
+        expect(find.byKey(Key("assets/icons/smoke.svg")), findsOneWidget);
       });
 }

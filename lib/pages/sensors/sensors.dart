@@ -10,7 +10,6 @@ import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
-import 'package:weather_icons/weather_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// displays all sensors
@@ -126,7 +125,7 @@ class _SensorsState extends State<Sensors> {
             text: "Trwa usuwanie czujnika...");
 
         int statusCode = await api.deactivateSensor(sensor.id, _token);
-        Navigator.of(_scaffoldKey.currentContext).pop();
+        Navigator.of(_scaffoldKey.currentContext, rootNavigator: true).pop();
         if (statusCode == 200) {
           setState(() {
             /// refreshes sensors' list
@@ -317,7 +316,7 @@ class _SensorsState extends State<Sensors> {
                                   onTap: () {
                                     navigateToSensorDetails(_sensorList[index]);
                                   },
-                                  leading: getSensorImage(_sensorList[index]),
+                                  leading: getCategoryImage(_sensorList[index]),
 
                                   /// delete sensor button
                                   trailing: deleteButtonTrailing(
@@ -334,50 +333,41 @@ class _SensorsState extends State<Sensors> {
     );
   }
 
-  Widget getSensorImage(Sensor sensor) {
+  Widget getCategoryImage(Sensor sensor) {
+    var imageUrl;
     switch (sensor.category) {
       case "water_temp":
-        return SizedBox(
-            width: 35,
-            child: Container(
-              padding: EdgeInsets.only(top:5),
-                alignment: Alignment.topRight,
-                child: SvgPicture.asset(
-                  "assets/icons/water-temperature.svg",
-                  matchTextDirection: false,
-                  width: 32,
-                  height: 32,
-                  color: Theme.of(context).iconTheme.color,
-                )));
+        imageUrl = "assets/icons/temperature.svg";
         break;
-      case "temperature":
-      case "humidity":
-      case "smoke":
-      case "rain_sensor":
-        return SizedBox(
-            width: 35,
-            child: Container(
-                alignment: Alignment.topRight,
-                child: Icon(getCategoryIcon(sensor.category),
-                    color: Theme.of(context).iconTheme.color, size: 30)));
-        break;
-    }
-  }
-
-  IconData getCategoryIcon(String category) {
-    switch (category) {
-      case "temperature":
-        return WeatherIcons.thermometer;
-      case "humidity":
-        return WeatherIcons.humidity;
+      case "breathalyser":
+        imageUrl = "assets/icons/breathalyser.svg";
         break;
       case "smoke":
-        return WeatherIcons.smog;
+        imageUrl = "assets/icons/smoke.svg";
+        break;
+      case "humidity":
+        imageUrl = "assets/icons/humidity.svg";
+        break;
+      case "temperature":
+        imageUrl = "assets/icons/thermometer.svg";
         break;
       case "rain_sensor":
-        return WeatherIcons.showers;
+        imageUrl = "assets/icons/rain.svg";
         break;
     }
+    return SizedBox(
+        width: 35,
+        child: Container(
+            padding: EdgeInsets.only(top: 5),
+            alignment: Alignment.topRight,
+            child: SvgPicture.asset(
+              imageUrl,
+              matchTextDirection: false,
+              width: 32,
+              height: 32,
+              color: Theme.of(context).iconTheme.color,
+              key: Key(imageUrl)
+            )));
   }
 
   Future<void> _pullRefresh() async {
@@ -422,8 +412,11 @@ class _SensorsState extends State<Sensors> {
         if (sensor.lastData == null) return "ostatnia dana: -";
         return "ostatnia dana: " + "${sensor.lastData} %";
         break;
+      case "breathalyser":
+        if (sensor.lastData == null) return "ostatnia dana: -";
+        return "ostatnia dana: " + "${sensor.lastData} ‰";
+        break;
       case "smoke":
-      case "rain":
       case "rain_sensor":
         return "";
     }
@@ -461,7 +454,18 @@ class _SensorsState extends State<Sensors> {
             alignment: Alignment.centerRight,
             child: TextButton(
               key: Key("deleteButton"),
-              child: Icon(Icons.delete, color: IdomColors.mainFill),
+              child: SizedBox(
+                  width: 35,
+                  child: Container(
+                      padding: EdgeInsets.only(top: 5),
+                      alignment: Alignment.topRight,
+                      child: SvgPicture.asset(
+                        "assets/icons/dustbin.svg",
+                        matchTextDirection: false,
+                        width: 32,
+                        height: 32,
+                        color: IdomColors.mainFill,
+                      ))),
               onPressed: () {
                 setState(() {
                   _deactivateSensor(sensor);

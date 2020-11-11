@@ -107,7 +107,8 @@ class _NewSensorState extends State<NewSensor> {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
-                selectedCategory['value'] == "water_temp") {
+                selectedCategory['value'] == "water_temp" ||
+                selectedCategory['value'] == "breathalyser") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -272,7 +273,8 @@ class _NewSensorState extends State<NewSensor> {
                                         ),
                                       ],
                                     ))),
-                            Padding(
+                            if (categoryValue != "breathalyser")
+                              Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
                                     top: 10.0,
@@ -285,7 +287,8 @@ class _NewSensorState extends State<NewSensor> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildCategoryField())),
-                            Padding(
+                            if (categoryValue != "breathalyser")
+                              Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
                                     top: 20.0,
@@ -311,7 +314,8 @@ class _NewSensorState extends State<NewSensor> {
                                         ),
                                       ],
                                     ))),
-                            Padding(
+                            if (categoryValue != "breathalyser")
+                              Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
                                     top: 10.0,
@@ -335,7 +339,8 @@ class _NewSensorState extends State<NewSensor> {
                                               child:
                                                   _buildFrequencyUnitsField()))),
                                 ]))),
-                            Padding(
+                            if (categoryValue != "breathalyser")
+                              Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 30.0),
                               child: AnimatedCrossFade(

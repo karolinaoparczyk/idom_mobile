@@ -4,5 +4,6 @@ class Categories {
     {"text": "temperatura wody", "value": "water_temp"},
     {"text": "opady atmosferyczne", "value": "rain_sensor"},
     {"text": "wilgotność", "value": "humidity"},
+    {"text": "alkomat", "value": "breathalyser"},
   ];
 }
