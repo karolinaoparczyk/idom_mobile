@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:idom/enums/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
@@ -47,10 +48,6 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
-  Map<String, String> englishToPolishCategories = {
-    "temperature": "temperatura",
-    "humidity": "wilgotność",
-  };
 
   @override
   void initState() {
@@ -79,9 +76,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             drawPlot();
           }
           chartWid = chartWidget();
-          setState(() {
             _load = false;
-          });
         }));
   }
 
@@ -299,8 +294,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                  englishToPolishCategories[
-                                      _categoryController.text],
+                                  Categories.values.where((element) => element['value'] ==
+                                      _categoryController.text).first['text'],
                                   style: TextStyle(fontSize: 21.0)))),
                       if (widget.sensor.category != "rain")
                         Padding(
@@ -511,7 +506,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   String getSelectedMeasure() {
-    var units = widget.sensor.category == "temperature" ? "°C" : "%";
+    var units = widget.sensor.category == "temperature"  || widget.sensor.category == "water-temp" ? "°C" : "%";
     var date = _time.toString().substring(0, 19);
     var year = date.substring(0, 4);
     var month = date.substring(5, 7);
@@ -522,13 +517,13 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   String getSensorLastData() {
     if (_currentSensorDataController.text == "null") return "-";
-    return widget.sensor.category == "temperature"
+    return widget.sensor.category == "temperature"  || widget.sensor.category == "water-temp"
         ? "${_currentSensorDataController.text} °C"
         : "${_currentSensorDataController.text} %";
   }
 
   String getSensorLastDataLabel() {
-    return widget.sensor.category == "temperature"
+    return widget.sensor.category == "temperature"  || widget.sensor.category == "water-temp"
         ? "Aktualna temperatura"
         : "Aktualna wilgotność";
   }
@@ -655,6 +650,6 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   String getFormattedSensorDataForChart(num value) {
-    return widget.sensor.category == "temperature" ? "$value °C" : "$value %";
+    return widget.sensor.category == "temperature"  || widget.sensor.category == "water-temp" ? "$value °C" : "$value %";
   }
 }

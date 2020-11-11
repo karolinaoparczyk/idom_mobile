@@ -171,7 +171,7 @@ void main() {
 
   /// tests if icons displayed correctly
   testWidgets(
-      'rain and temperature icons displayed correctly',
+      'rain and air temperature icons displayed correctly',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
         MockSecureStorage mockSecureStorage = MockSecureStorage();

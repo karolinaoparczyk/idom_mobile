@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 
@@ -10,8 +11,8 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:weather_icons/weather_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../api.dart';
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
@@ -324,11 +325,7 @@ class _SensorsState extends State<Sensors> {
                                   onTap: () {
                                     navigateToSensorDetails(_sensorList[index]);
                                   },
-                                  leading: Icon(
-                                    getSensorIcon(_sensorList[index]),
-                                    color: Theme.of(context).iconTheme.color,
-                                  ),
-
+                                  leading: getSensorImage(_sensorList[index]),
                                   /// delete sensor button
                                   trailing: deleteButtonTrailing(
                                       _sensorList[index])))),
@@ -344,11 +341,30 @@ class _SensorsState extends State<Sensors> {
     );
   }
 
-  IconData getSensorIcon(Sensor sensor) {
+  Widget getSensorImage(Sensor sensor) {
     switch (sensor.category) {
+      case "water-temp":
+        return SvgPicture.asset(
+          "assets/icons/water-temperature.svg",
+          matchTextDirection: false,
+          width: 30,
+          height: 30,
+          color: Theme.of(context).iconTheme.color,
+        );
+        break;
+      case "temperature":
+      case "humidity":
+      case "smoke":
+      case "rain":
+        return Icon(getCategoryIcon(sensor.category), color: Theme.of(context).iconTheme.color);
+        break;
+    }
+  }
+
+  IconData getCategoryIcon(String category) {
+    switch (category) {
       case "temperature":
         return WeatherIcons.thermometer;
-        break;
       case "humidity":
         return WeatherIcons.humidity;
         break;

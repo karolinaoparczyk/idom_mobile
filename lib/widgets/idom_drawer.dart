@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/setup/edit_api_address.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
-
-import '../api.dart';
 
 class IdomDrawer extends StatefulWidget {
   IdomDrawer({

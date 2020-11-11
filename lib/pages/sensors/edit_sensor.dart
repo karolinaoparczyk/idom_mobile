@@ -1,3 +1,4 @@
+import 'package:idom/utils/idom_colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
@@ -132,7 +133,8 @@ class _EditSensorState extends State<EditSensor> {
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
-            if (selectedCategory['value'] == "rain") {
+            if (selectedCategory['value'] == "rain" ||
+                selectedCategory['value'] == "water-temp") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -166,10 +168,10 @@ class _EditSensorState extends State<EditSensor> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             labelText: "Wartość",
-            labelStyle: Theme
-                .of(context)
-                .textTheme
-                .headline5,
+            labelStyle: Theme.of(context).textTheme.headline5.copyWith(
+                color: canEditFrequency
+                    ? IdomColors.additionalColor
+                    : IdomColors.textDark),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -183,10 +185,10 @@ class _EditSensorState extends State<EditSensor> {
         controller: _frequencyUnitsController,
         decoration: InputDecoration(
           labelText: "Jednostki",
-          labelStyle: Theme
-              .of(context)
-              .textTheme
-              .headline5,
+          labelStyle: Theme.of(context).textTheme.headline5.copyWith(
+              color: canEditFrequency
+                  ? IdomColors.additionalColor
+                  : IdomColors.textDark),
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),

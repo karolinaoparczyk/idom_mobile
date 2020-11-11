@@ -98,13 +98,13 @@ class _NewSensorState extends State<NewSensor> {
               context: context,
               builder: (context) {
                 return Dialog(
-                  child: CategoryDialog(),
+                  child: CategoryDialog(currentCategory: categoryValue,),
                 );
               });
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
-            if (selectedCategory['value'] == "humidity") {
+            if (selectedCategory['value'] == "rain" || selectedCategory['value'] == "water-temp") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
