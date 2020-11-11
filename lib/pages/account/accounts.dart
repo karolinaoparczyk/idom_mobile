@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
@@ -117,62 +118,60 @@ class _AccountsState extends State<Accounts> {
 
   /// deactivates user after confirmation
   _deactivateAccount(Account account) async {
-    var decision = await confirmActionDialog(
-      context,
-      "Potwierdź",
-      "Czy na pewno chcesz usunąć konto ${account.username}?");
-    if (decision){
-        try {
+    var decision = await confirmActionDialog(context, "Potwierdź",
+        "Czy na pewno chcesz usunąć konto ${account.username}?");
+    if (decision) {
+      try {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoader,
+            text: "Trwa usuwanie konta...");
+        var statusCode = await api.deactivateAccount(account.id, _token);
+        Navigator.of(_scaffoldKey.currentContext).pop();
+
+        if (statusCode == 200) {
+          setState(() {
+            /// refreshes accounts' list
+            getAccounts();
+          });
+        } else if (statusCode == 401) {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
-              key: _keyLoader,
-              text: "Trwa usuwanie konta...");
-          var statusCode = await api.deactivateAccount(account.id, _token);
-          Navigator.of(_scaffoldKey.currentContext).pop();
-
-          if (statusCode == 200) {
-            setState(() {
-              /// refreshes accounts' list
-              getAccounts();
-            });
-          } else if (statusCode == 401) {
-            displayProgressDialog(
-                context: _scaffoldKey.currentContext,
-                key: _keyLoaderInvalidToken,
-                text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
-            await new Future.delayed(const Duration(seconds: 3));
-            Navigator.of(_keyLoaderInvalidToken.currentContext,
-                    rootNavigator: true)
-                .pop();
-            await widget.storage.resetUserData();
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          } else if (statusCode == null) {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          } else {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          }
-        } catch (e) {
-          print(e.toString());
-          if (e.toString().contains("TimeoutException")) {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          }
-          if (e.toString().contains("SocketException")) {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Błąd usuwania konta. Adres serwera nieprawidłowy."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          }
+              key: _keyLoaderInvalidToken,
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+          await new Future.delayed(const Duration(seconds: 3));
+          Navigator.of(_keyLoaderInvalidToken.currentContext,
+                  rootNavigator: true)
+              .pop();
+          await widget.storage.resetUserData();
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (statusCode == null) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      } catch (e) {
+        print(e.toString());
+        if (e.toString().contains("TimeoutException")) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+        if (e.toString().contains("SocketException")) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania konta. Adres serwera nieprawidłowy."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
+    }
   }
 
   _buildSearchField() {
@@ -307,10 +306,17 @@ class _AccountsState extends State<Accounts> {
                                     navigateToAccountDetails(
                                         _accountList[index]);
                                   },
-                                  leading: Icon(
-                                    Icons.person,
-                                    color: Theme.of(context).iconTheme.color,
-                                  ),
+                                  leading: SizedBox(
+                                      width: 35,
+                                      child: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: SvgPicture.asset(
+                                            "assets/icons/man.svg",
+                                            matchTextDirection: false,
+                                            width: 32,
+                                            height: 32,
+                                            color: IdomColors.additionalColor,
+                                          ))),
 
                                   /// delete sensor button
                                   trailing: deleteButtonTrailing(
@@ -371,10 +377,16 @@ class _AccountsState extends State<Accounts> {
       return SizedBox(
           width: 35,
           child: Container(
-              alignment: Alignment.centerRight,
+              alignment: Alignment.bottomCenter,
               child: TextButton(
                 key: Key("deleteButton"),
-                child: Icon(Icons.delete, color: IdomColors.mainFill),
+                child: SvgPicture.asset(
+                  "assets/icons/dustbin.svg",
+                  matchTextDirection: false,
+                  width: 32,
+                  height: 32,
+                  color: IdomColors.mainFill,
+                ),
                 onPressed: () {
                   setState(() {
                     _deactivateAccount(account);

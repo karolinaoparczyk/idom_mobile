@@ -10,9 +10,7 @@ import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
-import 'package:weather_icons/weather_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 
 /// displays all sensors
 class Sensors extends StatefulWidget {
@@ -117,66 +115,61 @@ class _SensorsState extends State<Sensors> {
 
   /// deactivates sensor after confirmation
   _deactivateSensor(Sensor sensor) async {
-    await confirmActionDialog(
-      context,
-      "Potwierdź",
-      "Czy na pewno chcesz usunąć czujnik ${sensor.name}?",
-      onConfirm: () async {
-        try {
-          Navigator.of(context).pop(true);
+    var decision = await confirmActionDialog(context, "Potwierdź",
+        "Czy na pewno chcesz usunąć czujnik ${sensor.name}?");
+    if (decision) {
+      try {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoader,
+            text: "Trwa usuwanie czujnika...");
+
+        int statusCode = await api.deactivateSensor(sensor.id, _token);
+        Navigator.of(_scaffoldKey.currentContext, rootNavigator: true).pop();
+        if (statusCode == 200) {
+          setState(() {
+            /// refreshes sensors' list
+            getSensors();
+          });
+        } else if (statusCode == 401) {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
-              key: _keyLoader,
-              text: "Trwa usuwanie czujnika...");
-
-          int statusCode = await api.deactivateSensor(sensor.id, _token);
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-          if (statusCode == 200) {
-            setState(() {
-              /// refreshes sensors' list
-              getSensors();
-            });
-          } else if (statusCode == 401) {
-            displayProgressDialog(
-                context: _scaffoldKey.currentContext,
-                key: _keyLoaderInvalidToken,
-                text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
-            await new Future.delayed(const Duration(seconds: 3));
-            Navigator.of(_keyLoaderInvalidToken.currentContext,
-                    rootNavigator: true)
-                .pop();
-            await widget.storage.resetUserData();
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          } else if (statusCode == null) {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          } else {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          }
-        } catch (e) {
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-
-          print(e.toString());
-          if (e.toString().contains("TimeoutException")) {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          }
-          if (e.toString().contains("SocketException")) {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          }
+              key: _keyLoaderInvalidToken,
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+          await new Future.delayed(const Duration(seconds: 3));
+          Navigator.of(_keyLoaderInvalidToken.currentContext)
+              .pop();
+          await widget.storage.resetUserData();
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (statusCode == null) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
-      },
-    );
+      } catch (e) {
+        Navigator.of(_scaffoldKey.currentContext).pop();
+
+        print(e.toString());
+        if (e.toString().contains("TimeoutException")) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+        if (e.toString().contains("SocketException")) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      }
+    }
   }
 
   _buildSearchField() {
@@ -203,9 +196,7 @@ class _SensorsState extends State<Sensors> {
 
   Future<bool> _onBackButton() async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Na pewno wyjść z aplikacji?", onConfirm: () {
-      Navigator.pop(context, true);
-    });
+        context, "Potwierdź", "Na pewno wyjść z aplikacji?");
     return Future.value(decision);
   }
 
@@ -325,7 +316,8 @@ class _SensorsState extends State<Sensors> {
                                   onTap: () {
                                     navigateToSensorDetails(_sensorList[index]);
                                   },
-                                  leading: getSensorImage(_sensorList[index]),
+                                  leading: getCategoryImage(_sensorList[index]),
+
                                   /// delete sensor button
                                   trailing: deleteButtonTrailing(
                                       _sensorList[index])))),
@@ -341,40 +333,41 @@ class _SensorsState extends State<Sensors> {
     );
   }
 
-  Widget getSensorImage(Sensor sensor) {
+  Widget getCategoryImage(Sensor sensor) {
+    var imageUrl;
     switch (sensor.category) {
-      case "water-temp":
-        return SvgPicture.asset(
-          "assets/icons/water-temperature.svg",
-          matchTextDirection: false,
-          width: 30,
-          height: 30,
-          color: Theme.of(context).iconTheme.color,
-        );
+      case "water_temp":
+        imageUrl = "assets/icons/temperature.svg";
         break;
-      case "temperature":
-      case "humidity":
-      case "smoke":
-      case "rain":
-        return Icon(getCategoryIcon(sensor.category), color: Theme.of(context).iconTheme.color);
-        break;
-    }
-  }
-
-  IconData getCategoryIcon(String category) {
-    switch (category) {
-      case "temperature":
-        return WeatherIcons.thermometer;
-      case "humidity":
-        return WeatherIcons.humidity;
+      case "breathalyser":
+        imageUrl = "assets/icons/breathalyser.svg";
         break;
       case "smoke":
-        return WeatherIcons.smog;
+        imageUrl = "assets/icons/smoke.svg";
         break;
-      case "rain":
-        return WeatherIcons.showers;
+      case "humidity":
+        imageUrl = "assets/icons/humidity.svg";
+        break;
+      case "temperature":
+        imageUrl = "assets/icons/thermometer.svg";
+        break;
+      case "rain_sensor":
+        imageUrl = "assets/icons/rain.svg";
         break;
     }
+    return SizedBox(
+        width: 35,
+        child: Container(
+            padding: EdgeInsets.only(top: 5),
+            alignment: Alignment.topRight,
+            child: SvgPicture.asset(
+              imageUrl,
+              matchTextDirection: false,
+              width: 32,
+              height: 32,
+              color: Theme.of(context).iconTheme.color,
+              key: Key(imageUrl)
+            )));
   }
 
   Future<void> _pullRefresh() async {
@@ -410,6 +403,7 @@ class _SensorsState extends State<Sensors> {
 
   String sensorData(Sensor sensor) {
     switch (sensor.category) {
+      case "water_temp":
       case "temperature":
         if (sensor.lastData == null) return "ostatnia dana: -";
         return "ostatnia dana: " + "${sensor.lastData} °C";
@@ -418,8 +412,12 @@ class _SensorsState extends State<Sensors> {
         if (sensor.lastData == null) return "ostatnia dana: -";
         return "ostatnia dana: " + "${sensor.lastData} %";
         break;
+      case "breathalyser":
+        if (sensor.lastData == null) return "ostatnia dana: -";
+        return "ostatnia dana: " + "${sensor.lastData} ‰";
+        break;
       case "smoke":
-      case "rain":
+      case "rain_sensor":
         return "";
     }
   }
@@ -456,7 +454,18 @@ class _SensorsState extends State<Sensors> {
             alignment: Alignment.centerRight,
             child: TextButton(
               key: Key("deleteButton"),
-              child: Icon(Icons.delete, color: IdomColors.mainFill),
+              child: SizedBox(
+                  width: 35,
+                  child: Container(
+                      padding: EdgeInsets.only(top: 5),
+                      alignment: Alignment.topRight,
+                      child: SvgPicture.asset(
+                        "assets/icons/dustbin.svg",
+                        matchTextDirection: false,
+                        width: 32,
+                        height: 32,
+                        color: IdomColors.mainFill,
+                      ))),
               onPressed: () {
                 setState(() {
                   _deactivateSensor(sensor);

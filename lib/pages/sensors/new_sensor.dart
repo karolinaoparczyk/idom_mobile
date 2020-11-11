@@ -98,13 +98,17 @@ class _NewSensorState extends State<NewSensor> {
               context: context,
               builder: (context) {
                 return Dialog(
-                  child: CategoryDialog(currentCategory: categoryValue,),
+                  child: CategoryDialog(
+                    currentCategory: categoryValue,
+                  ),
                 );
               });
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
-            if (selectedCategory['value'] == "rain" || selectedCategory['value'] == "water-temp") {
+            if (selectedCategory['value'] == "rain_sensor" ||
+                selectedCategory['value'] == "water_temp" ||
+                selectedCategory['value'] == "breathalyser") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -194,7 +198,6 @@ class _NewSensorState extends State<NewSensor> {
     categoryValue = null;
     frequencyUnitsValue = null;
     canEditFrequency = true;
-    Navigator.pop(context, true);
   }
 
   onLogOutFailure(String text) {
@@ -217,9 +220,9 @@ class _NewSensorState extends State<NewSensor> {
               IconButton(
                 icon: Icon(Icons.restore_page_rounded),
                 onPressed: () async {
-                  await confirmActionDialog(context, "Potwierdź",
-                      "Czy na pewno wyczyścić wszystkie pola?",
-                      onConfirm: clearFields);
+                  var decision = await confirmActionDialog(context, "Potwierdź",
+                      "Czy na pewno wyczyścić wszystkie pola?");
+                  if (decision) clearFields();
                 },
               ),
               IconButton(
@@ -270,7 +273,8 @@ class _NewSensorState extends State<NewSensor> {
                                         ),
                                       ],
                                     ))),
-                            Padding(
+                            if (categoryValue != "breathalyser")
+                              Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
                                     top: 10.0,
@@ -283,7 +287,8 @@ class _NewSensorState extends State<NewSensor> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildCategoryField())),
-                            Padding(
+                            if (categoryValue != "breathalyser")
+                              Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
                                     top: 20.0,
@@ -309,7 +314,8 @@ class _NewSensorState extends State<NewSensor> {
                                         ),
                                       ],
                                     ))),
-                            Padding(
+                            if (categoryValue != "breathalyser")
+                              Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
                                     top: 10.0,
@@ -333,7 +339,8 @@ class _NewSensorState extends State<NewSensor> {
                                               child:
                                                   _buildFrequencyUnitsField()))),
                                 ]))),
-                            Padding(
+                            if (categoryValue != "breathalyser")
+                              Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 30.0),
                               child: AnimatedCrossFade(
@@ -361,7 +368,7 @@ class _NewSensorState extends State<NewSensor> {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       int valInt = int.tryParse(_frequencyValueController.text);
-      if (valInt == null) {
+      if (valInt == null || valInt <= 0) {
         fieldsValidationMessage =
             'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
         setState(() {});

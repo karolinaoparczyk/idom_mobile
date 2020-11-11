@@ -16,10 +16,7 @@ class Api {
   Client httpClient;
 
   void getApiAddress() async {
-    var _apiAddressProtocol = await storage.getApiServerAddressProtocol();
-    var _apiAddress = await storage.getApiServerAddress();
-    var _apiAddressPort = await storage.getApiServerAddressPort();
-    url = _apiAddressProtocol + _apiAddress + ":" + _apiAddressPort;
+    url = await storage.getApiURL();
   }
 
   /// requests signing in
@@ -284,6 +281,25 @@ class Api {
         "statusSensorData": resFrequency.statusCode.toString(),
       };
       return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// gets cameras
+  Future<Map<String, String>> getCameras(String userToken) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.get('$url/cameras/list', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> response = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return response;
     } catch (e) {
       print(e);
     }

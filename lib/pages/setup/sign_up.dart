@@ -192,23 +192,25 @@ class _SignUpState extends State<SignUp> {
     _obscurePassword = true;
     _passwordConfirmIcon = Icons.visibility_outlined;
     _obscureConfirmPassword = true;
-    Navigator.of(context).pop(true);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
+        key: _scaffoldKey,
         appBar: AppBar(title: Text('Zarejestruj się'), actions: [
           IconButton(
             icon: Icon(Icons.restore_page_rounded),
             onPressed: () async {
-              await confirmActionDialog(context, "Potwierdź",
-                  "Czy na pewno wyczyścić wszystkie pola?", onConfirm: clearFields);
+              var decision = await confirmActionDialog(
+                context,
+                "Potwierdź",
+                "Czy na pewno wyczyścić wszystkie pola?",
+              );
+              if (decision) clearFields();
             },
           ),
           IconButton(icon: Icon(Icons.check), onPressed: signUp),
-
         ]),
         body: Container(
             child: Column(
