@@ -424,7 +424,9 @@ class _EditSensorState extends State<EditSensor> {
   _confirmSavingChanges(bool changedName, bool changedCategory,
       bool changedFrequencyValue, int frequencyInSeconds) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context,
+        "Potwierdź",
+        "Czy na pewno zapisać zmiany?");
     if (decision) {
       await _saveChanges(changedName, changedCategory, changedFrequencyValue,
           frequencyInSeconds);
@@ -458,7 +460,7 @@ class _EditSensorState extends State<EditSensor> {
         int valInt = int.tryParse(_frequencyValueController.text);
         if (valInt == null) {
           fieldsValidationMessage =
-              'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+          'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
           setState(() {});
           return;
         }
