@@ -75,6 +75,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                         Navigator.pop(context);
                       }),
                   TextButton(
+                      key: Key('yesButton'),
                       child: Text("OK",
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {

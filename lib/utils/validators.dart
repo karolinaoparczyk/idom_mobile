@@ -86,7 +86,7 @@ Map<String, int> unitsToMaxValues = {
 class SensorFrequencyFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Podaj wartość';
+      return 'Pole wymagane';
     }
     return null;
   }

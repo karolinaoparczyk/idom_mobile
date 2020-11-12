@@ -12,10 +12,10 @@ import 'package:idom/widgets/idom_drawer.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
-  Accounts({@required this.storage, this.testAccounts});
+  Accounts({@required this.storage, this.testApi});
 
   final SecureStorage storage;
-  final List<Account> testAccounts;
+  final Api testApi;
 
   @override
   _AccountsState createState() => _AccountsState();
@@ -26,7 +26,7 @@ class _AccountsState extends State<Accounts> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   final TextEditingController _searchController = TextEditingController();
-  final Api api = Api();
+  Api api = Api();
   List<Account> _accountList;
   List<Account> _duplicateAccountList = List<Account>();
   bool zeroFetchedItems = false;
@@ -37,6 +37,9 @@ class _AccountsState extends State<Accounts> {
 
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
     checkIfUserIsStaff();
     getAccounts();
     _searchController.addListener(() {
@@ -59,10 +62,6 @@ class _AccountsState extends State<Accounts> {
       _searchController.text = "";
     });
 
-    /// if widget is being tested
-    if (widget.testAccounts != null) {
-      return widget.testAccounts;
-    }
     await getToken();
     try {
       var res = await api.getAccounts(_token);
@@ -118,19 +117,18 @@ class _AccountsState extends State<Accounts> {
 
   /// deactivates user after confirmation
   _deactivateAccount(Account account) async {
-    await confirmActionDialog(
+    var decision = await confirmActionDialog(
       context,
       "Potwierdź",
-      "Czy na pewno chcesz usunąć konto ${account.username}?",
-      () async {
+      "Czy na pewno chcesz usunąć konto ${account.username}?");
+    if (decision){
         try {
-          Navigator.of(context).pop(true);
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoader,
               text: "Trwa usuwanie konta...");
           var statusCode = await api.deactivateAccount(account.id, _token);
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+          Navigator.of(_scaffoldKey.currentContext).pop();
 
           if (statusCode == 200) {
             setState(() {
@@ -174,8 +172,7 @@ class _AccountsState extends State<Accounts> {
             _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         }
-      },
-    );
+      }
   }
 
   _buildSearchField() {
@@ -240,7 +237,9 @@ class _AccountsState extends State<Accounts> {
               ],
             ),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "Accounts", onLogOutFailure: onLogOutFailure),
+                storage: widget.storage,
+                parentWidgetType: "Accounts",
+                onLogOutFailure: onLogOutFailure),
 
             /// accounts' list builder
             body:
@@ -248,8 +247,7 @@ class _AccountsState extends State<Accounts> {
   }
 
   onLogOutFailure(String text) {
-    final snackBar =
-    new SnackBar(content: new Text(text));
+    final snackBar = new SnackBar(content: new Text(text));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
@@ -312,6 +310,7 @@ class _AccountsState extends State<Accounts> {
                                   leading: Icon(
                                     Icons.person,
                                     color: Theme.of(context).iconTheme.color,
+                                    size:30
                                   ),
 
                                   /// delete sensor button

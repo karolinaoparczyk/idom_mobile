@@ -1,3 +1,4 @@
+import 'package:idom/utils/idom_colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
@@ -16,10 +17,11 @@ import '../../models.dart';
 
 /// edits sensor
 class EditSensor extends StatefulWidget {
-  EditSensor({@required this.storage, @required this.sensor});
+  EditSensor({@required this.storage, @required this.sensor, this.testApi});
 
   final SecureStorage storage;
   final Sensor sensor;
+  final Api testApi;
 
   @override
   _EditSensorState createState() => new _EditSensorState();
@@ -35,10 +37,11 @@ class _EditSensorState extends State<EditSensor> {
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   String categoryValue;
   String frequencyUnitsValue;
-  final Api api = Api();
+  Api api = Api();
   bool _load;
   String _token;
   String fieldsValidationMessage;
+  bool canEditFrequency = true;
 
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
@@ -51,6 +54,9 @@ class _EditSensorState extends State<EditSensor> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
     _load = false;
     getToken();
 
@@ -60,8 +66,20 @@ class _EditSensorState extends State<EditSensor> {
     /// setting current sensor category
     _categoryController = TextEditingController(
         text: Categories.values.firstWhere(
-            (element) => element["value"] == widget.sensor.category)['text']);
+                (element) =>
+            element["value"] == widget.sensor.category)['text']);
     categoryValue = widget.sensor.category;
+    if (categoryValue == "rain" ||
+        categoryValue == "water_temp") {
+      canEditFrequency = false;
+      frequencyUnitsValue = "seconds";
+      _frequencyUnitsController.text = FrequencyUnits.values
+          .where((element) => element['value'] == "seconds")
+          .first['text'];
+      _frequencyValueController.text = "30";
+    } else {
+      canEditFrequency = true;
+    }
 
     /// setting current sensor frequency
     _frequencyValueController =
@@ -83,7 +101,10 @@ class _EditSensorState extends State<EditSensor> {
     return TextFormField(
         decoration: InputDecoration(
           labelText: "Nazwa",
-          labelStyle: Theme.of(context).textTheme.headline5,
+          labelStyle: Theme
+              .of(context)
+              .textTheme
+              .headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -103,7 +124,10 @@ class _EditSensorState extends State<EditSensor> {
         controller: _categoryController,
         decoration: InputDecoration(
           labelText: "Kategoria",
-          labelStyle: Theme.of(context).textTheme.headline5,
+          labelStyle: Theme
+              .of(context)
+              .textTheme
+              .headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -120,6 +144,18 @@ class _EditSensorState extends State<EditSensor> {
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
+            if (selectedCategory['value'] == "rain" ||
+                selectedCategory['value'] == "water_temp") {
+              canEditFrequency = false;
+              frequencyUnitsValue = "seconds";
+              _frequencyUnitsController.text = FrequencyUnits.values
+                  .where((element) => element['value'] == "seconds")
+                  .first['text'];
+              _frequencyValueController.text = "30";
+            } else {
+              canEditFrequency = true;
+            }
+            setState(() {});
           }
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -134,6 +170,7 @@ class _EditSensorState extends State<EditSensor> {
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: TextFormField(
           key: Key('frequencyValue'),
+          enabled: canEditFrequency,
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
           style: TextStyle(fontSize: 21.0),
@@ -142,7 +179,10 @@ class _EditSensorState extends State<EditSensor> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             labelText: "Wartość",
-            labelStyle: Theme.of(context).textTheme.headline5,
+            labelStyle: Theme.of(context).textTheme.headline5.copyWith(
+                color: canEditFrequency
+                    ? IdomColors.additionalColor
+                    : IdomColors.textDark),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -152,10 +192,14 @@ class _EditSensorState extends State<EditSensor> {
   Widget _buildFrequencyUnitsField() {
     return TextFormField(
         key: Key("frequencyUnitsButton"),
+        enabled: canEditFrequency,
         controller: _frequencyUnitsController,
         decoration: InputDecoration(
           labelText: "Jednostki",
-          labelStyle: Theme.of(context).textTheme.headline5,
+          labelStyle: Theme.of(context).textTheme.headline5.copyWith(
+              color: canEditFrequency
+                  ? IdomColors.additionalColor
+                  : IdomColors.textDark),
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -183,8 +227,7 @@ class _EditSensorState extends State<EditSensor> {
   }
 
   onLogOutFailure(String text) {
-    final snackBar =
-    new SnackBar(content: new Text(text));
+    final snackBar = new SnackBar(content: new Text(text));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
@@ -200,132 +243,146 @@ class _EditSensorState extends State<EditSensor> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(title: Text(widget.sensor.name), actions: [
-              IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+              IconButton(
+                  key: Key('editSensorButton'),
+                  icon: Icon(Icons.save),
+                  onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditSensor", onLogOutFailure: onLogOutFailure),
+                storage: widget.storage,
+                parentWidgetType: "EditSensor",
+                onLogOutFailure: onLogOutFailure),
 
             /// builds form with sensor properties
-            body: Container(
-                child: Column(children: <Widget>[
-              SingleChildScrollView(
-                  child: Form(
-                      key: _formKey,
-                      child: Column(children: <Widget>[
-                        Align(
-                          child: loadingIndicator(_load),
-                          alignment: FractionalOffset.center,
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 20.0,
-                                right: 30.0,
-                                bottom: 0.0),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.info_outline_rounded,
-                                        size: 17.5),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Ogólne",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1
-                                              .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                    ),
-                                  ],
-                                ))),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 10.0,
-                                right: 30.0,
-                                bottom: 0.0),
-                            child: _buildName()),
-                        Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 30.0),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: _buildCategoryField())),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 20.0,
-                                right: 30.0,
-                                bottom: 0.0),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.access_time_outlined,
-                                        size: 17.5),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text(
-                                          "Częstotliwość pobierania danych",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1
-                                              .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                    ),
-                                  ],
-                                ))),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: 30.0,
-                                top: 10.0,
-                                right: 30.0,
-                                bottom: 0.0),
-                            child: SizedBox(
-                                child: Row(children: <Widget>[
-                              Expanded(flex: 8, child: _buildFrequencyValue()),
-                              Expanded(flex: 1, child: SizedBox()),
-                              Expanded(
-                                  flex: 12,
-                                  child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 0.0,
-                                          top: 0.0,
-                                          right: 0.0,
-                                          bottom: 0.0),
-                                      child: Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: _buildFrequencyUnitsField()))),
-                            ]))),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 30.0),
-                          child: AnimatedCrossFade(
-                            crossFadeState: fieldsValidationMessage != null
-                                ? CrossFadeState.showFirst
-                                : CrossFadeState.showSecond,
-                            duration: Duration(milliseconds: 300),
-                            firstChild: fieldsValidationMessage != null
-                                ? Text(fieldsValidationMessage,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal))
-                                : SizedBox(),
-                            secondChild: SizedBox(),
-                          ),
-                        ),
-                      ]))),
-            ]))));
+            body:
+                  SingleChildScrollView(
+                        child: Form(
+                            key: _formKey,
+                          child:
+                          Column(children: <Widget>[
+                              Align(
+                                child: loadingIndicator(_load),
+                                alignment: FractionalOffset.center,
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 20.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.info_outline_rounded,
+                                              size: 17.5),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 5.0),
+                                            child: Text("Ogólne",
+                                                style: Theme
+                                                    .of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(
+                                                    fontWeight:
+                                                    FontWeight.normal)),
+                                          ),
+                                        ],
+                                      ))),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 10.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: _buildName()),
+                              Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 30.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: _buildCategoryField())),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 20.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.access_time_outlined,
+                                              size: 17.5),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 5.0),
+                                            child: Text(
+                                                "Częstotliwość pobierania danych",
+                                                style: Theme
+                                                    .of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(
+                                                    fontWeight:
+                                                    FontWeight.normal)),
+                                          ),
+                                        ],
+                                      ))),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 10.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: SizedBox(
+                                      child: Row(children: <Widget>[
+                                        Expanded(flex: 8,
+                                            child: _buildFrequencyValue()),
+                                        Expanded(flex: 1, child: SizedBox()),
+                                        Expanded(
+                                            flex: 12,
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 0.0,
+                                                    top: 0.0,
+                                                    right: 0.0,
+                                                    bottom: 0.0),
+                                                child: Align(
+                                                    alignment: Alignment
+                                                        .bottomLeft,
+                                                    child: _buildFrequencyUnitsField()))),
+                                      ]))),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 30.0),
+                                child: AnimatedCrossFade(
+                                  crossFadeState: fieldsValidationMessage != null
+                                      ? CrossFadeState.showFirst
+                                      : CrossFadeState.showSecond,
+                                  duration: Duration(milliseconds: 300),
+                                  firstChild: fieldsValidationMessage != null
+                                      ? Text(fieldsValidationMessage,
+                                      style: Theme
+                                          .of(context)
+                                          .textTheme
+                                          .bodyText1
+                                          .copyWith(
+                                          fontWeight: FontWeight.normal))
+                                      : SizedBox(),
+                                  secondChild: SizedBox(),
+                                ),
+                              ),
+                            ])),
+                      )
+                ));
   }
 
   /// saves changes after form fields and dropdown buttons validation
   _saveChanges(bool changedName, bool changedCategory,
       bool changedFrequencyValue, int frequencyInSeconds) async {
+    FocusScope.of(context).unfocus();
     var name = changedName ? _nameController.text : null;
     var category = changedCategory ? categoryValue : null;
     var frequencyValue = changedFrequencyValue ? frequencyInSeconds : null;
@@ -333,7 +390,6 @@ class _EditSensorState extends State<EditSensor> {
       _load = true;
     });
     try {
-      Navigator.of(context).pop(true);
       var res = await api.editSensor(
           widget.sensor.id, name, category, frequencyValue, _token);
       if (res['statusCode'] == "200") {
@@ -380,15 +436,14 @@ class _EditSensorState extends State<EditSensor> {
   /// confirms saving account changes
   _confirmSavingChanges(bool changedName, bool changedCategory,
       bool changedFrequencyValue, int frequencyInSeconds) async {
-    await confirmActionDialog(
-      context,
-      "Potwierdź",
-      "Czy na pewno zapisać zmiany?",
-      () async {
-        await _saveChanges(changedName, changedCategory, changedFrequencyValue,
-            frequencyInSeconds);
-      },
-    );
+    var decision = await confirmActionDialog(
+        context,
+        "Potwierdź",
+        "Czy na pewno zapisać zmiany?");
+    if (decision) {
+      await _saveChanges(changedName, changedCategory, changedFrequencyValue,
+          frequencyInSeconds);
+    }
   }
 
   /// verifies data changes
@@ -415,14 +470,22 @@ class _EditSensorState extends State<EditSensor> {
           frequencyValue != widget.sensor.frequency.toString()) {
         changedFrequencyValue = true;
 
+        int valInt = int.tryParse(_frequencyValueController.text);
+        if (valInt == null) {
+          fieldsValidationMessage =
+          'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+          setState(() {});
+          return;
+        }
+
         /// validates if frequency value is valid for given frequency units
         var validFrequencyValue =
-            SensorFrequencyFieldValidator.isFrequencyValueValid(
-                _frequencyValueController.text, frequencyUnitsValue);
+        SensorFrequencyFieldValidator.isFrequencyValueValid(
+            _frequencyValueController.text, frequencyUnitsValue);
         if (!validFrequencyValue) {
           setState(() {
             fieldsValidationMessage =
-                "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
+            "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
           });
         } else {
           setState(() {
@@ -447,7 +510,7 @@ class _EditSensorState extends State<EditSensor> {
               changedFrequencyValue, frequencyInSeconds);
         } else {
           final snackBar =
-              new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+          new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

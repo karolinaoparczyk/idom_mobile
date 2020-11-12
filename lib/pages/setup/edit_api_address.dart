@@ -121,8 +121,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
   }
 
   onLogOutFailure(String text) {
-    final snackBar =
-    new SnackBar(content: new Text(text));
+    final snackBar = new SnackBar(content: new Text(text));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
@@ -136,13 +135,15 @@ class _EditApiAddressState extends State<EditApiAddress> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
-          key: _scaffoldKey,
+            key: _scaffoldKey,
             appBar: AppBar(title: Text('Adres serwera'), actions: [
               IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
             ]),
             drawer: _isUserLoggedIn == "true"
                 ? IdomDrawer(
-                    storage: widget.storage, parentWidgetType: "EditApiAddress", onLogOutFailure: onLogOutFailure)
+                    storage: widget.storage,
+                    parentWidgetType: "EditApiAddress",
+                    onLogOutFailure: onLogOutFailure)
                 : null,
             body: Row(children: <Widget>[
               Expanded(flex: 1, child: SizedBox(width: 1)),
@@ -209,14 +210,11 @@ class _EditApiAddressState extends State<EditApiAddress> {
   /// confirms saving api address changes
   _confirmSavingChanges(
       bool changedProtocol, bool changedAddress, bool changedPort) async {
-    await confirmActionDialog(
-      context,
-      "Potwierdź",
-      "Czy na pewno zapisać zmiany?",
-      () async {
-        await _saveChanges(changedProtocol, changedAddress, changedPort);
-      },
-    );
+    var decision = await confirmActionDialog(
+        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+    if (decision) {
+      await _saveChanges(changedProtocol, changedAddress, changedPort);
+    }
   }
 
   /// sets api address

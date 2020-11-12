@@ -22,6 +22,13 @@ class SecureStorage {
     this.storage = FlutterSecureStorage();
   }
 
+  Future<String> getApiURL() async {
+    var _apiAddressProtocol = await getApiServerAddressProtocol();
+    var _apiAddress = await getApiServerAddress();
+    var _apiAddressPort = await getApiServerAddressPort();
+    return _apiAddressProtocol + _apiAddress + ":" + _apiAddressPort;
+  }
+
   void setApiServerAddress(String apiServerAddress) {
     storage.write(key: _apiServerAddress, value: apiServerAddress);
   }
@@ -142,6 +149,22 @@ class SecureStorage {
 
   Future<String> getUserId() {
     return storage.read(key: _userId);
+  }
+
+  void setAppNotifications(String appNotifications) {
+    storage.write(key: _appNotifications, value: appNotifications);
+  }
+
+  Future<String> getAppNotifications() {
+    return storage.read(key: _appNotifications);
+  }
+
+  void setSmsNotifications(String smsNotifications) {
+    storage.write(key: _smsNotifications, value: smsNotifications);
+  }
+
+  Future<String> getSmsNotifications() {
+    return storage.read(key: _smsNotifications);
   }
 
   void setToken(String token) {

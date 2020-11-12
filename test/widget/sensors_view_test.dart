@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -5,8 +8,12 @@ import 'package:mockito/mockito.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/sensors/sensors.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 class MockApi extends Mock implements Api {}
+
+class MockSecureStorage extends Mock implements SecureStorage {}
+
 
 void main() {
   Widget makeTestableWidget({Widget child}) {
@@ -18,6 +25,7 @@ void main() {
   /// tests if sensors on list
   testWidgets('sensors on list', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     List<Sensor> sensors = List();
     sensors.add(Sensor(
         id: 1,
@@ -32,21 +40,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -59,6 +55,7 @@ void main() {
   testWidgets('sensors on list, confirms, deletes',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     List<Sensor> sensors = List();
     sensors.add(Sensor(
         id: 1,
@@ -73,21 +70,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -108,6 +93,7 @@ void main() {
   testWidgets('sensors on list, does not confirm, does not delete',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     List<Sensor> sensors = List();
     sensors.add(Sensor(
         id: 1,
@@ -122,21 +108,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -158,6 +132,7 @@ void main() {
   testWidgets('sensors on list, api error, message to user',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.deactivateSensor(1, "token"))
         .thenAnswer((_) async => Future.value(404));
     List<Sensor> sensors = List();
@@ -174,21 +149,9 @@ void main() {
         frequency: 300,
         lastData: "27.0"));
 
-    Account account = Account(
-        id: 1,
-        username: "username",
-        email: "email@email.com",
-        telephone: "",
-        appNotifications: "true",
-        smsNotifications: "true",
-        isActive: true,
-        isStaff: true);
-
     Sensors page = Sensors(
-      currentLoggedInToken: "token",
-      currentUser: account,
-      api: mockApi,
-      testSensors: sensors,
+      storage: mockSecureStorage,
+      testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
@@ -205,4 +168,54 @@ void main() {
 
     verify(await mockApi.deactivateSensor(1, "token")).called(1);
   });
+
+  /// tests if icons displayed correctly
+  testWidgets(
+      'rain and air temperature icons displayed correctly',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockApi.addSensor('sensor', 'rain', 7200, "token")).thenAnswer(
+                (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
+        List<Map<String, dynamic>> sensors = [{
+          "id": 1,
+          "name": "sensor1",
+          "category": "temperature",
+          "frequency": 300,
+          "lastData": "27.0"},
+          {
+            "id": 2,
+            "name": "sensor2",
+            "category": "rain",
+            "frequency": 300,
+            "lastData": "27.0"},
+          {
+            "id": 2,
+            "name": "sensor3",
+            "category": "humidity",
+            "frequency": 300,
+            "lastData": "27.0"},
+          {
+            "id": 2,
+            "name": "sensor4",
+            "category": "smoke",
+            "frequency": 300,
+            "lastData": "27.0"}];
+        when(mockApi.getSensors("token")).thenAnswer(
+                (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+        Sensors page = Sensors(
+          storage: mockSecureStorage,
+          testApi: mockApi,
+        );
+
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
+        expect(find.byIcon(WeatherIcons.showers), findsOneWidget);
+        expect(find.byIcon(WeatherIcons.thermometer), findsOneWidget);
+        expect(find.byIcon(WeatherIcons.humidity), findsOneWidget);
+        expect(find.byIcon(WeatherIcons.smog), findsOneWidget);
+      });
 }

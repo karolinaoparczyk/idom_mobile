@@ -76,6 +76,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                         Navigator.pop(context);
                       }),
                   TextButton(
+                      key: Key('yesButton'),
                       child: Text("OK",
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {

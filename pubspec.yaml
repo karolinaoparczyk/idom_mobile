@@ -14,24 +14,20 @@ description: Projekt inżynierski
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
+  url_launcher:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
   http:
   flutter_secure_storage:
-  path_provider:
-  dio: ^2.1.6
   cookie_jar: ^1.0.0
   charts_flutter:
-  permission_handler:
-  shared_preferences:
-
+  weather_icons:
+  flutter_svg:
+  webview_flutter:
 
 dev_dependencies:
   flutter_test:
@@ -53,9 +49,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #  - images/a_dot_burr.jpeg
-  #  - images/a_dot_ham.jpeg
+  assets:
+    - assets/icons/water-temperature.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
+import 'package:idom/pages/cameras/cameras.dart';
 import 'package:idom/pages/setup/edit_api_address.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
-
-import '../api.dart';
 
 class IdomDrawer extends StatefulWidget {
   IdomDrawer({
@@ -202,6 +202,18 @@ class _IdomDrawerState extends State<IdomDrawer> {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Sensors") {
                 await Navigator.of(context).popUntil((route) => route.isFirst);
+                if (widget.onGoBackAction != null) widget.onGoBackAction();
+              }
+            }),
+            customMenuTile(Icons.videocam_outlined, "Kamery", () async {
+              Navigator.pop(context);
+              if (widget.parentWidgetType != "Cameras") {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Cameras(storage: widget.storage)));
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),

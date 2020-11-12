@@ -96,8 +96,7 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   onLogOutFailure(String text) {
-    final snackBar =
-    new SnackBar(content: new Text(text));
+    final snackBar = new SnackBar(content: new Text(text));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
@@ -116,7 +115,9 @@ class _EditAccountState extends State<EditAccount> {
               IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditAccount", onLogOutFailure: onLogOutFailure),
+                storage: widget.storage,
+                parentWidgetType: "EditAccount",
+                onLogOutFailure: onLogOutFailure),
             body: Container(
                 child: Column(children: <Widget>[
               SingleChildScrollView(
@@ -173,20 +174,17 @@ class _EditAccountState extends State<EditAccount> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 30.0),
                           child: AnimatedCrossFade(
-                            crossFadeState:
-                            fieldsValidationMessage != null
+                            crossFadeState: fieldsValidationMessage != null
                                 ? CrossFadeState.showFirst
                                 : CrossFadeState.showSecond,
                             duration: Duration(milliseconds: 300),
-                            firstChild: fieldsValidationMessage !=
-                                null
+                            firstChild: fieldsValidationMessage != null
                                 ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(
-                                    fontWeight:
-                                    FontWeight.normal))
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal))
                                 : SizedBox(),
                             secondChild: SizedBox(),
                           ),
@@ -217,6 +215,8 @@ class _EditAccountState extends State<EditAccount> {
           _load = false;
           fieldsValidationMessage = null;
         });
+        widget.storage.setEmail(_emailController.text);
+        widget.storage.setTelephone(_telephoneController.text);
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         displayProgressDialog(
@@ -268,8 +268,7 @@ class _EditAccountState extends State<EditAccount> {
         errorText += "Numer telefonu jest nieprawidłowy.";
       else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy";
 
-      if (errorText != "")
-        fieldsValidationMessage = errorText;
+      if (errorText != "") fieldsValidationMessage = errorText;
 
       setState(() {
         _load = false;
@@ -296,14 +295,11 @@ class _EditAccountState extends State<EditAccount> {
 
   /// confirms saving account changes
   _confirmSavingChanges(bool changedEmail, bool changedTelephone) async {
-    await confirmActionDialog(
-      context,
-      "Potwierdź",
-      "Czy na pewno zapisać zmiany?",
-      () async {
-        await _saveChanges(changedEmail, changedTelephone);
-      },
-    );
+    var decision = await confirmActionDialog(
+        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+    if (decision) {
+      await _saveChanges(changedEmail, changedTelephone);
+    }
   }
 
   /// verifies data changes

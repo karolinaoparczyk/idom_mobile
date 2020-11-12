@@ -156,6 +156,7 @@ class _FrontState extends State<Front> {
 
     /// displays success message when server address is set
     if (result == true) {
+      await checkApiAddressSet();
       final snackBar =
           new SnackBar(content: new Text("Adres serwera został zapisany."));
 
