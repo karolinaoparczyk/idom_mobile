@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
+  url_launcher:
   flutter:
     sdk: flutter
 
@@ -26,6 +27,7 @@ dependencies:
   charts_flutter:
   weather_icons:
   flutter_svg:
+  webview_flutter:
 
 dev_dependencies:
   flutter_test:

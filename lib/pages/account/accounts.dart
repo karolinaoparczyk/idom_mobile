@@ -310,6 +310,7 @@ class _AccountsState extends State<Accounts> {
                                   leading: Icon(
                                     Icons.person,
                                     color: Theme.of(context).iconTheme.color,
+                                    size:30
                                   ),
 
                                   /// delete sensor button

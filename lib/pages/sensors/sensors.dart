@@ -351,7 +351,8 @@ class _SensorsState extends State<Sensors> {
       case "smoke":
       case "rain":
         return Icon(getCategoryIcon(sensor.category),
-            color: Theme.of(context).iconTheme.color);
+            color: Theme.of(context).iconTheme.color,
+        size: 30);
         break;
     }
   }
