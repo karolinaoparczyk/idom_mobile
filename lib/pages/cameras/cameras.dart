@@ -9,9 +9,10 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 
 class Cameras extends StatefulWidget {
-  Cameras({@required this.storage});
+  Cameras({@required this.storage, this.testApi});
 
   final SecureStorage storage;
+  final Api testApi;
 
   @override
   _CamerasState createState() => _CamerasState();
@@ -29,6 +30,9 @@ class _CamerasState extends State<Cameras> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     getCameras();
   }
 
@@ -37,7 +41,7 @@ class _CamerasState extends State<Cameras> {
   }
 
   /// returns list of cameras
-  Future<List<Sensor>> getCameras() async {
+  Future<void> getCameras() async {
     await getUserToken();
     try {
       /// gets cameras
