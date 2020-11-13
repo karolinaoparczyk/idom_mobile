@@ -99,8 +99,7 @@ class _NewSensorState extends State<NewSensor> {
               builder: (context) {
                 return Dialog(
                   child: CategoryDialog(
-                    currentCategory: categoryValue,
-                  ),
+                      currentCategory: categoryValue, type: "sensors"),
                 );
               });
           if (selectedCategory != null) {
@@ -366,7 +365,7 @@ class _NewSensorState extends State<NewSensor> {
             ]))));
   }
 
-  /// saves changes after form fields and dropdown buttons validation
+  /// saves changes after form fields validation
   _saveChanges() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
