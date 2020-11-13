@@ -305,4 +305,27 @@ class Api {
     }
     return null;
   }
+
+  /// gets drivers
+  Future<Map<String, String>> getDrivers(String userToken) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.get('$url/drivers/list', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 5));
+
+      // Map<String, String> response = {
+      //   "body": res.body.toString(),
+      //   "statusCode": res.statusCode.toString(),
+      // };
+      Map<String, String> response = {
+        "body": "[]",
+        "statusCode": "200",
+      };
+      return response;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }

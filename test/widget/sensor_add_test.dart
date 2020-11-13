@@ -227,12 +227,12 @@ void main() {
     verify(await mockApi.addSensor('sensor', 'humidity', 7200, "token")).called(1);
   });
 
-  /// tests if can choose rain sensor, frequency read only
+  /// tests if can choose rain_sensor sensor, frequency read only
   testWidgets(
-      'can add rain sensor, frequency read only',
+      'can add rain_sensor sensor, frequency read only',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
-        when(mockApi.addSensor('sensor', 'rain', 30, "token")).thenAnswer(
+        when(mockApi.addSensor('sensor', 'rain_sensor', 30, "token")).thenAnswer(
                 (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
         MockSecureStorage mockSecureStorage = MockSecureStorage();
         when(mockSecureStorage.getToken())
@@ -280,13 +280,13 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(seconds: 5));
 
-        verify(await mockApi.addSensor('sensor', 'rain', 30, "token"))
+        verify(await mockApi.addSensor('sensor', 'rain_sensor', 30, "token"))
             .called(1);
       });
 
-  /// tests if can choose rain sensor, choose another category - frequency not read only
+  /// tests if can choose rain_sensor sensor, choose another category - frequency not read only
   testWidgets(
-      'can add rain sensor, choose another category - frequency not read only',
+      'can add rain_sensor sensor, choose another category - frequency not read only',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
         when(mockApi.addSensor('sensor', 'humidity', 7200, "token")).thenAnswer(

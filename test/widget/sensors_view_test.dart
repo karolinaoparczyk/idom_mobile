@@ -171,11 +171,11 @@ void main() {
 
   /// tests if icons displayed correctly
   testWidgets(
-      'rain and air temperature icons displayed correctly',
+      'rain_sensor and air temperature icons displayed correctly',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockApi.addSensor('sensor', 'rain', 7200, "token")).thenAnswer(
+        when(mockApi.addSensor('sensor', 'rain_sensor', 7200, "token")).thenAnswer(
                 (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
         List<Map<String, dynamic>> sensors = [{
           "id": 1,
@@ -186,7 +186,7 @@ void main() {
           {
             "id": 2,
             "name": "sensor2",
-            "category": "rain",
+            "category": "rain_sensor",
             "frequency": 300,
             "lastData": "27.0"},
           {

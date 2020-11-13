@@ -192,7 +192,6 @@ class _SignUpState extends State<SignUp> {
     _obscurePassword = true;
     _passwordConfirmIcon = Icons.visibility_outlined;
     _obscureConfirmPassword = true;
-    Navigator.of(context).pop(true);
   }
 
   @override

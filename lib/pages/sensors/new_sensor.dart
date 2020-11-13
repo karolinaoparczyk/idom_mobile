@@ -106,7 +106,7 @@ class _NewSensorState extends State<NewSensor> {
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
-            if (selectedCategory['value'] == "rain" ||
+            if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
@@ -197,7 +197,6 @@ class _NewSensorState extends State<NewSensor> {
     categoryValue = null;
     frequencyUnitsValue = null;
     canEditFrequency = true;
-    Navigator.pop(context, true);
   }
 
   onLogOutFailure(String text) {

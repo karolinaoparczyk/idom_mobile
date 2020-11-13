@@ -338,21 +338,29 @@ class _SensorsState extends State<Sensors> {
   Widget getSensorImage(Sensor sensor) {
     switch (sensor.category) {
       case "water_temp":
-        return SvgPicture.asset(
-          "assets/icons/water-temperature.svg",
-          matchTextDirection: false,
-          width: 30,
-          height: 30,
-          color: Theme.of(context).iconTheme.color,
-        );
+        return SizedBox(
+            width: 35,
+            child: Container(
+              padding: EdgeInsets.only(top:5),
+                alignment: Alignment.topRight,
+                child: SvgPicture.asset(
+                  "assets/icons/water-temperature.svg",
+                  matchTextDirection: false,
+                  width: 32,
+                  height: 32,
+                  color: Theme.of(context).iconTheme.color,
+                )));
         break;
       case "temperature":
       case "humidity":
       case "smoke":
-      case "rain":
-        return Icon(getCategoryIcon(sensor.category),
-            color: Theme.of(context).iconTheme.color,
-        size: 30);
+      case "rain_sensor":
+        return SizedBox(
+            width: 35,
+            child: Container(
+                alignment: Alignment.topRight,
+                child: Icon(getCategoryIcon(sensor.category),
+                    color: Theme.of(context).iconTheme.color, size: 30)));
         break;
     }
   }
@@ -367,7 +375,7 @@ class _SensorsState extends State<Sensors> {
       case "smoke":
         return WeatherIcons.smog;
         break;
-      case "rain":
+      case "rain_sensor":
         return WeatherIcons.showers;
         break;
     }
@@ -417,6 +425,7 @@ class _SensorsState extends State<Sensors> {
         break;
       case "smoke":
       case "rain":
+      case "rain_sensor":
         return "";
     }
   }
@@ -429,7 +438,7 @@ class _SensorsState extends State<Sensors> {
             builder: (context) => NewSensor(storage: widget.storage),
             fullscreenDialog: true));
 
-    /// displays success message if sensor added succesfully
+    /// displays success message if sensor added successfully
     if (result == true) {
       final snackBar = new SnackBar(content: new Text("Dodano nowy czujnik."));
       _scaffoldKey.currentState.showSnackBar((snackBar));

@@ -524,13 +524,13 @@ void main() {
     verify(await mockApi.editSensor(1, 'sensor2', null, null, 'token')).called(1);
   });
 
-  /// tests if when category rain, cannot change frequency
-  testWidgets('when category rain, cannot change frequency', (WidgetTester tester) async {
+  /// tests if when category rain_sensor, cannot change frequency
+  testWidgets('when category rain_sensor, cannot change frequency', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
         .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, 'newname', 'rain', 30, "token")).thenAnswer(
+    when(mockApi.editSensor(1, 'newname', 'rain_sensor', 30, "token")).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
 
     Sensor sensor = Sensor(
@@ -569,7 +569,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, 'newname', 'rain', 30, "token"))
+    verify(await mockApi.editSensor(1, 'newname', 'rain_sensor', 30, "token"))
         .called(1);
   });
 }
