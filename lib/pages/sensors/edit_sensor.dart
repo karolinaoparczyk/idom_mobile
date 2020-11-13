@@ -69,7 +69,7 @@ class _EditSensorState extends State<EditSensor> {
                 (element) =>
             element["value"] == widget.sensor.category)['text']);
     categoryValue = widget.sensor.category;
-    if (categoryValue == "rain" ||
+    if (categoryValue == "rain_sensor" ||
         categoryValue == "water_temp") {
       canEditFrequency = false;
       frequencyUnitsValue = "seconds";
@@ -144,7 +144,7 @@ class _EditSensorState extends State<EditSensor> {
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
-            if (selectedCategory['value'] == "rain" ||
+            if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";

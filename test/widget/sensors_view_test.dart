@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:idom/api.dart';
-import 'package:idom/models.dart';
 import 'package:idom/pages/sensors/sensors.dart';
 import 'package:weather_icons/weather_icons.dart';
 
@@ -26,19 +25,35 @@ void main() {
   testWidgets('sensors on list', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    List<Sensor> sensors = List();
-    sensors.add(Sensor(
-        id: 1,
-        name: "sensor1",
-        category: "temperature",
-        frequency: 300,
-        lastData: "27.0"));
-    sensors.add(Sensor(
-        id: 2,
-        name: "sensor2",
-        category: "temperature",
-        frequency: 300,
-        lastData: "27.0"));
+    List<Map<String, dynamic>> sensors = [{
+      "id": 1,
+      "name": "sensor1",
+      "category": "temperature",
+      "frequency": 300,
+      "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor3",
+        "category": "humidity",
+        "frequency": 300,
+        "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor4",
+        "category": "smoke",
+        "frequency": 300,
+        "last_data": "27.0"}];
+    when(mockApi.getSensors("token")).thenAnswer(
+            (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
 
     Sensors page = Sensors(
       storage: mockSecureStorage,
@@ -47,28 +62,47 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
-    expect(find.byType(ListTile).evaluate().length, 2);
-    expect(find.text("27.0 °C"), findsNWidgets(2));
+    expect(find.byType(ListTile).evaluate().length, 4);
+    expect(find.text("ostatnia dana: 27.0 °C"), findsOneWidget);
+    expect(find.text("ostatnia dana: 27.0 %"), findsOneWidget);
   });
 
   /// tests if deletes sensor after confirmation
-  testWidgets('sensors on list, confirms, deletes',
+  testWidgets('deletes sensor',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    List<Sensor> sensors = List();
-    sensors.add(Sensor(
-        id: 1,
-        name: "sensor1",
-        category: "humidity",
-        frequency: 300,
-        lastData: "27.0"));
-    sensors.add(Sensor(
-        id: 2,
-        name: "sensor2",
-        category: "humidity",
-        frequency: 300,
-        lastData: "27.0"));
+    List<Map<String, dynamic>> sensors = [{
+      "id": 1,
+      "name": "sensor1",
+      "category": "temperature",
+      "frequency": 300,
+      "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor3",
+        "category": "humidity",
+        "frequency": 300,
+        "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor4",
+        "category": "smoke",
+        "frequency": 300,
+        "last_data": "27.0"}];
+    when(mockApi.getSensors("token")).thenAnswer(
+            (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    when(mockApi.deactivateSensor(1, "token")).thenAnswer(
+            (_) async => Future.value(200));
+
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
 
     Sensors page = Sensors(
       storage: mockSecureStorage,
@@ -77,10 +111,8 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
-    expect(find.byType(ListTile).evaluate().length, 2);
-    expect(find.text("27.0 %"), findsNWidgets(2));
 
-    await tester.tap(find.byType(FlatButton).first);
+    await tester.tap(find.byKey(Key("deleteButton")).first);
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('yesButton')));
@@ -90,23 +122,41 @@ void main() {
   });
 
   /// tests if does not delete sensor when no confirmation
-  testWidgets('sensors on list, does not confirm, does not delete',
+  testWidgets('does not confirm, does not delete',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    List<Sensor> sensors = List();
-    sensors.add(Sensor(
-        id: 1,
-        name: "sensor1",
-        category: "temperature",
-        frequency: 300,
-        lastData: "27.0"));
-    sensors.add(Sensor(
-        id: 2,
-        name: "sensor2",
-        category: "humidity",
-        frequency: 300,
-        lastData: "27.0"));
+    List<Map<String, dynamic>> sensors = [{
+      "id": 1,
+      "name": "sensor1",
+      "category": "temperature",
+      "frequency": 300,
+      "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor3",
+        "category": "humidity",
+        "frequency": 300,
+        "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor4",
+        "category": "smoke",
+        "frequency": 300,
+        "last_data": "27.0"}];
+    when(mockApi.getSensors("token")).thenAnswer(
+            (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    when(mockApi.deactivateSensor(1, "token")).thenAnswer(
+            (_) async => Future.value(200));
+
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
 
     Sensors page = Sensors(
       storage: mockSecureStorage,
@@ -115,11 +165,8 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
-    expect(find.byType(ListTile).evaluate().length, 2);
-    expect(find.text("27.0 °C"), findsOneWidget);
-    expect(find.text("27.0 %"), findsOneWidget);
 
-    await tester.tap(find.byType(FlatButton).first);
+    await tester.tap(find.byKey(Key("deleteButton")).first);
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('noButton')));
@@ -129,25 +176,43 @@ void main() {
   });
 
   /// tests eror message when api error
-  testWidgets('sensors on list, api error, message to user',
+  testWidgets('api error, message to user',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.deactivateSensor(1, "token"))
         .thenAnswer((_) async => Future.value(404));
-    List<Sensor> sensors = List();
-    sensors.add(Sensor(
-        id: 1,
-        name: "sensor1",
-        category: "temperature",
-        frequency: 300,
-        lastData: "27.0"));
-    sensors.add(Sensor(
-        id: 2,
-        name: "sensor2",
-        category: "temperature",
-        frequency: 300,
-        lastData: "27.0"));
+    List<Map<String, dynamic>> sensors = [{
+      "id": 1,
+      "name": "sensor1",
+      "category": "temperature",
+      "frequency": 300,
+      "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor3",
+        "category": "humidity",
+        "frequency": 300,
+        "last_data": "27.0"},
+      {
+        "id": 2,
+        "name": "sensor4",
+        "category": "smoke",
+        "frequency": 300,
+        "last_data": "27.0"}];
+    when(mockApi.getSensors("token")).thenAnswer(
+            (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    when(mockApi.deactivateSensor(1, "token")).thenAnswer(
+            (_) async => Future.value(400));
+
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
 
     Sensors page = Sensors(
       storage: mockSecureStorage,
@@ -156,51 +221,49 @@ void main() {
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
-    expect(find.byType(ListTile).evaluate().length, 2);
 
-    await tester.tap(find.byType(FlatButton).first);
+    await tester.tap(find.byKey(Key("deleteButton")).first);
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(Key('ok button')));
+    await tester.tap(find.byType(SnackBar));
+    await tester.tap(find.text("Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
 
     verify(await mockApi.deactivateSensor(1, "token")).called(1);
   });
 
   /// tests if icons displayed correctly
   testWidgets(
-      'rain and air temperature icons displayed correctly',
+      'rain_sensor and air temperature icons displayed correctly',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockApi.addSensor('sensor', 'rain', 7200, "token")).thenAnswer(
-                (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
         List<Map<String, dynamic>> sensors = [{
           "id": 1,
           "name": "sensor1",
           "category": "temperature",
           "frequency": 300,
-          "lastData": "27.0"},
+          "last_data": "27.0"},
           {
             "id": 2,
             "name": "sensor2",
-            "category": "rain",
+            "category": "rain_sensor",
             "frequency": 300,
-            "lastData": "27.0"},
+            "last_data": "27.0"},
           {
             "id": 2,
             "name": "sensor3",
             "category": "humidity",
             "frequency": 300,
-            "lastData": "27.0"},
+            "last_data": "27.0"},
           {
             "id": 2,
             "name": "sensor4",
             "category": "smoke",
             "frequency": 300,
-            "lastData": "27.0"}];
+            "last_data": "27.0"}];
         when(mockApi.getSensors("token")).thenAnswer(
                 (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
 

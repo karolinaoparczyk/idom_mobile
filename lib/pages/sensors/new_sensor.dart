@@ -106,7 +106,7 @@ class _NewSensorState extends State<NewSensor> {
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
-            if (selectedCategory['value'] == "rain" ||
+            if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
@@ -197,7 +197,6 @@ class _NewSensorState extends State<NewSensor> {
     categoryValue = null;
     frequencyUnitsValue = null;
     canEditFrequency = true;
-    Navigator.pop(context, true);
   }
 
   onLogOutFailure(String text) {
@@ -364,7 +363,7 @@ class _NewSensorState extends State<NewSensor> {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       int valInt = int.tryParse(_frequencyValueController.text);
-      if (valInt == null) {
+      if (valInt == null || valInt <= 0) {
         fieldsValidationMessage =
             'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
         setState(() {});

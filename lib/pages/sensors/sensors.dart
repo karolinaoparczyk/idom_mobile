@@ -126,7 +126,7 @@ class _SensorsState extends State<Sensors> {
             text: "Trwa usuwanie czujnika...");
 
         int statusCode = await api.deactivateSensor(sensor.id, _token);
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        Navigator.of(_scaffoldKey.currentContext).pop();
         if (statusCode == 200) {
           setState(() {
             /// refreshes sensors' list
@@ -138,8 +138,7 @@ class _SensorsState extends State<Sensors> {
               key: _keyLoaderInvalidToken,
               text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
           await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoaderInvalidToken.currentContext,
-                  rootNavigator: true)
+          Navigator.of(_keyLoaderInvalidToken.currentContext)
               .pop();
           await widget.storage.resetUserData();
           Navigator.of(context).popUntil((route) => route.isFirst);
@@ -151,11 +150,11 @@ class _SensorsState extends State<Sensors> {
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        Navigator.of(_scaffoldKey.currentContext).pop();
 
         print(e.toString());
         if (e.toString().contains("TimeoutException")) {
@@ -338,21 +337,29 @@ class _SensorsState extends State<Sensors> {
   Widget getSensorImage(Sensor sensor) {
     switch (sensor.category) {
       case "water_temp":
-        return SvgPicture.asset(
-          "assets/icons/water-temperature.svg",
-          matchTextDirection: false,
-          width: 30,
-          height: 30,
-          color: Theme.of(context).iconTheme.color,
-        );
+        return SizedBox(
+            width: 35,
+            child: Container(
+              padding: EdgeInsets.only(top:5),
+                alignment: Alignment.topRight,
+                child: SvgPicture.asset(
+                  "assets/icons/water-temperature.svg",
+                  matchTextDirection: false,
+                  width: 32,
+                  height: 32,
+                  color: Theme.of(context).iconTheme.color,
+                )));
         break;
       case "temperature":
       case "humidity":
       case "smoke":
-      case "rain":
-        return Icon(getCategoryIcon(sensor.category),
-            color: Theme.of(context).iconTheme.color,
-        size: 30);
+      case "rain_sensor":
+        return SizedBox(
+            width: 35,
+            child: Container(
+                alignment: Alignment.topRight,
+                child: Icon(getCategoryIcon(sensor.category),
+                    color: Theme.of(context).iconTheme.color, size: 30)));
         break;
     }
   }
@@ -367,7 +374,7 @@ class _SensorsState extends State<Sensors> {
       case "smoke":
         return WeatherIcons.smog;
         break;
-      case "rain":
+      case "rain_sensor":
         return WeatherIcons.showers;
         break;
     }
@@ -417,6 +424,7 @@ class _SensorsState extends State<Sensors> {
         break;
       case "smoke":
       case "rain":
+      case "rain_sensor":
         return "";
     }
   }

@@ -111,7 +111,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   getSensorData() async {
-    if (widget.sensor.category == "rain") return;
+    if (widget.sensor.category == "rain_sensor") return;
     await getToken();
     try {
       if (widget.sensor != null) {
@@ -337,7 +337,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                                 _categoryController.text)
                                             .first['text'],
                                         style: TextStyle(fontSize: 21.0)))),
-                            if (widget.sensor.category != "rain")
+                            if (widget.sensor.category != "rain_sensor")
                               Padding(
                                   padding: EdgeInsets.only(
                                       left: 30.0,
@@ -363,7 +363,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                           ),
                                         ],
                                       ))),
-                            if (widget.sensor.category != "rain")
+                            if (widget.sensor.category != "rain_sensor")
                               Padding(
                                   padding: EdgeInsets.only(
                                       top: 10,
@@ -378,7 +378,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                             fontSize: 16.5,
                                             fontWeight: FontWeight.bold)),
                                   )),
-                            if (widget.sensor.category != "rain")
+                            if (widget.sensor.category != "rain_sensor")
                               Padding(
                                   padding: EdgeInsets.only(
                                       left: 52.5,
@@ -400,7 +400,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                           style: TextStyle(fontSize: 21.0)),
                                     ])
                                   ]))),
-                            if (widget.sensor.category != "rain")
+                            if (widget.sensor.category != "rain_sensor")
                               Padding(
                                   padding: EdgeInsets.only(
                                       top: 10,
@@ -415,7 +415,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                             fontSize: 16.5,
                                             fontWeight: FontWeight.bold)),
                                   )),
-                            if (widget.sensor.category != "rain")
+                            if (widget.sensor.category != "rain_sensor")
                               Padding(
                                   padding: EdgeInsets.symmetric(
                                       vertical: 0.0, horizontal: 52.5),
@@ -423,7 +423,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                       alignment: Alignment.centerLeft,
                                       child: Text(getSensorLastData(),
                                           style: TextStyle(fontSize: 21.0)))),
-            if (widget.sensor.category != "rain")
+            if (widget.sensor.category != "rain_sensor")
 
                               Padding(
                                   padding: EdgeInsets.only(
@@ -451,7 +451,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                           ),
                                         ],
                                       ))),
-                                if (widget.sensor.category != "rain")
+                                if (widget.sensor.category != "rain_sensor")
                                   Padding(
                                 padding: EdgeInsets.only(
                                     left: 52.5,
@@ -511,7 +511,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                       });
                                     }),
                               ),
-                                if (widget.sensor.category != "rain")
+                                if (widget.sensor.category != "rain_sensor")
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 30.0,
@@ -526,7 +526,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                           height: 200,
                                           child: chartWid)
                                     ])))),
-                                if (widget.sensor.category != "rain")
+                                if (widget.sensor.category != "rain_sensor")
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 52.5,
@@ -545,7 +545,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                                     fontWeight: FontWeight.bold)),
                                           )
                                         : SizedBox()),
-                                if (widget.sensor.category != "rain")
+                                if (widget.sensor.category != "rain_sensor")
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 52.5,
@@ -627,6 +627,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       setState(() {
         _load = true;
       });
+      await getToken();
       var res = await api.getSensorDetails(widget.sensor.id, _token);
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);

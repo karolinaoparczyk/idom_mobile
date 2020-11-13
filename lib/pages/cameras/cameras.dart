@@ -164,11 +164,15 @@ class _CamerasState extends State<Cameras> {
                                   onTap: () {
                                     navigateToCameraStream(_cameraList[index]);
                                   },
-                                  leading: Icon(
+                                  leading: SizedBox(
+                                    width: 35,
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      child:Icon(
                                     Icons.videocam,
                                     color: Theme.of(context).iconTheme.color,
                                   size: 30,
-                                  ),
+                                  ))),
                                 ),
                               )))))));
     }
