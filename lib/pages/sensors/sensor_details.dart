@@ -7,12 +7,12 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
+import 'package:idom/pages/sensors/edit_sensor.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
-import 'edit_sensor.dart';
 
 /// displays sensor details and allows editing them
 class SensorDetails extends StatefulWidget {
@@ -30,10 +30,6 @@ class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final Api api = Api();
-  TextEditingController _nameController;
-  TextEditingController _frequencyValueController;
-  TextEditingController _categoryController;
-  TextEditingController _currentSensorDataController;
   bool _load;
   List<SensorData> sensorData;
   List<charts.Series<SensorData, DateTime>> _seriesData;
@@ -46,29 +42,12 @@ class _SensorDetailsState extends State<SensorDetails> {
   DateTime firstDeliveryTime;
   String _token;
 
-  List<DropdownMenuItem<String>> categories;
-  List<DropdownMenuItem<String>> units;
-
   @override
   void initState() {
     super.initState();
     _load = true;
     noDataForChart = false;
     dataLoaded = false;
-
-    /// seting current sensor name
-    _nameController = TextEditingController(text: widget.sensor.name);
-
-    /// setting current sensor category
-    _categoryController = TextEditingController(text: widget.sensor.category);
-
-    /// setting current sensor frequency
-    _frequencyValueController =
-        TextEditingController(text: widget.sensor.frequency.toString());
-
-    _currentSensorDataController =
-        TextEditingController(text: widget.sensor.lastData.toString());
-
     _seriesData = List<charts.Series<SensorData, DateTime>>();
     measurementTimeSelected = [true, false, false];
     getSensorData().then((value) => setState(() {
@@ -217,10 +196,6 @@ class _SensorDetailsState extends State<SensorDetails> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _categoryController.dispose();
-    _frequencyValueController.dispose();
-    _currentSensorDataController.dispose();
     chartWid = null;
     super.dispose();
   }
@@ -331,10 +306,10 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                        Categories.values
+                                        SensorCategories.values
                                             .where((element) =>
                                                 element['value'] ==
-                                                _categoryController.text)
+                                                widget.sensor.category)
                                             .first['text'],
                                         style: TextStyle(fontSize: 21.0)))),
                             if (widget.sensor.category != "rain_sensor")
@@ -391,7 +366,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Text(_frequencyValueController.text,
+                                          Text(widget.sensor.frequency.toString(),
                                               style: TextStyle(fontSize: 21.0)),
                                         ]),
                                     SizedBox(width: 5.0),
@@ -567,9 +542,9 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   String getProperUnitsName() {
-    var lastDigitFrequencyValue = _frequencyValueController.text
+    var lastDigitFrequencyValue = widget.sensor.frequency
         .toString()
-        .substring(_frequencyValueController.text.toString().length - 1);
+        .substring(widget.sensor.frequency.toString().length - 1);
     var firstVersion = "sekundy";
     var secondVersion = "sekund";
     if (RegExp(r"^[0-1|5-9]").hasMatch(lastDigitFrequencyValue))
@@ -593,11 +568,11 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   String getSensorLastData() {
-    if (_currentSensorDataController.text == "null") return "-";
+    if (widget.sensor.lastData == "null") return "-";
     return widget.sensor.category == "temperature" ||
             widget.sensor.category == "water_temp"
-        ? "${_currentSensorDataController.text} °C"
-        : "${_currentSensorDataController.text} %";
+        ? "${widget.sensor.lastData} °C"
+        : "${widget.sensor.lastData} %";
   }
 
   String getSensorLastDataLabel() {
@@ -633,14 +608,6 @@ class _SensorDetailsState extends State<SensorDetails> {
         dynamic body = jsonDecode(res['body']);
         Sensor refreshedSensor = Sensor.fromJson(body);
         getSensorData().then((value) => setState(() {
-              _nameController =
-                  TextEditingController(text: refreshedSensor.name);
-              _categoryController =
-                  TextEditingController(text: refreshedSensor.category);
-              _frequencyValueController = TextEditingController(
-                  text: refreshedSensor.frequency.toString());
-              _currentSensorDataController = TextEditingController(
-                  text: refreshedSensor.lastData.toString());
               widget.sensor = refreshedSensor;
               if (sensorData != null && sensorData.length > 0) {
                 drawPlot();
