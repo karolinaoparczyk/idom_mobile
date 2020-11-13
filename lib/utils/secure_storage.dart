@@ -22,6 +22,13 @@ class SecureStorage {
     this.storage = FlutterSecureStorage();
   }
 
+  Future<String> getApiURL() async {
+    var _apiAddressProtocol = await getApiServerAddressProtocol();
+    var _apiAddress = await getApiServerAddress();
+    var _apiAddressPort = await getApiServerAddressPort();
+    return _apiAddressProtocol + _apiAddress + ":" + _apiAddressPort;
+  }
+
   void setApiServerAddress(String apiServerAddress) {
     storage.write(key: _apiServerAddress, value: apiServerAddress);
   }

@@ -11,6 +11,7 @@ class IdomColors {
   static const Color iconDark = Color(0xFF0E1111);
   static const Color additionalColor = Color(0xffDaa520);
   static const Color lightBlack = Color(0xff3B3736);
+  static const Color white = Color(0xffffffff);
 
   static Color darken(Color color, [double amount = 0.1]) {
     assert(amount >= 0 && amount <= 1);

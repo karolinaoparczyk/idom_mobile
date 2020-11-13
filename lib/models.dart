@@ -95,3 +95,19 @@ class SensorData {
             .replaceAll("T", " ") as String));
   }
 }
+
+class Camera{
+  int id;
+  String name;
+  String ipAddress;
+
+  Camera({@required this.id, this.name, this.ipAddress});
+
+  factory Camera.fromJson(Map<String, dynamic> json) {
+    return Camera(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        ipAddress: json['ip_address'] as String);
+  }
+
+}
