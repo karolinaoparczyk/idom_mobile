@@ -61,6 +61,7 @@ class _CameraStreamState extends State<CameraStream> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text("Otwórz w przeglądarce",
+                              key: Key("goToBrowser"),
                               style: Theme
                                   .of(context)
                                   .textTheme
