@@ -4,6 +4,7 @@ import 'package:idom/pages/logotype_widget.dart';
 
 import 'package:idom/pages/sensors/sensors.dart';
 import 'package:idom/pages/setup/front.dart';
+import 'package:idom/push_notifications.dart';
 import 'package:idom/utils/secure_storage.dart';
 
 class Home extends StatefulWidget {
@@ -25,6 +26,7 @@ class _HomeState extends State<Home> {
   void initState() {
     checkIfUserIsSignedIn();
     _createSensorsNotificationsChannel();
+    PushNotificationsManager().init();
     super.initState();
   }
 

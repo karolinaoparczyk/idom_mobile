@@ -5,6 +5,6 @@ class Categories {
     {"text": "opady atmosferyczne", "value": "rain_sensor"},
     {"text": "wilgotność", "value": "humidity"},
     {"text": "alkomat", "value": "breathalyser"},
-    {"text": "stanu powietrza", "value": "smoke"},
+    {"text": "stan powietrza", "value": "smoke"},
   ];
 }
