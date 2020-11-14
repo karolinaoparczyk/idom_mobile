@@ -16,10 +16,11 @@ import 'edit_sensor.dart';
 
 /// displays sensor details and allows editing them
 class SensorDetails extends StatefulWidget {
-  SensorDetails({@required this.storage, @required this.sensor});
+  SensorDetails({@required this.storage, @required this.sensor, this.testApi});
 
   final SecureStorage storage;
   Sensor sensor;
+  final Api testApi;
 
   @override
   _SensorDetailsState createState() => new _SensorDetailsState();
@@ -29,7 +30,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  final Api api = Api();
+  Api api = Api();
   TextEditingController _nameController;
   TextEditingController _frequencyValueController;
   TextEditingController _categoryController;
@@ -52,6 +53,10 @@ class _SensorDetailsState extends State<SensorDetails> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
+
     _load = true;
     noDataForChart = false;
     dataLoaded = false;
@@ -323,7 +328,6 @@ class _SensorDetailsState extends State<SensorDetails> {
                                       _categoryController.text)
                                   .first['text'],
                               style: TextStyle(fontSize: 21.0)))),
-                  if (widget.sensor.category != "rain_sensor")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
@@ -343,8 +347,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 ),
                               ],
                             ))),
-                  if (widget.sensor.category != "rain_sensor" &&
-                      widget.sensor.category != "breathalyser")
+                  if (widget.sensor.category != "breathalyser")
                     Padding(
                         padding: EdgeInsets.only(
                             top: 10, left: 52.5, right: 30.0, bottom: 0.0),
@@ -356,8 +359,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   fontSize: 16.5,
                                   fontWeight: FontWeight.bold)),
                         )),
-                  if (widget.sensor.category != "rain_sensor" &&
-                      widget.sensor.category != "breathalyser")
+                  if (widget.sensor.category != "breathalyser")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),
