@@ -273,7 +273,6 @@ class _NewSensorState extends State<NewSensor> {
                                         ),
                                       ],
                                     ))),
-                            if (categoryValue != "breathalyser")
                               Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
