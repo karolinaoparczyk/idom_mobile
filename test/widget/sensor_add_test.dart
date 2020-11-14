@@ -265,6 +265,126 @@ void main() {
             .called(1);
       });
 
+  /// tests if can choose breathalyser sensor, frequency invisible
+  testWidgets(
+      'can add breathalyser sensor, frequency invisible',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+        when(mockApi.addSensor('sensor', 'breathalyser', 30, "token")).thenAnswer(
+                (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+        NewSensor page = NewSensor(
+          storage: mockSecureStorage,
+          testApi: mockApi,
+        );
+
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
+
+        Finder emailField = find.byKey(Key('name'));
+        await tester.enterText(emailField, 'sensor');
+
+        Finder frequencyValueField = find.byKey(Key('frequencyValue'));
+        await tester.enterText(frequencyValueField, '2');
+
+        await tester.tap(find.byKey(Key('frequencyUnitsButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+
+        await tester.tap(find.text("godziny").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        expect(find.text("godziny"), findsNWidgets(2));
+        expect(find.text("2"), findsOneWidget);
+        expect(find.text("sensor"), findsOneWidget);
+
+        await tester.tap(find.byKey(Key('categoriesButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+
+        await tester.tap(find.text("alkomat").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        expect(find.text("sekundy"), findsNothing);
+        expect(find.text("30"), findsNothing);
+        expect(find.text("sensor"), findsOneWidget);
+
+        await tester.tap(find.byKey(Key('addSensorButton')));
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 5));
+
+        verify(await mockApi.addSensor('sensor', 'breathalyser', 30, "token"))
+            .called(1);
+      });
+
+  /// tests if can choose breathalyser sensor, choose another category - frequency visible
+  testWidgets(
+      'can add breathalyser sensor, choose another category - frequency visible',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+        when(mockApi.addSensor('sensor', 'humidity', 7200, "token")).thenAnswer(
+                (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+        NewSensor page = NewSensor(
+          storage: mockSecureStorage,
+          testApi: mockApi,
+        );
+
+        await tester.pumpWidget(makeTestableWidget(child: page));
+        await tester.pumpAndSettle();
+
+        Finder nameField = find.byKey(Key('name'));
+        await tester.enterText(nameField, 'sensor');
+
+        await tester.tap(find.byKey(Key('categoriesButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tap(find.text("alkomat").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        expect(find.text("sekundy"), findsNothing);
+        expect(find.text("30"), findsNothing);
+        expect(find.text("sensor"), findsOneWidget);
+
+        await tester.tap(find.byKey(Key('categoriesButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tap(find.text("wilgotność").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        Finder frequencyValueField = find.byKey(Key('frequencyValue'));
+        await tester.enterText(frequencyValueField, '2');
+
+        await tester.tap(find.byKey(Key('frequencyUnitsButton')));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+
+        await tester.tap(find.text("godziny").last);
+        await tester.tap(find.byKey(Key('yesButton')));
+        await tester.pump();
+
+        expect(find.text("godziny"), findsNWidgets(2));
+        expect(find.text("2"), findsOneWidget);
+        expect(find.text("sensor"), findsOneWidget);
+
+        await tester.tap(find.byKey(Key('addSensorButton')));
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 5));
+
+        verify(await mockApi.addSensor('sensor', 'humidity', 7200, "token"))
+            .called(1);
+      });
+
   /// tests if does not save when name exists
   testWidgets('valid data, name exists, does not save',
       (WidgetTester tester) async {
