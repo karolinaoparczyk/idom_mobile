@@ -70,8 +70,6 @@ void main() {
     await tester.pump();
 
     await tester.tap(find.byKey(Key('saveDriverButton')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));

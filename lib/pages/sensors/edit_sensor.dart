@@ -65,7 +65,7 @@ class _EditSensorState extends State<EditSensor> {
 
     /// setting current sensor category
     _categoryController = TextEditingController(
-        text: Categories.values.firstWhere(
+        text: SensorCategories.values.firstWhere(
             (element) => element["value"] == widget.sensor.category)['text']);
     categoryValue = widget.sensor.category;
     if (categoryValue == "rain_sensor" || categoryValue == "water_temp" ||

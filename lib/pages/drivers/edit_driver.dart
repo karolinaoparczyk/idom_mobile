@@ -34,6 +34,7 @@ class _EditDriverState extends State<EditDriver> {
   void initState() {
     super.initState();
     getToken();
+    _load = false;
 
     /// seting current driver name
     _nameController = TextEditingController(text: widget.driver.name);

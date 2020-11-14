@@ -30,7 +30,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  final Api api = Api();
+  Api api = Api();
   bool _load;
   List<SensorData> sensorData;
   List<charts.Series<SensorData, DateTime>> _seriesData;
@@ -358,8 +358,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                                             fontSize: 16.5,
                                             fontWeight: FontWeight.bold)),
                                   )),
-                            if (widget.sensor.category != "rain_sensor")
-                              Padding(
+                                if (widget.sensor.category != "breathalyser")
+                                  Padding(
                                   padding: EdgeInsets.only(
                                       left: 52.5,
                                       top: 0.0,

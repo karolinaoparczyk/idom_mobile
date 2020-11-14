@@ -176,6 +176,7 @@ class _CamerasState extends State<Cameras> {
                                             width: 32,
                                             height: 32,
                                             color: IdomColors.additionalColor,
+                                            key: Key("assets/icons/video-camera.svg")
                                           ))),
                                 ),
                               )))))));

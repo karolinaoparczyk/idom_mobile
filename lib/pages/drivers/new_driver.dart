@@ -31,6 +31,9 @@ class _NewDriverState extends State<NewDriver> {
   void initState() {
     super.initState();
     getToken();
+    _load = false;
+    _nameController = TextEditingController();
+    _categoryController = TextEditingController();
   }
 
   Future<void> getToken() async {
