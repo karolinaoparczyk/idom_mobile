@@ -268,6 +268,9 @@ class _IdomDrawerState extends State<IdomDrawer> {
       case "Kamery":
         imageUrl = "assets/icons/video-camera.svg";
         break;
+        case "Sterowniki":
+        imageUrl = "assets/icons/tap.svg";
+        break;
         case "Ustawienia":
           imageUrl = "assets/icons/settings.svg";
           break;

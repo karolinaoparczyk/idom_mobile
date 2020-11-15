@@ -3,6 +3,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/enums/categories.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
@@ -40,7 +41,10 @@ class _EditDriverState extends State<EditDriver> {
     _nameController = TextEditingController(text: widget.driver.name);
 
     /// setting current driver category
-    _categoryController = TextEditingController(text: widget.driver.category);
+    _categoryController = TextEditingController(
+        text: DriverCategories.values.firstWhere(
+            (element) => element["value"] == widget.driver.category)['text']);
+    categoryValue = widget.driver.category;
   }
 
   Future<void> getToken() async {
@@ -183,9 +187,7 @@ class _EditDriverState extends State<EditDriver> {
       _load = true;
     });
     try {
-      // var res = await api.editDriver(
-      //     widget.driver.id, name, category, _token);
-      var res;
+      var res = await api.editDriver(widget.driver.id, name, category, _token);
       if (res['statusCode'] == "200") {
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
