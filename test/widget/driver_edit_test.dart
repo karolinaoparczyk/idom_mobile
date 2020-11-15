@@ -1,6 +1,5 @@
-import 'dart:convert';
-
-import 'package:idom/pages/drivers/drivers.dart';
+import 'package:idom/models.dart';
+import 'package:idom/pages/drivers/edit_driver.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,43 +21,26 @@ void main() {
   /// tests if edits driver name
   testWidgets('edits driver name', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    List<Map<String, dynamic>> drivers = [
-      {
-        "id": 1,
-        "name": "driver1",
-        "category": "clicker",
-        "ipAddress": "111.111.11.11",
-        "data": true
-      },
-      {
-        "id": 2,
-        "name": "driver2",
-        "category": "clicker",
-        "ipAddress": "113.113.13.13",
-        "data": true
-      }
-    ];
-    when(mockApi.getDrivers("token")).thenAnswer((_) async =>
-        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
-    // when(mockApi.editDriver(1, 'newname', 'clicker', "token")).thenAnswer((_) async =>
-    //     Future.value({"body": "", "statusCode": "200"}));
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "clicker",
+        ipAddress: "111.111.11.11",
+        data: null);
+    when(mockApi.editDriver(1, 'newname', null, "token")).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
         .thenAnswer((_) async => Future.value("token"));
 
-    Drivers page = Drivers(
+    EditDriver page = EditDriver(
       storage: mockSecureStorage,
+      driver: driver,
       testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(Key("driver1")));
-    await tester.pump();
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 5));
-    await tester.tap(find.byKey(Key("editDriver")));
     await tester.pumpAndSettle();
 
     Finder emailField = find.byKey(Key('name'));
@@ -70,7 +52,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    // verify(await mockApi.editDriver(1, 'newname', 'clicker', "token"))
-    //     .called(1);
+    verify(await mockApi.editDriver(1, 'newname', null, "token"))
+        .called(1);
   });
 }

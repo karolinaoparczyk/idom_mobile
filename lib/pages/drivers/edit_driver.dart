@@ -11,10 +11,11 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
 class EditDriver extends StatefulWidget {
-  EditDriver({@required this.storage, @required this.driver});
+  EditDriver({@required this.storage, @required this.driver, this.testApi});
 
   final SecureStorage storage;
   final Driver driver;
+  final Api testApi;
 
   @override
   _EditDriverState createState() => _EditDriverState();
@@ -34,6 +35,9 @@ class _EditDriverState extends State<EditDriver> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     getToken();
     _load = false;
 
