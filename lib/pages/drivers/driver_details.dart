@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:flutter/material.dart';
 
@@ -142,25 +143,63 @@ class _DriverDetailsState extends State<DriverDetails> {
                               style: TextStyle(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: RaisedButton(
-                            elevation: 15,
-                            color: IdomColors.additionalColor,
-                            child: Row(
-                              children: [
-                                Text("Wciśnij przycisk",
-                                    style: TextStyle(
-                                        color: IdomColors.textDark,
-                                        fontSize: 16.5,
-                                        fontWeight: FontWeight.bold)),
-                                Icon(Icons.arrow_right_outlined,
-                                    color: IdomColors.textDark),
-                              ],
-                            ),
-                            onPressed: _clickDriver,
+                          child: Row(
+                            children: [
+                              Icon(Icons.touch_app_outlined, size: 17.5),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text("Obsługa sterownika",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                        fontWeight: FontWeight.normal)),
+                              ),
+                            ],
                           ))),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 52.5, top: 30, right: 52.5, bottom: 0.0),
+                    child: Column(
+                      children: [
+                        SizedBox.fromSize(
+                          size: Size(56, 56),
+                          child: ClipOval(
+                            child: Material(
+                              color: IdomColors.brightGreen,
+                              child: InkWell(
+                                key: Key("click"),
+                                splashColor: IdomColors.darkGreen,
+                                onTap: _clickDriver,
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SvgPicture.asset(
+                                      "assets/icons/play.svg",
+                                      matchTextDirection: false,alignment: Alignment.centerRight,
+                                      width: 25,
+                                      height: 25,
+                                      color: IdomColors.green,
+                                      key: Key("assets/icons/play.svg")
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text("Wciśnij przycisk",
+                            style: TextStyle(
+                                color: IdomColors.textDark,
+                                fontSize: 21,
+                                fontWeight: FontWeight.normal)),
+                      ],
+                    ),
+                  )
                 ]),
               ),
             ))));
@@ -168,9 +207,13 @@ class _DriverDetailsState extends State<DriverDetails> {
 
   _clickDriver() async {
     // todo: post to api
+    final snackBar =
+    new SnackBar(content: new Text("Wysłano komendę do sterownika ${widget.driver.name}."));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   _navigateToEditDriver() async {
+    _scaffoldKey.currentState.removeCurrentSnackBar();
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -191,8 +234,7 @@ class _DriverDetailsState extends State<DriverDetails> {
         _load = true;
       });
       await getToken();
-      // var res = await api.getDriverDetails(widget.driver.id, _token);
-      var res;
+      var res = await api.getDriverDetails(widget.driver.id, _token);
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);
         Driver refreshedDriver = Driver.fromJson(body);

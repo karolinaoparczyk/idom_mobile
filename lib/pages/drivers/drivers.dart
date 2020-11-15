@@ -7,7 +7,6 @@ import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/driver_details.dart';
-import 'package:idom/pages/drivers/edit_driver.dart';
 import 'package:idom/pages/drivers/new_driver.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -371,13 +370,18 @@ class _DriversState extends State<Drivers> {
 
     /// displays success message if driver added successfully
     if (result == true) {
-      final snackBar = new SnackBar(content: new Text("Dodano nowy sterownik."));
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar = new SnackBar(
+        content: new Text("Dodano nowy sterownik."),
+        duration: Duration(seconds: 1),
+      );
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await getDrivers();
     }
   }
 
   navigateToDriverDetails(Driver driver) async {
+    _scaffoldKey.currentState.removeCurrentSnackBar();
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             DriverDetails(storage: widget.storage, driver: driver)));

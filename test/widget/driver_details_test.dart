@@ -19,8 +19,8 @@ void main() {
     );
   }
 
-  /// tests if displays driver's details
-  testWidgets('displays driver details', (WidgetTester tester) async {
+  /// tests if displays driver's details, sends command to driver
+  testWidgets('displays driver details, sends command to driver', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     List<Map<String, dynamic>> drivers = [
       {
@@ -58,5 +58,11 @@ void main() {
     await tester.pump(const Duration(seconds: 5));
     expect(find.text("driver1"), findsNWidgets(2));
     expect(find.text("naduszacz"), findsOneWidget);
+    expect(find.text("Wciśnij przycisk"), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/play.svg")), findsOneWidget);
+    await tester.tap(find.byKey(Key("click")));
+    await tester.pumpAndSettle();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("Wysłano komendę do sterownika driver1."), findsOneWidget);
   });
 }
