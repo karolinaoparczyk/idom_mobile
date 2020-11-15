@@ -379,7 +379,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 style: TextStyle(fontSize: 21.0)),
                           ])
                         ]))),
-                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
+                  if (widget.sensor.category != "rain_sensor" && widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             top: 10, left: 52.5, right: 30.0, bottom: 0.0),
@@ -391,7 +391,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   fontSize: 16.5,
                                   fontWeight: FontWeight.bold)),
                         )),
-                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
+                  if (widget.sensor.category != "rain_sensor" && widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 0.0, horizontal: 52.5),
@@ -399,7 +399,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                             alignment: Alignment.centerLeft,
                             child: Text(getSensorLastData(),
                                 style: TextStyle(fontSize: 21.0)))),
-                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
+                  if (widget.sensor.category != "rain_sensor" && widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
@@ -419,7 +419,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 ),
                               ],
                             ))),
-                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
+                  if (widget.sensor.category != "rain_sensor" && widget.sensor.category != "smoke")
                     Padding(
                       padding: EdgeInsets.only(
                           left: 52.5, top: 13.5, right: 30.0, bottom: 0),
@@ -474,7 +474,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                             });
                           }),
                     ),
-                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
+                  if (widget.sensor.category != "rain_sensor" && widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 30.0, top: 0.0, right: 17.0, bottom: 0.0),
@@ -483,7 +483,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 child: Column(children: <Widget>[
                           SizedBox(width: 355, height: 200, child: chartWid)
                         ])))),
-                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
+                  if (widget.sensor.category != "rain_sensor" && widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 52.5, top: 20.0, right: 30.0, bottom: 0.0),
@@ -497,7 +497,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         fontWeight: FontWeight.bold)),
                               )
                             : SizedBox()),
-                  if (widget.sensor.category != "rain_sensor" || widget.sensor.category != "smoke")
+                  if (widget.sensor.category != "rain_sensor" && widget.sensor.category != "smoke")
                     Padding(
                         padding: EdgeInsets.only(
                             left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),

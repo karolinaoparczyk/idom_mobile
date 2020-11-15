@@ -249,34 +249,32 @@ void main() {
         when(mockSecureStorage.resetUserData()).thenAnswer(
                 (_) async => Future.value());
 
-        List<Sensor> sensors = List();
-        sensors.add(Sensor(
+        Sensor sensor = Sensor(
             id: 1,
             name: "sensor1",
             category: "smoke",
-            frequency: null,
-            lastData: null));
-        sensors.add(Sensor(
-            id: 2,
-            name: "sensor2",
-            category: "temperature",
-            frequency: 300,
-            lastData: "27.0"));
+            frequency: 30,
+            lastData: "1.0");
 
-        Sensors page = Sensors(
+
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+
+        SensorDetails page = SensorDetails(
           storage: mockSecureStorage,
+          sensor: sensor,
           testApi: mockApi,
-          testSensors: sensors,
         );
 
         await tester.pumpWidget(makeTestableWidget(child: page));
-        await tester.pumpAndSettle();
-        await tester.tap(find.byKey(Key('sensor1')));
-        await tester.pump();
-        await tester.pump(const Duration(seconds: 1));
 
-        expect(find.byType(SensorDetails), findsOneWidget);
-        expect(find.text("Dane z czujnika"), findsNothing);
+        expect(find.text("sensor1"), findsNWidgets(2));
+        expect(find.text("stan powietrza"), findsOneWidget);
+        expect(find.text("30"), findsOneWidget);
+        expect(find.text("sekund"), findsOneWidget);
+        expect(find.text("Ostatni pomiar"), findsNothing);
+        expect(find.text("Aktualna wilgotność"), findsNothing);
+        expect(find.text("Aktualna temperatura"), findsNothing);
 
         verifyNever(await mockApi.editSensor(1, '', null, null, "token"));
       });

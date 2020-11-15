@@ -18,13 +18,13 @@ Future<bool> confirmActionDialog(BuildContext context, String titleText,
                   .copyWith(fontWeight: FontWeight.normal, fontSize: 21.0)),
           actions: <Widget>[
             TextButton(
-              key: Key("confirmButton"),
+              key: Key("yesButton"),
               child: Text("Tak", style: Theme.of(context).textTheme.headline5),
               onPressed: () async {
                 Navigator.of(context).pop(true);
               },),
             TextButton(
-              key: Key("doNotConfirmButton"),
+              key: Key("noButton"),
               child: Text("Nie", style: Theme.of(context).textTheme.headline5),
               onPressed: () async {
                 Navigator.of(context).pop(false);

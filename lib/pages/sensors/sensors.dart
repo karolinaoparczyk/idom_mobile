@@ -484,7 +484,7 @@ class _SensorsState extends State<Sensors> {
                       ))),
               onPressed: () {
                 setState(() {
-                  _deactivateSensor(buildContext, sensor);
+                  _deactivateSensor(sensor);
                 });
               },
             )));

@@ -359,14 +359,6 @@ class _NewSensorState extends State<NewSensor> {
   _saveChanges() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
-      int valInt = int.tryParse(_frequencyValueController.text);
-      if (valInt == null || valInt <= 0) {
-        fieldsValidationMessage =
-            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
-        setState(() {});
-        return;
-      }
-
       /// validates if frequency value is valid for given frequency units
       var validFrequencyValue =
           SensorFrequencyFieldValidator.isFrequencyValueValid(

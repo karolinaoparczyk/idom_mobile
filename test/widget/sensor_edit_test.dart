@@ -543,17 +543,6 @@ void main() {
     MockApi mockApi = MockApi();
     when(mockApi.editSensor(1, 'newname', null, null, "token")).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
-    var updatedSensor = {
-      "id": 1,
-      "name": "newname",
-      "category": "temperature",
-      "frequency": 300,
-      "lastData": null};
-    when(mockApi.getSensorDetails(1, "token")).thenAnswer((_) async =>
-        Future.value({
-          "body": json.encode(updatedSensor),
-          "statusCode": "200"
-        }));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken()).thenAnswer(
@@ -561,48 +550,31 @@ void main() {
     when(mockSecureStorage.resetUserData()).thenAnswer(
             (_) async => Future.value());
 
-    List<Sensor> sensors = List();
-    sensors.add(Sensor(
+    Sensor sensor = Sensor(
         id: 1,
         name: "sensor1",
         category: "smoke",
-        frequency: null,
-        lastData: null));
-    sensors.add(Sensor(
-        id: 2,
-        name: "sensor2",
-        category: "temperature",
-        frequency: 300,
-        lastData: "27.0"));
+        frequency: 30,
+        lastData: null);
 
-    Sensors page = Sensors(
+    EditSensor page = EditSensor(
       storage: mockSecureStorage,
+      sensor: sensor,
       testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(Key('sensor1')));
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
 
-    expect(find.byType(SensorDetails), findsOneWidget);
-    expect(find.text("Dane z czujnika"), findsNothing);
-    await tester.tap(find.byKey(Key('editSensor')));
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(EditSensor), findsOneWidget);
     Finder usernameField = find.byKey(Key('name'));
     await tester.enterText(usernameField, 'newname');
 
-    await tester.tap(find.byKey(Key('saveChanges')));
+    await tester.tap(find.byKey(Key('editSensorButton')));
     await tester.pumpAndSettle();
-    expect(find.text("Czy na pewno zapisać zmiany?"), findsOneWidget);
-    await tester.tap(find.byKey(Key('confirmButton')));
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    expect(find.byType(SensorDetails), findsOneWidget);
-    expect(find.byType(SnackBar), findsOneWidget);
     verify(await mockApi.editSensor(1, 'newname', null, null, "token"))
         .called(1);
   });
