@@ -328,4 +328,84 @@ class Api {
     }
     return null;
   }
+
+  /// adds driver
+  Future<Map<String, String>> addDriver(
+      String name, String category, bool data, String userToken) async {
+    await getApiAddress();
+    var resSen = await httpClient.post(
+      '$url/drivers/add',
+      headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+      body: {
+        "name": name,
+        "category": category,
+        "data": data.toString(),
+      },
+    ).timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": resSen.body.toString(),
+      "statusCode": resSen.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// edits driver
+  Future<Map<String, String>> editDriver(
+      int id, String name, String category, String userToken) async {
+    await getApiAddress();
+    var body;
+    if (name != null && category != null) {
+      body = {"name": name, "category": category};
+    } else if (name != null) {
+      body = {"name": name};
+    } else if (category != null) {
+      body = {"category": category};
+    }
+    var res = await httpClient
+        .put(
+          '$url/drivers/update/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+          body: body,
+        )
+        .timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// gets driver details
+  Future<Map<String, String>> getDriverDetails(
+      int sensorId, String userToken) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.get('$url/drivers/detail/$sensorId', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> responses = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests deleting driver
+  Future<int> deleteDriver(int id, String userToken) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.delete('$url/drivers/delete/$id', headers: {
+        HttpHeaders.authorizationHeader: "Token $userToken"
+      }).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }

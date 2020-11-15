@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/driver_details.dart';
@@ -23,6 +25,7 @@ class Drivers extends StatefulWidget {
 
 class _DriversState extends State<Drivers> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<State> _keyLoader = GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = GlobalKey<State>();
   Api api = Api();
   List<Driver> _driverList;
@@ -177,23 +180,25 @@ class _DriversState extends State<Drivers> {
                                   leading: SizedBox(
                                       width: 35,
                                       child: Container(
+                                          padding: EdgeInsets.only(top: 5),
                                           alignment: Alignment.centerRight,
-                                          child: Icon(
-                                            Icons.touch_app_outlined,
-                                            color: Theme.of(context)
-                                                .iconTheme
-                                                .color,
-                                            size: 30,
-                                          ))),
-                                  trailing: SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: RaisedButton(
-                                      elevation: 15,
-                                      child: Icon(Icons.arrow_right_outlined,
-                                          color: IdomColors.additionalColor),
-                                      onPressed: _clickDriver,
-                                    ),
+                                          child: SvgPicture.asset(
+                                              "assets/icons/tap.svg",
+                                              matchTextDirection: false,
+                                              width: 32,
+                                              height: 32,
+                                              color: Theme.of(context)
+                                                  .iconTheme
+                                                  .color,
+                                              key: Key(
+                                                  "assets/icons/tap.svg")))),
+                                  trailing: GestureDetector(
+                                    onTapDown: (TapDownDetails details) async {
+                                      _showPopupMenu(details.globalPosition,
+                                          _driverList[index]);
+                                    },
+                                    child: Container(
+                                        child: Icon(Icons.more_vert_outlined)),
                                   ),
                                 ),
                               )))))));
@@ -207,8 +212,145 @@ class _DriversState extends State<Drivers> {
     );
   }
 
-  _clickDriver() async {
+  _showPopupMenu(Offset offset, Driver driver) async {
+    double left = offset.dx;
+    double top = offset.dy;
+    var selected = await showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 0, 0),
+      items: [
+        PopupMenuItem<String>(
+            key: Key("click"),
+            child: SizedBox(
+              width: 120,
+              child: Table(
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  columnWidths: {
+                    0: FlexColumnWidth(1),
+                    1: FlexColumnWidth(1),
+                    2: FlexColumnWidth(6),
+                  },
+                  children: [
+                    TableRow(
+                      children: [
+                        SvgPicture.asset(
+                          "assets/icons/play.svg",
+                          matchTextDirection: false,
+                          alignment: Alignment.centerRight,
+                          width: 25,
+                          height: 25,
+                          color: IdomColors.green,
+                        ),
+                        SizedBox(width: 5),
+                        Text('Wciśnij przycisk'),
+                      ],
+                    ),
+                  ]),
+            ),
+            value: 'click'),
+        PopupMenuItem<String>(
+            key: Key("delete"),
+            child: SizedBox(
+                width: 120,
+                child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: {
+                      0: FlexColumnWidth(1),
+                      1: FlexColumnWidth(1),
+                      2: FlexColumnWidth(6),
+                    },
+                    children: [
+                      TableRow(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/icons/dustbin.svg",
+                            matchTextDirection: false,
+                            alignment: Alignment.centerRight,
+                            width: 25,
+                            height: 25,
+                            color: IdomColors.mainFill,
+                          ),
+                          SizedBox(width: 5),
+                          Text('Usuń'),
+                        ],
+                      )
+                    ])),
+            value: 'delete'),
+      ],
+      elevation: 8.0,
+    );
+    switch (selected) {
+      case "click":
+        _clickDriver(driver);
+        break;
+      case "delete":
+        _deleteDriver(driver);
+    }
+  }
+
+  _clickDriver(Driver driver) async {
     // todo: post to api
+    _scaffoldKey.currentState.removeCurrentSnackBar();
+    final snackBar = new SnackBar(
+        content: new Text("Wysłano komendę do sterownika ${driver.name}."));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  _deleteDriver(Driver driver) async {
+    var decision = await confirmActionDialog(context, "Potwierdź",
+        "Czy na pewno chcesz usunąć sterownik ${driver.name}?");
+    if (decision) {
+      try {
+        displayProgressDialog(
+            context: _scaffoldKey.currentContext,
+            key: _keyLoader,
+            text: "Trwa usuwanie sterownika...");
+
+        int statusCode = await api.deleteDriver(driver.id, _token);
+        Navigator.of(_scaffoldKey.currentContext, rootNavigator: true).pop();
+        if (statusCode == 200) {
+          setState(() {
+            /// refreshes drivers' list
+            getDrivers();
+          });
+        } else if (statusCode == 401) {
+          displayProgressDialog(
+              context: _scaffoldKey.currentContext,
+              key: _keyLoaderInvalidToken,
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+          await new Future.delayed(const Duration(seconds: 3));
+          Navigator.of(_keyLoaderInvalidToken.currentContext).pop();
+          await widget.storage.resetUserData();
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (statusCode == null) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      } catch (e) {
+        Navigator.of(_scaffoldKey.currentContext).pop();
+
+        print(e.toString());
+        if (e.toString().contains("TimeoutException")) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+        if (e.toString().contains("SocketException")) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      }
+    }
   }
 
   Future<void> _pullRefresh() async {
