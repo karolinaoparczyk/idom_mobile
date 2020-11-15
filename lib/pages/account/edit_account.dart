@@ -25,7 +25,6 @@ class _EditAccountState extends State<EditAccount> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   final Api api = Api();
-  String _token;
   bool _load;
   String fieldsValidationMessage;
 
@@ -71,15 +70,11 @@ class _EditAccountState extends State<EditAccount> {
   void initState() {
     super.initState();
     _load = false;
-    getUserToken();
     _emailController = TextEditingController(text: widget.account.email);
     _telephoneController =
         TextEditingController(text: widget.account.telephone);
   }
 
-  Future<void> getUserToken() async {
-    _token = await widget.storage.getToken();
-  }
 
   @override
   void setState(fn) {
@@ -203,7 +198,7 @@ class _EditAccountState extends State<EditAccount> {
     try {
       Navigator.of(context).pop(true);
       var res =
-          await api.editAccount(widget.account.id, email, telephone, _token);
+          await api.editAccount(widget.account.id, email, telephone);
       var loginExists = false;
       var emailExists = false;
       var emailInvalid = false;

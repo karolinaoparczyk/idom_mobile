@@ -9,6 +9,7 @@ class PushNotificationsManager{
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   bool _initialized = false;
+  String deviceToken;
 
   Future<void> init() async {
     if (!_initialized) {
@@ -16,6 +17,7 @@ class PushNotificationsManager{
       print("FirebaseMessaging token: $token");
 
       _initialized = true;
+      deviceToken = token;
     }
   }
 }

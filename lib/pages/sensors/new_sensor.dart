@@ -35,7 +35,6 @@ class _NewSensorState extends State<NewSensor> {
   String categoryValue;
   String frequencyUnitsValue;
   bool _load;
-  String _token;
   String fieldsValidationMessage;
   bool canEditFrequency = true;
   List<DropdownMenuItem<String>> units;
@@ -47,11 +46,6 @@ class _NewSensorState extends State<NewSensor> {
       api = widget.testApi;
     }
     _load = false;
-    getToken();
-  }
-
-  Future<void> getToken() async {
-    _token = await widget.storage.getToken();
   }
 
   /// builds sensor name form field
@@ -394,7 +388,7 @@ class _NewSensorState extends State<NewSensor> {
       }
       try {
         var res = await api.addSensor(
-            _nameController.text, categoryValue, frequencyInSeconds, _token);
+            _nameController.text, categoryValue, frequencyInSeconds);
 
         if (res['statusCodeSen'] == "201") {
           setState(() {

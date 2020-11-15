@@ -45,7 +45,6 @@ class _SensorDetailsState extends State<SensorDetails> {
   bool dataLoaded;
   Widget chartWid = Text("");
   DateTime firstDeliveryTime;
-  String _token;
 
   List<DropdownMenuItem<String>> categories;
   List<DropdownMenuItem<String>> units;
@@ -84,10 +83,6 @@ class _SensorDetailsState extends State<SensorDetails> {
         }));
   }
 
-  Future<void> getToken() async {
-    _token = await widget.storage.getToken();
-  }
-
   @override
   void setState(fn) {
     if (mounted) {
@@ -118,10 +113,9 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (widget.sensor.category == "smoke" || widget.sensor.category == "rain_sensor") {
       return;
     }
-    await getToken();
     try {
       if (widget.sensor != null) {
-        var res = await api.getSensorData(_token, widget.sensor.id);
+        var res = await api.getSensorData(widget.sensor.id);
         if (res == null) {
           noDataForChart = true;
           dataLoaded = false;
@@ -606,8 +600,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       setState(() {
         _load = true;
       });
-      await getToken();
-      var res = await api.getSensorDetails(widget.sensor.id, _token);
+      var res = await api.getSensorDetails(widget.sensor.id);
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);
         Sensor refreshedSensor = Sensor.fromJson(body);

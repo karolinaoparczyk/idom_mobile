@@ -21,9 +21,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.addSensor(null, null, null, "token")).thenAnswer(
+    when(mockApi.addSensor(null, null, null)).thenAnswer(
         (_) async => Future.value({"bodySen": '"id": 3', "statusCodeSen": "201"}));
     NewSensor page = NewSensor(
       storage: mockSecureStorage,
@@ -37,16 +35,14 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.text("Pole wymagane"), findsNWidgets(4));
-    verifyNever(await mockApi.addSensor(null, null, null, "token"));
+    verifyNever(await mockApi.addSensor(null, null, null));
   });
 
   /// tests if does not save with only name
   testWidgets('only name, does not save', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.addSensor('sensor', null, null, "token")).thenAnswer(
+    when(mockApi.addSensor('sensor', null, null)).thenAnswer(
         (_) async => Future.value({"bodySen": '"id": 3', "statusCodeSen": "201"}));
     NewSensor page = NewSensor(
       storage: mockSecureStorage,
@@ -65,16 +61,14 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Pole wymagane"), findsNWidgets(3));
 
-    verifyNever(await mockApi.addSensor('sensor', null, null, "token"));
+    verifyNever(await mockApi.addSensor('sensor', null, null));
   });
 
   /// tests if does not save with only category
   testWidgets('only category, does not save', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.addSensor('', "humidity", null, "token")).thenAnswer(
+    when(mockApi.addSensor('', "humidity", null)).thenAnswer(
         (_) async => Future.value({"bodySen": '"id": 3', "statusCodeSen": "201"}));
     NewSensor page = NewSensor(
       storage: mockSecureStorage,
@@ -96,19 +90,17 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Pole wymagane"), findsNWidgets(3));
-    verifyNever(await mockApi.addSensor('', 'humidity', null, "token"));
+    verifyNever(await mockApi.addSensor('', 'humidity', null));
   });
 
   /// tests if does not save with only category smoke
   testWidgets('only category smoke, does not save',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.addSensor('', "smoke", null, "token")).thenAnswer((_) async =>
+    when(mockApi.addSensor('', "smoke", null)).thenAnswer((_) async =>
         Future.value({"bodySen": '"id": 3', "statusCodeSen": "201"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
     when(mockSecureStorage.resetUserData())
         .thenAnswer((_) async => Future.value());
 
@@ -136,7 +128,7 @@ void main() {
     expect(find.byType(NewSensor), findsOneWidget);
     expect(find.text("Pole wymagane"), findsOneWidget);
 
-    verifyNever(await mockApi.addSensor('', 'smoke', null, "token"));
+    verifyNever(await mockApi.addSensor('', 'smoke', null));
   });
 
   /// tests if saves with name, category, frequency value and frequency units
@@ -145,9 +137,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.addSensor('sensor', 'humidity', 7200, "token")).thenAnswer(
+    when(mockApi.addSensor('sensor', 'humidity', 7200)).thenAnswer(
         (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
     NewSensor page = NewSensor(
       storage: mockSecureStorage,
@@ -182,7 +172,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
 
-    verify(await mockApi.addSensor('sensor', 'humidity', 7200, "token")).called(1);
+    verify(await mockApi.addSensor('sensor', 'humidity', 7200)).called(1);
   });
 
   /// tests if can choose rain_sensor sensor, frequency read only
@@ -190,11 +180,9 @@ void main() {
       'can add rain_sensor sensor, frequency read only',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
-        when(mockApi.addSensor('sensor', 'rain_sensor', 30, "token")).thenAnswer(
+        when(mockApi.addSensor('sensor', 'rain_sensor', 30)).thenAnswer(
                 (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
         NewSensor page = NewSensor(
           storage: mockSecureStorage,
           testApi: mockApi,
@@ -238,7 +226,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(seconds: 5));
 
-        verify(await mockApi.addSensor('sensor', 'rain_sensor', 30, "token"))
+        verify(await mockApi.addSensor('sensor', 'rain_sensor', 30))
             .called(1);
       });
 
@@ -247,11 +235,9 @@ void main() {
       'can add rain_sensor sensor, choose another category - frequency not read only',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
-        when(mockApi.addSensor('sensor', 'humidity', 7200, "token")).thenAnswer(
+        when(mockApi.addSensor('sensor', 'humidity', 7200)).thenAnswer(
                 (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
         NewSensor page = NewSensor(
           storage: mockSecureStorage,
           testApi: mockApi,
@@ -301,7 +287,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(seconds: 5));
 
-        verify(await mockApi.addSensor('sensor', 'humidity', 7200, "token"))
+        verify(await mockApi.addSensor('sensor', 'humidity', 7200))
             .called(1);
       });
 
@@ -310,11 +296,9 @@ void main() {
       'can add breathalyser sensor, frequency invisible',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
-        when(mockApi.addSensor('sensor', 'breathalyser', 30, "token")).thenAnswer(
+        when(mockApi.addSensor('sensor', 'breathalyser', 30)).thenAnswer(
                 (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
         NewSensor page = NewSensor(
           storage: mockSecureStorage,
           testApi: mockApi,
@@ -358,7 +342,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(seconds: 5));
 
-        verify(await mockApi.addSensor('sensor', 'breathalyser', 30, "token"))
+        verify(await mockApi.addSensor('sensor', 'breathalyser', 30))
             .called(1);
       });
 
@@ -367,11 +351,9 @@ void main() {
       'can add breathalyser sensor, choose another category - frequency visible',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
-        when(mockApi.addSensor('sensor', 'humidity', 7200, "token")).thenAnswer(
+        when(mockApi.addSensor('sensor', 'humidity', 7200)).thenAnswer(
                 (_) async => Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
         NewSensor page = NewSensor(
           storage: mockSecureStorage,
           testApi: mockApi,
@@ -421,7 +403,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(seconds: 5));
 
-        verify(await mockApi.addSensor('sensor', 'humidity', 7200, "token"))
+        verify(await mockApi.addSensor('sensor', 'humidity', 7200))
             .called(1);
       });
 
@@ -430,9 +412,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.addSensor('sensor', "humidity", 7200, 'token')).thenAnswer(
+    when(mockApi.addSensor('sensor', "humidity", 7200)).thenAnswer(
         (_) async => Future.value({
               "bodySen": '{"name":["Sensor with provided name already exists"]}',
               "statusCodeSen": "400"
@@ -473,7 +453,7 @@ void main() {
     expect(find.text("Czujnik o podanej nazwie już istnieje."), findsOneWidget);
     expect(find.byType(NewSensor), findsOneWidget);
 
-    verify(await mockApi.addSensor('sensor', "humidity", 7200, 'token')).called(1);
+    verify(await mockApi.addSensor('sensor', "humidity", 7200)).called(1);
   });
 
   /// tests if does not save when frequency value not valid
@@ -481,9 +461,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.addSensor('sensor', "humidity", 0, 'token')).thenAnswer(
+    when(mockApi.addSensor('sensor', "humidity", 0)).thenAnswer(
         (_) async => Future.value({"bodySen": '"id": 3', "statusCodeSen": "400"}));
     NewSensor page = NewSensor(
       storage: mockSecureStorage,
@@ -520,7 +498,7 @@ void main() {
     expect(find.byType(NewSensor), findsOneWidget);
     expect(find.text("Podaj ilczbę całkowitą większą od zera"), findsOneWidget);
 
-    verifyNever(await mockApi.addSensor('sensor', "humidity", 0, 'token'));
+    verifyNever(await mockApi.addSensor('sensor', "humidity", 0));
   });
 
   /// tests if saves with name, category smoke
@@ -528,13 +506,11 @@ void main() {
       'non empty name, category smoke, saves',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
-        when(mockApi.addSensor('sensor', 'smoke', 30, "token")).thenAnswer(
+        when(mockApi.addSensor('sensor', 'smoke', 30)).thenAnswer(
                 (_) async =>
                 Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
 
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
         when(mockSecureStorage.resetUserData())
             .thenAnswer((_) async => Future.value());
 
@@ -565,7 +541,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(seconds: 5));
 
-        verify(await mockApi.addSensor('sensor', 'smoke', 30, "token"))
+        verify(await mockApi.addSensor('sensor', 'smoke', 30))
             .called(1);
       });
 }

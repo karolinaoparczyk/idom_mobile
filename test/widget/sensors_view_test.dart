@@ -48,11 +48,8 @@ void main() {
         "category": "smoke",
         "frequency": 300,
         "last_data": "27.0"}];
-    when(mockApi.getSensors("token")).thenAnswer(
+    when(mockApi.getSensors()).thenAnswer(
             (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
-
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
 
     Sensors page = Sensors(
       storage: mockSecureStorage,
@@ -95,13 +92,10 @@ void main() {
         "category": "smoke",
         "frequency": 300,
         "last_data": "27.0"}];
-    when(mockApi.getSensors("token")).thenAnswer(
+    when(mockApi.getSensors()).thenAnswer(
             (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
-    when(mockApi.deactivateSensor(1, "token")).thenAnswer(
+    when(mockApi.deactivateSensor(1)).thenAnswer(
             (_) async => Future.value(200));
-
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
 
     Sensors page = Sensors(
       storage: mockSecureStorage,
@@ -117,7 +111,7 @@ void main() {
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
 
-    verify(await mockApi.deactivateSensor(1, "token")).called(1);
+    verify(await mockApi.deactivateSensor(1)).called(1);
   });
 
   /// tests if does not delete sensor when no confirmation
@@ -149,13 +143,10 @@ void main() {
         "category": "smoke",
         "frequency": 300,
         "last_data": "27.0"}];
-    when(mockApi.getSensors("token")).thenAnswer(
+    when(mockApi.getSensors()).thenAnswer(
             (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
-    when(mockApi.deactivateSensor(1, "token")).thenAnswer(
+    when(mockApi.deactivateSensor(1)).thenAnswer(
             (_) async => Future.value(200));
-
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
 
     Sensors page = Sensors(
       storage: mockSecureStorage,
@@ -171,7 +162,7 @@ void main() {
     await tester.tap(find.byKey(Key('noButton')));
     await tester.pumpAndSettle();
 
-    verifyNever(await mockApi.deactivateSensor(1, "token"));
+    verifyNever(await mockApi.deactivateSensor(1));
   });
 
   /// tests eror message when api error
@@ -179,7 +170,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockApi.deactivateSensor(1, "token"))
+    when(mockApi.deactivateSensor(1))
         .thenAnswer((_) async => Future.value(404));
     List<Map<String, dynamic>> sensors = [{
       "id": 1,
@@ -205,13 +196,10 @@ void main() {
         "category": "smoke",
         "frequency": 300,
         "last_data": "27.0"}];
-    when(mockApi.getSensors("token")).thenAnswer(
+    when(mockApi.getSensors()).thenAnswer(
             (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
-    when(mockApi.deactivateSensor(1, "token")).thenAnswer(
+    when(mockApi.deactivateSensor(1)).thenAnswer(
             (_) async => Future.value(400));
-
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
 
     Sensors page = Sensors(
       storage: mockSecureStorage,
@@ -230,7 +218,7 @@ void main() {
     await tester.tap(find.byType(SnackBar));
     await tester.tap(find.text("Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
 
-    verify(await mockApi.deactivateSensor(1, "token")).called(1);
+    verify(await mockApi.deactivateSensor(1)).called(1);
   });
 
   /// tests if icons displayed correctly
@@ -275,11 +263,9 @@ void main() {
             "category": "water_temp",
             "frequency": 300,
             "last_data": "27.0"}];
-        when(mockApi.getSensors("token")).thenAnswer(
+        when(mockApi.getSensors()).thenAnswer(
                 (_) async => Future.value({"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
 
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
         Sensors page = Sensors(
           storage: mockSecureStorage,
           testApi: mockApi,

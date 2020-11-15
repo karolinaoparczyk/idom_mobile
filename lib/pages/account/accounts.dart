@@ -31,7 +31,6 @@ class _AccountsState extends State<Accounts> {
   List<Account> _accountList;
   List<Account> _duplicateAccountList = List<Account>();
   bool zeroFetchedItems = false;
-  String _token;
   String _isUserStaff;
   bool _connectionEstablished;
   bool _isSearching = false;
@@ -48,9 +47,6 @@ class _AccountsState extends State<Accounts> {
     });
   }
 
-  Future<void> getToken() async {
-    _token = await widget.storage.getToken();
-  }
 
   Future<void> checkIfUserIsStaff() async {
     _isUserStaff = await widget.storage.getIsUserStaff();
@@ -63,9 +59,8 @@ class _AccountsState extends State<Accounts> {
       _searchController.text = "";
     });
 
-    await getToken();
     try {
-      var res = await api.getAccounts(_token);
+      var res = await api.getAccounts();
 
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);
@@ -126,7 +121,7 @@ class _AccountsState extends State<Accounts> {
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
             text: "Trwa usuwanie konta...");
-        var statusCode = await api.deactivateAccount(account.id, _token);
+        var statusCode = await api.deactivateAccount(account.id);
         Navigator.of(_scaffoldKey.currentContext).pop();
 
         if (statusCode == 200) {

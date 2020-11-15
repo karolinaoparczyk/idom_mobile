@@ -46,12 +46,10 @@ void main() {
         "is_active": true
       }
     ];
-    when(mockApi.getAccounts("token")).thenAnswer((_) async =>
+    when(mockApi.getAccounts()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
     when(mockSecureStorage.getIsUserStaff())
         .thenAnswer((_) async => Future.value("false"));
 
@@ -93,12 +91,10 @@ void main() {
         "is_active": true
       }
     ];
-    when(mockApi.getAccounts("token")).thenAnswer((_) async =>
+    when(mockApi.getAccounts()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
     when(mockSecureStorage.getIsUserStaff())
         .thenAnswer((_) async => Future.value("true"));
 

@@ -33,7 +33,6 @@ class _SensorsState extends State<Sensors> {
   List<Sensor> _sensorList;
   List<Sensor> _duplicateSensorList = List<Sensor>();
   bool zeroFetchedItems = false;
-  String _token;
   bool _connectionEstablished;
   bool _isSearching = false;
 
@@ -49,10 +48,6 @@ class _SensorsState extends State<Sensors> {
     });
   }
 
-  Future<void> getUserToken() async {
-    _token = await widget.storage.getToken();
-  }
-
   /// returns list of sensors
   Future<List<Sensor>> getSensors() async {
     setState(() {
@@ -60,10 +55,9 @@ class _SensorsState extends State<Sensors> {
       _searchController.text = "";
     });
 
-    await getUserToken();
     try {
       /// gets sensors
-      var res = await api.getSensors(_token);
+      var res = await api.getSensors();
 
       if (res != null && res['statusCodeSensors'] == "200") {
         List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
@@ -124,7 +118,7 @@ class _SensorsState extends State<Sensors> {
             key: _keyLoader,
             text: "Trwa usuwanie czujnika...");
 
-        int statusCode = await api.deactivateSensor(sensor.id, _token);
+        int statusCode = await api.deactivateSensor(sensor.id);
         Navigator.of(_scaffoldKey.currentContext, rootNavigator: true).pop();
         if (statusCode == 200) {
           setState(() {
@@ -247,9 +241,7 @@ class _SensorsState extends State<Sensors> {
             storage: widget.storage,
             parentWidgetType: "Sensors",
             onGoBackAction: () async {
-              if (_token != null && _token.isNotEmpty) {
                 await getSensors();
-              }
             },
             onLogOutFailure: onLogOutFailure),
 

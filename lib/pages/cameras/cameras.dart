@@ -27,7 +27,6 @@ class _CamerasState extends State<Cameras> {
   List<Camera> _cameraList;
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
-  String _token;
 
   @override
   void initState() {
@@ -38,16 +37,11 @@ class _CamerasState extends State<Cameras> {
     getCameras();
   }
 
-  Future<void> getUserToken() async {
-    _token = await widget.storage.getToken();
-  }
-
   /// returns list of cameras
   Future<void> getCameras() async {
-    await getUserToken();
     try {
       /// gets cameras
-      var res = await api.getCameras(_token);
+      var res = await api.getCameras();
 
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);

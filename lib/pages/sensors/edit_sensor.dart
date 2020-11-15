@@ -39,7 +39,6 @@ class _EditSensorState extends State<EditSensor> {
   String frequencyUnitsValue;
   Api api = Api();
   bool _load;
-  String _token;
   String fieldsValidationMessage;
   bool canEditFrequency = true;
 
@@ -58,7 +57,6 @@ class _EditSensorState extends State<EditSensor> {
       api = widget.testApi;
     }
     _load = false;
-    getToken();
 
     /// seting current sensor name
     _nameController = TextEditingController(text: widget.sensor.name);
@@ -90,10 +88,6 @@ class _EditSensorState extends State<EditSensor> {
         text: FrequencyUnits.values
             .firstWhere((element) => element['value'] == "seconds")['text']);
     frequencyUnitsValue = "seconds";
-  }
-
-  Future<void> getToken() async {
-    _token = await widget.storage.getToken();
   }
 
   /// builds sensor name form field
@@ -363,7 +357,7 @@ class _EditSensorState extends State<EditSensor> {
     });
     try {
       var res = await api.editSensor(
-          widget.sensor.id, name, category, frequencyValue, _token);
+          widget.sensor.id, name, category, frequencyValue);
       if (res['statusCode'] == "200") {
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {

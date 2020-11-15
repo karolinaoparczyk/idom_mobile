@@ -44,7 +44,7 @@ void main() {
 
     expect(find.text("Pole wymagane"), findsOneWidget);
     expect(find.byType(EditSensor), findsOneWidget);
-    verifyNever(await mockApi.editSensor(1, '', null, null, "token"));
+    verifyNever(await mockApi.editSensor(1, '', null, null));
   });
 
   /// tests if does not save with no change
@@ -73,16 +73,14 @@ void main() {
     expect(find.text("Nie wprowadzono żadnych zmian."), findsOneWidget);
     expect(find.byType(EditSensor), findsOneWidget);
 
-    verifyNever(await mockApi.editSensor(1, null, null, null, "token"));
+    verifyNever(await mockApi.editSensor(1, null, null, null));
   });
 
   /// tests if saves with name changed
   testWidgets('changed name, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, 'newname', null, null, "token")).thenAnswer(
+    when(mockApi.editSensor(1, 'newname', null, null)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "200"}));
     Sensor sensor = Sensor(
         id: 1,
@@ -110,16 +108,14 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
 
-    verify(await mockApi.editSensor(1, 'newname', null, null, "token")).called(1);
+    verify(await mockApi.editSensor(1, 'newname', null, null)).called(1);
   });
 
   /// tests if saves with category changed
   testWidgets('changed category, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, null, "humidity", null, "token")).thenAnswer(
+    when(mockApi.editSensor(1, null, "humidity", null)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "200"}));
     Sensor sensor = Sensor(
         id: 1,
@@ -150,16 +146,14 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, null, 'humidity', null, "token")).called(1);
+    verify(await mockApi.editSensor(1, null, 'humidity', null)).called(1);
   });
 
   /// tests if saves with frequency value changed
   testWidgets('changed frequency value, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, null, null, 3000, "token")).thenAnswer(
+    when(mockApi.editSensor(1, null, null, 3000)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
     Sensor sensor = Sensor(
         id: 1,
@@ -186,16 +180,14 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, null, null, 3000, "token")).called(1);
+    verify(await mockApi.editSensor(1, null, null, 3000)).called(1);
   });
 
   /// tests if saves with frequency units changed
   testWidgets('changed frequency units, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, null, null, 18000, "token")).thenAnswer(
+    when(mockApi.editSensor(1, null, null, 18000)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
 
     Sensor sensor = Sensor(
@@ -227,7 +219,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, null, null, 18000, "token")).called(1);
+    verify(await mockApi.editSensor(1, null, null, 18000,)).called(1);
   });
 
 
@@ -235,9 +227,7 @@ void main() {
   testWidgets('changed name, category frequency value, frequency units, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, 'newname', 'humidity', 86400, "token")).thenAnswer(
+    when(mockApi.editSensor(1, 'newname', 'humidity', 86400)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "200"}));
     Sensor sensor = Sensor(
         id: 1,
@@ -281,7 +271,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, 'newname', 'humidity', 86400, "token"))
+    verify(await mockApi.editSensor(1, 'newname', 'humidity', 86400))
         .called(1);
   });
 
@@ -290,9 +280,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, 'newname', 'humidity', 86400, 'token')).thenAnswer(
+    when(mockApi.editSensor(1, 'newname', 'humidity', 86400)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "200"}));
     Sensor sensor = Sensor(
         id: 1,
@@ -334,7 +322,7 @@ void main() {
     await tester.tap(find.byKey(Key('noButton')));
     await tester.pump();
     expect(find.byType(EditSensor), findsOneWidget);
-    verifyNever(await mockApi.editSensor(1, 'newname', 'humidity', 86400, 'token'));
+    verifyNever(await mockApi.editSensor(1, 'newname', 'humidity', 86400));
   });
 
   /// tests if does not save when name exists
@@ -342,9 +330,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, 'sensor2', null, null, 'token')).thenAnswer(
+    when(mockApi.editSensor(1, 'sensor2', null, null)).thenAnswer(
         (_) async => Future.value({
               "body": "Sensor with provided name already exists",
               "statusCode": "400"
@@ -376,16 +362,14 @@ void main() {
     expect(find.text("Czujnik o podanej nazwie już istnieje."), findsOneWidget);
     await tester.pump();
     expect(find.byType(EditSensor), findsOneWidget);
-    verify(await mockApi.editSensor(1, 'sensor2', null, null, 'token')).called(1);
+    verify(await mockApi.editSensor(1, 'sensor2', null, null)).called(1);
   });
 
   /// tests if when category rain_sensor, cannot change frequency
   testWidgets('when category rain_sensor, cannot change frequency', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, 'newname', 'rain_sensor', 30, "token")).thenAnswer(
+    when(mockApi.editSensor(1, 'newname', 'rain_sensor', 30)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
 
     Sensor sensor = Sensor(
@@ -424,7 +408,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, 'newname', 'rain_sensor', 30, "token"))
+    verify(await mockApi.editSensor(1, 'newname', 'rain_sensor', 30))
         .called(1);
   });
 
@@ -432,9 +416,7 @@ void main() {
   testWidgets('when category breathalyser, cannot change frequency', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, 'newname', 'breathalyser', 30, "token")).thenAnswer(
+    when(mockApi.editSensor(1, 'newname', 'breathalyser', 30)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
 
     Sensor sensor = Sensor(
@@ -474,7 +456,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, 'newname', 'breathalyser', 30, "token"))
+    verify(await mockApi.editSensor(1, 'newname', 'breathalyser', 30))
         .called(1);
   });
 
@@ -482,9 +464,7 @@ void main() {
   testWidgets('when  edits category breathalyser, can change frequency', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
-    when(mockApi.editSensor(1, 'newname', 'temperature', 180, "token")).thenAnswer(
+    when(mockApi.editSensor(1, 'newname', 'temperature', 180)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
 
     Sensor sensor = Sensor(
@@ -534,14 +514,14 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, 'newname', 'temperature', 180, "token"))
+    verify(await mockApi.editSensor(1, 'newname', 'temperature', 180))
         .called(1);
   });
 
   /// tests if changes smoke sensor details correctly
   testWidgets('changes smoke sensor details correctly', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.editSensor(1, 'newname', null, null, "token")).thenAnswer(
+    when(mockApi.editSensor(1, 'newname', null, null)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -575,7 +555,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.editSensor(1, 'newname', null, null, "token"))
+    verify(await mockApi.editSensor(1, 'newname', null, null))
         .called(1);
   });
 }

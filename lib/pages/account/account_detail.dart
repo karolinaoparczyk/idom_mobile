@@ -81,7 +81,7 @@ class _AccountDetailState extends State<AccountDetail> {
       return;
     }
     var userResult =
-        await api.getUser(widget.username, currentUserData['token']);
+        await api.getUser(widget.username);
     if (userResult[1] == 200) {
       dynamic body = jsonDecode(userResult[0]);
       account = Account.fromJson(body);
@@ -323,7 +323,7 @@ class _AccountDetailState extends State<AccountDetail> {
 
   _updateNotifications() async {
     var result = await api.editNotifications(
-        account.id, appNotificationsOn.toString(), smsNotificationsOn.toString(), currentUserData['token']);
+        account.id, appNotificationsOn.toString(), smsNotificationsOn.toString());
     if (result != null && result['statusCode'] != "200") {
       final snackBar = new SnackBar(
           content: new Text("Błąd edycji powiadomień. Spróbuj ponownie."));
@@ -354,7 +354,7 @@ class _AccountDetailState extends State<AccountDetail> {
       setState(() {
         _load = true;
       });
-      var res = await api.getUser(widget.username, currentUserData['token']);
+      var res = await api.getUser(widget.username);
       if (res[1] == 200) {
         dynamic body = jsonDecode(res[0]);
         account = Account.fromJson(body);

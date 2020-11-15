@@ -36,20 +36,13 @@ class _IdomDrawerState extends State<IdomDrawer> {
   List<String> menuItems;
   int currentUserId;
   String currentUsername;
-  String token;
 
   @override
   void initState() {
-    getCurrentUserToken();
     checkIfUserIsStaff();
     getCurrentUserId();
     getCurrentUserName();
     super.initState();
-  }
-
-  Future<void> getCurrentUserToken() async {
-    token = await widget.storage.getToken();
-    setState(() {});
   }
 
   Future<void> checkIfUserIsStaff() async {
@@ -281,7 +274,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
     try {
       displayProgressDialog(
           context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut(token);
+      var statusCode = await api.logOut();
       if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);

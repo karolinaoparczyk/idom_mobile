@@ -35,12 +35,10 @@ void main() {
         "ipAddress": "113.113.13.13"
       }
     ];
-    when(mockApi.getCameras("token")).thenAnswer((_) async =>
+    when(mockApi.getCameras()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(cameras), "statusCode": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
 
     Cameras page = Cameras(
       storage: mockSecureStorage,
