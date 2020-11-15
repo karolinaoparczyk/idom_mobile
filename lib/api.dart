@@ -406,4 +406,18 @@ class Api {
     }
     return null;
   }
+
+  /// requests starting driver
+  Future<int> startDriver(String name, String userToken) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.post('$url/drivers/action',
+          headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+          body: {"name": name}).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }
