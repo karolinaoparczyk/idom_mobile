@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/api.dart';
-import 'package:idom/dialogs/confirm_action_dialog.dart';
-import 'package:idom/dialogs/progress_indicator_dialog.dart';
 
 import 'package:idom/models.dart';
 import 'package:idom/pages/sensors/new_sensor.dart';
@@ -133,18 +131,6 @@ class _SensorsState extends State<Sensors> {
             /// refreshes sensors' list
             getSensors();
           });
-        } else if (statusCode == 401) {
-          displayProgressDialog(
-              context: _scaffoldKey.currentContext,
-              key: _keyLoader,
-              text: "Trwa usuwanie czujnika...");
-          int statusCode = await api.deactivateSensor(sensor.id, _token);
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-          if (statusCode == 200) {
-            setState(() {
-              /// refreshes sensors' list
-              getSensors();
-            });
           } else if (statusCode == 401) {
             displayProgressDialog(
                 context: _scaffoldKey.currentContext,
@@ -164,10 +150,10 @@ class _SensorsState extends State<Sensors> {
           } else {
             final snackBar = new SnackBar(
                 content: new Text(
-                    "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+                    "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
             _scaffoldKey.currentState.showSnackBar((snackBar));
           }
-        } }
+         }
         catch (e) {
           Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         print(e.toString());

@@ -239,7 +239,7 @@ packages:
     dependency: transitive
     description: flutter
     source: sdk
-    version: "0.0.0
+    version: "0.0.0"
   glob:
     dependency: transitive
     description:
