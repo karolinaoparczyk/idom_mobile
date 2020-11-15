@@ -176,10 +176,8 @@ class _NewDriverState extends State<NewDriver> {
         _load = true;
       });
       try {
-        // var res = await api.newDriver(
-        //     widget.driver.id, name, category, _token);
-        var res;
-        if (res['statusCode'] == "200") {
+        var res = await api.addDriver(_nameController.text, categoryValue, null, _token);
+        if (res['statusCode'] == "201") {
           Navigator.pop(context, true);
         } else if (res['statusCode'] == "401") {
           displayProgressDialog(
