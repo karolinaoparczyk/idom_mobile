@@ -8,9 +8,10 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
 class NewDriver extends StatefulWidget {
-  NewDriver({@required this.storage});
+  NewDriver({@required this.storage, this.testApi});
 
   final SecureStorage storage;
+  final Api testApi;
 
   @override
   _NewDriverState createState() => _NewDriverState();
@@ -30,6 +31,9 @@ class _NewDriverState extends State<NewDriver> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     getToken();
     _load = false;
     _nameController = TextEditingController();

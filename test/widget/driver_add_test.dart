@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:idom/pages/drivers/drivers.dart';
+import 'package:idom/pages/drivers/new_driver.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,48 +17,26 @@ void main() {
     );
   }
 
-  /// tests if edits driver name
-  testWidgets('edits driver name', (WidgetTester tester) async {
+  /// tests if adds driver
+  testWidgets('adds driver', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    List<Map<String, dynamic>> drivers = [
-      {
-        "id": 1,
-        "name": "driver1",
-        "category": "clicker",
-        "ipAddress": "111.111.11.11",
-        "data": true
-      },
-      {
-        "id": 2,
-        "name": "driver2",
-        "category": "clicker",
-        "ipAddress": "113.113.13.13",
-        "data": true
-      }
-    ];
-    when(mockApi.getDrivers("token")).thenAnswer((_) async =>
-        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
-    // when(mockApi.newDriver('name', 'clicker', "token")).thenAnswer((_) async =>
-    //     Future.value({"body": "", "statusCode": "201"}));
+    when(mockApi.addDriver('name', 'clicker', null, "token")).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "201"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
         .thenAnswer((_) async => Future.value("token"));
 
-    Drivers page = Drivers(
+    NewDriver page = NewDriver(
       storage: mockSecureStorage,
       testApi: mockApi,
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(Key("addDriverButton")));
-    await tester.pump();
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 5));
 
     Finder emailField = find.byKey(Key('name'));
-    await tester.enterText(emailField, 'newname');
+    await tester.enterText(emailField, 'name');
 
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
@@ -73,7 +49,6 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    // verify(await mockApi.newDriver('name', 'clicker', "token"))
-    //     .called(1);
+    verify(await mockApi.addDriver('name', 'clicker', null, "token")).called(1);
   });
 }
