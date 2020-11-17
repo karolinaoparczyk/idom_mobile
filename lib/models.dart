@@ -96,7 +96,7 @@ class SensorData {
   }
 }
 
-class Camera{
+class Camera {
   int id;
   String name;
   String ipAddress;
@@ -109,5 +109,24 @@ class Camera{
         name: json['name'] as String,
         ipAddress: json['ip_address'] as String);
   }
+}
 
+class Driver {
+  int id;
+  String name;
+  String category;
+  String ipAddress;
+  bool data;
+
+  Driver(
+      {@required this.id, this.name, this.category, this.ipAddress, this.data});
+
+  factory Driver.fromJson(Map<String, dynamic> json) {
+    return Driver(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        category: json['category'] as String,
+        ipAddress: json['ip_address'] as String,
+        data: json['data'] as bool);
+  }
 }

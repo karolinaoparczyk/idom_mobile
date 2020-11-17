@@ -239,7 +239,6 @@ class _AccountsState extends State<Accounts> {
                 storage: widget.storage,
                 parentWidgetType: "Accounts",
                 onLogOutFailure: onLogOutFailure),
-
             /// accounts' list builder
             body:
                 Container(child: Column(children: <Widget>[listAccounts()]))));

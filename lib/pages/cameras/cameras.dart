@@ -80,13 +80,13 @@ class _CamerasState extends State<Cameras> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania kamer. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania kamer. Adres serwera nieprawidłowy."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -176,6 +176,7 @@ class _CamerasState extends State<Cameras> {
                                             width: 32,
                                             height: 32,
                                             color: IdomColors.additionalColor,
+                                            key: Key("assets/icons/video-camera.svg")
                                           ))),
                                 ),
                               )))))));

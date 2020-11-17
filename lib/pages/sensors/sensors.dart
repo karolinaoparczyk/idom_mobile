@@ -430,7 +430,7 @@ class _SensorsState extends State<Sensors> {
             builder: (context) => NewSensor(storage: widget.storage),
             fullscreenDialog: true));
 
-    /// displays success message if sensor added succesfully
+    /// displays success message if sensor added successfully
     if (result == true) {
       final snackBar = new SnackBar(content: new Text("Dodano nowy czujnik."));
       _scaffoldKey.currentState.showSnackBar((snackBar));

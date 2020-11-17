@@ -99,8 +99,7 @@ class _NewSensorState extends State<NewSensor> {
               builder: (context) {
                 return Dialog(
                   child: CategoryDialog(
-                    currentCategory: categoryValue,
-                  ),
+                      currentCategory: categoryValue, type: "sensors"),
                 );
               });
           if (selectedCategory != null) {
@@ -222,7 +221,9 @@ class _NewSensorState extends State<NewSensor> {
                 onPressed: () async {
                   var decision = await confirmActionDialog(context, "Potwierdź",
                       "Czy na pewno wyczyścić wszystkie pola?");
-                  if (decision) clearFields();
+                  if (decision) {
+                    clearFields();
+                  }
                 },
               ),
               IconButton(
@@ -288,81 +289,83 @@ class _NewSensorState extends State<NewSensor> {
                                     child: _buildCategoryField())),
                             if (categoryValue != "breathalyser")
                               Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 20.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.access_time_outlined,
-                                            size: 17.5),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5.0),
-                                          child: Text(
-                                              "Częstotliwość pobierania danych",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal)),
-                                        ),
-                                      ],
-                                    ))),
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 20.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.access_time_outlined,
+                                              size: 17.5),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 5.0),
+                                            child: Text(
+                                                "Częstotliwość pobierania danych",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                          ),
+                                        ],
+                                      ))),
                             if (categoryValue != "breathalyser")
                               Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: SizedBox(
-                                    child: Row(children: <Widget>[
-                                  Expanded(
-                                      flex: 8, child: _buildFrequencyValue()),
-                                  Expanded(flex: 1, child: SizedBox()),
-                                  Expanded(
-                                      flex: 12,
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 0.0,
-                                              top: 0.0,
-                                              right: 0.0,
-                                              bottom: 0.0),
-                                          child: Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child:
-                                                  _buildFrequencyUnitsField()))),
-                                ]))),
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 10.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: SizedBox(
+                                      child: Row(children: <Widget>[
+                                    Expanded(
+                                        flex: 8, child: _buildFrequencyValue()),
+                                    Expanded(flex: 1, child: SizedBox()),
+                                    Expanded(
+                                        flex: 12,
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 0.0,
+                                                top: 0.0,
+                                                right: 0.0,
+                                                bottom: 0.0),
+                                            child: Align(
+                                                alignment: Alignment.bottomLeft,
+                                                child:
+                                                    _buildFrequencyUnitsField()))),
+                                  ]))),
                             if (categoryValue != "breathalyser")
                               Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 30.0),
-                              child: AnimatedCrossFade(
-                                crossFadeState: fieldsValidationMessage != null
-                                    ? CrossFadeState.showFirst
-                                    : CrossFadeState.showSecond,
-                                duration: Duration(milliseconds: 300),
-                                firstChild: fieldsValidationMessage != null
-                                    ? Text(fieldsValidationMessage,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal))
-                                    : SizedBox(),
-                                secondChild: SizedBox(),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 30.0),
+                                child: AnimatedCrossFade(
+                                  crossFadeState:
+                                      fieldsValidationMessage != null
+                                          ? CrossFadeState.showFirst
+                                          : CrossFadeState.showSecond,
+                                  duration: Duration(milliseconds: 300),
+                                  firstChild: fieldsValidationMessage != null
+                                      ? Text(fieldsValidationMessage,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(
+                                                  fontWeight:
+                                                      FontWeight.normal))
+                                      : SizedBox(),
+                                  secondChild: SizedBox(),
+                                ),
                               ),
-                            ),
                           ])))),
             ]))));
   }
 
-  /// saves changes after form fields and dropdown buttons validation
+  /// saves changes after form fields validation
   _saveChanges() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {

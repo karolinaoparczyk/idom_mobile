@@ -6,6 +6,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/cameras/cameras.dart';
+import 'package:idom/pages/drivers/drivers.dart';
 import 'package:idom/pages/setup/edit_api_address.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -218,6 +219,18 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
+            customMenuTile(Icons.touch_app_outlined, "Sterowniki", () async {
+              Navigator.pop(context);
+              if (widget.parentWidgetType != "Drivers") {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Drivers(storage: widget.storage)));
+                if (widget.onGoBackAction != null) widget.onGoBackAction();
+              }
+            }),
             customMenuTile(Icons.settings_outlined, "Ustawienia", () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "EditApiAddress") {
@@ -254,6 +267,9 @@ class _IdomDrawerState extends State<IdomDrawer> {
         break;
       case "Kamery":
         imageUrl = "assets/icons/video-camera.svg";
+        break;
+        case "Sterowniki":
+        imageUrl = "assets/icons/tap.svg";
         break;
         case "Ustawienia":
           imageUrl = "assets/icons/settings.svg";

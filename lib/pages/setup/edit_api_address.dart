@@ -211,10 +211,12 @@ class _EditApiAddressState extends State<EditApiAddress> {
   _confirmSavingChanges(
       bool changedProtocol, bool changedAddress, bool changedPort) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
-    if (decision) {
-      await _saveChanges(changedProtocol, changedAddress, changedPort);
-    }
+      context,
+      "Potwierdź",
+      "Czy na pewno zapisać zmiany?");
+     if (decision) {
+        await _saveChanges(changedProtocol, changedAddress, changedPort);
+      }
   }
 
   /// sets api address
