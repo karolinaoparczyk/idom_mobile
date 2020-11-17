@@ -2,8 +2,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
   static const String _apiServerAddress = "apiServerAddress";
-  static const String _apiServerAddressProtocol = "apiServerAddressProtocol";
-  static const String _apiServerAddressPort = "apiServerAddressPort";
   static const String _username = "username";
   static const String _password = "password";
   static const String _email = "email";
@@ -15,18 +13,16 @@ class SecureStorage {
   static const String _token = "token";
   static const String _isLoggedIn = "isLoggedIn";
   static const String _isUserStaff = "isUserStaff";
+  static const String _firebaseUrl = "firebaseUrl";
+  static const String _storageBucket = "storageBucket";
+  static const String _mobileAppId = "mobileAppId";
+  static const String _apiKey = "mobileAppId";
+  static const String _fileName = "fileName";
 
   FlutterSecureStorage storage;
 
   SecureStorage() {
     this.storage = FlutterSecureStorage();
-  }
-
-  Future<String> getApiURL() async {
-    var _apiAddressProtocol = await getApiServerAddressProtocol();
-    var _apiAddress = await getApiServerAddress();
-    var _apiAddressPort = await getApiServerAddressPort();
-    return _apiAddressProtocol + _apiAddress + ":" + _apiAddressPort;
   }
 
   void setApiServerAddress(String apiServerAddress) {
@@ -35,23 +31,6 @@ class SecureStorage {
 
   Future<String> getApiServerAddress() {
     return storage.read(key: _apiServerAddress);
-  }
-
-  void setApiServerAddressProtocol(String apiServerAddressProtocol) {
-    storage.write(
-        key: _apiServerAddressProtocol, value: apiServerAddressProtocol);
-  }
-
-  Future<String> getApiServerAddressProtocol() {
-    return storage.read(key: _apiServerAddressProtocol);
-  }
-
-  void setApiServerAddressPort(String apiServerAddressPort) {
-    storage.write(key: _apiServerAddressPort, value: apiServerAddressPort);
-  }
-
-  Future<String> getApiServerAddressPort() {
-    return storage.read(key: _apiServerAddressPort);
   }
 
   void setUserData(
@@ -193,5 +172,25 @@ class SecureStorage {
 
   Future<String> getIsUserStaff() {
     return storage.read(key: _isUserStaff);
+  }
+
+  void setFirebaseParams(String firebaseUrl, String storageBucket,
+      String mobileAppId, String apiKey, String fileName) {
+    storage.write(key: _firebaseUrl, value: firebaseUrl);
+    storage.write(key: _storageBucket, value: storageBucket);
+    storage.write(key: _mobileAppId, value: mobileAppId);
+    storage.write(key: _apiKey, value: apiKey);
+    storage.write(key: _fileName, value: fileName);
+  }
+
+  Future<Map<String, String>> getFirebaseParams() async {
+    var firebaseParams = {
+      "firebaseUrl": await storage.read(key: _firebaseUrl),
+      "storageBucket": await storage.read(key: _storageBucket),
+      "mobileAppId": await storage.read(key: _mobileAppId),
+      "apiKey": await storage.read(key: _apiKey),
+      "fileName": await storage.read(key: _fileName),
+    };
+    return firebaseParams;
   }
 }

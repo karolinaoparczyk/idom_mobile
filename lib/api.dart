@@ -16,7 +16,8 @@ class Api {
   Client httpClient;
 
   void getApiAddress() async {
-    url = await storage.getApiURL();
+    // url = "https://" + await storage.getApiServerAddress();
+    url = "http://" + await storage.getApiServerAddress();
   }
 
   void getToken() async {
@@ -371,7 +372,7 @@ class Api {
         "name": username,
         "registration_id": deviceToken,
         "type": "android"
-      }).timeout(Duration(seconds: 5));
+      }).timeout(Duration(seconds: 10));
 
       Map<String, String> responses = {
         "body": res.body.toString(),

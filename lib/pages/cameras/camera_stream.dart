@@ -32,7 +32,8 @@ class _CameraStreamState extends State<CameraStream> {
   }
 
   Future<void> getApiURL() async {
-    apiURL = await widget.storage.getApiURL();
+    // apiURL = "https:/" + await widget.storage.getApiServerAddress();
+    apiURL = "http:/" + await widget.storage.getApiServerAddress();
     setState(() {});
   }
 

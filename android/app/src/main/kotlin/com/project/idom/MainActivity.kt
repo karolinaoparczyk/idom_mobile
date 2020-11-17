@@ -12,22 +12,28 @@ import android.app.NotificationChannel;
 import android.net.Uri;
 import android.media.AudioAttributes;
 import android.content.ContentResolver;
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 
-class MainActivity: FlutterActivity() {
+class MainActivity : FlutterActivity() {
     private val CHANNEL = "flutter.idom/notifications"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
-            call, result ->
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
 
-            if (call.method == "createNotificationChannel"){
+            if (call.method == "createNotificationChannel") {
                 val argData = call.arguments as java.util.HashMap<String, String>
                 val completed = createNotificationChannel(argData)
-                if (completed == true){
+                if (completed == true) {
                     result.success(completed)
-                }
-                else{
+                    val builder: FirebaseOptions.Builder = FirebaseOptions.Builder()
+                            .setApplicationId(argData["mobileAppId"].toString())
+                            .setApiKey(argData["apiKey"].toString())
+                            .setDatabaseUrl(argData["firebaseUrl"].toString())
+                            .setStorageBucket(argData["storageBucket"].toString())
+                    FirebaseApp.initializeApp(this, builder.build());
+                } else {
                     result.error("Error Code", "Error Message", null)
                 }
             } else {
@@ -37,7 +43,7 @@ class MainActivity: FlutterActivity() {
 
     }
 
-    private fun createNotificationChannel(mapData: HashMap<String,String>): Boolean {
+    private fun createNotificationChannel(mapData: HashMap<String, String>): Boolean {
         val completed: Boolean
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             val id = mapData["id"]
@@ -49,8 +55,7 @@ class MainActivity: FlutterActivity() {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(mChannel)
             completed = true
-        }
-        else{
+        } else {
             completed = false
         }
         return completed

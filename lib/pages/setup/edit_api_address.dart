@@ -1,7 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 
-import 'package:idom/dialogs/protocol_dialog.dart';
+import 'package:idom/push_notifications.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -20,70 +27,50 @@ class EditApiAddress extends StatefulWidget {
 class _EditApiAddressState extends State<EditApiAddress> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final Api api = Api();
   TextEditingController _apiAddressController = TextEditingController();
-  TextEditingController _apiAddressProtocolController = TextEditingController();
-  TextEditingController _apiAddressPortController = TextEditingController();
   String currentAddress;
-  String currentAddressProtocol;
-  String currentAddressPort;
   FocusNode _apiAddressFocusNode = FocusNode();
   bool _load;
   String _isUserLoggedIn;
+  String firebaseUrl;
+  String storageBucket;
+  String mobileAppId;
+  String apiKey;
+  File file;
+  String fieldsValidationMessage;
+  Map<String, String> currentFirebaseParams;
+  static const MethodChannel _channel =
+      MethodChannel('flutter.idom/notifications');
+  Map<String, String> channelMap = {
+    "id": "SENSORS_NOTIFICATIONS",
+    "name": "Sensors",
+    "description": "Sensors notifications",
+  };
 
   void initState() {
     super.initState();
     _load = true;
     getApiAddress();
+    getFirebaseParams();
     checkIfUserIsSignedIn();
   }
 
   Future<void> getApiAddress() async {
-    currentAddressProtocol = await widget.storage.getApiServerAddressProtocol();
     currentAddress = await widget.storage.getApiServerAddress();
-    currentAddressPort = await widget.storage.getApiServerAddressPort();
-    _apiAddressProtocolController =
-        TextEditingController(text: currentAddressProtocol ?? "");
     _apiAddressController = TextEditingController(text: currentAddress ?? "");
-    _apiAddressPortController =
-        TextEditingController(text: currentAddressPort ?? "");
     _load = false;
+    setState(() {});
+  }
+
+  Future<void> getFirebaseParams() async {
+    currentFirebaseParams = await widget.storage.getFirebaseParams();
     setState(() {});
   }
 
   Future<void> checkIfUserIsSignedIn() async {
     _isUserLoggedIn = await widget.storage.getIsLoggedIn();
     setState(() {});
-  }
-
-  /// build api address protocol field
-  Widget _buildApiAddressProtocol() {
-    return TextFormField(
-        key: Key("apiAddressProtocol"),
-        controller: _apiAddressProtocolController,
-        decoration: InputDecoration(
-          labelText: "Protokół",
-          labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        onTap: () async {
-          final String selectedProtocol = await showDialog(
-              context: context,
-              builder: (context) {
-                return Dialog(
-                  child: ProtocolDialog(_apiAddressProtocolController.text),
-                );
-              });
-          if (selectedProtocol != null) {
-            _apiAddressProtocolController.text = selectedProtocol;
-          }
-        },
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        readOnly: true,
-        style: TextStyle(fontSize: 21.0),
-        validator: UrlFieldValidator.validate);
   }
 
   /// build api address form field
@@ -95,29 +82,13 @@ class _EditApiAddressState extends State<EditApiAddress> {
         decoration: InputDecoration(
           labelText: "Adres serwera",
           labelStyle: Theme.of(context).textTheme.headline5,
+          prefixText: "https://",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
         style: TextStyle(fontSize: 21.0),
         validator: UrlFieldValidator.validate);
-  }
-
-  /// build api address port form field
-  Widget _buildApiAddressPort() {
-    return TextFormField(
-        key: Key("apiAddressPort"),
-        controller: _apiAddressPortController,
-        keyboardType: TextInputType.phone,
-        decoration: InputDecoration(
-          labelText: "Port",
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        style: TextStyle(fontSize: 21.0),
-        validator: PortFieldValidator.validate);
   }
 
   onLogOutFailure(String text) {
@@ -136,7 +107,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text('Adres serwera'), actions: [
+            appBar: AppBar(title: Text('Ustawienia'), actions: [
               IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
             ]),
             drawer: _isUserLoggedIn == "true"
@@ -157,16 +128,106 @@ class _EditApiAddressState extends State<EditApiAddress> {
                         : Column(children: <Widget>[
                             Expanded(
                                 flex: 3,
-                                child: Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    children: [
-                                      _buildApiAddressProtocol(),
-                                      SizedBox(height: 20.0),
-                                      _buildApiAddress(),
-                                      SizedBox(height: 20.0),
-                                      _buildApiAddressPort(),
-                                    ],
+                                child: SingleChildScrollView(
+                                  child: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      children: [
+                                        _buildApiAddress(),
+                                        if (_isUserLoggedIn == "true")
+                                          SizedBox(height: 20.0),
+                                        if (_isUserLoggedIn == "true")
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "Plik google_services.json",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline5,
+                                              ),
+                                            ],
+                                          ),
+                                        if (_isUserLoggedIn == "true" &&
+                                                currentFirebaseParams != null &&
+                                                currentFirebaseParams[
+                                                        'fileName'] !=
+                                                    null ||
+                                            file != null)
+                                          Row(
+                                            children: [
+                                              Text(
+                                                  file == null
+                                                      ? currentFirebaseParams[
+                                                          'fileName']
+                                                      : file.path
+                                                          .split("/")
+                                                          .last,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1
+                                                      .copyWith(
+                                                          fontWeight: FontWeight
+                                                              .normal)),
+                                              SizedBox(width: 30),
+                                              IconButton(
+                                                icon: Icon(Icons
+                                                    .remove_circle_outline),
+                                                color: IdomColors.error,
+                                                onPressed: () {
+                                                  setState(() {
+                                                    file = null;
+                                                    fieldsValidationMessage =
+                                                        null;
+                                                    currentFirebaseParams =
+                                                        null;
+                                                  });
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        if (_isUserLoggedIn == "true" &&
+                                            (currentFirebaseParams == null ||
+                                                currentFirebaseParams[
+                                                        'fileName'] ==
+                                                    null) &&
+                                            file == null)
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                    Icons
+                                                        .add_circle_outline_rounded,
+                                                    color: IdomColors.textDark),
+                                                onPressed: _pickFile,
+                                              ),
+                                            ],
+                                          ),
+                                        if (_isUserLoggedIn == "true")
+                                          SizedBox(width: 50),
+                                        if (_isUserLoggedIn == "true")
+                                          AnimatedCrossFade(
+                                            crossFadeState:
+                                                fieldsValidationMessage != null
+                                                    ? CrossFadeState.showFirst
+                                                    : CrossFadeState.showSecond,
+                                            duration:
+                                                Duration(milliseconds: 300),
+                                            firstChild:
+                                                fieldsValidationMessage != null
+                                                    ? Text(
+                                                        fieldsValidationMessage,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal))
+                                                    : SizedBox(),
+                                            secondChild: SizedBox(),
+                                          ),
+                                      ],
+                                    ),
                                   ),
                                 )),
                           ]),
@@ -175,30 +236,59 @@ class _EditApiAddressState extends State<EditApiAddress> {
             ])));
   }
 
+  _pickFile() async {
+    FilePickerResult result =
+        await FilePicker.platform.pickFiles(type: FileType.custom);
+    if (result != null) {
+      file = File(result.files.single.path);
+      try {
+        final Map<String, dynamic> googleServicesJson =
+            jsonDecode(file.readAsStringSync());
+        firebaseUrl = googleServicesJson['project_info']['firebase_url'];
+        storageBucket = googleServicesJson['project_info']['storage_bucket'];
+        mobileAppId =
+            googleServicesJson['client'][0]['client_info']['mobilesdk_app_id'];
+        apiKey = googleServicesJson['client'][0]['api_key'][0]['current_key'];
+      } catch (e) {
+        fieldsValidationMessage =
+            "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie.";
+      }
+    }
+    setState(() {});
+  }
+
   /// verifies data changes
   _verifyChanges() async {
-    var protocol = _apiAddressProtocolController.text;
     var address = _apiAddressController.text;
-    var port = _apiAddressPortController.text;
     var changedProtocol = false;
     var changedAddress = false;
     var changedPort = false;
+    var changedGoogleServicesFile = false;
 
     final formState = _formKey.currentState;
-    if (formState.validate()) {
+    var formValidated = formState.validate();
+    if (_isUserLoggedIn == "true" &&
+        file == null &&
+        (currentFirebaseParams == null ||
+            currentFirebaseParams['fileName'] == null)) {
+      fieldsValidationMessage = "Należy dodać plik.";
+      setState(() {});
+      return;
+    }
+    if (formValidated) {
       /// sends request only if data has changed
-      if (protocol != currentAddressProtocol) {
-        changedProtocol = true;
-      }
       if (address != currentAddress) {
         changedAddress = true;
       }
-      if (port != currentAddressPort) {
-        changedPort = true;
+      if (file != null) {
+        changedGoogleServicesFile = true;
       }
-      if (changedProtocol || changedAddress || changedPort) {
-        await _confirmSavingChanges(
-            changedProtocol, changedAddress, changedPort);
+      if (changedProtocol ||
+          changedAddress ||
+          changedPort ||
+          changedGoogleServicesFile) {
+        await _confirmSavingChanges(changedProtocol, changedAddress,
+            changedPort, changedGoogleServicesFile);
       } else {
         final snackBar =
             new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
@@ -208,34 +298,65 @@ class _EditApiAddressState extends State<EditApiAddress> {
   }
 
   /// confirms saving api address changes
-  _confirmSavingChanges(
-      bool changedProtocol, bool changedAddress, bool changedPort) async {
+  _confirmSavingChanges(bool changedProtocol, bool changedAddress,
+      bool changedPort, bool changedGoogleServicesFile) async {
     var decision = await confirmActionDialog(
         context, "Potwierdź", "Czy na pewno zapisać zmiany?");
     if (decision) {
-      await _saveChanges(changedProtocol, changedAddress, changedPort);
+      await _saveChanges(changedProtocol, changedAddress, changedPort,
+          changedGoogleServicesFile);
     }
   }
 
   /// sets api address
-  _saveChanges(
-      bool changedProtocol, bool changedAddress, bool changedPort) async {
+  _saveChanges(bool changedProtocol, bool changedAddress, bool changedPort,
+      bool changedFirebaseParams) async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
-      if (changedProtocol)
-        widget.storage
-            .setApiServerAddressProtocol(_apiAddressProtocolController.text);
       if (changedAddress)
         widget.storage.setApiServerAddress(_apiAddressController.text);
-      if (changedPort)
-        widget.storage.setApiServerAddressPort(_apiAddressPortController.text);
+      if (changedFirebaseParams) {
+        widget.storage.setFirebaseParams(firebaseUrl, storageBucket,
+            mobileAppId, apiKey, file.path.split("/").last);
+        await _createSensorsNotificationsChannel();
+        await sendDeviceToken();
+      }
       if (_isUserLoggedIn == "true") {
         final snackBar = new SnackBar(
             content: new Text("Adres serwera został zapisany."),
             duration: Duration(seconds: 2));
         _scaffoldKey.currentState.showSnackBar((snackBar));
+      } else {
+        Navigator.pop(context, true);
       }
-      Navigator.pop(context, true);
+    }
+  }
+
+  Future<void> _createSensorsNotificationsChannel() async {
+    channelMap["firebaseUrl"] = firebaseUrl;
+    channelMap["storageBucket"] = storageBucket;
+    channelMap["mobileAppId"] = mobileAppId;
+    channelMap["apiKey"] = apiKey;
+    try {
+      await _channel.invokeMethod('createNotificationChannel', channelMap);
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> sendDeviceToken() async {
+    final pushNotificationsManager = PushNotificationsManager();
+    await pushNotificationsManager.init();
+    var deviceResponse =
+        await api.checkIfDeviceTokenSent(pushNotificationsManager.deviceToken);
+    if (deviceResponse != null && deviceResponse['statusCode'] != "200") {
+      var tokenResponse =
+          await api.sendDeviceToken(pushNotificationsManager.deviceToken);
+      if (tokenResponse != null && tokenResponse['statusCode'] == "201")
+        print("Device token sent successfully");
+      else {
+        print("Error while sending device token.");
+      }
     }
   }
 }

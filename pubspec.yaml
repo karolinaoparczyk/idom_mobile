@@ -28,6 +28,7 @@ dependencies:
   flutter_svg:
   webview_flutter:
   firebase_messaging: ^5.1.2
+  file_picker:
 
 
 dev_dependencies:
