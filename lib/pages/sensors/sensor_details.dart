@@ -541,9 +541,145 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         : SizedBox()),
                                 SizedBox(height: 30)
                               ]),
-                            ),
-                          )
-            )));
+                          SizedBox(width: 5.0),
+                          Column(children: <Widget>[
+                            Text(getProperUnitsName(),
+                                style: TextStyle(fontSize: 21.0)),
+                          ])
+                        ]))),
+                  if (widget.sensor.category != "rain_sensor")
+                    Padding(
+                        padding: EdgeInsets.only(
+                            top: 10, left: 52.5, right: 30.0, bottom: 0.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(getSensorLastDataLabel(),
+                              style: TextStyle(
+                                  color: IdomColors.additionalColor,
+                                  fontSize: 16.5,
+                                  fontWeight: FontWeight.bold)),
+                        )),
+                  if (widget.sensor.category != "rain_sensor")
+                    Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 52.5),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(getSensorLastData(),
+                                style: TextStyle(fontSize: 21.0)))),
+                  if (widget.sensor.category != "rain_sensor")
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              children: [
+                                Icon(Icons.calendar_today_outlined, size: 17.5),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5.0),
+                                  child: Text("Okres wyświetlanych danych",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1
+                                          .copyWith(
+                                              fontWeight: FontWeight.normal)),
+                                ),
+                              ],
+                            ))),
+                  if (widget.sensor.category != "rain_sensor")
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 52.5, top: 13.5, right: 30.0, bottom: 0),
+                      child: ToggleButtons(
+                          borderRadius: BorderRadius.circular(30),
+                          borderColor: IdomColors.additionalColor,
+                          splashColor: Colors.transparent,
+                          fillColor: IdomColors.lighten(
+                              IdomColors.additionalColor, 0.2),
+                          selectedColor: IdomColors.textDark,
+                          children: [
+                            Container(
+                                child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Text("Dzisiaj")))),
+                            Container(
+                                child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Text("Ten miesiąc")))),
+                            Container(
+                                child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Text("Ostatnie 30 dni")))),
+                          ],
+                          isSelected: measurementTimeSelected,
+                          onPressed: (int index) {
+                            setState(() {
+                              if (measurementTimeSelected[index] == false) {
+                                for (int i = 0;
+                                    i < measurementTimeSelected.length;
+                                    i++) {
+                                  if (i == index) {
+                                    measurementTimeSelected[i] = true;
+                                  } else {
+                                    measurementTimeSelected[i] = false;
+                                  }
+                                }
+                                _time = null;
+                                _measure = null;
+                                if (sensorData != null &&
+                                    sensorData.length > 0) {
+                                  drawPlot();
+                                }
+                                chartWid = chartWidget();
+                              }
+                            });
+                          }),
+                    ),
+                  if (widget.sensor.category != "rain_sensor")
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 30.0, top: 0.0, right: 17.0, bottom: 0.0),
+                        child: Container(
+                            child: Center(
+                                child: Column(children: <Widget>[
+                          SizedBox(width: 355, height: 200, child: chartWid)
+                        ])))),
+                  if (widget.sensor.category != "rain_sensor")
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 52.5, top: 20.0, right: 30.0, bottom: 0.0),
+                        child: _time != null
+                            ? Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text("Wybrany pomiar z wykresu",
+                                    style: TextStyle(
+                                        color: IdomColors.additionalColor,
+                                        fontSize: 16.5,
+                                        fontWeight: FontWeight.bold)),
+                              )
+                            : SizedBox()),
+                  if (widget.sensor.category != "rain_sensor")
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),
+                        child: _time != null
+                            ? Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(getSelectedMeasure(),
+                                    style: TextStyle(fontSize: 21.0)),
+                              )
+                            : SizedBox()),
+                  SizedBox(height: 30)
+                ]),
+              ),
+            ))));
   }
 
   String getProperUnitsName() {
