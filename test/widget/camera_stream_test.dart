@@ -39,6 +39,8 @@ void main() {
         Future.value({"body": jsonEncode(cameras), "statusCode": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getApiServerAddress()).thenAnswer((_) async =>
+        Future.value("apiAddress"));
 
     Cameras page = Cameras(
       storage: mockSecureStorage,

@@ -207,7 +207,9 @@ class _SignUpState extends State<SignUp> {
                 "Potwierdź",
                 "Czy na pewno wyczyścić wszystkie pola?",
               );
-              if (decision) clearFields();
+              if (decision) {
+                clearFields();
+              }
             },
           ),
           IconButton(icon: Icon(Icons.check), onPressed: signUp),

@@ -53,6 +53,6 @@ void main() {
         .length, 2);
     expect(find.text("camera1"), findsOneWidget);
     expect(find.text("camera2"), findsOneWidget);
-    expect(find.byIcon(Icons.videocam), findsNWidgets(2));
+    expect(find.byKey(Key("assets/icons/video-camera.svg")), findsNWidgets(2));
   });
 }

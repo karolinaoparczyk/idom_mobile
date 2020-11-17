@@ -233,7 +233,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                        account.telephone != ""
+                                        account.telephone != null && account.telephone != ""
                                             ? account.telephone
                                             : "-",
                                         style: TextStyle(fontSize: 21.0)))),
@@ -371,7 +371,7 @@ class _AccountDetailState extends State<AccountDetail> {
       } else {
         final snackBar = new SnackBar(
             content:
-            new Text("Odświeżenie danych użytkownika nie powiodło się."));
+                new Text("Odświeżenie danych użytkownika nie powiodło się."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {

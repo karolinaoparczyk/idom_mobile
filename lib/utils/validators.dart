@@ -68,6 +68,16 @@ class SensorNameFieldValidator {
   }
 }
 
+/// driver name field validator
+class DriverNameFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane';
+    }
+    return null;
+  }
+}
+
 /// minimum and maximum frequency values due to chosen frequency units
 Map<String, int> unitsToMinValues = {
   "seconds": 30,

@@ -176,8 +176,8 @@ class Api {
   }
 
   /// edits sensor
-  Future<Map<String, String>> editSensor(int id, String name, String category,
-      int frequency) async {
+  Future<Map<String, String>> editSensor(
+      int id, String name, String category, int frequency) async {
     await getApiAddress();
     await getToken();
     var frequencyString = frequency.toString();
@@ -367,18 +367,133 @@ class Api {
     try {
       var res = await httpClient.post('$url/devices/', headers: {
         HttpHeaders.authorizationHeader: "Token $token"
-      },
-      body: {
+      }, body: {
         "name": username,
         "registration_id": deviceToken,
         "type": "android"
       }).timeout(Duration(seconds: 10));
+
+      var resDict = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return resDict;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  /// gets drivers
+  Future<Map<String, String>> getDrivers() async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.get('$url/drivers/list', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> response = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return response;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// adds driver
+  Future<Map<String, String>> addDriver(
+      String name, String category, bool data) async {
+    await getApiAddress();
+    await getToken();
+    var resSen = await httpClient.post(
+      '$url/drivers/add',
+      headers: {HttpHeaders.authorizationHeader: "Token $token"},
+      body: {
+        "name": name,
+        "category": category,
+        "data": data.toString(),
+      },
+    ).timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": resSen.body.toString(),
+      "statusCode": resSen.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// edits driver
+  Future<Map<String, String>> editDriver(
+      int id, String name, String category) async {
+    await getApiAddress();
+    await getToken();
+    var body;
+    if (name != null && category != null) {
+      body = {"name": name, "category": category};
+    } else if (name != null) {
+      body = {"name": name};
+    } else if (category != null) {
+      body = {"category": category};
+    }
+    var res = await httpClient
+        .put(
+          '$url/drivers/update/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: body,
+        )
+        .timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// gets driver details
+  Future<Map<String, String>> getDriverDetails(int driverId) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.get('$url/drivers/detail/$driverId', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
         "body": res.body.toString(),
         "statusCode": res.statusCode.toString(),
       };
       return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests deleting driver
+  Future<int> deleteDriver(int id) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.delete('$url/drivers/delete/$id', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests starting driver
+  Future<int> startDriver(String name) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.post('$url/drivers/action',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: {"name": name}).timeout(Duration(seconds: 5));
+      return res.statusCode;
     } catch (e) {
       print(e);
     }

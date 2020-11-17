@@ -75,7 +75,6 @@ class _EditAccountState extends State<EditAccount> {
         TextEditingController(text: widget.account.telephone);
   }
 
-
   @override
   void setState(fn) {
     if (mounted) {

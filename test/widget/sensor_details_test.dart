@@ -46,7 +46,6 @@ void main() {
       "frequency": 300,
       'last_data': "27.0"
     };
-
     when(mockApi.getSensorDetails(1)).thenAnswer(
             (_) async => Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
 

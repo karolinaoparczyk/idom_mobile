@@ -63,7 +63,7 @@ class _EditSensorState extends State<EditSensor> {
 
     /// setting current sensor category
     _categoryController = TextEditingController(
-        text: Categories.values.firstWhere(
+        text: SensorCategories.values.firstWhere(
             (element) => element["value"] == widget.sensor.category)['text']);
     categoryValue = widget.sensor.category;
     if (categoryValue == "rain_sensor" || categoryValue == "water_temp" ||
@@ -89,6 +89,7 @@ class _EditSensorState extends State<EditSensor> {
             .firstWhere((element) => element['value'] == "seconds")['text']);
     frequencyUnitsValue = "seconds";
   }
+
 
   /// builds sensor name form field
   Widget _buildName() {
@@ -126,7 +127,8 @@ class _EditSensorState extends State<EditSensor> {
               context: context,
               builder: (context) {
                 return Dialog(
-                  child: CategoryDialog(currentCategory: categoryValue),
+                  child: CategoryDialog(
+                      currentCategory: categoryValue, type: "sensors"),
                 );
               });
           if (selectedCategory != null) {
@@ -151,7 +153,7 @@ class _EditSensorState extends State<EditSensor> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
         style: TextStyle(fontSize: 21.0),
-        validator: UrlFieldValidator.validate);
+        validator: CategoryFieldValidator.validate);
   }
 
   /// builds sensor frequency value form field

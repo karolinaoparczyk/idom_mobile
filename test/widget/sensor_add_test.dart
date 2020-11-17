@@ -110,7 +110,6 @@ void main() {
     );
 
     await tester.pumpWidget(makeTestableWidget(child: page));
-    await tester.tap(find.byKey(Key('addSensorButton')));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('categoriesButton')));

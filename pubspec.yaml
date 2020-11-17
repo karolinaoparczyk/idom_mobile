@@ -26,10 +26,9 @@ dependencies:
   cookie_jar: ^1.0.0
   charts_flutter:
   flutter_svg:
-  webview_flutter:
+  flutter_inappwebview:
   firebase_messaging: ^5.1.2
   file_picker:
-
 
 dev_dependencies:
   flutter_test:

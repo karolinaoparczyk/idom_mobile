@@ -22,7 +22,6 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
-
   Future<void> checkIfUserIsSignedIn() async {
     isUserSignedIn = await storage.getIsLoggedIn();
     setState(() {});

@@ -47,7 +47,6 @@ class _AccountsState extends State<Accounts> {
     });
   }
 
-
   Future<void> checkIfUserIsStaff() async {
     _isUserStaff = await widget.storage.getIsUserStaff();
   }

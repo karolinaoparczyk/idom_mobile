@@ -13,7 +13,6 @@ class LogotypeWidget extends StatelessWidget {
               children: [
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   Image.asset('assets/home.png', height: 70.0, width: 70.0),
-
                   Text(
                     'IDOM',
                     style:

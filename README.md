@@ -2,6 +2,7 @@
 
 IDOM is an (engineering project) application for running smart house created with raspberry pi and sensors.
 Landing page - https://adriannajmrocki.github.io/idom-website/
+
 # Play Store
 
 Beta version of mobile application wil be available in Play Store on 1st of December 2020.

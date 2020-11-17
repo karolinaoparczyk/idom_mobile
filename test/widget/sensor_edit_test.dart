@@ -483,8 +483,8 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
 
-    Finder emailField = find.byKey(Key('name'));
-    await tester.enterText(emailField, 'newname');
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'newname');
 
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
