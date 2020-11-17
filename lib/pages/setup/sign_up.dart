@@ -192,7 +192,6 @@ class _SignUpState extends State<SignUp> {
     _obscurePassword = true;
     _passwordConfirmIcon = Icons.visibility_outlined;
     _obscureConfirmPassword = true;
-    Navigator.of(context).pop(true);
   }
 
   @override
@@ -208,7 +207,9 @@ class _SignUpState extends State<SignUp> {
                 "Potwierdź",
                 "Czy na pewno wyczyścić wszystkie pola?",
               );
-              if (decision) clearFields();
+              if (decision) {
+                clearFields();
+              }
             },
           ),
           IconButton(icon: Icon(Icons.check), onPressed: signUp),

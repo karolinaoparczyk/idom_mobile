@@ -105,7 +105,7 @@ class _SignInState extends State<SignIn> {
             _usernameController.text, _passwordController.text);
         if (result[1] == 200 && result[0].toString().contains('token')) {
           var userResult = await api.getUser(_usernameController.text,
-              result[0].split(':')[1].substring(1, 41));
+              userToken: result[0].split(':')[1].substring(1, 41));
           if (userResult[1] == 200) {
             dynamic body = jsonDecode(userResult[0]);
             Account account = Account.fromJson(body);

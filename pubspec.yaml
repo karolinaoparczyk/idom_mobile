@@ -25,9 +25,10 @@ dependencies:
   flutter_secure_storage:
   cookie_jar: ^1.0.0
   charts_flutter:
-  weather_icons:
   flutter_svg:
-  webview_flutter:
+  flutter_inappwebview:
+  firebase_messaging: ^5.1.2
+  file_picker:
 
 dev_dependencies:
   flutter_test:
@@ -50,7 +51,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/icons/water-temperature.svg
+    - assets/icons/
+    - assets/home.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

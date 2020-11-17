@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Future<bool> confirmActionDialog(BuildContext context, String titleText,
-    String content, {Function onConfirm}) async {
+    String content) async {
   return await showDialog(
       context: context,
       builder: (BuildContext context) {

@@ -47,14 +47,12 @@ void main() {
             "is_active": true
           }
         ];
-        when(mockApi.getAccounts("token")).thenAnswer((_) async =>
+        when(mockApi.getAccounts()).thenAnswer((_) async =>
             Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
-        when(mockApi.deactivateAccount(1, "token"))
+        when(mockApi.deactivateAccount(1))
             .thenAnswer((_) async => Future.value(200));
 
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
         when(mockSecureStorage.getIsUserStaff())
             .thenAnswer((_) async => Future.value("true"));
 
@@ -69,7 +67,7 @@ void main() {
         expect(find.text("user1"), findsOneWidget);
         expect(find.text("user2"), findsOneWidget);
         await tester.tap(find.byKey(Key("deleteButton")).first);
-        when(mockApi.getAccounts("token")).thenAnswer((_) async => Future.value({
+        when(mockApi.getAccounts()).thenAnswer((_) async => Future.value({
           "body": jsonEncode([accounts[1]]),
           "statusCode": "200"
         }));
@@ -79,7 +77,7 @@ void main() {
         expect(find.byKey(Key("deleteButton")).evaluate().length, 1);
         expect(find.text("user1"), findsNothing);
         expect(find.text("user2"), findsOneWidget);
-        verify(await mockApi.deactivateAccount(1, "token")).called(1);
+        verify(await mockApi.deactivateAccount(1)).called(1);
       });
 
   /// tests if does not delete after no confirmation
@@ -108,14 +106,12 @@ void main() {
             "is_active": true
           }
         ];
-        when(mockApi.getAccounts("token")).thenAnswer((_) async =>
+        when(mockApi.getAccounts()).thenAnswer((_) async =>
             Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
-        when(mockApi.deactivateAccount(1, "token"))
+        when(mockApi.deactivateAccount(1))
             .thenAnswer((_) async => Future.value(200));
 
         MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
         when(mockSecureStorage.getIsUserStaff())
             .thenAnswer((_) async => Future.value("true"));
 
@@ -130,7 +126,7 @@ void main() {
         expect(find.text("user1"), findsOneWidget);
         expect(find.text("user2"), findsOneWidget);
         await tester.tap(find.byKey(Key("deleteButton")).first);
-        when(mockApi.getAccounts("token")).thenAnswer((_) async => Future.value({
+        when(mockApi.getAccounts()).thenAnswer((_) async => Future.value({
           "body": jsonEncode([accounts[1]]),
           "statusCode": "200"
         }));
@@ -140,7 +136,7 @@ void main() {
         expect(find.byKey(Key("deleteButton")).evaluate().length, 2);
         expect(find.text("user1"), findsOneWidget);
         expect(find.text("user2"), findsOneWidget);
-        verifyNever(await mockApi.deactivateAccount(1, "token"));
+        verifyNever(await mockApi.deactivateAccount(1));
       });
 
   /// tests if does not delete after api error
@@ -168,14 +164,12 @@ void main() {
         "is_active": true
       }
     ];
-    when(mockApi.getAccounts("token"))
+    when(mockApi.getAccounts())
         .thenAnswer((_) async => Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
-    when(mockApi.deactivateAccount(1, "token"))
+    when(mockApi.deactivateAccount(1))
         .thenAnswer((_) async => Future.value(404));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-    when(mockSecureStorage.getToken())
-        .thenAnswer((_) async => Future.value("token"));
     when(mockSecureStorage.getIsUserStaff())
         .thenAnswer((_) async => Future.value("true"));
 
@@ -190,7 +184,7 @@ void main() {
     expect(find.text("user1"), findsOneWidget);
     expect(find.text("user2"), findsOneWidget);
     await tester.tap(find.byKey(Key("deleteButton")).first);
-    when(mockApi.getAccounts("token")).thenAnswer((_) async => Future.value({
+    when(mockApi.getAccounts()).thenAnswer((_) async => Future.value({
       "body": jsonEncode([accounts[1]]),
       "statusCode": "200"
     }));
@@ -205,6 +199,6 @@ void main() {
         find.text(
             "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."),
         findsOneWidget);
-    verify(await mockApi.deactivateAccount(1, "token")).called(1);
+    verify(await mockApi.deactivateAccount(1)).called(1);
   });
 }

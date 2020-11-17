@@ -120,7 +120,7 @@ void main() {
       "app_notifications": true,
       "is_staff": false,
       "is_active": true};
-    when(mockApi.getUser("user1", "token")).thenAnswer(
+    when(mockApi.getUser("user1")).thenAnswer(
             (_) async => Future.value([jsonEncode(user1Json), 200]));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -174,7 +174,7 @@ void main() {
       "app_notifications": false,
       "is_staff": false,
       "is_active": true};
-    when(mockApi.getUser("user1", "token")).thenAnswer(
+    when(mockApi.getUser("user1")).thenAnswer(
             (_) async => Future.value([jsonEncode(user1Json), 200]));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();

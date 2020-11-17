@@ -3,19 +3,27 @@ import 'package:idom/enums/categories.dart';
 
 class CategoryDialog extends StatefulWidget {
   final String currentCategory;
+  final String type;
 
-  CategoryDialog({this.currentCategory});
+  CategoryDialog({this.currentCategory, this.type});
 
   @override
   _CategoryDialogState createState() => _CategoryDialogState();
 }
 
 class _CategoryDialogState extends State<CategoryDialog> {
-  List<Map<String, String>> categories = Categories.values;
+  List<Map<String, String>> categories;
   Map<String, String> _selectedCategory;
 
   @override
   void initState() {
+    if (widget.type == "sensors"){
+      categories = SensorCategories.values;
+    }
+    else if (widget.type == "drivers"){
+      categories = DriverCategories.values;
+    }
+
     if (widget.currentCategory != null) {
       _selectedCategory = categories
           .firstWhere((element) => element['value'] == widget.currentCategory);

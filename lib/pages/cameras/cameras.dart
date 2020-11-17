@@ -1,17 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/cameras/camera_stream.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 
 class Cameras extends StatefulWidget {
-  Cameras({@required this.storage});
+  Cameras({@required this.storage, this.testApi});
 
   final SecureStorage storage;
+  final Api testApi;
 
   @override
   _CamerasState createState() => _CamerasState();
@@ -24,24 +27,21 @@ class _CamerasState extends State<Cameras> {
   List<Camera> _cameraList;
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
-  String _token;
 
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
     getCameras();
   }
 
-  Future<void> getUserToken() async {
-    _token = await widget.storage.getToken();
-  }
-
   /// returns list of cameras
-  Future<List<Sensor>> getCameras() async {
-    await getUserToken();
+  Future<void> getCameras() async {
     try {
       /// gets cameras
-      var res = await api.getCameras(_token);
+      var res = await api.getCameras();
 
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);
@@ -74,13 +74,13 @@ class _CamerasState extends State<Cameras> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania kamer. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania kamer. Adres serwera nieprawidłowy."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -160,11 +160,18 @@ class _CamerasState extends State<Cameras> {
                                   onTap: () {
                                     navigateToCameraStream(_cameraList[index]);
                                   },
-                                  leading: Icon(
-                                    Icons.videocam,
-                                    color: Theme.of(context).iconTheme.color,
-                                  size: 30,
-                                  ),
+                                  leading: SizedBox(
+                                      width: 35,
+                                      child: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: SvgPicture.asset(
+                                            "assets/icons/video-camera.svg",
+                                            matchTextDirection: false,
+                                            width: 32,
+                                            height: 32,
+                                            color: IdomColors.additionalColor,
+                                            key: Key("assets/icons/video-camera.svg")
+                                          ))),
                                 ),
                               )))))));
     }

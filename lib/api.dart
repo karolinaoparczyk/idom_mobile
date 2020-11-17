@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -13,10 +12,16 @@ class Api {
   }
 
   String url;
+  String token;
   Client httpClient;
 
   void getApiAddress() async {
-    url = await storage.getApiURL();
+    // url = "https://" + await storage.getApiServerAddress();
+    url = "http://" + await storage.getApiServerAddress();
+  }
+
+  void getToken() async {
+    token = await storage.getToken();
   }
 
   /// requests signing in
@@ -48,17 +53,22 @@ class Api {
   }
 
   /// gets user data
-  Future<List<dynamic>> getUser(username, token) async {
+  Future<List<dynamic>> getUser(username, {userToken}) async {
     await getApiAddress();
+    await getToken();
+    if (token != null) {
+      userToken = token;
+    }
     var result = await httpClient.get('$url/users/detail/$username', headers: {
-      HttpHeaders.authorizationHeader: "Token $token"
+      HttpHeaders.authorizationHeader: "Token $userToken"
     }).timeout(Duration(seconds: 5));
     return [result.body, result.statusCode];
   }
 
   /// requests logging out
-  Future<int> logOut(String token) async {
+  Future<int> logOut() async {
     await getApiAddress();
+    await getToken();
     try {
       var res = await httpClient.post('$url/api-logout/$token', headers: {
         HttpHeaders.authorizationHeader: "Token $token"
@@ -71,11 +81,12 @@ class Api {
   }
 
   /// requests deactivating user
-  Future<int> deactivateAccount(int id, String userToken) async {
+  Future<int> deactivateAccount(int id) async {
     await getApiAddress();
+    await getToken();
     try {
       var res = await httpClient.delete('$url/users/delete/$id', headers: {
-        HttpHeaders.authorizationHeader: "Token $userToken"
+        HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
@@ -93,11 +104,12 @@ class Api {
   }
 
   /// gets accounts
-  Future<Map<String, String>> getAccounts(String userToken) async {
+  Future<Map<String, String>> getAccounts() async {
     await getApiAddress();
+    await getToken();
     try {
       var res = await httpClient.get('$url/users/list', headers: {
-        HttpHeaders.authorizationHeader: "Token $userToken"
+        HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 5));
       var resDict = {
         "body": res.body.toString(),
@@ -112,8 +124,9 @@ class Api {
 
   /// edits users data
   Future<Map<String, String>> editAccount(
-      int id, String email, String telephone, String userToken) async {
+      int id, String email, String telephone) async {
     await getApiAddress();
+    await getToken();
     var body;
     if (email != null && telephone != null) {
       body = {"email": email, "telephone": telephone};
@@ -124,7 +137,7 @@ class Api {
     }
     var res = await httpClient
         .put('$url/users/update/$id',
-            headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+            headers: {HttpHeaders.authorizationHeader: "Token $token"},
             body: body)
         .timeout(Duration(seconds: 5));
     var resDict = {
@@ -136,11 +149,15 @@ class Api {
 
   /// edits users notifications
   Future<Map<String, String>> editNotifications(
-      int id, String appNotifications, String smsNotifications, String userToken) async {
+      int id, String appNotifications, String smsNotifications) async {
     await getApiAddress();
+    await getToken();
     var body;
     if (appNotifications != null && smsNotifications != null) {
-      body = {"app_notifications": appNotifications, "sms_notifications": smsNotifications};
+      body = {
+        "app_notifications": appNotifications,
+        "sms_notifications": smsNotifications
+      };
     } else if (appNotifications != null) {
       body = {"app_notifications": appNotifications};
     } else if (smsNotifications != null) {
@@ -148,7 +165,7 @@ class Api {
     }
     var res = await httpClient
         .put('$url/users/update/$id',
-            headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+            headers: {HttpHeaders.authorizationHeader: "Token $token"},
             body: body)
         .timeout(Duration(seconds: 5));
     var resDict = {
@@ -159,9 +176,10 @@ class Api {
   }
 
   /// edits sensor
-  Future<Map<String, String>> editSensor(int id, String name, String category,
-      int frequency, String userToken) async {
+  Future<Map<String, String>> editSensor(
+      int id, String name, String category, int frequency) async {
     await getApiAddress();
+    await getToken();
     var frequencyString = frequency.toString();
     var body;
     if (name != null && category != null && frequency != null) {
@@ -182,7 +200,7 @@ class Api {
     var res = await httpClient
         .put(
           '$url/sensors/update/$id',
-          headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
           body: body,
         )
         .timeout(Duration(seconds: 5));
@@ -195,17 +213,29 @@ class Api {
 
   /// adds sensor
   Future<Map<String, String>> addSensor(
-      String name, String category, int frequency, String userToken) async {
+      String name, String category, int frequency) async {
     await getApiAddress();
-    var resSen = await httpClient.post(
-      '$url/sensors/add',
-      headers: {HttpHeaders.authorizationHeader: "Token $userToken"},
-      body: {
+    await getToken();
+    var body;
+    if (frequency == null) {
+      body = {
+        "name": name,
+        "category": category,
+      };
+    } else {
+      body = {
         "name": name,
         "category": category,
         "frequency": frequency.toString()
-      },
-    ).timeout(Duration(seconds: 5));
+      };
+    }
+    var resSen = await httpClient
+        .post(
+          '$url/sensors/add',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: body,
+        )
+        .timeout(Duration(seconds: 5));
     var resDict = {
       "bodySen": resSen.body.toString(),
       "statusCodeSen": resSen.statusCode.toString(),
@@ -214,11 +244,12 @@ class Api {
   }
 
   /// requests deactivating sensor
-  Future<int> deactivateSensor(int id, String userToken) async {
+  Future<int> deactivateSensor(int id) async {
     await getApiAddress();
+    await getToken();
     try {
       var res = await httpClient.delete('$url/sensors/delete/$id', headers: {
-        HttpHeaders.authorizationHeader: "Token $userToken"
+        HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
@@ -228,11 +259,12 @@ class Api {
   }
 
   /// gets sensors
-  Future<Map<String, String>> getSensors(String userToken) async {
+  Future<Map<String, String>> getSensors() async {
     await getApiAddress();
+    await getToken();
     try {
       var resSensors = await httpClient.get('$url/sensors/list', headers: {
-        HttpHeaders.authorizationHeader: "Token $userToken"
+        HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
@@ -247,12 +279,12 @@ class Api {
   }
 
   /// gets sensor details
-  Future<Map<String, String>> getSensorDetails(
-      int sensorId, String userToken) async {
+  Future<Map<String, String>> getSensorDetails(int sensorId) async {
     await getApiAddress();
+    await getToken();
     try {
       var res = await httpClient.get('$url/sensors/detail/$sensorId', headers: {
-        HttpHeaders.authorizationHeader: "Token $userToken"
+        HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
@@ -267,13 +299,13 @@ class Api {
   }
 
   /// gets sensors' frequency
-  Future<Map<String, String>> getSensorData(
-      String userToken, int sensorId) async {
+  Future<Map<String, String>> getSensorData(int sensorId) async {
     await getApiAddress();
+    await getToken();
     try {
       var resFrequency = await httpClient
           .get('$url/sensors_data/list/$sensorId', headers: {
-        HttpHeaders.authorizationHeader: "Token $userToken"
+        HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 10));
 
       Map<String, String> responses = {
@@ -288,11 +320,12 @@ class Api {
   }
 
   /// gets cameras
-  Future<Map<String, String>> getCameras(String userToken) async {
+  Future<Map<String, String>> getCameras() async {
     await getApiAddress();
+    await getToken();
     try {
       var res = await httpClient.get('$url/cameras/list', headers: {
-        HttpHeaders.authorizationHeader: "Token $userToken"
+        HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> response = {
@@ -300,6 +333,167 @@ class Api {
         "statusCode": res.statusCode.toString(),
       };
       return response;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// checks if device token is sent
+  Future<Map<String, String>> checkIfDeviceTokenSent(String deviceToken) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.get('$url/devices/$deviceToken', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> responses = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// sends device token
+  Future<Map<String, String>> sendDeviceToken(String deviceToken) async {
+    await getApiAddress();
+    await getToken();
+    var username = await storage.getUsername();
+    try {
+      var res = await httpClient.post('$url/devices/', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }, body: {
+        "name": username,
+        "registration_id": deviceToken,
+        "type": "android"
+      }).timeout(Duration(seconds: 10));
+
+      var resDict = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return resDict;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  /// gets drivers
+  Future<Map<String, String>> getDrivers() async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.get('$url/drivers/list', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> response = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return response;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// adds driver
+  Future<Map<String, String>> addDriver(
+      String name, String category, bool data) async {
+    await getApiAddress();
+    await getToken();
+    var resSen = await httpClient.post(
+      '$url/drivers/add',
+      headers: {HttpHeaders.authorizationHeader: "Token $token"},
+      body: {
+        "name": name,
+        "category": category,
+        "data": data.toString(),
+      },
+    ).timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": resSen.body.toString(),
+      "statusCode": resSen.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// edits driver
+  Future<Map<String, String>> editDriver(
+      int id, String name, String category) async {
+    await getApiAddress();
+    await getToken();
+    var body;
+    if (name != null && category != null) {
+      body = {"name": name, "category": category};
+    } else if (name != null) {
+      body = {"name": name};
+    } else if (category != null) {
+      body = {"category": category};
+    }
+    var res = await httpClient
+        .put(
+          '$url/drivers/update/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: body,
+        )
+        .timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": res.body.toString(),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// gets driver details
+  Future<Map<String, String>> getDriverDetails(int driverId) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.get('$url/drivers/detail/$driverId', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> responses = {
+        "body": res.body.toString(),
+        "statusCode": res.statusCode.toString(),
+      };
+      return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests deleting driver
+  Future<int> deleteDriver(int id) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.delete('$url/drivers/delete/$id', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests starting driver
+  Future<int> startDriver(String name) async {
+    await getApiAddress();
+    try {
+      var res = await httpClient.post('$url/drivers/action',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: {"name": name}).timeout(Duration(seconds: 5));
+      return res.statusCode;
     } catch (e) {
       print(e);
     }

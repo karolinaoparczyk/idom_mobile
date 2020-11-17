@@ -8,7 +8,7 @@ void main() {
   /// tests if empty username is not validated
   test('empty username returns error string', () {
     var result = UsernameFieldValidator.validate('');
-    expect(result, 'Podaj login');
+    expect(result, 'Pole wymagane');
   });
 
   /// tests if non-empty username is validated
@@ -18,9 +18,15 @@ void main() {
   });
 
   /// tests if username with space is not validated
-  test('username wtih space returns error string', () {
+  test('username with space returns error string', () {
     var result = UsernameFieldValidator.validate('log in');
     expect(result, 'Login nie może zawierać spacji');
+  });
+
+  /// tests if username not longer than 25 characters
+  test('username longer than 25 characters returns error string', () {
+    var result = UsernameFieldValidator.validate('loginloginloginloginlogin1');
+    expect(result, 'Login nie może zawierać więcej niż 25 znaków');
   });
 
   ///Password
@@ -28,7 +34,7 @@ void main() {
   /// tests if empty password is not validated
   test('empty password returns error string', () {
     var result = PasswordFieldValidator.validate('');
-    expect(result, 'Podaj hasło');
+    expect(result, 'Pole wymagane');
   });
 
   /// tests if non-empty password is validated
@@ -37,16 +43,16 @@ void main() {
     expect(result, null);
   });
 
-  /// tests if empty password is not validated
-  test('empty password returns error string', () {
-    var result = PasswordFieldValidator.validate('');
-    expect(result, 'Podaj hasło');
-  });
-
   /// tests if password shorter that 8 is not validated
   test('empty password returns error string', () {
     var result = PasswordFieldValidator.validate('pass');
     expect(result, 'Hasło musi zawierać przynajmniej 8 znaków');
+  });
+
+  /// tests if password longer that 8 is not validated
+  test('empty password returns error string', () {
+    var result = PasswordFieldValidator.validate('passwordpasswordpassword1234');
+    expect(result, 'Hasło nie może zawierać więcej niż 25 znaków');
   });
 
   ///Email
@@ -54,7 +60,7 @@ void main() {
   /// tests if empty email is not validated
   test('empty email returns error string', () {
     var result = EmailFieldValidator.validate('');
-    expect(result, 'Email jest wymagany');
+    expect(result, 'Pole wymagane');
   });
 
   /// tests if invalid email is not validated
@@ -81,21 +87,21 @@ void main() {
   test('too short telephone returns error string', () {
     var result = TelephoneFieldValidator.validate('65789');
     expect(result,
-        'Numer telefonu musi zawierać kierunkowy postaci +XX oraz 9 cyfr');
+        'Podaj numer telefonu postaci +XX XXX XXX XXX');
   });
 
   /// tests if too long telephone is not validated
   test('too long telephone returns error string', () {
     var result = TelephoneFieldValidator.validate('6657787654335');
     expect(result,
-        'Numer telefonu musi zawierać kierunkowy postaci +XX oraz 9 cyfr');
+        'Podaj numer telefonu postaci +XX XXX XXX XXX');
   });
 
   /// tests if telephone without country number is not validated
   test('telephone without country number returns error string', () {
     var result = TelephoneFieldValidator.validate('667787654335');
     expect(result,
-        'Numer telefonu musi zawierać kierunkowy postaci +XX oraz 9 cyfr');
+        'Podaj numer telefonu postaci +XX XXX XXX XXX');
   });
 
   /// tests if telephone with country number is validated

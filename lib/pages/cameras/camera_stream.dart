@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class CameraStream extends StatefulWidget {
   CameraStream({@required this.storage, @required this.camera});
@@ -19,8 +19,6 @@ class CameraStream extends StatefulWidget {
 
 class _CameraStreamState extends State<CameraStream> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final Completer<WebViewController> _controller =
-  Completer<WebViewController>();
   bool _loading;
   String apiURL;
 
@@ -32,7 +30,8 @@ class _CameraStreamState extends State<CameraStream> {
   }
 
   Future<void> getApiURL() async {
-    apiURL = await widget.storage.getApiURL();
+    // apiURL = "https://" + await widget.storage.getApiServerAddress();
+    apiURL = "http://" + await widget.storage.getApiServerAddress();
     setState(() {});
   }
 
@@ -61,6 +60,7 @@ class _CameraStreamState extends State<CameraStream> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text("Otwórz w przeglądarce",
+                              key: Key("goToBrowser"),
                               style: Theme
                                   .of(context)
                                   .textTheme
@@ -87,16 +87,18 @@ class _CameraStreamState extends State<CameraStream> {
                       .size
                       .width,
                   child: apiURL != null ?
-                        WebView(
-                      gestureNavigationEnabled: false,
-                      onWebResourceError: (error) {
-                        print("error $error");
-                      },
+                  InAppWebView(
                       initialUrl: apiURL + '/cameras/stream/' + widget.camera.id.toString(),
-                      javascriptMode: JavascriptMode.unrestricted,
+                    initialOptions: InAppWebViewGroupOptions(
+                      crossPlatform: InAppWebViewOptions(
+                          debuggingEnabled: true,
+                          preferredContentMode: MediaQuery
+                              .of(context)
+                              .size
+                              .width <= 600 ? UserPreferredContentMode.DESKTOP : UserPreferredContentMode.MOBILE),
+                    ),
                       onWebViewCreated:
-                          (WebViewController webViewController) {
-                        _controller.complete(webViewController);
+                          (InAppWebViewController webViewController) {
                         _loading = false;
                         setState(() {});
                       },

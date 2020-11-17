@@ -35,17 +35,8 @@ class _NewSensorState extends State<NewSensor> {
   String categoryValue;
   String frequencyUnitsValue;
   bool _load;
-  String _token;
   String fieldsValidationMessage;
   bool canEditFrequency = true;
-
-  List<DropdownMenuItem<String>> units;
-  Map<String, String> englishToPolishUnits = {
-    "seconds": "sekundy",
-    "minutes": "minuty",
-    "hours": "godziny",
-    "days": "dni"
-  };
 
   @override
   void initState() {
@@ -54,11 +45,6 @@ class _NewSensorState extends State<NewSensor> {
       api = widget.testApi;
     }
     _load = false;
-    getToken();
-  }
-
-  Future<void> getToken() async {
-    _token = await widget.storage.getToken();
   }
 
   /// builds sensor name form field
@@ -99,15 +85,16 @@ class _NewSensorState extends State<NewSensor> {
               builder: (context) {
                 return Dialog(
                   child: CategoryDialog(
-                    currentCategory: categoryValue,
-                  ),
+                      currentCategory: categoryValue, type: "sensors"),
                 );
               });
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'];
             categoryValue = selectedCategory['value'];
-            if (selectedCategory['value'] == "rain" ||
-                selectedCategory['value'] == "water_temp") {
+            if (selectedCategory['value'] == "rain_sensor" ||
+                selectedCategory['value'] == "water_temp" ||
+                selectedCategory['value'] == "breathalyser" ||
+                selectedCategory['value'] == "smoke") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -123,7 +110,7 @@ class _NewSensorState extends State<NewSensor> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
         style: TextStyle(fontSize: 17.0),
-        validator: UrlFieldValidator.validate);
+        validator: CategoryFieldValidator.validate);
   }
 
   /// builds sensor frequency value form field
@@ -185,7 +172,7 @@ class _NewSensorState extends State<NewSensor> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
         style: TextStyle(fontSize: 17.0),
-        validator: UrlFieldValidator.validate);
+        validator: FrequencyUnitsFieldValidator.validate);
   }
 
   clearFields() {
@@ -197,7 +184,7 @@ class _NewSensorState extends State<NewSensor> {
     categoryValue = null;
     frequencyUnitsValue = null;
     canEditFrequency = true;
-    Navigator.pop(context, true);
+    setState(() {});
   }
 
   onLogOutFailure(String text) {
@@ -222,7 +209,9 @@ class _NewSensorState extends State<NewSensor> {
                 onPressed: () async {
                   var decision = await confirmActionDialog(context, "Potwierdź",
                       "Czy na pewno wyczyścić wszystkie pola?");
-                  if (decision) clearFields();
+                  if (decision) {
+                    clearFields();
+                  }
                 },
               ),
               IconButton(
@@ -286,85 +275,87 @@ class _NewSensorState extends State<NewSensor> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildCategoryField())),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 20.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.access_time_outlined,
-                                            size: 17.5),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5.0),
-                                          child: Text(
-                                              "Częstotliwość pobierania danych",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal)),
-                                        ),
-                                      ],
-                                    ))),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 30.0,
-                                    top: 10.0,
-                                    right: 30.0,
-                                    bottom: 0.0),
-                                child: SizedBox(
-                                    child: Row(children: <Widget>[
-                                  Expanded(
-                                      flex: 8, child: _buildFrequencyValue()),
-                                  Expanded(flex: 1, child: SizedBox()),
-                                  Expanded(
-                                      flex: 12,
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 0.0,
-                                              top: 0.0,
-                                              right: 0.0,
-                                              bottom: 0.0),
-                                          child: Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child:
-                                                  _buildFrequencyUnitsField()))),
-                                ]))),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 30.0),
-                              child: AnimatedCrossFade(
-                                crossFadeState: fieldsValidationMessage != null
-                                    ? CrossFadeState.showFirst
-                                    : CrossFadeState.showSecond,
-                                duration: Duration(milliseconds: 300),
-                                firstChild: fieldsValidationMessage != null
-                                    ? Text(fieldsValidationMessage,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal))
-                                    : SizedBox(),
-                                secondChild: SizedBox(),
+                            if (categoryValue != "breathalyser")
+                              Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 30.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.access_time_outlined,
+                                              size: 17.5),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 5.0),
+                                            child: Text(
+                                                "Częstotliwość pobierania danych",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                          ),
+                                        ],
+                                      ))),
+                            if (categoryValue != "breathalyser")
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 10.0,
+                                      right: 30.0,
+                                      bottom: 0.0),
+                                  child: SizedBox(
+                                      child: Row(children: <Widget>[
+                                    Expanded(
+                                        flex: 8, child: _buildFrequencyValue()),
+                                    Expanded(flex: 1, child: SizedBox()),
+                                    Expanded(
+                                        flex: 12,
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 0.0,
+                                                top: 0.0,
+                                                right: 0.0,
+                                                bottom: 0.0),
+                                            child: Align(
+                                                alignment: Alignment.bottomLeft,
+                                                child:
+                                                    _buildFrequencyUnitsField()))),
+                                  ]))),
+                            if (categoryValue != "breathalyser")
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 30.0),
+                                child: AnimatedCrossFade(
+                                  crossFadeState:
+                                      fieldsValidationMessage != null
+                                          ? CrossFadeState.showFirst
+                                          : CrossFadeState.showSecond,
+                                  duration: Duration(milliseconds: 300),
+                                  firstChild: fieldsValidationMessage != null
+                                      ? Text(fieldsValidationMessage,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(
+                                                  fontWeight:
+                                                      FontWeight.normal))
+                                      : SizedBox(),
+                                  secondChild: SizedBox(),
+                                ),
                               ),
-                            ),
                           ])))),
             ]))));
   }
 
-  /// saves changes after form fields and dropdown buttons validation
+  /// saves changes after form fields validation
   _saveChanges() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       int valInt = int.tryParse(_frequencyValueController.text);
-      if (valInt == null) {
+      if (valInt == null || valInt <= 0) {
         fieldsValidationMessage =
             'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
         setState(() {});
@@ -372,15 +363,15 @@ class _NewSensorState extends State<NewSensor> {
       }
 
       /// validates if frequency value is valid for given frequency units
-      var validFequencyValue =
+      var validFrequencyValue =
           SensorFrequencyFieldValidator.isFrequencyValueValid(
               _frequencyValueController.text, frequencyUnitsValue);
-      if (!validFequencyValue) {
+      if (!validFrequencyValue) {
         var text =
-            "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
+            "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}";
         if (frequencyUnitsValue == "seconds")
           text =
-              "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${englishToPolishUnits[frequencyUnitsValue]}";
+              "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}";
         setState(() {
           fieldsValidationMessage = text;
         });
@@ -406,7 +397,7 @@ class _NewSensorState extends State<NewSensor> {
       }
       try {
         var res = await api.addSensor(
-            _nameController.text, categoryValue, frequencyInSeconds, _token);
+            _nameController.text, categoryValue, frequencyInSeconds);
 
         if (res['statusCodeSen'] == "201") {
           setState(() {

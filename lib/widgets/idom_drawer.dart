@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:idom/pages/cameras/cameras.dart';
+import 'package:idom/pages/drivers/drivers.dart';
 import 'package:idom/pages/setup/edit_api_address.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -35,20 +37,13 @@ class _IdomDrawerState extends State<IdomDrawer> {
   List<String> menuItems;
   int currentUserId;
   String currentUsername;
-  String token;
 
   @override
   void initState() {
-    getCurrentUserToken();
     checkIfUserIsStaff();
     getCurrentUserId();
     getCurrentUserName();
     super.initState();
-  }
-
-  Future<void> getCurrentUserToken() async {
-    token = await widget.storage.getToken();
-    setState(() {});
   }
 
   Future<void> checkIfUserIsStaff() async {
@@ -83,7 +78,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Icon(icon, size: 25.0),
+                        getItemImage(title),
                         Padding(
                           padding: const EdgeInsets.only(left: 15.0),
                           child: Text(title,
@@ -127,41 +122,41 @@ class _IdomDrawerState extends State<IdomDrawer> {
     return SafeArea(
       child: Drawer(
         child: Container(
-          decoration: BoxDecoration(
-            color:IdomColors.darken(IdomColors.additionalColor, 0.1)),
           child: ListView(children: [
             DrawerHeader(
+                decoration: BoxDecoration(
+                    color: IdomColors.lighten(IdomColors.additionalColor, 0.1)),
                 child: Container(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Row(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(Icons.roofing_rounded,
-                              size: 50.0, color: IdomColors.mainFill),
-                          Text(
-                            'IDOM',
-                            style: TextStyle(
-                                fontSize: 70.0, color: IdomColors.textDark),
-                            textAlign: TextAlign.center,
-                          ),
-                          Icon(Icons.roofing_rounded,
-                              size: 50.0, color: Colors.transparent),
-                        ]),
-                        Text(
-                          'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
-                          style: TextStyle(
-                              fontSize: 13.0,
-                              color: IdomColors.textDark,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
+                        Column(
+                          children: [
+                            Row(mainAxisSize: MainAxisSize.min, children: [
+                              Icon(Icons.roofing_rounded,
+                                  size: 50.0, color: IdomColors.mainFill),
+                              Text(
+                                'IDOM',
+                                style: TextStyle(
+                                    fontSize: 70.0, color: IdomColors.textDark),
+                                textAlign: TextAlign.center,
+                              ),
+                              Icon(Icons.roofing_rounded,
+                                  size: 50.0, color: Colors.transparent),
+                            ]),
+                            Text(
+                              'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
+                              style: TextStyle(
+                                  fontSize: 13.0,
+                                  color: IdomColors.textDark,
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    userRow(),
-                  ]),
-            )),
+                        userRow(),
+                      ]),
+                )),
             customMenuTile(Icons.perm_identity_rounded, "Moje konto", () async {
               Navigator.pop(context);
               var toPush = false;
@@ -217,6 +212,18 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
+            customMenuTile(Icons.touch_app_outlined, "Sterowniki", () async {
+              Navigator.pop(context);
+              if (widget.parentWidgetType != "Drivers") {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Drivers(storage: widget.storage)));
+                if (widget.onGoBackAction != null) widget.onGoBackAction();
+              }
+            }),
             customMenuTile(Icons.settings_outlined, "Ustawienia", () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "EditApiAddress") {
@@ -231,7 +238,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
             }),
             customMenuTile(Icons.logout, "Wyloguj", () async {
               Navigator.pop(context);
-               await _logOut();
+              await _logOut();
             }),
           ]),
         ),
@@ -239,11 +246,51 @@ class _IdomDrawerState extends State<IdomDrawer> {
     );
   }
 
+  Widget getItemImage(String title) {
+    var imageUrl;
+    switch (title) {
+      case "Moje konto":
+        imageUrl = "assets/icons/man.svg";
+        break;
+      case "Wszystkie konta":
+        imageUrl = "assets/icons/team.svg";
+        break;
+      case "Czujniki":
+        imageUrl = "assets/icons/motion-sensor.svg";
+        break;
+      case "Kamery":
+        imageUrl = "assets/icons/video-camera.svg";
+        break;
+        case "Sterowniki":
+        imageUrl = "assets/icons/tap.svg";
+        break;
+        case "Ustawienia":
+          imageUrl = "assets/icons/settings.svg";
+          break;
+          case "Wyloguj":
+        imageUrl = "assets/icons/logout.svg";
+        break;
+    }
+    return SizedBox(
+        width: 25,
+        child: Container(
+            padding: EdgeInsets.only(top: 5),
+            alignment: Alignment.topRight,
+            child: SvgPicture.asset(
+              imageUrl,
+              matchTextDirection: false,
+              width: 25,
+              height: 25,
+              color: IdomColors.additionalColor,
+            )));
+  }
+
   /// logs the user out of the app
   Future<void> _logOut() async {
     try {
-      displayProgressDialog(context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut(token);
+      displayProgressDialog(
+          context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
+      var statusCode = await api.logOut();
       if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);

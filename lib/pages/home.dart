@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:idom/api.dart';
 import 'package:idom/pages/logotype_widget.dart';
 
 import 'package:idom/pages/sensors/sensors.dart';
@@ -12,6 +13,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final SecureStorage storage = SecureStorage();
+  final Api api = Api();
   String isUserSignedIn;
 
   @override

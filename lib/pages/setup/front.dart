@@ -81,11 +81,10 @@ class _FrontState extends State<Front> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.roofing_rounded,
-                                            size: 70.0,
-                                            color: IdomColors.mainFill),
+                                        Image.asset('assets/home.png', height: 70.0, width: 70.0),
                                         Text(
                                           'IDOM',
                                           style: TextStyle(
