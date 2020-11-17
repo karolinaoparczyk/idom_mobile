@@ -206,9 +206,16 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 
   _clickDriver() async {
-    // todo: post to api
-    final snackBar =
-    new SnackBar(content: new Text("Wysłano komendę do sterownika ${widget.driver.name}."));
+    var result = await api.startDriver(widget.driver.name, _token);
+    var message;
+    if (result == 200) {
+      message = "Wysłano komendę do sterownika ${widget.driver.name}.";
+    } else {
+      message =
+      "Wysłanie komendy do sterownika ${widget.driver.name} nie powiodło się.";
+    }
+    _scaffoldKey.currentState.removeCurrentSnackBar();
+    final snackBar = new SnackBar(content: new Text(message));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
