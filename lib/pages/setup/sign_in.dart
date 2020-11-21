@@ -182,70 +182,63 @@ class _SignInState extends State<SignIn> {
           appBar: AppBar(
             title: Text('Zaloguj się'),
           ),
-          body: Row(
-            children: <Widget>[
-              Expanded(flex: 1, child: SizedBox(width: 1)),
-              Expanded(
-                  flex: 30,
-                  child: Column(children: <Widget>[
-                    Expanded(
-                        flex: 2,
-                        child: Form(
-                            key: _formKey,
-                            child: FocusScope(
-                                node: _node,
-                                child: Column(
-                                  children: <Widget>[
-                                    Align(
-                                      child: loadingIndicator(_load),
-                                      alignment: FractionalOffset.center,
-                                    ),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 30.0,
-                                            top: 20.0,
-                                            right: 30.0,
-                                            bottom: 0.0),
-                                        child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: _buildUsername())),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 30.0,
-                                            top: 20.0,
-                                            right: 30.0,
-                                            bottom: 13.5),
-                                        child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: _buildPassword())),
-                                  ],
-                                )))),
-                    Expanded(
-                        flex: 1,
-                        child: AnimatedContainer(
-                            curve: Curves.easeInToLinear,
-                            duration: Duration(
-                              milliseconds: 10,
-                            ),
-                            alignment: Alignment.bottomCenter,
-                            child: Column(children: <Widget>[
-                              buttonWidget(context, "Zaloguj", Icons.arrow_right_outlined, signIn),
-                              TextButton(
-                                key: Key("passwordReset"),
-                                child: Text('Zapomniałeś/aś hasła?',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
-                                onPressed: navigateToEnterEmail,
-                              ),
-                            ])))
-                  ])),
-              Expanded(flex: 1, child: SizedBox(width: 1)),
-            ],
+          body: SizedBox(
+            height: MediaQuery.of(context).size.height - 60,
+            child: SingleChildScrollView(
+              child: Column(children: <Widget>[
+                         Form(
+                                key: _formKey,
+                                child: FocusScope(
+                                    node: _node,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Align(
+                                          child: loadingIndicator(_load),
+                                          alignment: FractionalOffset.center,
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 30.0,
+                                                top: 20.0,
+                                                right: 30.0,
+                                                bottom: 0.0),
+                                            child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: _buildUsername())),
+                                        Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 30.0,
+                                                top: 20.0,
+                                                right: 30.0,
+                                                bottom: 13.5),
+                                            child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: _buildPassword())),
+                                      ],
+                                    ))),AnimatedContainer(
+                                curve: Curves.easeInToLinear,
+                                duration: Duration(
+                                  milliseconds: 10,
+                                ),
+                                alignment: Alignment.bottomCenter,
+                                child: Column(children: <Widget>[
+                                  buttonWidget(context, "Zaloguj", Icons.arrow_right_outlined, signIn),
+                                  TextButton(
+                                    key: Key("passwordReset"),
+                                    child: Text('Zapomniałeś/aś hasła?',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                fontWeight: FontWeight.normal)),
+                                    onPressed: navigateToEnterEmail,
+                                  ),
+                                ]))
+                      ]),
+            ),
+          )
           ),
-        ));
+        );
   }
 
   /// navigates to sending reset password request page

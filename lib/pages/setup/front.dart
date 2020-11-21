@@ -106,7 +106,7 @@ class _FrontState extends State<Front> {
                                   ),
                                 ]))),
                     SizedBox(
-                        height: queryData.size.height / 15 * 6,
+                        height: queryData.size.height / 15 * 7,
                         child: AnimatedContainer(
                             curve: Curves.easeInToLinear,
                             duration: Duration(
