@@ -323,7 +323,7 @@ class _EditApiAddressState extends State<EditApiAddress> {
       }
       if (_isUserLoggedIn == "true") {
         final snackBar = new SnackBar(
-            content: new Text("Adres serwera został zapisany."),
+            content: new Text("Ustawienia zostały zapisane."),
             duration: Duration(seconds: 2));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       } else {
