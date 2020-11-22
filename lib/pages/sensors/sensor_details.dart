@@ -6,7 +6,6 @@ import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/enums/categories.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/sensors/edit_sensor.dart';
 import 'package:idom/utils/idom_colors.dart';
@@ -527,6 +526,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       case "water_temp":
         units = "°C";
         break;
+      case "air_humidity":
       case "humidity":
         units = "%";
         break;
@@ -550,6 +550,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       case "water_temp":
         data = "${widget.sensor.lastData} °C";
         break;
+      case "air_humidity":
       case "humidity":
         data = "${widget.sensor.lastData} %";
         break;
@@ -567,6 +568,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       case "water_temp":
         label = "Aktualna temperatura";
         break;
+      case "air_humidity":
       case "humidity":
         label = "Aktualna wilgotność";
         break;

@@ -338,6 +338,7 @@ class _SensorsState extends State<Sensors> {
       case "smoke":
         imageUrl = "assets/icons/smoke.svg";
         break;
+      case "air_humidity":
       case "humidity":
         imageUrl = "assets/icons/humidity.svg";
         break;
@@ -401,6 +402,7 @@ class _SensorsState extends State<Sensors> {
         if (sensor.lastData == null) return "ostatnia dana: -";
         return "ostatnia dana: " + "${sensor.lastData} °C";
         break;
+      case "air_humidity":
       case "humidity":
         if (sensor.lastData == null) return "ostatnia dana: -";
         return "ostatnia dana: " + "${sensor.lastData} %";

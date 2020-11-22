@@ -172,7 +172,7 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
     expect(find.text("sensor1"), findsNWidgets(2));
-    expect(find.text("wilgotność"), findsOneWidget);
+    expect(find.text("wilgotność gleby"), findsOneWidget);
     expect(find.text("300"), findsOneWidget);
     expect(find.text("sekund"), findsOneWidget);
     expect(find.text("Aktualna wilgotność"), findsOneWidget);

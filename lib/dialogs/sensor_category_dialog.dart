@@ -55,6 +55,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                 height: 320.0,
                 width: size.width * 2 / 3,
                 child: ListView.builder(
+                  key: Key("categories_list"),
                   itemCount: categories.length,
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
