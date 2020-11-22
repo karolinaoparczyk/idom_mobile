@@ -136,7 +136,7 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
-    await tester.tap(find.text("wilgotność").last);
+    await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
@@ -251,7 +251,7 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
-    await tester.tap(find.text("wilgotność").last);
+    await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
@@ -303,7 +303,7 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
-    await tester.tap(find.text("wilgotność").last);
+    await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
@@ -457,6 +457,54 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
     verify(await mockApi.editSensor(1, 'newname', 'breathalyser', 30))
+        .called(1);
+  });
+
+  /// tests can change category to air_humidity
+  testWidgets('change category to air_humidity', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockApi.editSensor(1, 'newname', 'air_humidity', null)).thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "200"}));
+
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "temperature",
+        frequency: 300,
+        lastData: "27.0");
+
+    EditSensor page = EditSensor(
+      storage: mockSecureStorage,
+      sensor: sensor,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    await tester.tap(find.byKey(Key('categoriesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("wilgotność powietrza").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    expect(find.text("sekundy"), findsOneWidget);
+    expect(find.text("300"), findsOneWidget);
+    expect(find.text("newname"), findsOneWidget);
+    expect(find.text("wilgotność powietrza"), findsNWidgets(2));
+
+    await tester.tap(find.byKey(Key('editSensorButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editSensor(1, 'newname', 'air_humidity', null))
         .called(1);
   });
 
