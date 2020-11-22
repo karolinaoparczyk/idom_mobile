@@ -139,8 +139,8 @@ void main() {
     expect(find.text("27.0 °C"), findsNothing);
   });
 
-  /// tests if displays humidity sensor
-  testWidgets('displays humidity sensor', (WidgetTester tester) async {
+  /// tests if displays pot humidity sensor
+  testWidgets('displays pot humidity sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
             (_) async => Future.value({"body": "[]", "statusCode": "200"}));
@@ -173,6 +173,46 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text("sensor1"), findsNWidgets(2));
     expect(find.text("wilgotność gleby"), findsOneWidget);
+    expect(find.text("300"), findsOneWidget);
+    expect(find.text("sekund"), findsOneWidget);
+    expect(find.text("Aktualna wilgotność"), findsOneWidget);
+    expect(find.text("27.0 %"), findsOneWidget);
+  });
+
+  /// tests if displays air humidity sensor
+  testWidgets('displays air humidity sensor', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.getSensorData(1)).thenAnswer(
+            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "air_humidity",
+        frequency: 300,
+        lastData: "27.0");
+
+    SensorDetails page = SensorDetails(
+      storage: mockSecureStorage,
+      sensor: sensor,
+      testApi: mockApi,
+    );
+
+    Map<String, dynamic> sensorJson = {
+      "id": 1,
+      "name": "sensor1",
+      "category": "air_humidity",
+      "frequency": 300,
+      'last_data': "27.0"
+    };
+
+    when(mockApi.getSensorDetails(1)).thenAnswer(
+            (_) async => Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+    expect(find.text("sensor1"), findsNWidgets(2));
+    expect(find.text("wilgotność powietrza"), findsOneWidget);
     expect(find.text("300"), findsOneWidget);
     expect(find.text("sekund"), findsOneWidget);
     expect(find.text("Aktualna wilgotność"), findsOneWidget);
