@@ -125,31 +125,30 @@ class _SensorsState extends State<Sensors> {
             /// refreshes sensors' list
             getSensors();
           });
-          } else if (statusCode == 401) {
-            displayProgressDialog(
-                context: _scaffoldKey.currentContext,
-                key: _keyLoaderInvalidToken,
-                text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
-            await new Future.delayed(const Duration(seconds: 3));
-            Navigator.of(_keyLoaderInvalidToken.currentContext,
-                    rootNavigator: true)
-                .pop();
-            await widget.storage.resetUserData();
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          } else if (statusCode == null) {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          } else {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          }
-         }
-        catch (e) {
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        } else if (statusCode == 401) {
+          displayProgressDialog(
+              context: _scaffoldKey.currentContext,
+              key: _keyLoaderInvalidToken,
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+          await new Future.delayed(const Duration(seconds: 3));
+          Navigator.of(_keyLoaderInvalidToken.currentContext,
+                  rootNavigator: true)
+              .pop();
+          await widget.storage.resetUserData();
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (statusCode == null) {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      } catch (e) {
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         print(e.toString());
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
@@ -241,7 +240,7 @@ class _SensorsState extends State<Sensors> {
             storage: widget.storage,
             parentWidgetType: "Sensors",
             onGoBackAction: () async {
-                await getSensors();
+              await getSensors();
             },
             onLogOutFailure: onLogOutFailure),
 
@@ -295,23 +294,27 @@ class _SensorsState extends State<Sensors> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: _sensorList.length,
-                      itemBuilder: (BuildContext buildContext, index) => Container(
-                          height: 80,
-                          child: Card(
-                              child: ListTile(
-                                  key: Key(_sensorList[index].name),
-                                  title: Text(_sensorList[index].name,
-                                      style: TextStyle(fontSize: 21.0)),
-                                  subtitle: Text(sensorData(_sensorList[index]),
-                                      style: TextStyle(
-                                          fontSize: 16.5,
-                                          color: IdomColors.textDark)),
-                                  onTap: () {
-                                    navigateToSensorDetails(_sensorList[index]);
-                                  },
-                                  leading: getCategoryImage(_sensorList[index]),
+                      itemBuilder: (BuildContext buildContext, index) =>
+                          Container(
+                              height: 80,
+                              child: Card(
+                                  child: ListTile(
+                                      key: Key(_sensorList[index].name),
+                                      title: Text(_sensorList[index].name,
+                                          style: TextStyle(fontSize: 21.0)),
+                                      subtitle: Text(
+                                          sensorData(_sensorList[index]),
+                                          style: TextStyle(
+                                              fontSize: 16.5,
+                                              color: IdomColors.textDark)),
+                                      onTap: () {
+                                        navigateToSensorDetails(
+                                            _sensorList[index]);
+                                      },
+                                      leading:
+                                          getCategoryImage(_sensorList[index]),
 
-                                  /// delete sensor button
+                                      /// delete sensor button
                                       trailing: deleteButtonTrailing(
                                           buildContext, _sensorList[index])))),
                     ),
@@ -338,8 +341,11 @@ class _SensorsState extends State<Sensors> {
       case "smoke":
         imageUrl = "assets/icons/smoke.svg";
         break;
-      case "humidity":
+      case "air_humidity":
         imageUrl = "assets/icons/humidity.svg";
+        break;
+      case "humidity":
+        imageUrl = "assets/icons/pot.svg";
         break;
       case "temperature":
         imageUrl = "assets/icons/thermometer.svg";
@@ -352,15 +358,13 @@ class _SensorsState extends State<Sensors> {
         width: 35,
         child: Container(
             padding: EdgeInsets.only(top: 5),
-            alignment: Alignment.topRight,
-            child: SvgPicture.asset(
-                imageUrl,
+            alignment: Alignment.centerRight,
+            child: SvgPicture.asset(imageUrl,
                 matchTextDirection: false,
                 width: 32,
                 height: 32,
                 color: Theme.of(context).iconTheme.color,
-                key: Key(imageUrl)
-            )));
+                key: Key(imageUrl))));
   }
 
   Future<void> _pullRefresh() async {
@@ -395,19 +399,26 @@ class _SensorsState extends State<Sensors> {
   }
 
   String sensorData(Sensor sensor) {
+    var doubleData;
+    var stringData;
+    if (sensor.lastData != null) {
+      doubleData = double.tryParse(sensor.lastData);
+      stringData = doubleData.toStringAsFixed(2);
+    }
     switch (sensor.category) {
       case "water_temp":
       case "temperature":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${sensor.lastData} °C";
+        return "ostatnia dana: " + "${stringData} °C";
         break;
+      case "air_humidity":
       case "humidity":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${sensor.lastData} %";
+        return "ostatnia dana: " + "${stringData} %";
         break;
       case "breathalyser":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${sensor.lastData} ‰";
+        return "ostatnia dana: " + "${stringData} ‰";
         break;
       case "smoke":
       case "rain_sensor":

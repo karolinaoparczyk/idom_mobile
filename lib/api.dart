@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -30,7 +31,7 @@ class Api {
       "username": username,
       "password": password,
     }).timeout(Duration(seconds: 5));
-    return [result.body, result.statusCode];
+    return [utf8.decode(result.body.runes.toList()), result.statusCode];
   }
 
   /// registers user
@@ -61,7 +62,7 @@ class Api {
     var result = await httpClient.get('$url/users/detail/$username', headers: {
       HttpHeaders.authorizationHeader: "Token $userToken"
     }).timeout(Duration(seconds: 5));
-    return [result.body, result.statusCode];
+    return [ utf8.decode(result.body.runes.toList()), result.statusCode];
   }
 
   /// requests logging out
@@ -111,7 +112,7 @@ class Api {
         HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 5));
       var resDict = {
-        "body": res.body.toString(),
+        "body": utf8.decode(res.body.runes.toList()),
         "statusCode": res.statusCode.toString(),
       };
       return resDict;
@@ -140,7 +141,7 @@ class Api {
             body: body)
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "body": res.body.toString(),
+      "body": utf8.decode(res.body.runes.toList()),
       "statusCode": res.statusCode.toString(),
     };
     return resDict;
@@ -204,7 +205,7 @@ class Api {
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "body": res.body.toString(),
+      "body": utf8.decode(res.body.runes.toList()),
       "statusCode": res.statusCode.toString(),
     };
     return resDict;
@@ -236,7 +237,7 @@ class Api {
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "bodySen": resSen.body.toString(),
+      "bodySen": utf8.decode(resSen.body.runes.toList()),
       "statusCodeSen": resSen.statusCode.toString(),
     };
     return resDict;
@@ -267,7 +268,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
-        "bodySensors": resSensors.body.toString(),
+        "bodySensors": utf8.decode(resSensors.body.runes.toList()),
         "statusCodeSensors": resSensors.statusCode.toString(),
       };
       return responses;
@@ -287,7 +288,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
-        "body": res.body.toString(),
+        "body": utf8.decode(res.body.runes.toList()),
         "statusCode": res.statusCode.toString(),
       };
       return responses;
@@ -308,7 +309,7 @@ class Api {
       }).timeout(Duration(seconds: 10));
 
       Map<String, String> responses = {
-        "bodySensorData": resFrequency.body.toString(),
+        "bodySensorData": utf8.decode(resFrequency.body.runes.toList()),
         "statusSensorData": resFrequency.statusCode.toString(),
       };
       return responses;
@@ -328,7 +329,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> response = {
-        "body": res.body.toString(),
+        "body": utf8.decode(res.body.runes.toList()),
         "statusCode": res.statusCode.toString(),
       };
       return response;
@@ -393,7 +394,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> response = {
-        "body": res.body.toString(),
+        "body": utf8.decode(res.body.runes.toList()),
         "statusCode": res.statusCode.toString(),
       };
       return response;
@@ -408,7 +409,7 @@ class Api {
       String name, String category, bool data) async {
     await getApiAddress();
     await getToken();
-    var resSen = await httpClient.post(
+    var res = await httpClient.post(
       '$url/drivers/add',
       headers: {HttpHeaders.authorizationHeader: "Token $token"},
       body: {
@@ -418,8 +419,8 @@ class Api {
       },
     ).timeout(Duration(seconds: 5));
     var resDict = {
-      "body": resSen.body.toString(),
-      "statusCode": resSen.statusCode.toString(),
+      "body": utf8.decode(res.body.runes.toList()),
+      "statusCode": res.statusCode.toString(),
     };
     return resDict;
   }
@@ -445,7 +446,7 @@ class Api {
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "body": res.body.toString(),
+      "body": utf8.decode(res.body.runes.toList()),
       "statusCode": res.statusCode.toString(),
     };
     return resDict;
@@ -461,7 +462,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
-        "body": res.body.toString(),
+        "body": utf8.decode(res.body.runes.toList()),
         "statusCode": res.statusCode.toString(),
       };
       return responses;

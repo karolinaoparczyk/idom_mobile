@@ -24,7 +24,7 @@ dependencies:
   http:
   flutter_secure_storage: 3.3.3
   cookie_jar: ^1.0.0
-  charts_flutter:
+  syncfusion_flutter_charts: ^18.3.51
   flutter_svg:
   flutter_inappwebview:
   firebase_messaging: ^5.1.2
@@ -33,7 +33,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  test:
   mockito:
   build_runner:
 

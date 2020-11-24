@@ -440,26 +440,26 @@ class _EditSensorState extends State<EditSensor> {
         int valInt = int.tryParse(_frequencyValueController.text);
         if (valInt == null) {
           fieldsValidationMessage =
-              'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+          'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
           setState(() {});
           return;
         }
 
         /// validates if frequency value is valid for given frequency units
         var validFrequencyValue =
-            SensorFrequencyFieldValidator.isFrequencyValueValid(
-                _frequencyValueController.text, frequencyUnitsValue);
+        SensorFrequencyFieldValidator.isFrequencyValueValid(
+            _frequencyValueController.text, frequencyUnitsValue);
         if (!validFrequencyValue) {
           setState(() {
             fieldsValidationMessage =
-                "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
+            "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
           });
         } else {
           setState(() {
             fieldsValidationMessage = null;
           });
         }
-
+      }
         /// converts frequency value to seconds
         frequencyInSeconds = int.parse(_frequencyValueController.text);
         if (frequencyUnitsValue != "seconds") {
@@ -469,7 +469,7 @@ class _EditSensorState extends State<EditSensor> {
             frequencyInSeconds = frequencyInSeconds * 60 * 60;
           else if (frequencyUnitsValue == "days")
             frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
-        }
+
       }
       if (fieldsValidationMessage == null) {
         if (changedName || changedCategory || changedFrequencyValue) {
