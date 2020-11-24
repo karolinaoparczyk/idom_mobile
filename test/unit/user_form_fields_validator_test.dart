@@ -1,5 +1,5 @@
-import 'package:test/test.dart';
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:idom/utils/validators.dart';
 
 void main() {
