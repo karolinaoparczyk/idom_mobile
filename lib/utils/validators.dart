@@ -139,6 +139,20 @@ class CategoryFieldValidator {
   }
 }
 
+/// validates last days amount field
+class LastDaysAmountFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane';
+    }
+    var intValue = int.tryParse(value);
+    if (intValue == null || intValue < 1 || intValue > 30){
+      return "Podaj liczbę całkowitą z przedziału 1 - 30";
+    }
+    return null;
+  }
+}
+
 /// validates frequency units field
 class FrequencyUnitsFieldValidator {
   static String validate(String value) {

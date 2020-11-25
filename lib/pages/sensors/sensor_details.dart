@@ -581,7 +581,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                         borderRadius: BorderRadius.circular(30.0),
                         border: Border.all(),
                         color: IdomColors.lighten(
-                            IdomColors.additionalColor, 0.1)),
+                            IdomColors.additionalColor, 0.2)),
                     padding: EdgeInsets.all(8.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

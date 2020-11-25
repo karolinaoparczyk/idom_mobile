@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/enter_email.dart';
+import 'package:idom/pages/setup/settings.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/pages/setup/sign_up.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/button.dart';
 
-import 'edit_api_address.dart';
 
 /// allows signing in or signing up
 class Front extends StatefulWidget {
@@ -150,7 +150,7 @@ class _FrontState extends State<Front> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EditApiAddress(storage: widget.storage),
+            builder: (context) => Settings(storage: widget.storage),
             fullscreenDialog: true));
 
     /// displays success message when server address is set

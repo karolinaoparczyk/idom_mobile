@@ -1,6 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-class Account {
+class Account extends Equatable {
   final int id;
   String username;
   String email;
@@ -20,6 +21,9 @@ class Account {
     @required this.isStaff,
     @required this.isActive,
   });
+
+  @override
+  List<Object> get props => [id, username];
 
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
@@ -47,7 +51,7 @@ class Account {
   }
 }
 
-class Sensor {
+class Sensor extends Equatable {
   final int id;
   String name;
   String category;
@@ -62,6 +66,9 @@ class Sensor {
     @required this.lastData,
   });
 
+  @override
+  List<Object> get props => [id, name];
+
   factory Sensor.fromJson(Map<String, dynamic> json) {
     return Sensor(
         id: json['id'] as int,
@@ -72,7 +79,7 @@ class Sensor {
   }
 }
 
-class SensorData {
+class SensorData extends Equatable {
   int id;
   String sensorName;
   String data;
@@ -85,6 +92,9 @@ class SensorData {
     @required this.deliveryTime,
   });
 
+  @override
+  List<Object> get props => [id, sensorName];
+
   factory SensorData.fromJson(Map<String, dynamic> json, int id) {
     return SensorData(
         id: id,
@@ -96,12 +106,15 @@ class SensorData {
   }
 }
 
-class Camera {
+class Camera extends Equatable {
   int id;
   String name;
   String ipAddress;
 
   Camera({@required this.id, this.name, this.ipAddress});
+
+  @override
+  List<Object> get props => [id, name];
 
   factory Camera.fromJson(Map<String, dynamic> json) {
     return Camera(
@@ -111,7 +124,7 @@ class Camera {
   }
 }
 
-class Driver {
+class Driver extends Equatable {
   int id;
   String name;
   String category;
@@ -120,6 +133,9 @@ class Driver {
 
   Driver(
       {@required this.id, this.name, this.category, this.ipAddress, this.data});
+
+  @override
+  List<Object> get props => [id, name];
 
   factory Driver.fromJson(Map<String, dynamic> json) {
     return Driver(

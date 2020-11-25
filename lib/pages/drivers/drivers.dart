@@ -30,7 +30,6 @@ class _DriversState extends State<Drivers> {
   List<Driver> _driverList;
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
-  String _token;
 
   @override
   void initState() {
@@ -41,13 +40,8 @@ class _DriversState extends State<Drivers> {
     getDrivers();
   }
 
-  Future<void> getUserToken() async {
-    _token = await widget.storage.getToken();
-  }
-
   /// returns list of drivers
   Future<void> getDrivers() async {
-    await getUserToken();
     try {
       /// gets drivers
       var res = await api.getDrivers();

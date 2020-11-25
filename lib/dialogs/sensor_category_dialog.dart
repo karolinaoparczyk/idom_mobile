@@ -44,7 +44,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                child: Text("Kategoria",
+                child: Text("Wybierz ategorię",
                     style: Theme.of(context)
                         .textTheme
                         .headline5

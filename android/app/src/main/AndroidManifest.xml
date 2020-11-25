@@ -10,7 +10,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher_home"
         android:label="IDOM"
-        android:networkSecurityConfig="@xml/network_security_config">
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true">
         <provider
             android:name="com.google.firebase.provider.FirebaseInitProvider"
             android:authorities="${applicationId}.firebaseinitprovider"

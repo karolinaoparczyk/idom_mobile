@@ -8,7 +8,7 @@ Widget buttonWidget(
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       SizedBox(
-        width: 160,
+        width: 180,
         child: RaisedButton(
             elevation: 15,
             key: Key(text),
@@ -17,11 +17,19 @@ Widget buttonWidget(
                 ? Row(
               mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(text, style: TextStyle(
-                          color: IdomColors.textLight,
-                          fontSize: 21,
-                          fontWeight: FontWeight.normal)),
-                      Icon(iconData, color: IdomColors.textLight),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:28.0, right: 8.0),
+                          child: Text(text, style: TextStyle(
+                              color: IdomColors.textLight,
+                              fontSize: 21,
+                              fontWeight: FontWeight.normal)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal:10.0),
+                        child: Icon(iconData, color: IdomColors.textLight),
+                      ),
                   ])
                 : Text(text,
                     style: TextStyle(

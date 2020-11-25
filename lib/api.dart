@@ -475,6 +475,7 @@ class Api {
   /// requests deleting driver
   Future<int> deleteDriver(int id) async {
     await getApiAddress();
+    await getToken();
     try {
       var res = await httpClient.delete('$url/drivers/delete/$id', headers: {
         HttpHeaders.authorizationHeader: "Token $token"
@@ -489,11 +490,38 @@ class Api {
   /// requests starting driver
   Future<int> startDriver(String name) async {
     await getApiAddress();
+    await getToken();
     try {
       var res = await httpClient.post('$url/drivers/action',
           headers: {HttpHeaders.authorizationHeader: "Token $token"},
           body: {"name": name}).timeout(Duration(seconds: 5));
       return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+
+  /// requests generating csv file with sensor data
+  Future<Map<String, dynamic>> generateFile(
+      List<String> sensorIds, List<String> categoriesValues, int days) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.post('$url/sensors_data/csv', headers: {
+        HttpHeaders.authorizationHeader: "Token $token",
+        HttpHeaders.contentTypeHeader: 'application/json',
+      }, body: jsonEncode({
+        "sensors_ids": sensorIds,
+        "categories": categoriesValues,
+        "days": days.toString()
+      })).timeout(Duration(seconds: 5));
+      Map<String, dynamic> response = {
+        "body": utf8.decode(res.body.runes.toList()),
+        "statusCode": res.statusCode,
+      };
+      return response;
     } catch (e) {
       print(e);
     }
