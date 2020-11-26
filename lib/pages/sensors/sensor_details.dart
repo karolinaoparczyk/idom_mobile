@@ -51,7 +51,8 @@ class _SensorDetailsState extends State<SensorDetails> {
     dataLoaded = false;
     _seriesData = List<SensorData>();
     measurementTimeSelected = [true, false, false];
-    getSensorData().then((value) => setState(() {
+    getSensorData().then((value) =>
+        setState(() {
           if (sensorData != null && sensorData.length > 0) {
             getDataForChart();
           }
@@ -128,17 +129,17 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (measurementTimeSelected[0] == true) {
       _seriesData = sensorData
           .where((data) =>
-              data.deliveryTime.year == now.year &&
-              data.deliveryTime.month == now.month &&
-              data.deliveryTime.day == now.day)
+      data.deliveryTime.year == now.year &&
+          data.deliveryTime.month == now.month &&
+          data.deliveryTime.day == now.day)
           .toList();
 
       /// this month
     } else if (measurementTimeSelected[1] == true) {
       _seriesData = sensorData
           .where((data) =>
-              data.deliveryTime.year == now.year &&
-              data.deliveryTime.month == now.month)
+      data.deliveryTime.year == now.year &&
+          data.deliveryTime.month == now.month)
           .toList();
 
       /// last 30 days
@@ -218,11 +219,12 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
                                     child: Text("Ogólne",
-                                        style: Theme.of(context)
+                                        style: Theme
+                                            .of(context)
                                             .textTheme
                                             .bodyText1
                                             .copyWith(
-                                                fontWeight: FontWeight.normal)),
+                                            fontWeight: FontWeight.normal)),
                                   ),
                                 ],
                               ))),
@@ -261,8 +263,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                               child: Text(
                                   SensorCategories.values
                                       .where((element) =>
-                                          element['value'] ==
-                                          widget.sensor.category)
+                                  element['value'] ==
+                                      widget.sensor.category)
                                       .first['text'],
                                   style: TextStyle(fontSize: 21.0)))),
                       if (widget.sensor.category != "rain_sensor")
@@ -281,12 +283,13 @@ class _SensorDetailsState extends State<SensorDetails> {
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5.0),
                                       child: Text("Dane z czujnika",
-                                          style: Theme.of(context)
+                                          style: Theme
+                                              .of(context)
                                               .textTheme
                                               .bodyText1
                                               .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
+                                              fontWeight:
+                                              FontWeight.normal)),
                                     ),
                                   ],
                                 ))),
@@ -308,18 +311,19 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 left: 52.5, top: 0.0, right: 30.0, bottom: 0.0),
                             child: SizedBox(
                                 child: Row(children: <Widget>[
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(widget.sensor.frequency.toString(),
+                                  Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start,
+                                      children: <Widget>[
+                                        Text(widget.sensor.frequency.toString(),
+                                            style: TextStyle(fontSize: 21.0)),
+                                      ]),
+                                  SizedBox(width: 5.0),
+                                  Column(children: <Widget>[
+                                    Text(getProperUnitsName(),
                                         style: TextStyle(fontSize: 21.0)),
-                                  ]),
-                              SizedBox(width: 5.0),
-                              Column(children: <Widget>[
-                                Text(getProperUnitsName(),
-                                    style: TextStyle(fontSize: 21.0)),
-                              ])
-                            ]))),
+                                  ])
+                                ]))),
                       if (widget.sensor.category != "rain_sensor" &&
                           widget.sensor.category != "smoke")
                         Padding(
@@ -359,12 +363,13 @@ class _SensorDetailsState extends State<SensorDetails> {
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5.0),
                                       child: Text("Okres wyświetlanych danych",
-                                          style: Theme.of(context)
+                                          style: Theme
+                                              .of(context)
                                               .textTheme
                                               .bodyText1
                                               .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
+                                              fontWeight:
+                                              FontWeight.normal)),
                                     ),
                                   ],
                                 ))),
@@ -405,8 +410,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 setState(() {
                                   if (measurementTimeSelected[index] == false) {
                                     for (int i = 0;
-                                        i < measurementTimeSelected.length;
-                                        i++) {
+                                    i < measurementTimeSelected.length;
+                                    i++) {
                                       if (i == index) {
                                         measurementTimeSelected[i] = true;
                                       } else {
@@ -425,7 +430,10 @@ class _SensorDetailsState extends State<SensorDetails> {
                       if (widget.sensor.category != "rain_sensor" &&
                           widget.sensor.category != "smoke")
                         Container(
-                            width: MediaQuery.of(context).size.width - 40,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width - 40,
                             padding: EdgeInsets.only(
                                 left: 10.0,
                                 top: 20.0,
@@ -441,7 +449,9 @@ class _SensorDetailsState extends State<SensorDetails> {
   String getProperUnitsName() {
     var lastDigitFrequencyValue = widget.sensor.frequency
         .toString()
-        .substring(widget.sensor.frequency.toString().length - 1);
+        .substring(widget.sensor.frequency
+        .toString()
+        .length - 1);
     var firstVersion = "sekundy";
     var secondVersion = "sekund";
     if (RegExp(r"^[0-1|5-9]").hasMatch(lastDigitFrequencyValue))
@@ -466,6 +476,9 @@ class _SensorDetailsState extends State<SensorDetails> {
       case "breathalyser":
         data = "${widget.sensor.lastData} ‰";
         break;
+      case "atmo_pressure":
+        data = "${widget.sensor.lastData} hPa";
+        break;
     }
     return data;
   }
@@ -481,6 +494,9 @@ class _SensorDetailsState extends State<SensorDetails> {
       case "humidity":
         label = "Aktualna wilgotność";
         break;
+      case "atmo_pressure":
+        label = "Aktualne ciśnienie";
+        break;
       case "breathalyser":
         label = "Ostatni pomiar";
         break;
@@ -492,14 +508,15 @@ class _SensorDetailsState extends State<SensorDetails> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EditSensor(
-                storage: widget.storage,
-                sensor: widget.sensor,
-                testApi: widget.testApi),
+            builder: (context) =>
+                EditSensor(
+                    storage: widget.storage,
+                    sensor: widget.sensor,
+                    testApi: widget.testApi),
             fullscreenDialog: true));
     if (result == true) {
       final snackBar =
-          new SnackBar(content: new Text("Zapisano dane czujnika."));
+      new SnackBar(content: new Text("Zapisano dane czujnika."));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshSensorDetails();
     }
@@ -514,7 +531,8 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);
         Sensor refreshedSensor = Sensor.fromJson(body);
-        getSensorData().then((value) => setState(() {
+        getSensorData().then((value) =>
+            setState(() {
               widget.sensor = refreshedSensor;
               if (sensorData != null && sensorData.length > 0) {
                 getDataForChart();
@@ -562,10 +580,10 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (noDataForChart) {
       return Container(
           child: Padding(
-        padding: const EdgeInsets.only(left: 22.5),
-        child: Text("Brak danych z wybranego okresu.",
-            style: TextStyle(fontSize: 16.5)),
-      ));
+            padding: const EdgeInsets.only(left: 22.5),
+            child: Text("Brak danych z wybranego okresu.",
+                style: TextStyle(fontSize: 16.5)),
+          ));
     } else if (dataLoaded) {
       return SfCartesianChart(
           enableAxisAnimation: true,
@@ -592,7 +610,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                           textAlign: TextAlign.center,
                         ),
                         Text(
-                          '${data.data} ${getFormattedSensorDataUnitsForChart()}',
+                          '${data
+                              .data} ${getFormattedSensorDataUnitsForChart()}',
                           style: TextStyle(fontSize: 16.5),
                           textAlign: TextAlign.center,
                         ),
@@ -601,37 +620,37 @@ class _SensorDetailsState extends State<SensorDetails> {
               }),
           series: widget.sensor.category == "breathalyser"
               ? [
-                  ScatterSeries<SensorData, String>(
-                      sortingOrder: SortingOrder.ascending,
-                      sortFieldValueMapper: (SensorData sensorData, _) =>
-                          sensorData.deliveryTime,
-                      color: IdomColors.additionalColor,
-                      dataSource: _seriesData,
-                      xValueMapper: (SensorData sensorData, _) {
-                        return DateFormat("yyy-MM-dd\nhh:mm:ss")
-                            .format(sensorData.deliveryTime);
-                      },
-                      yValueMapper: (SensorData sensorData, _) =>
-                          double.parse(sensorData.data),
-                      markerSettings: MarkerSettings(isVisible: true),
-                      dataLabelSettings: DataLabelSettings(isVisible: false))
-                ]
+            ScatterSeries<SensorData, String>(
+                sortingOrder: SortingOrder.ascending,
+                sortFieldValueMapper: (SensorData sensorData, _) =>
+                sensorData.deliveryTime,
+                color: IdomColors.additionalColor,
+                dataSource: _seriesData,
+                xValueMapper: (SensorData sensorData, _) {
+                  return DateFormat("yyy-MM-dd\nhh:mm:ss")
+                      .format(sensorData.deliveryTime);
+                },
+                yValueMapper: (SensorData sensorData, _) =>
+                    double.parse(sensorData.data),
+                markerSettings: MarkerSettings(isVisible: true),
+                dataLabelSettings: DataLabelSettings(isVisible: false))
+          ]
               : [
-                  SplineSeries<SensorData, String>(
-                      sortingOrder: SortingOrder.ascending,
-                      sortFieldValueMapper: (SensorData sensorData, _) =>
-                          sensorData.deliveryTime,
-                      color: IdomColors.additionalColor,
-                      dataSource: _seriesData,
-                      xValueMapper: (SensorData sensorData, _) {
-                        return DateFormat("yyy-MM-dd\nhh:mm:ss")
-                            .format(sensorData.deliveryTime);
-                      },
-                      yValueMapper: (SensorData sensorData, _) =>
-                          double.parse(sensorData.data),
-                      markerSettings: MarkerSettings(isVisible: true),
-                      dataLabelSettings: DataLabelSettings(isVisible: false))
-                ]);
+            SplineSeries<SensorData, String>(
+                sortingOrder: SortingOrder.ascending,
+                sortFieldValueMapper: (SensorData sensorData, _) =>
+                sensorData.deliveryTime,
+                color: IdomColors.additionalColor,
+                dataSource: _seriesData,
+                xValueMapper: (SensorData sensorData, _) {
+                  return DateFormat("yyy-MM-dd\nhh:mm:ss")
+                      .format(sensorData.deliveryTime);
+                },
+                yValueMapper: (SensorData sensorData, _) =>
+                    double.parse(sensorData.data),
+                markerSettings: MarkerSettings(isVisible: true),
+                dataLabelSettings: DataLabelSettings(isVisible: false))
+          ]);
     }
     return null;
   }
@@ -649,6 +668,9 @@ class _SensorDetailsState extends State<SensorDetails> {
         break;
       case "breathalyser":
         data = "‰";
+        break;
+      case "atmo_pressure":
+        data = "hPa";
         break;
     }
     return data;

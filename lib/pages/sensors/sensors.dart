@@ -332,6 +332,9 @@ class _SensorsState extends State<Sensors> {
   Widget getCategoryImage(Sensor sensor) {
     var imageUrl;
     switch (sensor.category) {
+      case "atmo_pressure":
+        imageUrl = "assets/icons/barometer.svg";
+        break;
       case "water_temp":
         imageUrl = "assets/icons/temperature.svg";
         break;
@@ -419,6 +422,10 @@ class _SensorsState extends State<Sensors> {
       case "breathalyser":
         if (sensor.lastData == null) return "ostatnia dana: -";
         return "ostatnia dana: " + "${stringData} ‰";
+        break;
+      case "atmo_pressure":
+        if (sensor.lastData == null) return "ostatnia dana: -";
+        return "ostatnia dana: " + "${stringData} hPa";
         break;
       case "smoke":
       case "rain_sensor":
