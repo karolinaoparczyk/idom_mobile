@@ -11,6 +11,7 @@ import 'package:idom/pages/drivers/drivers.dart';
 import 'package:idom/pages/setup/settings.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class IdomDrawer extends StatefulWidget {
   IdomDrawer({
@@ -205,7 +206,8 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     }
                   })
                 : SizedBox(),
-            customMenuTile("assets/icons/motion-sensor.svg", "Czujniki", () async {
+            customMenuTile("assets/icons/motion-sensor.svg", "Czujniki",
+                () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Sensors") {
                 await Navigator.of(context).popUntil((route) => route.isFirst);
@@ -248,7 +250,8 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/download.svg", "Pobierz dane", () async {
+            customMenuTile("assets/icons/download.svg", "Pobierz dane",
+                () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "DataDownload") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -264,49 +267,22 @@ class _IdomDrawerState extends State<IdomDrawer> {
               Navigator.pop(context);
               await _logOut();
             }),
+            customMenuTile("assets/icons/info.svg", "O projekcie", () async {
+              Navigator.pop(context);
+              _navigateToProjectWebPage();
+            }),
           ]),
         ),
       ),
     );
   }
 
-  Widget getItemImage(String title) {
-    var imageUrl;
-    switch (title) {
-      case "Moje konto":
-        imageUrl = "assets/icons/man.svg";
-        break;
-      case "Wszystkie konta":
-        imageUrl = "assets/icons/team.svg";
-        break;
-      case "Czujniki":
-        imageUrl = "assets/icons/motion-sensor.svg";
-        break;
-      case "Kamery":
-        imageUrl = "assets/icons/video-camera.svg";
-        break;
-        case "Sterowniki":
-        imageUrl = "assets/icons/tap.svg";
-        break;
-        case "Ustawienia":
-          imageUrl = "assets/icons/settings.svg";
-          break;
-          case "Wyloguj":
-        imageUrl = "assets/icons/logout.svg";
-        break;
+  _navigateToProjectWebPage() async {
+    try {
+      await launch("https://adriannajmrocki.github.io/idom-website/");
+    } catch (e) {
+      throw 'Could not launch page';
     }
-    return SizedBox(
-        width: 25,
-        child: Container(
-            padding: EdgeInsets.only(top: 5),
-            alignment: Alignment.topRight,
-            child: SvgPicture.asset(
-              imageUrl,
-              matchTextDirection: false,
-              width: 25,
-              height: 25,
-              color: IdomColors.additionalColor,
-            )));
   }
 
   /// logs the user out of the app
