@@ -292,6 +292,7 @@ class _SensorsState extends State<Sensors> {
                     padding: const EdgeInsets.only(
                         left: 10.0, top: 10, right: 10.0, bottom: 0.0),
                     child: ListView.builder(
+                      key: Key("SensorsList"),
                       shrinkWrap: true,
                       itemCount: _sensorList.length,
                       itemBuilder: (BuildContext buildContext, index) =>
@@ -412,20 +413,20 @@ class _SensorsState extends State<Sensors> {
       case "water_temp":
       case "temperature":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${stringData} °C";
+        return "ostatnia dana: " + "$stringData °C";
         break;
       case "air_humidity":
       case "humidity":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${stringData} %";
+        return "ostatnia dana: " + "$stringData %";
         break;
       case "breathalyser":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${stringData} ‰";
+        return "ostatnia dana: " + "$stringData ‰";
         break;
       case "atmo_pressure":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${stringData} hPa";
+        return "ostatnia dana: " + "$stringData hPa";
         break;
       case "smoke":
       case "rain_sensor":

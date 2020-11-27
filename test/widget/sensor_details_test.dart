@@ -24,7 +24,7 @@ void main() {
   testWidgets('displays air temperature sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
@@ -46,8 +46,8 @@ void main() {
       "frequency": 300,
       'last_data': "27.0"
     };
-    when(mockApi.getSensorDetails(1)).thenAnswer(
-            (_) async => Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
+    when(mockApi.getSensorDetails(1)).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
@@ -63,7 +63,7 @@ void main() {
   testWidgets('displays water temperature sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
@@ -86,8 +86,8 @@ void main() {
       'last_data': "27.0"
     };
 
-    when(mockApi.getSensorDetails(1)).thenAnswer(
-            (_) async => Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
+    when(mockApi.getSensorDetails(1)).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
@@ -103,7 +103,7 @@ void main() {
   testWidgets('displays rain sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
@@ -126,8 +126,8 @@ void main() {
       'last_data': "27.0"
     };
 
-    when(mockApi.getSensorDetails(1)).thenAnswer(
-            (_) async => Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
+    when(mockApi.getSensorDetails(1)).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
@@ -143,7 +143,7 @@ void main() {
   testWidgets('displays pot humidity sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
@@ -166,8 +166,8 @@ void main() {
       'last_data': "27.0"
     };
 
-    when(mockApi.getSensorDetails(1)).thenAnswer(
-            (_) async => Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
+    when(mockApi.getSensorDetails(1)).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
@@ -183,7 +183,7 @@ void main() {
   testWidgets('displays air humidity sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
@@ -206,8 +206,8 @@ void main() {
       'last_data': "27.0"
     };
 
-    when(mockApi.getSensorDetails(1)).thenAnswer(
-            (_) async => Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
+    when(mockApi.getSensorDetails(1)).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
@@ -223,7 +223,7 @@ void main() {
   testWidgets('displays breathalyser sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
@@ -246,8 +246,8 @@ void main() {
       'last_data': "1.0"
     };
 
-    when(mockApi.getSensorDetails(1)).thenAnswer(
-            (_) async => Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
+    when(mockApi.getSensorDetails(1)).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(sensorJson), "statusCode": "200"}));
 
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
@@ -258,37 +258,75 @@ void main() {
     expect(find.text("Ostatni pomiar"), findsOneWidget);
     expect(find.text("1.0 ‰"), findsOneWidget);
   });
-      /// tests if displays smoke correctly
-      testWidgets('displays smoke correctly', (WidgetTester tester) async {
-        MockApi mockApi = MockApi();
 
-        MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken()).thenAnswer(
-                (_) async => Future.value("token"));
-        when(mockSecureStorage.resetUserData()).thenAnswer(
-                (_) async => Future.value());
+  /// tests if displays smoke correctly
+  testWidgets('displays smoke correctly', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.getSensorData(1)).thenAnswer(
+            (_) async => Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
 
-        Sensor sensor = Sensor(
-            id: 1,
-            name: "sensor1",
-            category: "smoke",
-            frequency: 30,
-            lastData: "1.0");
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+    when(mockSecureStorage.resetUserData())
+        .thenAnswer((_) async => Future.value());
 
-        SensorDetails page = SensorDetails(
-          storage: mockSecureStorage,
-          sensor: sensor,
-          testApi: mockApi,
-        );
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "smoke",
+        frequency: 30,
+        lastData: "1.0");
 
-        await tester.pumpWidget(makeTestableWidget(child: page));
+    SensorDetails page = SensorDetails(
+      storage: mockSecureStorage,
+      sensor: sensor,
+      testApi: mockApi,
+    );
 
-        expect(find.text("sensor1"), findsNWidgets(2));
-        expect(find.text("stan powietrza"), findsOneWidget);
-        expect(find.text("30"), findsOneWidget);
-        expect(find.text("sekund"), findsOneWidget);
-        expect(find.text("Ostatni pomiar"), findsNothing);
-        expect(find.text("Aktualna wilgotność"), findsNothing);
-        expect(find.text("Aktualna temperatura"), findsNothing);
-      });
+    await tester.pumpWidget(makeTestableWidget(child: page));
+
+    expect(find.text("sensor1"), findsNWidgets(2));
+    expect(find.text("stan powietrza"), findsOneWidget);
+    expect(find.text("30"), findsOneWidget);
+    expect(find.text("sekund"), findsOneWidget);
+    expect(find.text("Ostatni pomiar"), findsNothing);
+    expect(find.text("Aktualna wilgotność"), findsNothing);
+    expect(find.text("Aktualna temperatura"), findsNothing);
+  });
+
+  /// tests if displays atmospheric pressure sensor correctly
+  testWidgets('displays atmospheric pressure sensor correctly', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.getSensorData(1)).thenAnswer(
+            (_) async => Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+    when(mockSecureStorage.resetUserData())
+        .thenAnswer((_) async => Future.value());
+
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "atmo_pressure",
+        frequency: 300,
+        lastData: "1.0");
+
+    SensorDetails page = SensorDetails(
+      storage: mockSecureStorage,
+      sensor: sensor,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+
+    expect(find.text("sensor1"), findsNWidgets(2));
+    expect(find.text("ciśnienie atmosferyczne"), findsOneWidget);
+    expect(find.text("300"), findsOneWidget);
+    expect(find.text("sekund"), findsOneWidget);
+    expect(find.text("Aktualne ciśnienie"), findsOneWidget);
+    expect(find.text("Aktualna wilgotność"), findsNothing);
+    expect(find.text("Aktualna temperatura"), findsNothing);
+  });
 }

@@ -302,6 +302,13 @@ void main() {
         "category": "air_humidity",
         "frequency": 300,
         "last_data": "27.0"
+      },
+      {
+        "id": 8,
+        "name": "sensor8",
+        "category": "atmo_pressure",
+        "frequency": 300,
+        "last_data": "27.0"
       }
     ];
     when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
@@ -321,5 +328,10 @@ void main() {
     expect(find.byKey(Key("assets/icons/breathalyser.svg")), findsOneWidget);
     expect(find.byKey(Key("assets/icons/temperature.svg")), findsOneWidget);
     expect(find.byKey(Key("assets/icons/humidity.svg")), findsOneWidget);
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('SensorsList')), const Offset(0.0, -300));
+    await tester.pump();
+    expect(find.byKey(Key("assets/icons/barometer.svg")), findsOneWidget);
   });
 }
