@@ -134,13 +134,16 @@ class _SensorDetailsState extends State<SensorDetails> {
           data.deliveryTime.day == now.day)
           .toList();
 
-      /// this month
+      /// last 2 weeks
     } else if (measurementTimeSelected[1] == true) {
-      _seriesData = sensorData
-          .where((data) =>
-      data.deliveryTime.year == now.year &&
-          data.deliveryTime.month == now.month)
-          .toList();
+      _seriesData.clear();
+      for (SensorData data in sensorData){
+        var date = DateTime(data.deliveryTime.year, data.deliveryTime.month, data.deliveryTime.day);
+        int diff = now.difference(date).inDays;
+        if (diff < 14){
+          _seriesData.add(data);
+        }
+      }
 
       /// last 30 days
     } else if (measurementTimeSelected[2] == true) {
@@ -397,7 +400,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            child: Text("Ten miesiąc")))),
+                                            child:
+                                                Text("Ostatnie 2 tygodnie")))),
                                 Container(
                                     child: Center(
                                         child: Padding(
