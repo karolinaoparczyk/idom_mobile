@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:idom/models.dart';
 
-class ChooseMultipleSensorsDialog extends StatefulWidget {
-  ChooseMultipleSensorsDialog({this.sensors, this.selectedSensors});
+class ChooseSensorDialog extends StatefulWidget {
+  ChooseSensorDialog({this.sensors, this.currentSensor});
 
   final List<Sensor> sensors;
-  final List<Sensor> selectedSensors;
+  final Sensor currentSensor;
 
   @override
-  _ChooseMultipleSensorsDialogState createState() => _ChooseMultipleSensorsDialogState();
+  _ChooseSensorDialogState createState() => _ChooseSensorDialogState();
 }
 
-class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialog> {
+class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
   bool searchBarVisible;
   TextEditingController _searchBarController = TextEditingController();
-  List<Sensor> tempSelectedSensors = List<Sensor>();
+  Sensor selectedSensor;
 
   @override
   void initState() {
     super.initState();
     searchBarVisible = false;
-    tempSelectedSensors.addAll(widget.selectedSensors);
+    selectedSensor = widget.currentSensor;
     _searchBarController.addListener(() {
       setState(() {});
     });
@@ -75,7 +75,7 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        "Wybierz czujniki",
+                        "Wybierz czujnik",
                         style: Theme.of(context)
                             .textTheme
                             .headline5
@@ -101,26 +101,20 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                       .toLowerCase()
                       .contains(_searchBarController.text.toLowerCase()))
                       : widget.sensors)
-                      .map((sensor) => GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {},
-                      child: CheckboxListTile(
-                        onChanged: (checked) {
-                          setState(() {
-                            checked
-                                ?tempSelectedSensors.add(sensor)
-                                :  tempSelectedSensors.remove(sensor);
-                          });
-                        },
-                        value:  tempSelectedSensors.contains(sensor),
-                        dense: true,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: Text(sensor.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal)),
-                      )))
+                      .map(
+                        (sensor) => RadioListTile(
+                      title: Text(sensor.name,
+                          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                              fontWeight: FontWeight.normal, fontSize: 21.0)),
+                      value: sensor,
+                      groupValue: selectedSensor,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedSensor = sensor;
+                        });
+                      },
+                    ),
+                  )
                       .toList(),
                 )),
             Divider(),
@@ -138,7 +132,7 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                     child: Text("OK",
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {
-                      Navigator.pop(context,  tempSelectedSensors);
+                      Navigator.pop(context, selectedSensor);
                     }),
               ],
             ),

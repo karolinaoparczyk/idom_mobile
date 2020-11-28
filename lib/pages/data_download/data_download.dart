@@ -234,8 +234,8 @@ class _DataDownloadState extends State<DataDownload> {
                                     Theme.of(context).dialogBackgroundColor,
                                 child: StatefulBuilder(
                                     builder: (BuildContext context,
-                                            StateSetter setState) =>
-                                        ChooseSensorsDialog(
+                                        StateSetter setState) =>
+                                        ChooseMultipleSensorsDialog(
                                             sensors: sensors,
                                             selectedSensors: selectedSensors)));
                           });

@@ -243,7 +243,7 @@ class _SettingsState extends State<Settings> {
     File result =
         await FilePicker.getFile(type: FileType.custom);
     if (result != null) {
-      file = File(file.path);
+      file = File(result.path);
       try {
         final Map<String, dynamic> googleServicesJson =
             jsonDecode(file.readAsStringSync());
@@ -252,6 +252,7 @@ class _SettingsState extends State<Settings> {
         mobileAppId =
             googleServicesJson['client'][0]['client_info']['mobilesdk_app_id'];
         apiKey = googleServicesJson['client'][0]['api_key'][0]['current_key'];
+        fieldsValidationMessage = null;
       } catch (e) {
         fieldsValidationMessage =
             "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie.".i18n;
@@ -269,16 +270,7 @@ class _SettingsState extends State<Settings> {
     var changedGoogleServicesFile = false;
 
     final formState = _formKey.currentState;
-    var formValidated = formState.validate();
-    if (_isUserLoggedIn == "true" &&
-        file == null &&
-        (currentFirebaseParams == null ||
-            currentFirebaseParams['fileName'] == null)) {
-      fieldsValidationMessage = "Należy dodać plik.".i18n;
-      setState(() {});
-      return;
-    }
-    if (formValidated) {
+    if (formState.validate()) {
       /// sends request only if data has changed
       if (address != currentAddress) {
         changedAddress = true;

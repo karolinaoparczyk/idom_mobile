@@ -137,6 +137,27 @@ class CategoryFieldValidator {
   }
 }
 
+
+/// validates driver field
+class DriverFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane';
+    }
+    return null;
+  }
+}
+
+/// validates time field
+class TimeFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane';
+    }
+    return null;
+  }
+}
+
 /// validates last days amount field
 class LastDaysAmountFieldValidator {
   static String validate(String value) {

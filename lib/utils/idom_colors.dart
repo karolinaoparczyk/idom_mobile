@@ -16,6 +16,7 @@ class IdomColors {
   static const Color green = Color(0xFF73C76C);
   static const Color darkGreen = Color(0xFF4A9245);
   static const Color brightGreen = Color(0xFFF0F8F0);
+  static const Color brightGrey = Color(0xFFA2A2A2);
 
   static Color darken(Color color, [double amount = 0.1]) {
     assert(amount >= 0 && amount <= 1);
