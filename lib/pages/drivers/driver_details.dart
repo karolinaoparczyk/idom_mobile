@@ -35,7 +35,7 @@ class _DriverDetailsState extends State<DriverDetails> {
   @override
   void initState() {
     super.initState();
-    if (widget.testApi != null){
+    if (widget.testApi != null) {
       api = widget.testApi;
     }
     _load = false;
@@ -154,50 +154,56 @@ class _DriverDetailsState extends State<DriverDetails> {
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
-                                        fontWeight: FontWeight.normal)),
+                                            fontWeight: FontWeight.normal)),
                               ),
                             ],
                           ))),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 52.5, top: 30, right: 52.5, bottom: 0.0),
-                    child: Column(
-                      children: [
-                        SizedBox.fromSize(
-                          size: Size(56, 56),
-                          child: ClipOval(
-                            child: Material(
-                              color: IdomColors.brightGreen,
-                              child: InkWell(
-                                key: Key("click"),
-                                splashColor: IdomColors.darkGreen,
-                                onTap: _clickDriver,
-                                child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    SvgPicture.asset(
-                                      "assets/icons/play.svg",
-                                      matchTextDirection: false,alignment: Alignment.centerRight,
-                                      width: 25,
-                                      height: 25,
-                                      color: IdomColors.green,
-                                      key: Key("assets/icons/play.svg")
-                                    ),
-                                  ],
+                  if (widget.driver.category != "clicker")
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 52.5, top: 30, right: 52.5, bottom: 0.0),
+                      child: Column(
+                        children: [
+                          SizedBox.fromSize(
+                            size: Size(56, 56),
+                            child: ClipOval(
+                              child: Material(
+                                color: IdomColors.brightGreen,
+                                child: InkWell(
+                                  key: Key("click"),
+                                  splashColor: IdomColors.darkGreen,
+                                  onTap: _clickDriver,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SvgPicture.asset("assets/icons/play.svg",
+                                          matchTextDirection: false,
+                                          alignment: Alignment.centerRight,
+                                          width: 25,
+                                          height: 25,
+                                          color: IdomColors.green,
+                                          key: Key("assets/icons/play.svg")),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        Text("Wciśnij przycisk",
-                            style: TextStyle(
-                                color: IdomColors.textDark,
-                                fontSize: 21,
-                                fontWeight: FontWeight.normal)),
-                      ],
+                          Text("Wciśnij przycisk",
+                              style: TextStyle(
+                                  color: IdomColors.textDark,
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.normal)),
+                        ],
+                      ),
                     ),
-                  )
+                  if (widget.driver.category != "clicker")
+                    Padding(
+                        padding: const EdgeInsets.only(
+                            left: 52.5, top: 30, right: 52.5, bottom: 0.0),
+                        child: Column(children: [
+
+                        ]))
                 ]),
               ),
             ))));
@@ -210,7 +216,7 @@ class _DriverDetailsState extends State<DriverDetails> {
       message = "Wysłano komendę do sterownika ${widget.driver.name}.";
     } else {
       message =
-      "Wysłanie komendy do sterownika ${widget.driver.name} nie powiodło się.";
+          "Wysłanie komendy do sterownika ${widget.driver.name} nie powiodło się.";
     }
     _scaffoldKey.currentState.removeCurrentSnackBar();
     final snackBar = new SnackBar(content: new Text(message));
