@@ -14,6 +14,6 @@ class SensorCategories {
 class DriverCategories {
   static const values = [
     {"text": "naduszacz", "value": "clicker"},
-    {"text": "pilot", "value": "remote_controller"},
+    {"text": "pilot", "value": "remote_control"},
   ];
 }

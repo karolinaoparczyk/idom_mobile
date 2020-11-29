@@ -155,19 +155,21 @@ class _SettingsState extends State<Settings> {
                                             file != null)
                                           Row(
                                             children: [
-                                              Text(
-                                                  file == null
-                                                      ? currentFirebaseParams[
-                                                          'fileName']
-                                                      : file.path
-                                                          .split("/")
-                                                          .last,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          fontWeight: FontWeight
-                                                              .normal)),
+                                              Flexible(
+                                                child: Text(
+                                                    file == null
+                                                        ? currentFirebaseParams[
+                                                            'fileName']
+                                                        : file.path
+                                                            .split("/")
+                                                            .last,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1
+                                                        .copyWith(
+                                                            fontWeight: FontWeight
+                                                                .normal)),
+                                              ),
                                               SizedBox(width: 30),
                                               IconButton(
                                                 icon: Icon(Icons

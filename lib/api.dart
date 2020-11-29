@@ -62,7 +62,7 @@ class Api {
     var result = await httpClient.get('$url/users/detail/$username', headers: {
       HttpHeaders.authorizationHeader: "Token $userToken"
     }).timeout(Duration(seconds: 5));
-    return [ utf8.decode(result.body.runes.toList()), result.statusCode];
+    return [utf8.decode(result.body.runes.toList()), result.statusCode];
   }
 
   /// requests logging out
@@ -406,18 +406,23 @@ class Api {
 
   /// adds driver
   Future<Map<String, String>> addDriver(
-      String name, String category, bool data) async {
+      String name, String category, {bool data = false}) async {
     await getApiAddress();
     await getToken();
-    var res = await httpClient.post(
-      '$url/drivers/add',
-      headers: {HttpHeaders.authorizationHeader: "Token $token"},
-      body: {
-        "name": name,
-        "category": category,
-        "data": data.toString(),
-      },
-    ).timeout(Duration(seconds: 5));
+    var res = await httpClient
+        .post(
+          '$url/drivers/add',
+          headers: {
+            HttpHeaders.authorizationHeader: "Token $token",
+            HttpHeaders.contentTypeHeader: 'application/json',
+          },
+          body: jsonEncode({
+            "name": name,
+            "category": category,
+            "data": data,
+          }),
+        )
+        .timeout(Duration(seconds: 5));
     var resDict = {
       "body": utf8.decode(res.body.runes.toList()),
       "statusCode": res.statusCode.toString(),
@@ -502,21 +507,24 @@ class Api {
     return null;
   }
 
-
   /// requests generating csv file with sensor data
   Future<Map<String, dynamic>> generateFile(
       List<String> sensorIds, List<String> categoriesValues, int days) async {
     await getApiAddress();
     await getToken();
     try {
-      var res = await httpClient.post('$url/sensors_data/csv', headers: {
-        HttpHeaders.authorizationHeader: "Token $token",
-        HttpHeaders.contentTypeHeader: 'application/json',
-      }, body: jsonEncode({
-        "sensors_ids": sensorIds,
-        "categories": categoriesValues,
-        "days": days.toString()
-      })).timeout(Duration(seconds: 5));
+      var res = await httpClient
+          .post('$url/sensors_data/csv',
+              headers: {
+                HttpHeaders.authorizationHeader: "Token $token",
+                HttpHeaders.contentTypeHeader: 'application/json',
+              },
+              body: jsonEncode({
+                "sensors_ids": sensorIds,
+                "categories": categoriesValues,
+                "days": days.toString()
+              }))
+          .timeout(Duration(seconds: 5));
       Map<String, dynamic> response = {
         "body": utf8.decode(res.body.runes.toList()),
         "statusCode": res.statusCode,

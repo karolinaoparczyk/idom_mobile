@@ -7,6 +7,7 @@ class IdomColors {
   static const Color buttonBackground = Color(0xFF0E1111);
   static const Color textLight = Color(0xFFFFFFFF);
   static const Color iconLight = Color(0xFFFFFFFF);
+  static const Color grey = Color(0xFFE5E5E5);
   static const Color textDark = Color(0xFF0E1111);
   static const Color iconDark = Color(0xFF0E1111);
   static const Color additionalColor = Color(0xFFDAA520);

@@ -180,7 +180,7 @@ class _NewDriverState extends State<NewDriver> {
         _load = true;
       });
       try {
-        var res = await api.addDriver(_nameController.text, categoryValue, null);
+        var res = await api.addDriver(_nameController.text, categoryValue);
         if (res['statusCode'] == "201") {
           Navigator.pop(context, true);
         } else if (res['statusCode'] == "401") {
