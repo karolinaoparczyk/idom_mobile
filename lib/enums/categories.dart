@@ -15,5 +15,6 @@ class DriverCategories {
   static const values = [
     {"text": "naduszacz", "value": "clicker"},
     {"text": "pilot", "value": "remote_control"},
+    {"text": "żarówka", "value": "bulb"},
   ];
 }

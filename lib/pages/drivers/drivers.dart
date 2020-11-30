@@ -207,6 +207,9 @@ class _DriversState extends State<Drivers> {
       case "remote_control":
         imageUrl = "assets/icons/controller.svg";
         break;
+      case "bulb":
+        imageUrl = "assets/icons/light-bulb.svg";
+        break;
     }
     return SvgPicture.asset(imageUrl,
         matchTextDirection: false,
@@ -226,7 +229,7 @@ class _DriversState extends State<Drivers> {
         PopupMenuItem<String>(
             key: Key("click"),
             child: SizedBox(
-              width: 140,
+              width: 160,
               child: Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   columnWidths: {
@@ -263,6 +266,21 @@ class _DriversState extends State<Drivers> {
                           ),
                           SizedBox(width: 5),
                           Text('Włącz/wyłącz pilot'),
+                        ],
+                      ),
+                    if (driver.category == "bulb")
+                      TableRow(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/icons/turn-off.svg",
+                            matchTextDirection: false,
+                            alignment: Alignment.centerRight,
+                            width: 25,
+                            height: 25,
+                            color: IdomColors.error,
+                          ),
+                          SizedBox(width: 5),
+                          Text('Włącz/wyłącz żarówkę'),
                         ],
                       ),
                   ]),
