@@ -48,7 +48,7 @@ class _DriverDetailsState extends State<DriverDetails> {
     Color.fromARGB(255, 255, 0, 127),
     Color.fromARGB(255, 128, 128, 128),
   ];
-  double _colorSliderPosition = 0;
+  double _colorSliderPosition = 255;
   double _shadeSliderPosition;
   Color _currentColor;
   Color _shadedColor;
@@ -734,7 +734,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _switchDriver();
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -1136,7 +1138,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                           SizedBox(),
                           Center(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                _switchDriver();
+                              },
                               highlightColor: digitsVisible
                                   ? Colors.transparent
                                   : IdomColors.grey,
@@ -1192,7 +1196,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                     ),
                   if (widget.driver.category == "bulb")
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        _changeBulbColor();
+                      },
                       splashColor: IdomColors.additionalColor,
                       child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -1246,7 +1252,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                     ),
                   if (widget.driver.category == "bulb")
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        _changeBulbBrightness();
+                      },
                       splashColor: IdomColors.additionalColor,
                       child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -1372,6 +1380,75 @@ class _DriverDetailsState extends State<DriverDetails> {
       return Color.fromARGB(255, redVal, greenVal, blueVal);
     } else {
       return _currentColor;
+    }
+  }
+
+  _changeBulbColor() async {
+    var message;
+    var result = await api.changeBulbColor(widget.driver.id, _currentColor.red,
+        _currentColor.green, _currentColor.blue);
+    if (result == 200) {
+      message = "Wysłano komendę zmiany koloru żarówki ${widget.driver.name}.";
+    } else if (result == 404) {
+      message =
+          "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
+    } else if (result == 503) {
+      message =
+          "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
+    }
+    if (message != null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar = new SnackBar(content: new Text(message));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
+  }
+
+  _changeBulbBrightness() async {
+    var message;
+    if (_shadeSliderPosition == 0) _shadeSliderPosition = 1;
+    int brightness = (_shadeSliderPosition / 255 * 100).round();
+    var result = await api.changeBulbBrightness(widget.driver.id, brightness);
+    if (result == 200) {
+      message =
+          "Wysłano komendę zmiany jasności żarówki ${widget.driver.name}.";
+    } else if (result == 404) {
+      message =
+          "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
+    } else if (result == 503) {
+      message =
+          "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
+    }
+    if (message != null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar = new SnackBar(content: new Text(message));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
+  }
+
+  _switchDriver() async {
+    var flag = "on";
+    var message;
+    var result;
+    if (widget.driver.category == "bulb") {
+      result = await api.switchBulb(widget.driver.id, flag);
+    }
+    if (result == 200) {
+      if (flag == "on") {
+        message = "Wysłano komendę włączenia sterownika ${widget.driver.name}.";
+      } else {
+        message = "Wysłano komendę wyłączenia sterownika ${widget.driver.name}.";
+      }
+    } else if (result == 404) {
+      message =
+          "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
+    } else if (result == 503) {
+      message =
+          "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
+    }
+    if (message != null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar = new SnackBar(content: new Text(message));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
 

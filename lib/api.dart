@@ -585,6 +585,56 @@ class Api {
     return null;
   }
 
+  /// requests switching bulb
+  Future<int> switchBulb(int bulbId, String flag) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.post('$url/bulbs/swith/$bulbId',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: {"flag ": flag}).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests changing bulb's color
+  Future<int> changeBulbColor(int bulbId, int red, int green, int blue) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.post('$url/bulbs/color/$bulbId', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }, body: jsonEncode({
+        "red ": red,
+        "green": green,
+        "blue": blue
+      })).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests changing bulb's brightness
+  Future<int> changeBulbBrightness(int bulbId, int brightness) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.post('$url/bulbs/brightness/$bulbId',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: jsonEncode({"brightness ": brightness})).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+
   /// requests generating csv file with sensor data
   Future<Map<String, dynamic>> generateFile(
       List<String> sensorIds, List<String> categoriesValues, int days) async {
