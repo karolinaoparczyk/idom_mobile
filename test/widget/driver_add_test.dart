@@ -20,7 +20,7 @@ void main() {
   /// tests if adds driver
   testWidgets('adds driver', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.addDriver('name', 'clicker', null)).thenAnswer(
+    when(mockApi.addDriver('name', 'clicker')).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "201"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -35,8 +35,8 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: page));
     await tester.pumpAndSettle();
 
-    Finder emailField = find.byKey(Key('name'));
-    await tester.enterText(emailField, 'name');
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
 
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
@@ -49,6 +49,6 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.addDriver('name', 'clicker', null)).called(1);
+    verify(await mockApi.addDriver('name', 'clicker')).called(1);
   });
 }

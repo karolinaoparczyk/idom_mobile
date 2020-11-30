@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:idom/enums/categories.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
@@ -816,7 +815,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                                 fontSize: 35,
                                                 color:
                                                     IdomColors.additionalColor),
-                                            key: Key("assets/icons/enter.svg")),
+                                            key: Key("OK")),
                                       ),
                                     ),
                                   ),

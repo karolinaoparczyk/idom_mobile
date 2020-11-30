@@ -14,22 +14,22 @@ Widget buttonWidget(
             key: Key(text),
             onPressed: onPressed,
             child: iconData != null
-                ? Row(
-              mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left:28.0, right: 8.0),
-                          child: Text(text, style: TextStyle(
+                ? Row(mainAxisSize: MainAxisSize.min, children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: text.length > 11 ? 28.0 : 48.0, right: 8.0),
+                      child: Text(text,
+                          style: TextStyle(
                               color: IdomColors.textLight,
                               fontSize: 21,
                               fontWeight: FontWeight.normal)),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal:10.0),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Icon(iconData, color: IdomColors.textLight),
                       ),
+                    ),
                   ])
                 : Text(text,
                     style: TextStyle(
