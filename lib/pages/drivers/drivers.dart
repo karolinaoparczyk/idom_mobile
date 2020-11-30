@@ -191,7 +191,8 @@ class _DriversState extends State<Drivers> {
                                           _driverList[index]);
                                     },
                                     child: Container(
-                                        child: Icon(Icons.more_vert_outlined)),
+                                        child: Icon(Icons.more_vert_outlined,
+                                            size: 30)),
                                   ),
                                 ),
                               )))))));
