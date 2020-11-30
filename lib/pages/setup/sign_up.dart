@@ -11,9 +11,10 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user up
 class SignUp extends StatefulWidget {
-  SignUp({@required this.storage});
+  SignUp({@required this.storage, this.testApi});
 
   final SecureStorage storage;
+  final Api testApi;
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -30,7 +31,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _telephoneController = TextEditingController();
   final FocusScopeNode _node = FocusScopeNode();
   final _scrollController = ScrollController();
-  final Api api = Api();
+  Api api = Api();
   bool _load;
   String fieldsValidationMessage;
   IconData _passwordIcon = Icons.visibility_outlined;
@@ -40,6 +41,9 @@ class _SignUpState extends State<SignUp> {
 
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
     _load = false;
   }
 
@@ -212,7 +216,10 @@ class _SignUpState extends State<SignUp> {
               }
             },
           ),
-          IconButton(icon: Icon(Icons.check), onPressed: signUp),
+          IconButton(
+              key: Key("registerButton"),
+              icon: Icon(Icons.check),
+              onPressed: signUp),
         ]),
         body: Container(
             child: Column(
@@ -321,6 +328,9 @@ class _SignUpState extends State<SignUp> {
         });
         var res =
             await api.signUp(username, password1, password2, email, telephone);
+        setState(() {
+          _load = false;
+        });
         var loginExists = false;
         var emailExists = false;
         var telephoneExists = false;
@@ -328,19 +338,15 @@ class _SignUpState extends State<SignUp> {
 
         if (res['statusCode'] == "201") {
           setState(() {
-            _load = false;
             fieldsValidationMessage = null;
           });
-          final snackBar = new SnackBar(
-              content:
-                  new Text("Konto zostało utworzone. Możesz się zalogować."));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
 
           /// navigates to logging in page
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SignIn(storage: widget.storage)));
+                  builder: (context) => SignIn(storage: widget.storage, isFromSignUp: true)));
+          return;
         }
         if (res['body'].contains("Username already exists")) {
           loginExists = true;
@@ -355,22 +361,22 @@ class _SignUpState extends State<SignUp> {
           telephoneExists = true;
         }
 
-        String errorText;
+        String errorText = "";
         if (loginExists && emailExists && telephoneExists)
           errorText =
-              "Konto dla podanego loginu, adresu e-mail i numeru telefonu już istnieje.";
+              "Konto dla podanej nazwy użytkownika, adresu e-mail i numeru telefonu już istnieje.";
         else if (loginExists && emailExists)
-          errorText = "Konto dla podanego loginu i adresu e-mail już istnieje.";
+          errorText = "Konto dla podanej nazwy użytkownika i adresu e-mail już istnieje.";
         else if (loginExists && telephoneExists)
           errorText =
-              "Konto dla podanego loginu i numeru telefonu już istnieje.";
+              "Konto dla podanej nazwy użytkownika i numeru telefonu już istnieje.";
         else if (emailExists && telephoneExists)
           errorText =
               "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.";
         else if (emailExists)
           errorText = "Konto dla podanego adresu e-mail już istnieje.";
         else if (loginExists)
-          errorText = "Konto dla podanego loginu już istnieje.";
+          errorText = "Konto dla podanej nazwy użytkownika już istnieje.";
         else if (telephoneExists)
           errorText = "Konto dla podanego numeru telefonu już istnieje.";
 
