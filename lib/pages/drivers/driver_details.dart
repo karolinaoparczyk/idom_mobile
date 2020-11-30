@@ -1156,6 +1156,9 @@ class _DriverDetailsState extends State<DriverDetails> {
         _load = true;
       });
       var res = await api.getDriverDetails(widget.driver.id);
+      setState(() {
+        _load = false;
+      });
       if (res['statusCode'] == "200") {
         dynamic body = jsonDecode(res['body']);
         Driver refreshedDriver = Driver.fromJson(body);

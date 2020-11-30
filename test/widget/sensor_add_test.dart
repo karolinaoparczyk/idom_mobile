@@ -576,7 +576,6 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text("Czujnik o podanej nazwie już istnieje."), findsOneWidget);
     expect(find.byType(NewSensor), findsOneWidget);
 

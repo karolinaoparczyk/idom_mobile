@@ -2,32 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/dialogs/sensor_category_dialog.dart';
-import 'package:idom/enums/categories.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
-class EditDriver extends StatefulWidget {
-  EditDriver({@required this.storage, @required this.driver, this.testApi});
+class EditCamera extends StatefulWidget {
+  EditCamera({@required this.storage, @required this.camera, this.testApi});
 
   final SecureStorage storage;
-  final Driver driver;
+  final Camera camera;
   final Api testApi;
 
   @override
-  _EditDriverState createState() => _EditDriverState();
+  _EditCameraState createState() => _EditCameraState();
 }
 
-class _EditDriverState extends State<EditDriver> {
+class _EditCameraState extends State<EditCamera> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   TextEditingController _nameController;
-  TextEditingController _categoryController;
-  String categoryValue;
   Api api = Api();
   bool _load;
   String fieldsValidationMessage;
@@ -40,20 +36,13 @@ class _EditDriverState extends State<EditDriver> {
     }
     _load = false;
 
-    /// seting current driver name
-    _nameController = TextEditingController(text: widget.driver.name);
-
-    /// setting current driver category
-    _categoryController = TextEditingController(
-        text: DriverCategories.values.firstWhere(
-            (element) => element["value"] == widget.driver.category)['text']);
-    categoryValue = widget.driver.category;
+    /// seting current camera name
+    _nameController = TextEditingController(text: widget.camera.name);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
@@ -67,7 +56,7 @@ class _EditDriverState extends State<EditDriver> {
     return true;
   }
 
-  /// builds driver name form field
+  /// builds camera name form field
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
@@ -85,57 +74,24 @@ class _EditDriverState extends State<EditDriver> {
         validator: DriverNameFieldValidator.validate);
   }
 
-  /// builds driver category field
-  Widget _buildCategoryField() {
-    return TextFormField(
-        key: Key("categoriesButton"),
-        controller: _categoryController,
-        decoration: InputDecoration(
-          labelText: "Kategoria",
-          labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        onTap: () async {
-          final Map<String, String> selectedCategory = await showDialog(
-              context: context,
-              builder: (context) {
-                return Dialog(
-                  child: CategoryDialog(
-                      currentCategory: categoryValue, type: "drivers"),
-                );
-              });
-          if (selectedCategory != null) {
-            _categoryController.text = selectedCategory['text'];
-            categoryValue = selectedCategory['value'];
-          }
-        },
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        readOnly: true,
-        style: TextStyle(fontSize: 21.0),
-        validator: CategoryFieldValidator.validate);
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text(widget.driver.name), actions: [
+            appBar: AppBar(title: Text(widget.camera.name), actions: [
               IconButton(
-                  key: Key('editDriverButton'),
+                  key: Key('editCameraButton'),
                   icon: Icon(Icons.save),
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditDriver",
+                parentWidgetType: "EditCamera",
                 onLogOutFailure: onLogOutFailure),
 
-            /// builds form with driver's properties
+            /// builds form with camera's properties
             body: SingleChildScrollView(
               child: Form(
                   key: _formKey,
@@ -168,12 +124,6 @@ class _EditDriverState extends State<EditDriver> {
                             left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
                         child: _buildName()),
                     Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: _buildCategoryField())),
-                    Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 30.0),
                       child: AnimatedCrossFade(
@@ -195,43 +145,44 @@ class _EditDriverState extends State<EditDriver> {
             )));
   }
 
-  /// saves changes after form fields and dropdown buttons validation
-  _saveChanges(bool changedName, bool changedCategory) async {
+  /// saves changes after form fields validation
+  _saveChanges(bool changedName) async {
     FocusScope.of(context).unfocus();
     var name = changedName ? _nameController.text : null;
-    var category = changedCategory ? categoryValue : null;
     setState(() {
       _load = true;
     });
     try {
-      var res = await api.editDriver(widget.driver.id, name, category);
+      var res = await api.editCamera(widget.camera.id, name);
       setState(() {
         _load = false;
       });
       if (res['statusCode'] == "200") {
         fieldsValidationMessage = null;
-        setState(() {});  Navigator.pop(context, true);
+        setState(() {});
+        Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         fieldsValidationMessage = null;
-        setState(() {}); displayProgressDialog(
+        setState(() {});
+        displayProgressDialog(
             context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
+            key: _keyLoader,
             text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
         await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
-          .contains("Driver with provided name already exists")) {
-        fieldsValidationMessage = "Sterownik o podanej nazwie już istnieje.";
+          .contains("Camera with provided name already exists")) {
+        fieldsValidationMessage = "Kamera o podanej nazwie już istnieje.";
         setState(() {});
         return;
       } else {
         fieldsValidationMessage = null;
-        setState(() {}); final snackBar = new SnackBar(
-            content: new Text(
-                "Edycja sterownika nie powiodła się. Spróbuj ponownie."));
+        setState(() {});
+        final snackBar = new SnackBar(
+            content:
+                new Text("Edycja kamery nie powiodła się. Spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -243,46 +194,41 @@ class _EditDriverState extends State<EditDriver> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edytowania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania sterownika. Adres serwera nieprawidłowy."));
+                "Błąd edytowania kamery. Adres serwera nieprawidłowy."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
 
   /// confirms saving changes
-  _confirmSavingChanges(bool changedName, bool changedCategory) async {
+  _confirmSavingChanges(bool changedName) async {
     var decision = await confirmActionDialog(
         context, "Potwierdź", "Czy na pewno zapisać zmiany?");
     if (decision) {
-      await _saveChanges(changedName, changedCategory);
+      await _saveChanges(changedName);
     }
   }
 
   /// verifies data changes
   _verifyChanges() async {
     var name = _nameController.text;
-    var category = categoryValue;
     var changedName = false;
-    var changedCategory = false;
 
     final formState = _formKey.currentState;
     if (formState.validate()) {
       /// sends request only if data changed
-      if (name != widget.driver.name) {
+      if (name != widget.camera.name) {
         changedName = true;
       }
-      if (category != widget.driver.category) {
-        changedCategory = true;
-      }
 
-      if (changedName || changedCategory) {
-        await _confirmSavingChanges(changedName, changedCategory);
+      if (changedName) {
+        await _confirmSavingChanges(changedName);
       } else {
         final snackBar =
             new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));

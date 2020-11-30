@@ -50,6 +50,9 @@ class _SensorsState extends State<Sensors> {
 
   /// returns list of sensors
   Future<List<Sensor>> getSensors() async {
+    if (!mounted) {
+      return null;
+    }
     setState(() {
       _isSearching = false;
       _searchController.text = "";

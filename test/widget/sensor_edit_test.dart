@@ -370,7 +370,6 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
-    expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text("Czujnik o podanej nazwie już istnieje."), findsOneWidget);
     await tester.pump();
     expect(find.byType(EditSensor), findsOneWidget);

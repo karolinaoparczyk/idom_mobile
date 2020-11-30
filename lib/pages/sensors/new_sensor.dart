@@ -36,6 +36,7 @@ class _NewSensorState extends State<NewSensor> {
   String frequencyUnitsValue;
   bool _load;
   String fieldsValidationMessage;
+  String nameValidationMessage;
   bool canEditFrequency = true;
 
   @override
@@ -95,12 +96,15 @@ class _NewSensorState extends State<NewSensor> {
                 selectedCategory['value'] == "water_temp" ||
                 selectedCategory['value'] == "breathalyser" ||
                 selectedCategory['value'] == "smoke") {
-              canEditFrequency = false;
-              frequencyUnitsValue = "seconds";
+              _frequencyUnitsController = TextEditingController();
+              frequencyUnitsValue = null;
               _frequencyUnitsController.text = FrequencyUnits.values
                   .where((element) => element['value'] == "seconds")
                   .first['text'];
-              _frequencyValueController.text = "30";
+              frequencyUnitsValue = "seconds";
+              _frequencyValueController = TextEditingController(text: "30");
+              setState(() {});
+              canEditFrequency = false;
             } else {
               canEditFrequency = true;
             }
@@ -177,14 +181,16 @@ class _NewSensorState extends State<NewSensor> {
 
   clearFields() {
     _formKey.currentState.reset();
-    _nameController.text = "";
-    _categoryController.text = "";
-    _frequencyValueController.text = "";
-    _frequencyUnitsController.text = "";
-    categoryValue = null;
-    frequencyUnitsValue = null;
-    canEditFrequency = true;
-    setState(() {});
+    setState(() {
+      _nameController = TextEditingController();
+      _categoryController = TextEditingController();
+      _frequencyValueController = TextEditingController();
+      _frequencyUnitsController = TextEditingController();
+      categoryValue = null;
+      frequencyUnitsValue = null;
+      canEditFrequency = true;
+    });
+    FocusScope.of(context).unfocus();
   }
 
   onLogOutFailure(String text) {
@@ -346,6 +352,25 @@ class _NewSensorState extends State<NewSensor> {
                                   secondChild: SizedBox(),
                                 ),
                               ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 30.0),
+                              child: AnimatedCrossFade(
+                                crossFadeState: nameValidationMessage != null
+                                    ? CrossFadeState.showFirst
+                                    : CrossFadeState.showSecond,
+                                duration: Duration(milliseconds: 300),
+                                firstChild: nameValidationMessage != null
+                                    ? Text(nameValidationMessage,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                fontWeight: FontWeight.normal))
+                                    : SizedBox(),
+                                secondChild: SizedBox(),
+                              ),
+                            ),
                           ])))),
             ]))));
   }
@@ -398,13 +423,17 @@ class _NewSensorState extends State<NewSensor> {
       try {
         var res = await api.addSensor(
             _nameController.text, categoryValue, frequencyInSeconds);
+        setState(() {
+          _load = false;
+        });
 
         if (res['statusCodeSen'] == "201") {
-          setState(() {
-            _load = false;
-          });
+          nameValidationMessage = null;
+          setState(() {});
           Navigator.pop(context, true);
         } else if (res['statusCodeSen'] == "401") {
+          nameValidationMessage = null;
+          setState(() {});
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
@@ -417,16 +446,21 @@ class _NewSensorState extends State<NewSensor> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
+          nameValidationMessage = "Czujnik o podanej nazwie już istnieje.";
+          setState(() {});
+          return;
+        } else {
+          nameValidationMessage = null;
+          setState(() {});
           final snackBar = new SnackBar(
-              content: new Text("Czujnik o podanej nazwie już istnieje."));
+              content: new Text(
+                  "Dodawanie czujnika nie powiodło się. Spróbuj ponownie."));
           _scaffoldKey.currentState.showSnackBar((snackBar));
-          setState(() {
-            _load = false;
-          });
         }
       } catch (e) {
         print(e);
         setState(() {
+          nameValidationMessage = null;
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {

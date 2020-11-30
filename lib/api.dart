@@ -339,6 +339,84 @@ class Api {
     return null;
   }
 
+  /// requests deleting camera
+  Future<int> deleteCamera(int id) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.delete('$url/cameras/delete/$id', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// adds camera
+  Future<Map<String, String>> addCamera(String name) async {
+    await getApiAddress();
+    await getToken();
+    var res = await httpClient
+        .post(
+          '$url/cameras/add',
+          headers: {
+            HttpHeaders.authorizationHeader: "Token $token",
+            HttpHeaders.contentTypeHeader: 'application/json',
+          },
+          body: jsonEncode({
+            "name": name,
+          }),
+        )
+        .timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": utf8.decode(res.bodyBytes),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// edits camera
+  Future<Map<String, String>> editCamera(int id, String name) async {
+    await getApiAddress();
+    await getToken();
+    var body = {"name": name};
+
+    var res = await httpClient
+        .put(
+          '$url/cameras/update/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: body,
+        )
+        .timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": utf8.decode(res.bodyBytes),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// gets camera details
+  Future<Map<String, String>> getCameraDetails(int cameraId) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.get('$url/cameras/detail/$cameraId', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> responses = {
+        "body": utf8.decode(res.body.runes.toList()),
+        "statusCode": res.statusCode.toString(),
+      };
+      return responses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
   /// checks if device token is sent
   Future<Map<String, String>> checkIfDeviceTokenSent(String deviceToken) async {
     await getApiAddress();
@@ -405,8 +483,8 @@ class Api {
   }
 
   /// adds driver
-  Future<Map<String, String>> addDriver(
-      String name, String category, {bool data = false}) async {
+  Future<Map<String, String>> addDriver(String name, String category,
+      {bool data = false}) async {
     await getApiAddress();
     await getToken();
     var res = await httpClient
