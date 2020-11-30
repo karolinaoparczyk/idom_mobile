@@ -32,6 +32,26 @@ class _DriverDetailsState extends State<DriverDetails> {
   Api api = Api();
   bool _load;
   bool digitsVisible = false;
+  Color selectedColor;
+  final List<Color> _colors = [
+    Color.fromARGB(255, 255, 0, 0),
+    Color.fromARGB(255, 255, 128, 0),
+    Color.fromARGB(255, 255, 255, 0),
+    Color.fromARGB(255, 128, 255, 0),
+    Color.fromARGB(255, 0, 255, 0),
+    Color.fromARGB(255, 0, 255, 128),
+    Color.fromARGB(255, 0, 255, 255),
+    Color.fromARGB(255, 0, 128, 255),
+    Color.fromARGB(255, 0, 0, 255),
+    Color.fromARGB(255, 127, 0, 255),
+    Color.fromARGB(255, 255, 0, 255),
+    Color.fromARGB(255, 255, 0, 127),
+    Color.fromARGB(255, 128, 128, 128),
+  ];
+  double _colorSliderPosition = 0;
+  double _shadeSliderPosition;
+  Color _currentColor;
+  Color _shadedColor;
 
   @override
   void initState() {
@@ -40,6 +60,9 @@ class _DriverDetailsState extends State<DriverDetails> {
       api = widget.testApi;
     }
     _load = false;
+    _currentColor = _calculateSelectedColor(_colorSliderPosition);
+    _shadeSliderPosition = 255 / 2; //center the shader selector
+    _shadedColor = _calculateShadedColor(_shadeSliderPosition);
   }
 
   onLogOutFailure(String text) {
@@ -189,7 +212,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 ? Column(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 30.0),
                                         child: TextFormField(
                                           key: Key('channelNumber'),
                                           readOnly: true,
@@ -652,14 +676,14 @@ class _DriverDetailsState extends State<DriverDetails> {
                                                 child: Center(
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.all(8.0),
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text("WRÓĆ",
                                                         style: TextStyle(
                                                             color: IdomColors
                                                                 .additionalColor,
                                                             fontSize: 30),
-                                                        key: Key(
-                                                            "goBack")),
+                                                        key: Key("goBack")),
                                                   ),
                                                 ),
                                               ),
@@ -671,15 +695,13 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     ],
                                   )
                                 : SizedBox(),
-                            secondChild: Table(
-                              columnWidths: {
-                                0:FlexColumnWidth(1),
-                                1:FlexColumnWidth(1),
-                                2:FlexColumnWidth(2),
-                                3:FlexColumnWidth(1),
-                                4:FlexColumnWidth(1),
-                              },
-                                children: [
+                            secondChild: Table(columnWidths: {
+                              0: FlexColumnWidth(1),
+                              1: FlexColumnWidth(1),
+                              2: FlexColumnWidth(2),
+                              3: FlexColumnWidth(1),
+                              4: FlexColumnWidth(1),
+                            }, children: [
                               TableRow(
                                 children: [
                                   Center(
@@ -694,7 +716,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/menu.svg",
                                             matchTextDirection: false,
@@ -721,7 +744,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.error, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/turn-off.svg",
                                             matchTextDirection: false,
@@ -752,7 +776,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/up-arrow.svg",
                                             matchTextDirection: false,
@@ -784,7 +809,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/left-arrow.svg",
                                             matchTextDirection: false,
@@ -809,7 +835,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: Text("OK",
                                             style: TextStyle(
                                                 fontSize: 35,
@@ -831,7 +858,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/right-arrow.svg",
                                             matchTextDirection: false,
@@ -863,7 +891,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/down-arrow.svg",
                                             matchTextDirection: false,
@@ -894,7 +923,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, bottom: 16.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/no-sound.svg",
                                             matchTextDirection: false,
@@ -902,8 +932,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                             width: 35,
                                             height: 35,
                                             color: IdomColors.additionalColor,
-                                            key:
-                                                Key("assets/icons/no-sound.svg")),
+                                            key: Key(
+                                                "assets/icons/no-sound.svg")),
                                       ),
                                     ),
                                   ),
@@ -922,7 +952,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, bottom: 16.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/return.svg",
                                             matchTextDirection: false,
@@ -930,125 +961,12 @@ class _DriverDetailsState extends State<DriverDetails> {
                                             width: 35,
                                             height: 35,
                                             color: IdomColors.additionalColor,
-                                            key: Key("assets/icons/return.svg")),
+                                            key:
+                                                Key("assets/icons/return.svg")),
                                       ),
                                     ),
                                   ),
                                 ],
-                              ),
-                              TableRow(
-                                  children: [
-                                    Center(
-                                      child: InkWell(
-                                        onTap: () {},
-                                        highlightColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.grey,
-                                        splashColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.lighten(
-                                                IdomColors.additionalColor,
-                                                0.3),
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                          child: SvgPicture.asset(
-                                              "assets/icons/volume-up.svg",
-                                              matchTextDirection: false,
-                                              alignment:
-                                                  Alignment.centerRight,
-                                              width: 35,
-                                              height: 35,
-                                              color:
-                                                  IdomColors.additionalColor,
-                                              key: Key(
-                                                  "assets/icons/volume-up.svg")),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(),
-                                    Center(
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            digitsVisible = true;
-                                          });
-                                        },
-                                        highlightColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.grey,
-                                        splashColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.lighten(
-                                            IdomColors.additionalColor,
-                                            0.3),
-                                        borderRadius:
-                                        BorderRadius.circular(50.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/cubes.svg",
-                                            matchTextDirection: false,
-                                            alignment:
-                                            Alignment.centerRight,
-                                            width: 55,
-                                            height: 55,
-                                            color:
-                                            IdomColors.additionalColor,
-                                            key: Key(
-                                                "assets/icons/cubes.svg")),
-                                      ),
-                                    ),
-                                    SizedBox(),
-                                    Center(
-                                      child: InkWell(
-                                        onTap: () {},
-                                        highlightColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.grey,
-                                        splashColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.lighten(
-                                            IdomColors.additionalColor,
-                                            0.3),
-                                        borderRadius:
-                                        BorderRadius.circular(50.0),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                          child: SvgPicture.asset(
-                                              "assets/icons/next_channel.svg",
-                                              matchTextDirection: false,
-                                              alignment:
-                                              Alignment.centerRight,
-                                              width: 35,
-                                              height: 35,
-                                              color:
-                                              IdomColors.additionalColor,
-                                              key: Key(
-                                                  "assets/icons/next_channel.svg")),
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                              TableRow(
-                                children:[
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Text("VOL",
-                                          style: TextStyle(fontSize: 21.0)),
-                                    ),
-                                  ),
-                                  SizedBox(),
-                                  SizedBox(),
-
-                                  SizedBox(),
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Text("CH",
-                                          style: TextStyle(fontSize: 21.0)),
-                                    ),
-                                  ), ]
                               ),
                               TableRow(children: [
                                 Center(
@@ -1060,28 +978,126 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     splashColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.lighten(
-                                        IdomColors.additionalColor,
-                                        0.3),
-                                    borderRadius:
-                                    BorderRadius.circular(50.0),
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: SvgPicture.asset(
+                                          "assets/icons/volume-up.svg",
+                                          matchTextDirection: false,
+                                          alignment: Alignment.centerRight,
+                                          width: 35,
+                                          height: 35,
+                                          color: IdomColors.additionalColor,
+                                          key: Key(
+                                              "assets/icons/volume-up.svg")),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(),
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        digitsVisible = true;
+                                      });
+                                    },
+                                    highlightColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.grey,
+                                    splashColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.lighten(
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    child: SvgPicture.asset(
+                                        "assets/icons/cubes.svg",
+                                        matchTextDirection: false,
+                                        alignment: Alignment.centerRight,
+                                        width: 55,
+                                        height: 55,
+                                        color: IdomColors.additionalColor,
+                                        key: Key("assets/icons/cubes.svg")),
+                                  ),
+                                ),
+                                SizedBox(),
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {},
+                                    highlightColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.grey,
+                                    splashColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.lighten(
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: SvgPicture.asset(
+                                          "assets/icons/next_channel.svg",
+                                          matchTextDirection: false,
+                                          alignment: Alignment.centerRight,
+                                          width: 35,
+                                          height: 35,
+                                          color: IdomColors.additionalColor,
+                                          key: Key(
+                                              "assets/icons/next_channel.svg")),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Text("VOL",
+                                        style: TextStyle(fontSize: 21.0)),
+                                  ),
+                                ),
+                                SizedBox(),
+                                SizedBox(),
+                                SizedBox(),
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Text("CH",
+                                        style: TextStyle(fontSize: 21.0)),
+                                  ),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {},
+                                    highlightColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.grey,
+                                    splashColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.lighten(
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
                                       child: SvgPicture.asset(
                                           "assets/icons/volume-down.svg",
                                           matchTextDirection: false,
-                                          alignment:
-                                          Alignment.centerRight,
+                                          alignment: Alignment.centerRight,
                                           width: 35,
                                           height: 35,
-                                          color:
-                                          IdomColors.additionalColor,
+                                          color: IdomColors.additionalColor,
                                           key: Key(
                                               "assets/icons/volume-down.svg")),
                                     ),
                                   ),
                                 ),
                                 SizedBox(),
-
                                 SizedBox(),
                                 SizedBox(),
                                 Center(
@@ -1093,31 +1109,270 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     splashColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.lighten(
-                                        IdomColors.additionalColor,
-                                        0.3),
-                                    borderRadius:
-                                    BorderRadius.circular(50.0),
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
                                       child: SvgPicture.asset(
                                           "assets/icons/previous_channel.svg",
                                           matchTextDirection: false,
-                                          alignment:
-                                          Alignment.centerRight,
+                                          alignment: Alignment.centerRight,
                                           width: 35,
                                           height: 35,
-                                          color:
-                                          IdomColors.additionalColor,
+                                          color: IdomColors.additionalColor,
                                           key: Key(
                                               "assets/icons/previous_channel.svg")),
                                     ),
                                   ),
                                 ),
                               ])
-                            ])))
+                            ]))),
+                  if (widget.driver.category == "bulb")
+                    Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Table(children: [
+                        TableRow(children: [
+                          SizedBox(),
+                          Center(
+                            child: InkWell(
+                              onTap: () {},
+                              highlightColor: digitsVisible
+                                  ? Colors.transparent
+                                  : IdomColors.grey,
+                              splashColor: digitsVisible
+                                  ? Colors.transparent
+                                  : IdomColors.lighten(IdomColors.error, 0.3),
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: SvgPicture.asset(
+                                    "assets/icons/turn-off.svg",
+                                    matchTextDirection: false,
+                                    alignment: Alignment.centerRight,
+                                    width: 35,
+                                    height: 35,
+                                    color: IdomColors.error,
+                                    key: Key("assets/icons/turn-off.svg")),
+                              ),
+                            ),
+                          ),
+                          SizedBox(),
+                        ])
+                      ]),
+                    ),
+                  if (widget.driver.category == "bulb")
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onHorizontalDragStart: (DragStartDetails details) {
+                        _colorChangeHandler(details.localPosition.dx);
+                      },
+                      onHorizontalDragUpdate: (DragUpdateDetails details) {
+                        _colorChangeHandler(details.localPosition.dx);
+                      },
+                      onTapDown: (TapDownDetails details) {
+                        _colorChangeHandler(details.localPosition.dx);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Container(
+                          width: 255,
+                          height: 15,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            gradient: LinearGradient(colors: _colors),
+                          ),
+                          child: CustomPaint(
+                            painter:
+                                _SliderIndicatorPainter(_colorSliderPosition),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (widget.driver.category == "bulb")
+                    InkWell(
+                      onTap: () {},
+                      splashColor: IdomColors.additionalColor,
+                      child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(18.0),
+                              child: Text("Ustaw kolor",
+                                  style: TextStyle(fontSize: 21)),
+                            ),
+                            SvgPicture.asset("assets/icons/enter.svg",
+                                matchTextDirection: false,
+                                alignment: Alignment.centerRight,
+                                width: 25,
+                                height: 25,
+                                color: IdomColors.additionalColor,
+                                key: Key("assets/icons/enter.svg")),
+                          ]),
+                    ),
+                  if (widget.driver.category == "bulb")
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onHorizontalDragStart: (DragStartDetails details) {
+                        _shadeChangeHandler(details.localPosition.dx);
+                      },
+                      onHorizontalDragUpdate: (DragUpdateDetails details) {
+                        _shadeChangeHandler(details.localPosition.dx);
+                      },
+                      onTapDown: (TapDownDetails details) {
+                        _shadeChangeHandler(details.localPosition.dx);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Container(
+                          width: 255,
+                          height: 15,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            gradient: LinearGradient(colors: [
+                              Colors.black,
+                              _currentColor,
+                              Colors.white
+                            ]),
+                          ),
+                          child: CustomPaint(
+                            painter:
+                                _SliderIndicatorPainter(_shadeSliderPosition),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (widget.driver.category == "bulb")
+                    InkWell(
+                      onTap: () {},
+                      splashColor: IdomColors.additionalColor,
+                      child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(18.0),
+                              child: Text("Ustaw jasność",
+                                  style: TextStyle(fontSize: 21)),
+                            ),
+                            SvgPicture.asset("assets/icons/enter.svg",
+                                matchTextDirection: false,
+                                alignment: Alignment.centerRight,
+                                width: 25,
+                                height: 25,
+                                color: IdomColors.additionalColor,
+                                key: Key("assets/icons/enter.svg")),
+                          ]),
+                    ),
+                  if (widget.driver.category == "bulb")
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, border: Border.all()),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SvgPicture.asset(
+                              "assets/icons/light_bulb_filled.svg",
+                              matchTextDirection: false,
+                              alignment: Alignment.centerRight,
+                              width: 85,
+                              height: 85,
+                              color: _shadedColor,
+                              key: Key("assets/icons/light_bulb_filled.svg")),
+                        ),
+                      ),
+                    )
                 ]),
               ),
             ))));
+  }
+
+  _colorChangeHandler(double position) {
+    if (position > 255) {
+      position = 255;
+    }
+    if (position < 0) {
+      position = 0;
+    }
+    setState(() {
+      _colorSliderPosition = position;
+      _currentColor = _calculateSelectedColor(_colorSliderPosition);
+      _shadedColor = _calculateShadedColor(_shadeSliderPosition);
+    });
+  }
+
+  _shadeChangeHandler(double position) {
+    if (position > 255) position = 255;
+    if (position < 0) position = 0;
+    setState(() {
+      _shadeSliderPosition = position;
+      _shadedColor = _calculateShadedColor(_shadeSliderPosition);
+    });
+  }
+
+  Color _calculateSelectedColor(double position) {
+    double positionInColorArray = (position / 255 * (_colors.length - 1));
+    int index = positionInColorArray.truncate();
+    double remainder = positionInColorArray - index;
+    if (remainder == 0.0) {
+      _currentColor = _colors[index];
+    } else {
+      int redValue = _colors[index].red == _colors[index + 1].red
+          ? _colors[index].red
+          : (_colors[index].red +
+                  (_colors[index + 1].red - _colors[index].red) * remainder)
+              .round();
+      int greenValue = _colors[index].green == _colors[index + 1].green
+          ? _colors[index].green
+          : (_colors[index].green +
+                  (_colors[index + 1].green - _colors[index].green) * remainder)
+              .round();
+      int blueValue = _colors[index].blue == _colors[index + 1].blue
+          ? _colors[index].blue
+          : (_colors[index].blue +
+                  (_colors[index + 1].blue - _colors[index].blue) * remainder)
+              .round();
+      _currentColor = Color.fromARGB(255, redValue, greenValue, blueValue);
+    }
+    return _currentColor;
+  }
+
+  Color _calculateShadedColor(double position) {
+    double ratio = position / 255;
+    if (ratio > 0.5) {
+      int redVal = _currentColor.red != 255
+          ? (_currentColor.red +
+                  (255 - _currentColor.red) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      int greenVal = _currentColor.green != 255
+          ? (_currentColor.green +
+                  (255 - _currentColor.green) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      int blueVal = _currentColor.blue != 255
+          ? (_currentColor.blue +
+                  (255 - _currentColor.blue) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      return Color.fromARGB(255, redVal, greenVal, blueVal);
+    } else if (ratio < 0.5) {
+      int redVal = _currentColor.red != 0
+          ? (_currentColor.red * ratio / 0.5).round()
+          : 0;
+      int greenVal = _currentColor.green != 0
+          ? (_currentColor.green * ratio / 0.5).round()
+          : 0;
+      int blueVal = _currentColor.blue != 0
+          ? (_currentColor.blue * ratio / 0.5).round()
+          : 0;
+      return Color.fromARGB(255, redVal, greenVal, blueVal);
+    } else {
+      return _currentColor;
+    }
   }
 
   _clickDriver() async {
@@ -1201,5 +1456,22 @@ class _DriverDetailsState extends State<DriverDetails> {
     setState(() {
       _load = false;
     });
+  }
+}
+
+class _SliderIndicatorPainter extends CustomPainter {
+  final double position;
+
+  _SliderIndicatorPainter(this.position);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawCircle(
+        Offset(position, size.height / 2), 12, Paint()..color = Colors.black);
+  }
+
+  @override
+  bool shouldRepaint(_SliderIndicatorPainter old) {
+    return true;
   }
 }
