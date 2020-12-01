@@ -50,6 +50,9 @@ class _SensorsState extends State<Sensors> {
 
   /// returns list of sensors
   Future<List<Sensor>> getSensors() async {
+    if (!mounted) {
+      return null;
+    }
     setState(() {
       _isSearching = false;
       _searchController.text = "";
@@ -168,12 +171,19 @@ class _SensorsState extends State<Sensors> {
 
   _buildSearchField() {
     return TextField(
+      key: Key('searchField'),
       controller: _searchController,
-      style: Theme.of(context).appBarTheme.textTheme.headline6,
+      style: TextStyle(
+          color: IdomColors.textLight,
+          fontSize: 20,
+          letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...",
-        hintStyle: Theme.of(context).appBarTheme.textTheme.headline6,
+        hintStyle: TextStyle(
+            color: IdomColors.textLight,
+            fontSize: 20,
+            letterSpacing: 2.0),
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
@@ -292,6 +302,7 @@ class _SensorsState extends State<Sensors> {
                     padding: const EdgeInsets.only(
                         left: 10.0, top: 10, right: 10.0, bottom: 0.0),
                     child: ListView.builder(
+                      key: Key("SensorsList"),
                       shrinkWrap: true,
                       itemCount: _sensorList.length,
                       itemBuilder: (BuildContext buildContext, index) =>
@@ -332,6 +343,9 @@ class _SensorsState extends State<Sensors> {
   Widget getCategoryImage(Sensor sensor) {
     var imageUrl;
     switch (sensor.category) {
+      case "atmo_pressure":
+        imageUrl = "assets/icons/barometer.svg";
+        break;
       case "water_temp":
         imageUrl = "assets/icons/temperature.svg";
         break;
@@ -376,12 +390,13 @@ class _SensorsState extends State<Sensors> {
   }
 
   void filterSearchResults(String query) {
+    query = query.toLowerCase();
     List<Sensor> dummySearchList = List<Sensor>();
     dummySearchList.addAll(_duplicateSensorList);
     if (query.isNotEmpty) {
       List<Sensor> dummyListData = List<Sensor>();
       dummySearchList.forEach((item) {
-        if (item.name.contains(query)) {
+        if (item.name.toLowerCase().contains(query)) {
           dummyListData.add(item);
         }
       });
@@ -409,16 +424,20 @@ class _SensorsState extends State<Sensors> {
       case "water_temp":
       case "temperature":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${stringData} °C";
+        return "ostatnia dana: " + "$stringData °C";
         break;
       case "air_humidity":
       case "humidity":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${stringData} %";
+        return "ostatnia dana: " + "$stringData %";
         break;
       case "breathalyser":
         if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "${stringData} ‰";
+        return "ostatnia dana: " + "$stringData ‰";
+        break;
+      case "atmo_pressure":
+        if (sensor.lastData == null) return "ostatnia dana: -";
+        return "ostatnia dana: " + "$stringData hPa";
         break;
       case "smoke":
       case "rain_sensor":

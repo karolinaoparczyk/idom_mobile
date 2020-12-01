@@ -40,6 +40,7 @@ class _EditSensorState extends State<EditSensor> {
   Api api = Api();
   bool _load;
   String fieldsValidationMessage;
+  String nameValidationMessage;
   bool canEditFrequency = true;
 
   List<DropdownMenuItem<String>> units;
@@ -66,7 +67,8 @@ class _EditSensorState extends State<EditSensor> {
         text: SensorCategories.values.firstWhere(
             (element) => element["value"] == widget.sensor.category)['text']);
     categoryValue = widget.sensor.category;
-    if (categoryValue == "rain_sensor" || categoryValue == "water_temp" ||
+    if (categoryValue == "rain_sensor" ||
+        categoryValue == "water_temp" ||
         categoryValue == "breathalyser" ||
         categoryValue == "smoke") {
       canEditFrequency = false;
@@ -89,7 +91,6 @@ class _EditSensorState extends State<EditSensor> {
             .firstWhere((element) => element['value'] == "seconds")['text']);
     frequencyUnitsValue = "seconds";
   }
-
 
   /// builds sensor name form field
   Widget _buildName() {
@@ -136,8 +137,7 @@ class _EditSensorState extends State<EditSensor> {
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
-                selectedCategory['value'] == "breathalyser"
-            ) {
+                selectedCategory['value'] == "breathalyser") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -343,6 +343,24 @@ class _EditSensorState extends State<EditSensor> {
                           secondChild: SizedBox(),
                         ),
                       ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      child: AnimatedCrossFade(
+                        crossFadeState: nameValidationMessage != null
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration: Duration(milliseconds: 300),
+                        firstChild: nameValidationMessage != null
+                            ? Text(nameValidationMessage,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                .copyWith(fontWeight: FontWeight.normal))
+                            : SizedBox(),
+                        secondChild: SizedBox(),
+                      ),
+                    ),
                   ])),
             )));
   }
@@ -360,9 +378,16 @@ class _EditSensorState extends State<EditSensor> {
     try {
       var res = await api.editSensor(
           widget.sensor.id, name, category, frequencyValue);
+      setState(() {
+        _load = false;
+      });
       if (res['statusCode'] == "200") {
+        nameValidationMessage = null;
+        setState(() {});
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
+        nameValidationMessage = null;
+        setState(() {});
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
@@ -374,16 +399,21 @@ class _EditSensorState extends State<EditSensor> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
           .contains("Sensor with provided name already exists")) {
+        nameValidationMessage = "Czujnik o podanej nazwie już istnieje.";
+        setState(() {});
+        return;
+      } else {
+        nameValidationMessage = null;
+        setState(() {});
         final snackBar = new SnackBar(
-            content: new Text("Czujnik o podanej nazwie już istnieje."));
+            content: new Text(
+                "Edycja czujnika nie powiodła się. Spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
-        setState(() {
-          _load = false;
-        });
       }
     } catch (e) {
       print(e.toString());
       setState(() {
+        nameValidationMessage = null;
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
@@ -401,7 +431,7 @@ class _EditSensorState extends State<EditSensor> {
     }
   }
 
-  /// confirms saving account changes
+  /// confirms saving changes
   _confirmSavingChanges(bool changedName, bool changedCategory,
       bool changedFrequencyValue, int frequencyInSeconds) async {
     var decision = await confirmActionDialog(
@@ -440,19 +470,19 @@ class _EditSensorState extends State<EditSensor> {
         int valInt = int.tryParse(_frequencyValueController.text);
         if (valInt == null) {
           fieldsValidationMessage =
-          'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+              'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
           setState(() {});
           return;
         }
 
         /// validates if frequency value is valid for given frequency units
         var validFrequencyValue =
-        SensorFrequencyFieldValidator.isFrequencyValueValid(
-            _frequencyValueController.text, frequencyUnitsValue);
+            SensorFrequencyFieldValidator.isFrequencyValueValid(
+                _frequencyValueController.text, frequencyUnitsValue);
         if (!validFrequencyValue) {
           setState(() {
             fieldsValidationMessage =
-            "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
+                "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
           });
         } else {
           setState(() {
@@ -460,16 +490,16 @@ class _EditSensorState extends State<EditSensor> {
           });
         }
       }
-        /// converts frequency value to seconds
-        frequencyInSeconds = int.parse(_frequencyValueController.text);
-        if (frequencyUnitsValue != "seconds") {
-          if (frequencyUnitsValue == "minutes")
-            frequencyInSeconds = frequencyInSeconds * 60;
-          else if (frequencyUnitsValue == "hours")
-            frequencyInSeconds = frequencyInSeconds * 60 * 60;
-          else if (frequencyUnitsValue == "days")
-            frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
 
+      /// converts frequency value to seconds
+      frequencyInSeconds = int.parse(_frequencyValueController.text);
+      if (frequencyUnitsValue != "seconds") {
+        if (frequencyUnitsValue == "minutes")
+          frequencyInSeconds = frequencyInSeconds * 60;
+        else if (frequencyUnitsValue == "hours")
+          frequencyInSeconds = frequencyInSeconds * 60 * 60;
+        else if (frequencyUnitsValue == "days")
+          frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
       }
       if (fieldsValidationMessage == null) {
         if (changedName || changedCategory || changedFrequencyValue) {

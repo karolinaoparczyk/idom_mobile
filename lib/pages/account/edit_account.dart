@@ -11,10 +11,11 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 /// allows editing account
 class EditAccount extends StatefulWidget {
-  EditAccount({@required this.storage, @required this.account});
+  EditAccount({@required this.storage, @required this.account, this.testApi});
 
   final SecureStorage storage;
   final Account account;
+  final Api testApi;
 
   @override
   _EditAccountState createState() => new _EditAccountState();
@@ -24,9 +25,10 @@ class _EditAccountState extends State<EditAccount> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
-  final Api api = Api();
+  Api api = Api();
   bool _load;
   String fieldsValidationMessage;
+  String currentUsername;
 
   TextEditingController _emailController;
   TextEditingController _telephoneController;
@@ -69,10 +71,18 @@ class _EditAccountState extends State<EditAccount> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
+    _getCurrentUser();
     _load = false;
     _emailController = TextEditingController(text: widget.account.email);
     _telephoneController =
         TextEditingController(text: widget.account.telephone);
+  }
+
+  _getCurrentUser() async {
+    currentUsername = await widget.storage.getUsername();
   }
 
   @override
@@ -106,7 +116,10 @@ class _EditAccountState extends State<EditAccount> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(title: Text(widget.account.username), actions: [
-              IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+              IconButton(
+                  key: Key("saveAccountButton"),
+                  icon: Icon(Icons.save),
+                  onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
@@ -195,10 +208,7 @@ class _EditAccountState extends State<EditAccount> {
       _load = true;
     });
     try {
-      Navigator.of(context).pop(true);
-      var res =
-          await api.editAccount(widget.account.id, email, telephone);
-      var loginExists = false;
+      var res = await api.editAccount(widget.account.id, email, telephone);
       var emailExists = false;
       var emailInvalid = false;
       var telephoneExists = false;
@@ -209,8 +219,10 @@ class _EditAccountState extends State<EditAccount> {
           _load = false;
           fieldsValidationMessage = null;
         });
-        widget.storage.setEmail(_emailController.text);
-        widget.storage.setTelephone(_telephoneController.text);
+        if (widget.account.username == currentUsername) {
+          widget.storage.setEmail(_emailController.text);
+          widget.storage.setTelephone(_telephoneController.text);
+        }
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         displayProgressDialog(
@@ -222,9 +234,6 @@ class _EditAccountState extends State<EditAccount> {
             .pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-      if (res['body'].contains("Username already exists")) {
-        loginExists = true;
       }
       if (res['body'].contains("Email address already exists")) {
         emailExists = true;
@@ -239,20 +248,11 @@ class _EditAccountState extends State<EditAccount> {
         telephoneExists = true;
       }
       String errorText = "";
-      if (loginExists && emailExists && telephoneExists)
-        errorText =
-            "Konto dla podanego loginu, adresu e-mail i numeru telefonu już istnieje.";
-      else if (loginExists && emailExists)
-        errorText = "Konto dla podanego loginu i adresu e-mail już istnieje.";
-      else if (loginExists && telephoneExists)
-        errorText = "Konto dla podanego loginu i numeru telefonu już istnieje.";
-      else if (emailExists && telephoneExists)
+      if (emailExists && telephoneExists)
         errorText =
             "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.";
       else if (emailExists)
         errorText = "Konto dla podanego adresu e-mail już istnieje.";
-      else if (loginExists)
-        errorText = "Konto dla podanego loginu już istnieje.";
       else if (telephoneExists)
         errorText = "Konto dla podanego numeru telefonu już istnieje.";
 

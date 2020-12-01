@@ -80,6 +80,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -156,6 +160,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -215,6 +223,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("opady atmosferyczne").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -253,6 +265,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("opady atmosferyczne").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -264,6 +280,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -378,6 +398,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -426,6 +450,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność powietrza").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -453,6 +481,54 @@ void main() {
     verify(await mockApi.addSensor('sensor', 'air_humidity', 7200)).called(1);
   });
 
+  /// tests if can add atmospheric pressure sensor
+  testWidgets('can add atmospheric pressure sensor', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addSensor('sensor', 'atmo_pressure', 7200)).thenAnswer(
+        (_) async =>
+            Future.value({"bodySen": '{"id": 3}', "statusCodeSen": "201"}));
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    NewSensor page = NewSensor(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'sensor');
+
+    await tester.tap(find.byKey(Key('categoriesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("ciśnienie atmosferyczne").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    Finder frequencyValueField = find.byKey(Key('frequencyValue'));
+    await tester.enterText(frequencyValueField, '2');
+
+    await tester.tap(find.byKey(Key('frequencyUnitsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.text("godziny").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    expect(find.text("godziny"), findsNWidgets(2));
+    expect(find.text("2"), findsOneWidget);
+    expect(find.text("sensor"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('addSensorButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+
+    verify(await mockApi.addSensor('sensor', 'atmo_pressure', 7200)).called(1);
+  });
+
   /// tests if does not save when name exists
   testWidgets('valid data, name exists, does not save',
       (WidgetTester tester) async {
@@ -478,6 +554,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -496,7 +576,6 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text("Czujnik o podanej nazwie już istnieje."), findsOneWidget);
     expect(find.byType(NewSensor), findsOneWidget);
 
@@ -524,6 +603,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();

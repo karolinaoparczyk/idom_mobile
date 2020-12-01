@@ -13,9 +13,10 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user in
 class SignIn extends StatefulWidget {
-  SignIn({@required this.storage});
+  SignIn({@required this.storage, @required this.isFromSignUp});
 
   final SecureStorage storage;
+  final bool isFromSignUp;
 
   @override
   _SignInState createState() => new _SignInState();
@@ -35,6 +36,17 @@ class _SignInState extends State<SignIn> {
   void initState() {
     super.initState();
     _load = false;
+  }
+
+  _displaySignUpSuccessMessage() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 18.0),
+      child: Text("Konto zostało utworzone. Możesz się zalogować.",
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontWeight: FontWeight.normal)),
+    );
   }
 
   /// builds username text field for the form
@@ -176,8 +188,8 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: _onBackButton,
-        child: Scaffold(
+      onWillPop: _onBackButton,
+      child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
             title: Text('Zaloguj się'),
@@ -186,59 +198,61 @@ class _SignInState extends State<SignIn> {
             height: MediaQuery.of(context).size.height - 60,
             child: SingleChildScrollView(
               child: Column(children: <Widget>[
-                         Form(
-                                key: _formKey,
-                                child: FocusScope(
-                                    node: _node,
-                                    child: Column(
-                                      children: <Widget>[
-                                        Align(
-                                          child: loadingIndicator(_load),
-                                          alignment: FractionalOffset.center,
-                                        ),
-                                        Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 30.0,
-                                                top: 20.0,
-                                                right: 30.0,
-                                                bottom: 0.0),
-                                            child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: _buildUsername())),
-                                        Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 30.0,
-                                                top: 20.0,
-                                                right: 30.0,
-                                                bottom: 13.5),
-                                            child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: _buildPassword())),
-                                      ],
-                                    ))),AnimatedContainer(
-                                curve: Curves.easeInToLinear,
-                                duration: Duration(
-                                  milliseconds: 10,
-                                ),
-                                alignment: Alignment.bottomCenter,
-                                child: Column(children: <Widget>[
-                                  buttonWidget(context, "Zaloguj", Icons.arrow_right_outlined, signIn),
-                                  TextButton(
-                                    key: Key("passwordReset"),
-                                    child: Text('Zapomniałeś/aś hasła?',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal)),
-                                    onPressed: navigateToEnterEmail,
-                                  ),
-                                ]))
-                      ]),
+                Form(
+                    key: _formKey,
+                    child: FocusScope(
+                        node: _node,
+                        child: Column(
+                          children: <Widget>[
+                            if (widget.isFromSignUp)
+                              _displaySignUpSuccessMessage(),
+                            Align(
+                              child: loadingIndicator(_load),
+                              alignment: FractionalOffset.center,
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 20.0,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildUsername())),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 20.0,
+                                    right: 30.0,
+                                    bottom: 13.5),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _buildPassword())),
+                          ],
+                        ))),
+                AnimatedContainer(
+                    curve: Curves.easeInToLinear,
+                    duration: Duration(
+                      milliseconds: 10,
+                    ),
+                    alignment: Alignment.bottomCenter,
+                    child: Column(children: <Widget>[
+                      buttonWidget(context, "Zaloguj",
+                          Icons.arrow_right_outlined, signIn),
+                      TextButton(
+                        key: Key("passwordReset"),
+                        child: Text('Zapomniałeś/aś hasła?',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                .copyWith(fontWeight: FontWeight.normal)),
+                        onPressed: navigateToEnterEmail,
+                      ),
+                    ]))
+              ]),
             ),
-          )
-          ),
-        );
+          )),
+    );
   }
 
   /// navigates to sending reset password request page

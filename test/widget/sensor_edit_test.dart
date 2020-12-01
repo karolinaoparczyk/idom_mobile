@@ -136,6 +136,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -251,6 +255,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -303,6 +311,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność gleby").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -358,7 +370,6 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
-    expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text("Czujnik o podanej nazwie już istnieje."), findsOneWidget);
     await tester.pump();
     expect(find.byType(EditSensor), findsOneWidget);
@@ -489,6 +500,10 @@ void main() {
     await tester.tap(find.byKey(Key('categoriesButton')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+    /// scroll categories list
+    await tester.drag(
+        find.byKey(Key('categories_list')), const Offset(0.0, -300));
+    await tester.pump();
     await tester.tap(find.text("wilgotność powietrza").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -604,6 +619,58 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
     verify(await mockApi.editSensor(1, 'newname', null, null))
+        .called(1);
+  });
+
+  /// tests if changes atmospheric pressure sensor details correctly
+  testWidgets('changes atmospheric pressure sensor details correctly', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.editSensor(1, 'newname', null, 180)).thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken()).thenAnswer(
+            (_) async => Future.value("token"));
+    when(mockSecureStorage.resetUserData()).thenAnswer(
+            (_) async => Future.value());
+
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "atmo_pressure",
+        frequency: 30,
+        lastData: null);
+
+    EditSensor page = EditSensor(
+      storage: mockSecureStorage,
+      sensor: sensor,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder usernameField = find.byKey(Key('name'));
+    await tester.enterText(usernameField, 'newname');
+
+    Finder frequencyValueField = find.byKey(Key('frequencyValue'));
+    await tester.enterText(frequencyValueField, '3');
+
+    await tester.tap(find.byKey(Key('frequencyUnitsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("minuty").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+
+    await tester.tap(find.byKey(Key('editSensorButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editSensor(1, 'newname', null, 180))
         .called(1);
   });
 }

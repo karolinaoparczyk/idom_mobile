@@ -14,7 +14,8 @@ import 'edit_account.dart';
 
 /// displays account details
 class AccountDetail extends StatefulWidget {
-  AccountDetail({@required this.storage, @required this.username, this.testApi});
+  AccountDetail(
+      {@required this.storage, @required this.username, this.testApi});
 
   final SecureStorage storage;
   String username;
@@ -38,7 +39,7 @@ class _AccountDetailState extends State<AccountDetail> {
   @override
   void initState() {
     super.initState();
-    if (widget.testApi != null){
+    if (widget.testApi != null) {
       api = widget.testApi;
     }
     _load = true;
@@ -80,8 +81,7 @@ class _AccountDetailState extends State<AccountDetail> {
       });
       return;
     }
-    var userResult =
-        await api.getUser(widget.username);
+    var userResult = await api.getUser(widget.username);
     if (userResult[1] == 200) {
       dynamic body = jsonDecode(userResult[0]);
       account = Account.fromJson(body);
@@ -120,7 +120,9 @@ class _AccountDetailState extends State<AccountDetail> {
             key: _scaffoldKey,
             appBar: AppBar(title: Text(widget.username), actions: [
               IconButton(
-                  icon: Icon(Icons.edit), onPressed: _navigateToEditAccount)
+                  key: Key("editAccount"),
+                  icon: Icon(Icons.edit),
+                  onPressed: _navigateToEditAccount)
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
@@ -233,7 +235,8 @@ class _AccountDetailState extends State<AccountDetail> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                        account.telephone != null && account.telephone != ""
+                                        account.telephone != null &&
+                                                account.telephone != ""
                                             ? account.telephone
                                             : "-",
                                         style: TextStyle(fontSize: 21.0)))),
@@ -322,8 +325,8 @@ class _AccountDetailState extends State<AccountDetail> {
   }
 
   _updateNotifications() async {
-    var result = await api.editNotifications(
-        account.id, appNotificationsOn.toString(), smsNotificationsOn.toString());
+    var result = await api.editNotifications(account.id,
+        appNotificationsOn.toString(), smsNotificationsOn.toString());
     if (result != null && result['statusCode'] != "200") {
       final snackBar = new SnackBar(
           content: new Text("Błąd edycji powiadomień. Spróbuj ponownie."));
@@ -337,8 +340,10 @@ class _AccountDetailState extends State<AccountDetail> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                EditAccount(storage: widget.storage, account: account),
+            builder: (context) => EditAccount(
+                storage: widget.storage,
+                account: account,
+                testApi: widget.testApi),
             fullscreenDialog: true));
 
     if (result == true) {

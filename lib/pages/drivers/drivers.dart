@@ -30,7 +30,6 @@ class _DriversState extends State<Drivers> {
   List<Driver> _driverList;
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
-  String _token;
 
   @override
   void initState() {
@@ -41,13 +40,8 @@ class _DriversState extends State<Drivers> {
     getDrivers();
   }
 
-  Future<void> getUserToken() async {
-    _token = await widget.storage.getToken();
-  }
-
   /// returns list of drivers
   Future<void> getDrivers() async {
-    await getUserToken();
     try {
       /// gets drivers
       var res = await api.getDrivers();
@@ -181,23 +175,16 @@ class _DriversState extends State<Drivers> {
                                       child: Container(
                                           padding: EdgeInsets.only(top: 5),
                                           alignment: Alignment.centerRight,
-                                          child: SvgPicture.asset(
-                                              "assets/icons/tap.svg",
-                                              matchTextDirection: false,
-                                              width: 32,
-                                              height: 32,
-                                              color: Theme.of(context)
-                                                  .iconTheme
-                                                  .color,
-                                              key: Key(
-                                                  "assets/icons/tap.svg")))),
+                                          child: _getDriverImage(
+                                              _driverList[index]))),
                                   trailing: GestureDetector(
                                     onTapDown: (TapDownDetails details) async {
                                       _showPopupMenu(details.globalPosition,
                                           _driverList[index]);
                                     },
                                     child: Container(
-                                        child: Icon(Icons.more_vert_outlined)),
+                                        child: Icon(Icons.more_vert_outlined,
+                                            size: 30)),
                                   ),
                                 ),
                               )))))));
@@ -211,6 +198,24 @@ class _DriversState extends State<Drivers> {
     );
   }
 
+  _getDriverImage(Driver driver) {
+    var imageUrl;
+    switch (driver.category) {
+      case "clicker":
+        imageUrl = "assets/icons/tap.svg";
+        break;
+      case "remote_control":
+        imageUrl = "assets/icons/controller.svg";
+        break;
+    }
+    return SvgPicture.asset(imageUrl,
+        matchTextDirection: false,
+        width: 32,
+        height: 32,
+        color: Theme.of(context).iconTheme.color,
+        key: Key(imageUrl));
+  }
+
   _showPopupMenu(Offset offset, Driver driver) async {
     double left = offset.dx;
     double top = offset.dy;
@@ -221,29 +226,45 @@ class _DriversState extends State<Drivers> {
         PopupMenuItem<String>(
             key: Key("click"),
             child: SizedBox(
-              width: 120,
+              width: 140,
               child: Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   columnWidths: {
                     0: FlexColumnWidth(1),
                     1: FlexColumnWidth(1),
-                    2: FlexColumnWidth(6),
+                    2: FlexColumnWidth(8),
                   },
                   children: [
-                    TableRow(
-                      children: [
-                        SvgPicture.asset(
-                          "assets/icons/play.svg",
-                          matchTextDirection: false,
-                          alignment: Alignment.centerRight,
-                          width: 25,
-                          height: 25,
-                          color: IdomColors.green,
-                        ),
-                        SizedBox(width: 5),
-                        Text('Wciśnij przycisk'),
-                      ],
-                    ),
+                    if (driver.category == "clicker")
+                      TableRow(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/icons/play.svg",
+                            matchTextDirection: false,
+                            alignment: Alignment.centerRight,
+                            width: 25,
+                            height: 25,
+                            color: IdomColors.green,
+                          ),
+                          SizedBox(width: 5),
+                          Text('Wciśnij przycisk'),
+                        ],
+                      ),
+                    if (driver.category == "remote_control")
+                      TableRow(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/icons/turn-off.svg",
+                            matchTextDirection: false,
+                            alignment: Alignment.centerRight,
+                            width: 25,
+                            height: 25,
+                            color: IdomColors.error,
+                          ),
+                          SizedBox(width: 5),
+                          Text('Włącz/wyłącz pilot'),
+                        ],
+                      ),
                   ]),
             ),
             value: 'click'),

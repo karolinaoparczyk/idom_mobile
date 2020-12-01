@@ -25,23 +25,18 @@ class _NewDriverState extends State<NewDriver> {
   TextEditingController _categoryController;
   String categoryValue;
   Api api = Api();
-  String _token;
   bool _load;
+  String fieldsValidationMessage;
 
   @override
   void initState() {
     super.initState();
-    if (widget.testApi != null){
+    if (widget.testApi != null) {
       api = widget.testApi;
     }
-    getToken();
     _load = false;
     _nameController = TextEditingController();
     _categoryController = TextEditingController();
-  }
-
-  Future<void> getToken() async {
-    _token = await widget.storage.getToken();
   }
 
   @override
@@ -167,6 +162,24 @@ class _NewDriverState extends State<NewDriver> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildCategoryField())),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      child: AnimatedCrossFade(
+                        crossFadeState: fieldsValidationMessage != null
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration: Duration(milliseconds: 300),
+                        firstChild: fieldsValidationMessage != null
+                            ? Text(fieldsValidationMessage,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontWeight: FontWeight.normal))
+                            : SizedBox(),
+                        secondChild: SizedBox(),
+                      ),
+                    ),
                   ])),
             )));
   }
@@ -180,10 +193,17 @@ class _NewDriverState extends State<NewDriver> {
         _load = true;
       });
       try {
-        var res = await api.addDriver(_nameController.text, categoryValue, null);
+        var res = await api.addDriver(_nameController.text, categoryValue);
+        setState(() {
+          _load = false;
+        });
         if (res['statusCode'] == "201") {
+          fieldsValidationMessage = null;
+          setState(() {});
           Navigator.pop(context, true);
         } else if (res['statusCode'] == "401") {
+          fieldsValidationMessage = null;
+          setState(() {});
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
@@ -194,11 +214,24 @@ class _NewDriverState extends State<NewDriver> {
               .pop();
           await widget.storage.resetUserData();
           Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (res['body']
+            .contains("Driver with provided name already exists")) {
+          fieldsValidationMessage = "Sterownik o podanej nazwie już istnieje.";
+          setState(() {});
+          return;
+        } else {
+          fieldsValidationMessage = null;
+          setState(() {});
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Dodawanie sterownika nie powiodło się. Spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
         print(e.toString());
         setState(() {
           _load = false;
+          fieldsValidationMessage = null;
         });
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(

@@ -29,6 +29,9 @@ dependencies:
   flutter_inappwebview:
   firebase_messaging: ^5.1.2
   file_picker:
+  equatable: ^1.2.5
+  path_provider: ^1.6.24
+  permission_handler: ^5.0.1
 
 dev_dependencies:
   flutter_test:

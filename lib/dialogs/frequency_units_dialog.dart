@@ -37,7 +37,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                child: Text("Jednostki",
+                child: Text("Wybierz jednostki",
                     style: Theme.of(context)
                         .textTheme
                         .headline5

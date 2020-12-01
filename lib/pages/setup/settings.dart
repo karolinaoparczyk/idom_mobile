@@ -15,16 +15,16 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
 /// allows to enter email and send reset password request
-class EditApiAddress extends StatefulWidget {
-  EditApiAddress({@required this.storage});
+class Settings extends StatefulWidget {
+  Settings({@required this.storage});
 
   final SecureStorage storage;
 
   @override
-  _EditApiAddressState createState() => _EditApiAddressState();
+  _SettingsState createState() => _SettingsState();
 }
 
-class _EditApiAddressState extends State<EditApiAddress> {
+class _SettingsState extends State<Settings> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final Api api = Api();
@@ -155,19 +155,21 @@ class _EditApiAddressState extends State<EditApiAddress> {
                                             file != null)
                                           Row(
                                             children: [
-                                              Text(
-                                                  file == null
-                                                      ? currentFirebaseParams[
-                                                          'fileName']
-                                                      : file.path
-                                                          .split("/")
-                                                          .last,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1
-                                                      .copyWith(
-                                                          fontWeight: FontWeight
-                                                              .normal)),
+                                              Flexible(
+                                                child: Text(
+                                                    file == null
+                                                        ? currentFirebaseParams[
+                                                            'fileName']
+                                                        : file.path
+                                                            .split("/")
+                                                            .last,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1
+                                                        .copyWith(
+                                                            fontWeight: FontWeight
+                                                                .normal)),
+                                              ),
                                               SizedBox(width: 30),
                                               IconButton(
                                                 icon: Icon(Icons
