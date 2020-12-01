@@ -171,12 +171,19 @@ class _SensorsState extends State<Sensors> {
 
   _buildSearchField() {
     return TextField(
+      key: Key('searchField'),
       controller: _searchController,
-      style: Theme.of(context).appBarTheme.textTheme.headline6,
+      style: TextStyle(
+          color: IdomColors.textLight,
+          fontSize: 20,
+          letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...",
-        hintStyle: Theme.of(context).appBarTheme.textTheme.headline6,
+        hintStyle: TextStyle(
+            color: IdomColors.textLight,
+            fontSize: 20,
+            letterSpacing: 2.0),
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
@@ -383,12 +390,13 @@ class _SensorsState extends State<Sensors> {
   }
 
   void filterSearchResults(String query) {
+    query = query.toLowerCase();
     List<Sensor> dummySearchList = List<Sensor>();
     dummySearchList.addAll(_duplicateSensorList);
     if (query.isNotEmpty) {
       List<Sensor> dummyListData = List<Sensor>();
       dummySearchList.forEach((item) {
-        if (item.name.contains(query)) {
+        if (item.name.toLowerCase().contains(query)) {
           dummyListData.add(item);
         }
       });

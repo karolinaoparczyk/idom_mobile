@@ -20,7 +20,7 @@ void main() {
   }
 
   /// tests if sensors on list
-  testWidgets('sensors on list', (WidgetTester tester) async {
+  testWidgets('sensors on list, search results', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     List<Map<String, dynamic>> sensors = [
@@ -33,7 +33,7 @@ void main() {
       },
       {
         "id": 2,
-        "name": "sensor2",
+        "name": "SENSOR2",
         "category": "rain_sensor",
         "frequency": 300,
         "last_data": "27.0"
@@ -73,6 +73,20 @@ void main() {
     expect(find.byType(ListTile).evaluate().length, 5);
     expect(find.text("ostatnia dana: 27.00 °C"), findsOneWidget);
     expect(find.text("ostatnia dana: 27.00 %"), findsNWidgets(2));
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, 'sensor');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 5);
+    expect(find.text("sensor1"), findsOneWidget);
+    expect(find.text("SENSOR2"), findsOneWidget);
+
+    await tester.enterText(searchField, '1');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 1);
+    expect(find.text("sensor1"), findsOneWidget);
   });
 
   /// tests if deletes sensor after confirmation

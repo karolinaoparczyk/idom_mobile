@@ -170,15 +170,22 @@ class _AccountsState extends State<Accounts> {
 
   _buildSearchField() {
     return TextField(
+      key: Key("searchField"),
       controller: _searchController,
       onChanged: (value) {
         filterSearchResults(value);
       },
-      style: Theme.of(context).appBarTheme.textTheme.headline6,
+      style: TextStyle(
+          color: IdomColors.textLight,
+          fontSize: 20,
+          letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...",
-        hintStyle: Theme.of(context).appBarTheme.textTheme.headline6,
+        hintStyle: TextStyle(
+            color: IdomColors.textLight,
+            fontSize: 20,
+            letterSpacing: 2.0),
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
@@ -335,12 +342,13 @@ class _AccountsState extends State<Accounts> {
   }
 
   void filterSearchResults(String query) {
+    query = query.toLowerCase();
     List<Account> dummySearchList = List<Account>();
     dummySearchList.addAll(_duplicateAccountList);
     if (query.isNotEmpty) {
       List<Account> dummyListData = List<Account>();
       dummySearchList.forEach((item) {
-        if (item.username.contains(query)) {
+        if (item.username.toLowerCase().contains(query)) {
           dummyListData.add(item);
         }
       });
