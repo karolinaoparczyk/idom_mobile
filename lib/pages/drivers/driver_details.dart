@@ -162,6 +162,14 @@ class _DriverDetailsState extends State<DriverDetails> {
                           ))),
                   if (widget.driver.category == "clicker")
                     Padding(
+                      padding: EdgeInsets.only(
+                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(widget.driver.name,
+                              style: TextStyle(fontSize: 21.0)))),
+                  if (widget.driver.category == "clicker")
+                    Padding(
                       padding: const EdgeInsets.only(
                           left: 52.5, top: 30, right: 52.5, bottom: 0.0),
                       child: Column(
@@ -1387,12 +1395,13 @@ class _DriverDetailsState extends State<DriverDetails> {
     var message;
     var result = await api.changeBulbColor(widget.driver.id, _currentColor.red,
         _currentColor.green, _currentColor.blue);
+    var serverError = RegExp("50[0-4]");
     if (result == 200) {
       message = "Wysłano komendę zmiany koloru żarówki ${widget.driver.name}.";
     } else if (result == 404) {
       message =
           "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
-    } else if (result == 503) {
+    } else if (serverError.hasMatch(result.toString())) {
       message =
           "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
     }
@@ -1408,13 +1417,14 @@ class _DriverDetailsState extends State<DriverDetails> {
     if (_shadeSliderPosition == 0) _shadeSliderPosition = 1;
     int brightness = (_shadeSliderPosition / 255 * 100).round();
     var result = await api.changeBulbBrightness(widget.driver.id, brightness);
+    var serverError = RegExp("50[0-4]");
     if (result == 200) {
       message =
           "Wysłano komendę zmiany jasności żarówki ${widget.driver.name}.";
     } else if (result == 404) {
       message =
           "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
-    } else if (result == 503) {
+    } else if (serverError.hasMatch(result.toString())) {
       message =
           "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
     }
@@ -1432,16 +1442,18 @@ class _DriverDetailsState extends State<DriverDetails> {
     if (widget.driver.category == "bulb") {
       result = await api.switchBulb(widget.driver.id, flag);
     }
+    var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
         message = "Wysłano komendę włączenia sterownika ${widget.driver.name}.";
       } else {
-        message = "Wysłano komendę wyłączenia sterownika ${widget.driver.name}.";
+        message =
+            "Wysłano komendę wyłączenia sterownika ${widget.driver.name}.";
       }
     } else if (result == 404) {
       message =
           "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
-    } else if (result == 503) {
+    } else if (serverError.hasMatch(result.toString())) {
       message =
           "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
     }
