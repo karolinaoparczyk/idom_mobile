@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/driver_details.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -175,10 +177,10 @@ void main() {
   });
 
 
-  /// tests if turns bulb on
-  testWidgets('turn bulb on', (WidgetTester tester) async {
+  /// tests if turns bulb on, data null
+  testWidgets('turn bulb on, data null', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver = Driver(id: 1, name: "driver1", category: "bulb");
+    Driver driver = Driver(id: 1, name: "driver1", category: "bulb", data: null);
 
     when(mockApi.switchBulb(1, "on"))
         .thenAnswer((_) async => Future.value(200));
@@ -197,11 +199,94 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("driver1"), findsNWidgets(2));
+    expect(find.text("Aktualny stan"), findsNothing);
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text("Wysłano komendę włączenia sterownika driver1."),
         findsOneWidget);
     verify(await mockApi.switchBulb(1, "on")).called(1);
+  });
+
+  /// tests if turns bulb on, data false
+  testWidgets('turn bulb on, data false', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(id: 1, name: "driver1", category: "bulb", data: false);
+
+    Map<String, dynamic> bulb ={
+      "id": 1,
+      "name": "driver1",
+      "category": "bulb",
+      "data": true
+    };
+    when(mockApi.switchBulb(1, "on"))
+        .thenAnswer((_) async => Future.value(200));
+    when(mockApi.getDriverDetails(1))
+        .thenAnswer((_) async => Future.value({"body": jsonEncode(bulb), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver1"), findsNWidgets(2));
+    expect(find.text("Aktualny stan"), findsOneWidget);
+    expect(find.text("wyłączona"), findsOneWidget);
+    await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("Wysłano komendę włączenia sterownika driver1."),
+        findsOneWidget);
+    expect(find.text("włączona"), findsOneWidget);
+    verify(await mockApi.switchBulb(1, "on")).called(1);
+  });
+
+  /// tests if turns bulb off, data true
+  testWidgets('turn bulb off, data true', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(id: 1, name: "driver1", category: "bulb", data: true);
+
+    Map<String, dynamic> bulb ={
+      "id": 1,
+      "name": "driver1",
+      "category": "bulb",
+      "data": false
+    };
+    when(mockApi.switchBulb(1, "off"))
+        .thenAnswer((_) async => Future.value(200));
+    when(mockApi.getDriverDetails(1))
+        .thenAnswer((_) async => Future.value({"body": jsonEncode(bulb), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver1"), findsNWidgets(2));
+    expect(find.text("Aktualny stan"), findsOneWidget);
+    expect(find.text("włączona"), findsOneWidget);
+    await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("Wysłano komendę wyłączenia sterownika driver1."),
+        findsOneWidget);
+    expect(find.text("wyłączona"), findsOneWidget);
+    verify(await mockApi.switchBulb(1, "off")).called(1);
   });
 }

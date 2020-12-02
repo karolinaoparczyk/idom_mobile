@@ -160,14 +160,27 @@ class _DriverDetailsState extends State<DriverDetails> {
                               ),
                             ],
                           ))),
-                  if (widget.driver.category == "clicker")
+                  if (widget.driver.category == "bulb" &&
+                      widget.driver.data != null)
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(widget.driver.name,
-                              style: TextStyle(fontSize: 21.0)))),
+                        padding: EdgeInsets.only(
+                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Aktualny stan",
+                                style: TextStyle(
+                                    color: IdomColors.additionalColor,
+                                    fontSize: 16.5,
+                                    fontWeight: FontWeight.bold)))),
+                  if (widget.driver.category == "bulb" &&
+                      widget.driver.data != null)
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(_getDataValue(),
+                                style: TextStyle(fontSize: 21.0)))),
                   if (widget.driver.category == "clicker")
                     Padding(
                       padding: const EdgeInsets.only(
@@ -1306,6 +1319,10 @@ class _DriverDetailsState extends State<DriverDetails> {
             ))));
   }
 
+  _getDataValue() {
+    return widget.driver.data ? "włączona" : "wyłączona";
+  }
+
   _colorChangeHandler(double position) {
     if (position > 255) {
       position = 255;
@@ -1436,7 +1453,11 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 
   _switchDriver() async {
-    var flag = "on";
+    var flag = widget.driver.data == null
+        ? "on"
+        : widget.driver.data
+            ? "off"
+            : "on";
     var message;
     var result;
     if (widget.driver.category == "bulb") {
@@ -1450,6 +1471,7 @@ class _DriverDetailsState extends State<DriverDetails> {
         message =
             "Wysłano komendę wyłączenia sterownika ${widget.driver.name}.";
       }
+      await _refreshSensorDetails();
     } else if (result == 404) {
       message =
           "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
