@@ -352,6 +352,7 @@ class _SensorsState extends State<Sensors> {
       case "breathalyser":
         imageUrl = "assets/icons/breathalyser.svg";
         break;
+      case "gas":
       case "smoke":
         imageUrl = "assets/icons/smoke.svg";
         break;
@@ -440,6 +441,7 @@ class _SensorsState extends State<Sensors> {
         return "ostatnia dana: " + "$stringData hPa";
         break;
       case "smoke":
+      case "gas":
       case "rain_sensor":
         return "";
     }
