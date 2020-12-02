@@ -31,7 +31,7 @@ class Api {
       "username": username,
       "password": password,
     }).timeout(Duration(seconds: 5));
-    return [utf8.decode(result.body.runes.toList()), result.statusCode];
+    return [utf8.decode(result.bodyBytes), result.statusCode];
   }
 
   /// registers user
@@ -62,7 +62,7 @@ class Api {
     var result = await httpClient.get('$url/users/detail/$username', headers: {
       HttpHeaders.authorizationHeader: "Token $userToken"
     }).timeout(Duration(seconds: 5));
-    return [utf8.decode(result.body.runes.toList()), result.statusCode];
+    return [utf8.decode(result.bodyBytes), result.statusCode];
   }
 
   /// requests logging out
@@ -112,7 +112,7 @@ class Api {
         HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 5));
       var resDict = {
-        "body": utf8.decode(res.body.runes.toList()),
+        "body": utf8.decode(res.bodyBytes),
         "statusCode": res.statusCode.toString(),
       };
       return resDict;
@@ -141,7 +141,7 @@ class Api {
             body: body)
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "body": utf8.decode(res.body.runes.toList()),
+      "body": utf8.decode(res.bodyBytes),
       "statusCode": res.statusCode.toString(),
     };
     return resDict;
@@ -205,7 +205,7 @@ class Api {
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "body": utf8.decode(res.body.runes.toList()),
+      "body": utf8.decode(res.bodyBytes),
       "statusCode": res.statusCode.toString(),
     };
     return resDict;
@@ -237,7 +237,7 @@ class Api {
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "bodySen": utf8.decode(resSen.body.runes.toList()),
+      "bodySen": utf8.decode(resSen.bodyBytes),
       "statusCodeSen": resSen.statusCode.toString(),
     };
     return resDict;
@@ -268,7 +268,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
-        "bodySensors": utf8.decode(resSensors.body.runes.toList()),
+        "bodySensors": utf8.decode(resSensors.bodyBytes),
         "statusCodeSensors": resSensors.statusCode.toString(),
       };
       return responses;
@@ -288,7 +288,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
-        "body": utf8.decode(res.body.runes.toList()),
+        "body": utf8.decode(res.bodyBytes),
         "statusCode": res.statusCode.toString(),
       };
       return responses;
@@ -309,7 +309,7 @@ class Api {
       }).timeout(Duration(seconds: 10));
 
       Map<String, String> responses = {
-        "bodySensorData": utf8.decode(resFrequency.body.runes.toList()),
+        "bodySensorData": utf8.decode(resFrequency.bodyBytes),
         "statusSensorData": resFrequency.statusCode.toString(),
       };
       return responses;
@@ -329,7 +329,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> response = {
-        "body": utf8.decode(res.body.runes.toList()),
+        "body": utf8.decode(res.bodyBytes),
         "statusCode": res.statusCode.toString(),
       };
       return response;
@@ -407,7 +407,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
-        "body": utf8.decode(res.body.runes.toList()),
+        "body": utf8.decode(res.bodyBytes),
         "statusCode": res.statusCode.toString(),
       };
       return responses;
@@ -472,7 +472,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> response = {
-        "body": utf8.decode(res.body.runes.toList()),
+        "body": utf8.decode(res.bodyBytes),
         "statusCode": res.statusCode.toString(),
       };
       return response;
@@ -502,7 +502,7 @@ class Api {
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "body": utf8.decode(res.body.runes.toList()),
+      "body": utf8.decode(res.bodyBytes),
       "statusCode": res.statusCode.toString(),
     };
     return resDict;
@@ -529,7 +529,7 @@ class Api {
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
-      "body": utf8.decode(res.body.runes.toList()),
+      "body": utf8.decode(res.bodyBytes),
       "statusCode": res.statusCode.toString(),
     };
     return resDict;
@@ -545,7 +545,7 @@ class Api {
       }).timeout(Duration(seconds: 5));
 
       Map<String, String> responses = {
-        "body": utf8.decode(res.body.runes.toList()),
+        "body": utf8.decode(res.bodyBytes),
         "statusCode": res.statusCode.toString(),
       };
       return responses;
@@ -604,7 +604,7 @@ class Api {
               }))
           .timeout(Duration(seconds: 5));
       Map<String, dynamic> response = {
-        "body": utf8.decode(res.body.runes.toList()),
+        "body": utf8.decode(res.bodyBytes),
         "statusCode": res.statusCode,
       };
       return response;

@@ -6,6 +6,7 @@ class SensorCategories {
     {"text": "temperatura powietrza", "value": "temperature"},
     {"text": "temperatura wody", "value": "water_temp"},
     {"text": "stan powietrza", "value": "smoke"},
+    {"text": "gaz", "value": "gas"},
     {"text": "wilgotność gleby", "value": "humidity"},
     {"text": "wilgotność powietrza", "value": "air_humidity"},
   ];
