@@ -484,9 +484,18 @@ class Api {
 
   /// adds driver
   Future<Map<String, String>> addDriver(String name, String category,
-      {bool data = false}) async {
+      {bool data = null}) async {
     await getApiAddress();
     await getToken();
+    var body;
+    if (data == null) {
+      body = {
+        "name": name,
+        "category": category,
+      };
+    } else {
+      body = {"name": name, "category": category, "data": data};
+    }
     var res = await httpClient
         .post(
           '$url/drivers/add',
@@ -494,11 +503,7 @@ class Api {
             HttpHeaders.authorizationHeader: "Token $token",
             HttpHeaders.contentTypeHeader: 'application/json',
           },
-          body: jsonEncode({
-            "name": name,
-            "category": category,
-            "data": data,
-          }),
+          body: jsonEncode(body),
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
@@ -578,6 +583,61 @@ class Api {
       var res = await httpClient.post('$url/drivers/action',
           headers: {HttpHeaders.authorizationHeader: "Token $token"},
           body: {"name": name}).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests switching bulb
+  Future<int> switchBulb(int bulbId, String flag) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.post('$url/bulbs/switch/$bulbId',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: {"flag": flag}).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests changing bulb's color
+  Future<int> changeBulbColor(int bulbId, int red, int green, int blue) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient
+          .post('$url/bulbs/color/$bulbId',
+              headers: {
+                HttpHeaders.authorizationHeader: "Token $token",
+                HttpHeaders.contentTypeHeader: 'application/json'
+              },
+              body: jsonEncode({"red": red, "green": green, "blue": blue}))
+          .timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests changing bulb's brightness
+  Future<int> changeBulbBrightness(int bulbId, int brightness) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient
+          .post('$url/bulbs/brightness/$bulbId',
+              headers: {
+                HttpHeaders.authorizationHeader: "Token $token",
+                HttpHeaders.contentTypeHeader: 'application/json'
+              },
+              body: jsonEncode({"brightness": brightness}))
+          .timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
       print(e);
