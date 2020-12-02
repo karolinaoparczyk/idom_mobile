@@ -484,9 +484,18 @@ class Api {
 
   /// adds driver
   Future<Map<String, String>> addDriver(String name, String category,
-      {bool data = false}) async {
+      {bool data = null}) async {
     await getApiAddress();
     await getToken();
+    var body;
+    if (data == null) {
+      body = {
+        "name": name,
+        "category": category,
+      };
+    } else {
+      body = {"name": name, "category": category, "data": data};
+    }
     var res = await httpClient
         .post(
           '$url/drivers/add',
@@ -494,11 +503,7 @@ class Api {
             HttpHeaders.authorizationHeader: "Token $token",
             HttpHeaders.contentTypeHeader: 'application/json',
           },
-          body: jsonEncode({
-            "name": name,
-            "category": category,
-            "data": data,
-          }),
+          body: jsonEncode(body),
         )
         .timeout(Duration(seconds: 5));
     var resDict = {
