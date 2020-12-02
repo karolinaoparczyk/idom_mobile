@@ -17,7 +17,7 @@ class Api {
   Client httpClient;
 
   void getApiAddress() async {
-    url = "https://" + await storage.getApiServerAddress();
+    url = "http://" + await storage.getApiServerAddress();
   }
 
   void getToken() async {
@@ -595,9 +595,9 @@ class Api {
     await getApiAddress();
     await getToken();
     try {
-      var res = await httpClient.post('$url/bulbs/swith/$bulbId',
+      var res = await httpClient.post('$url/bulbs/switch/$bulbId',
           headers: {HttpHeaders.authorizationHeader: "Token $token"},
-          body: {"flag ": flag}).timeout(Duration(seconds: 5));
+          body: {"flag": flag}).timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
       print(e);
@@ -610,13 +610,14 @@ class Api {
     await getApiAddress();
     await getToken();
     try {
-      var res = await httpClient.post('$url/bulbs/color/$bulbId', headers: {
-        HttpHeaders.authorizationHeader: "Token $token"
-      }, body: jsonEncode({
-        "red ": red,
-        "green": green,
-        "blue": blue
-      })).timeout(Duration(seconds: 5));
+      var res = await httpClient
+          .post('$url/bulbs/color/$bulbId',
+              headers: {
+                HttpHeaders.authorizationHeader: "Token $token",
+                HttpHeaders.contentTypeHeader: 'application/json'
+              },
+              body: jsonEncode({"red": red, "green": green, "blue": blue}))
+          .timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
       print(e);
@@ -629,16 +630,20 @@ class Api {
     await getApiAddress();
     await getToken();
     try {
-      var res = await httpClient.post('$url/bulbs/brightness/$bulbId',
-          headers: {HttpHeaders.authorizationHeader: "Token $token"},
-          body: jsonEncode({"brightness ": brightness})).timeout(Duration(seconds: 5));
+      var res = await httpClient
+          .post('$url/bulbs/brightness/$bulbId',
+              headers: {
+                HttpHeaders.authorizationHeader: "Token $token",
+                HttpHeaders.contentTypeHeader: 'application/json'
+              },
+              body: jsonEncode({"brightness": brightness}))
+          .timeout(Duration(seconds: 5));
       return res.statusCode;
     } catch (e) {
       print(e);
     }
     return null;
   }
-
 
   /// requests generating csv file with sensor data
   Future<Map<String, dynamic>> generateFile(
