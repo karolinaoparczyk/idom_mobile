@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:idom/localization/setup/front.i18n.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/pages/setup/enter_email.dart';
@@ -47,7 +48,7 @@ class _FrontState extends State<Front> {
           children: [
             Icon(Icons.warning_amber_outlined,
                 size: 16, color: IdomColors.error),
-            Text(' Adres serwera nie został ustawiony',
+            Text(' Adres serwera nie został ustawiony'.i18n,
                 style: TextStyle(fontSize: 16, color: IdomColors.error))
           ]);
     }
@@ -97,7 +98,7 @@ class _FrontState extends State<Front> {
                                             color: Colors.transparent),
                                       ]),
                                   Text(
-                                    'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU',
+                                    'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU'.i18n,
                                     style: TextStyle(
                                         fontSize: 21,
                                         color: IdomColors.additionalColor,
@@ -117,7 +118,7 @@ class _FrontState extends State<Front> {
                               setApiAddressEmptyMessage(),
                               TextButton(
                                 key: Key('editApiServer'),
-                                child: Text('Edytuj adres serwera',
+                                child: Text('Edytuj adres serwera'.i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -126,13 +127,13 @@ class _FrontState extends State<Front> {
                                 onPressed: navigateToEditApiAddress,
                               ),
                               buttonWidget(
-                                  context, "Zaloguj", Icons.arrow_right_outlined, navigateToSignIn),
+                                  context, "Zaloguj".i18n, Icons.arrow_right_outlined, navigateToSignIn),
                               SizedBox(height: 10),
                               buttonWidget(
-                                  context, "Zarejestruj", Icons.arrow_right_outlined, navigateToSignUp),
+                                  context, "Zarejestruj".i18n, Icons.arrow_right_outlined, navigateToSignUp),
                               TextButton(
                                 key: Key('passwordReset'),
-                                child: Text('Zapomniałeś/aś hasła?',
+                                child: Text('Zapomniałeś/aś hasła?'.i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -157,7 +158,7 @@ class _FrontState extends State<Front> {
     if (result == true) {
       await checkApiAddressSet();
       final snackBar =
-          new SnackBar(content: new Text("Adres serwera został zapisany."));
+          new SnackBar(content: new Text("Adres serwera został zapisany.".i18n));
 
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
@@ -174,7 +175,7 @@ class _FrontState extends State<Front> {
       /// displays success message when the email is successfully sent
       if (result == true) {
         final snackBar = new SnackBar(
-            content: new Text("Email został wysłany. Sprawdź pocztę."));
+            content: new Text("E-mail został wysłany. Sprawdź pocztę.".i18n));
 
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }

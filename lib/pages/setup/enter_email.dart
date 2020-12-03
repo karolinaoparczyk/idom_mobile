@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/localization/setup/enter_email.i18n.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -29,7 +30,7 @@ class _EnterEmailState extends State<EnterEmail> {
         key: Key("email"),
         controller: _emailController,
         decoration: InputDecoration(
-          labelText: "Adres e-mail",
+          labelText: "Adres e-mail".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -53,7 +54,7 @@ class _EnterEmailState extends State<EnterEmail> {
         child: Scaffold(
           key: _scaffoldKey,
             appBar: AppBar(
-              title: Text('Reset hasła'),
+              title: Text('Reset hasła'.i18n),
             ),
             body: Row(children: <Widget>[
               Expanded(flex: 1, child: SizedBox(width: 1)),
@@ -77,7 +78,7 @@ class _EnterEmailState extends State<EnterEmail> {
                                         right: 30.0,
                                         bottom: 0.0),
                                     child: Text(
-                                        "Podaj adres e-mail połączony z Twoim kontem",
+                                        "Podaj adres e-mail połączony z Twoim kontem".i18n,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
@@ -104,7 +105,7 @@ class _EnterEmailState extends State<EnterEmail> {
                             ),
                             alignment: Alignment.bottomCenter,
                             child: Column(children: <Widget>[
-                              buttonWidget(context, "Resetuj hasło", Icons.arrow_right_outlined,
+                              buttonWidget(context, "Resetuj hasło".i18n, Icons.arrow_right_outlined,
                                   sendResetPasswordRequest)
                             ])))
                   ])),
@@ -127,12 +128,12 @@ class _EnterEmailState extends State<EnterEmail> {
         if (res == 200) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Link do resetu hasła zosta wysłany na podany adres e-mail."));
+                  "Link do resetu hasła został wysłany na podany adres e-mail.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else if (res == 400) {
           final snackBar = new SnackBar(
               content:
-                  new Text("Konto dla podanego adresu e-mail nie istnieje."));
+                  new Text("Konto dla podanego adresu e-mail nie istnieje.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -144,13 +145,13 @@ class _EnterEmailState extends State<EnterEmail> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd resetu hasła. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd resetu hasła. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content:
-                new Text("Błąd resetu hasła. Adres serwera nieprawidłowy."));
+                new Text("Błąd resetu hasła. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

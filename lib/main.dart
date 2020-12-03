@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:i18n_extension/i18n_widget.dart';
 import 'package:idom/pages/home.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,7 +10,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('en', "UK"),
+          Locale('pl', "PL"),
+        ],
         /// default app theme and colors
         theme: ThemeData(
           fontFamily: "BarlowCondensed",
@@ -52,6 +62,6 @@ class MyApp extends StatelessWidget {
             actionsIconTheme: IconThemeData(color: IdomColors.iconLight),
           ),
         ),
-        home: SafeArea(child: Home()));
+        home: SafeArea(child: I18n(child: Home())));
   }
 }

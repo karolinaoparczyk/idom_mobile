@@ -14,13 +14,14 @@ description: Projekt inżynierski
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   url_launcher:
   flutter:
     sdk: flutter
-
+  flutter_localizations:
+    sdk: flutter
   http:
   flutter_secure_storage:
   cookie_jar: ^1.0.0
@@ -33,6 +34,7 @@ dependencies:
   path_provider: ^1.6.24
   permission_handler: ^5.0.1
   flex_color_picker:
+  i18n_extension: ^1.4.5
 
 dev_dependencies:
   flutter_test:
