@@ -98,10 +98,6 @@ class SensorFrequencyFieldValidator {
     if (value.isEmpty) {
       return 'Pole wymagane';
     }
-    var intVal = int.tryParse(value);
-    if (intVal == null || intVal <= 0) {
-      return 'Podaj ilczbę całkowitą większą od zera';
-    }
     return null;
   }
 

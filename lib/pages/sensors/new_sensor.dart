@@ -1,6 +1,7 @@
 import 'package:idom/enums/frequency_units.dart';
 import 'package:flutter/material.dart';
 
+import 'package:idom/localization/sensors/new_sensor.i18n.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/frequency_units_dialog.dart';
@@ -38,6 +39,12 @@ class _NewSensorState extends State<NewSensor> {
   String fieldsValidationMessage;
   String nameValidationMessage;
   bool canEditFrequency = true;
+  Map<String, String> englishToPolishUnits = {
+    "seconds": "sekundy".i18n,
+    "minutes": "minuty".i18n,
+    "hours": "godziny".i18n,
+    "days": "dni".i18n
+  };
 
   @override
   void initState() {
@@ -52,7 +59,7 @@ class _NewSensorState extends State<NewSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -72,7 +79,7 @@ class _NewSensorState extends State<NewSensor> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
-          labelText: "Kategoria",
+          labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
@@ -131,7 +138,7 @@ class _NewSensorState extends State<NewSensor> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            labelText: "Wartość",
+            labelText: "Wartość".i18n,
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
@@ -148,7 +155,7 @@ class _NewSensorState extends State<NewSensor> {
         controller: _frequencyUnitsController,
         enabled: canEditFrequency,
         decoration: InputDecoration(
-          labelText: "Jednostki",
+          labelText: "Jednostki".i18n,
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
@@ -209,12 +216,12 @@ class _NewSensorState extends State<NewSensor> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text("Dodaj czujnik"), actions: [
+            appBar: AppBar(title: Text("Dodaj czujnik".i18n), actions: [
               IconButton(
                 icon: Icon(Icons.restore_page_rounded),
                 onPressed: () async {
-                  var decision = await confirmActionDialog(context, "Potwierdź",
-                      "Czy na pewno wyczyścić wszystkie pola?");
+                  var decision = await confirmActionDialog(context, "Potwierdź".i18n,
+                      "Czy na pewno wyczyścić wszystkie pola?".i18n);
                   if (decision) {
                     clearFields();
                   }
@@ -258,7 +265,7 @@ class _NewSensorState extends State<NewSensor> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 5.0),
-                                          child: Text("Ogólne",
+                                          child: Text("Ogólne".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyText1
@@ -295,7 +302,7 @@ class _NewSensorState extends State<NewSensor> {
                                             padding: const EdgeInsets.only(
                                                 left: 5.0),
                                             child: Text(
-                                                "Częstotliwość pobierania danych",
+                                                "Częstotliwość pobierania danych".i18n,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyText1
@@ -382,7 +389,7 @@ class _NewSensorState extends State<NewSensor> {
       int valInt = int.tryParse(_frequencyValueController.text);
       if (valInt == null || valInt <= 0) {
         fieldsValidationMessage =
-            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.'.i18n;
         setState(() {});
         return;
       }
@@ -393,10 +400,12 @@ class _NewSensorState extends State<NewSensor> {
               _frequencyValueController.text, frequencyUnitsValue);
       if (!validFrequencyValue) {
         var text =
-            "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}";
-        if (frequencyUnitsValue == "seconds")
-          text =
-              "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}";
+            "Poprawne wartości dla jednostki ".i18n +
+                englishToPolishUnits[frequencyUnitsValue] +
+                " to ".i18n +
+                unitsToMinValues[frequencyUnitsValue].toString() +
+                " - " +
+                unitsToMaxValues[frequencyUnitsValue].toString();
         setState(() {
           fieldsValidationMessage = text;
         });
@@ -437,7 +446,7 @@ class _NewSensorState extends State<NewSensor> {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoaderInvalidToken.currentContext,
                   rootNavigator: true)
@@ -446,7 +455,7 @@ class _NewSensorState extends State<NewSensor> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
-          nameValidationMessage = "Czujnik o podanej nazwie już istnieje.";
+          nameValidationMessage = "Czujnik o podanej nazwie już istnieje.".i18n;
           setState(() {});
           return;
         } else {
@@ -454,7 +463,7 @@ class _NewSensorState extends State<NewSensor> {
           setState(() {});
           final snackBar = new SnackBar(
               content: new Text(
-                  "Dodawanie czujnika nie powiodło się. Spróbuj ponownie."));
+                  "Dodawanie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -466,13 +475,13 @@ class _NewSensorState extends State<NewSensor> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania czujnika. Adres serwera nieprawidłowy."));
+                  "Błąd dodawania czujnika. Adres serwera nieprawidłowy.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

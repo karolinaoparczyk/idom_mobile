@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 
-import 'package:idom/localization/setup/settings.i18ndart.dart';
+import 'package:idom/localization/setup/settings.i18n.dart';
 import 'package:idom/push_notifications.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';

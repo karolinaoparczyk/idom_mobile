@@ -1,6 +1,7 @@
 import 'package:idom/utils/idom_colors.dart';
 import 'package:flutter/material.dart';
 
+import 'package:idom/localization/sensors/edit_sensor.i18n.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/frequency_units_dialog.dart';
@@ -45,10 +46,10 @@ class _EditSensorState extends State<EditSensor> {
 
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
-    "seconds": "sekundy",
-    "minutes": "minuty",
-    "hours": "godziny",
-    "days": "dni"
+    "seconds": "sekundy".i18n,
+    "minutes": "minuty".i18n,
+    "hours": "godziny".i18n,
+    "days": "dni".i18n
   };
 
   @override
@@ -96,7 +97,7 @@ class _EditSensorState extends State<EditSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -116,7 +117,7 @@ class _EditSensorState extends State<EditSensor> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
-          labelText: "Kategoria",
+          labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
@@ -170,7 +171,7 @@ class _EditSensorState extends State<EditSensor> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            labelText: "Wartość",
+            labelText: "Wartość".i18n,
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
@@ -187,7 +188,7 @@ class _EditSensorState extends State<EditSensor> {
         enabled: canEditFrequency,
         controller: _frequencyUnitsController,
         decoration: InputDecoration(
-          labelText: "Jednostki",
+          labelText: "Jednostki".i18n,
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
@@ -264,7 +265,7 @@ class _EditSensorState extends State<EditSensor> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -295,7 +296,7 @@ class _EditSensorState extends State<EditSensor> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
                                     child: Text(
-                                        "Częstotliwość pobierania danych",
+                                        "Częstotliwość pobierania danych".i18n,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
@@ -353,10 +354,10 @@ class _EditSensorState extends State<EditSensor> {
                         duration: Duration(milliseconds: 300),
                         firstChild: nameValidationMessage != null
                             ? Text(nameValidationMessage,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontWeight: FontWeight.normal))
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),
@@ -391,7 +392,7 @@ class _EditSensorState extends State<EditSensor> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
@@ -399,7 +400,7 @@ class _EditSensorState extends State<EditSensor> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
           .contains("Sensor with provided name already exists")) {
-        nameValidationMessage = "Czujnik o podanej nazwie już istnieje.";
+        nameValidationMessage = "Czujnik o podanej nazwie już istnieje.".i18n;
         setState(() {});
         return;
       } else {
@@ -407,7 +408,7 @@ class _EditSensorState extends State<EditSensor> {
         setState(() {});
         final snackBar = new SnackBar(
             content: new Text(
-                "Edycja czujnika nie powiodła się. Spróbuj ponownie."));
+                "Edycja czujnika nie powiodła się. Spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -419,13 +420,14 @@ class _EditSensorState extends State<EditSensor> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania czujnika. Adres serwera nieprawidłowy."));
+                "Błąd edytowania czujnika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -435,7 +437,7 @@ class _EditSensorState extends State<EditSensor> {
   _confirmSavingChanges(bool changedName, bool changedCategory,
       bool changedFrequencyValue, int frequencyInSeconds) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(changedName, changedCategory, changedFrequencyValue,
           frequencyInSeconds);
@@ -470,7 +472,8 @@ class _EditSensorState extends State<EditSensor> {
         int valInt = int.tryParse(_frequencyValueController.text);
         if (valInt == null) {
           fieldsValidationMessage =
-              'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+              'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.'
+                  .i18n;
           setState(() {});
           return;
         }
@@ -481,8 +484,12 @@ class _EditSensorState extends State<EditSensor> {
                 _frequencyValueController.text, frequencyUnitsValue);
         if (!validFrequencyValue) {
           setState(() {
-            fieldsValidationMessage =
-                "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
+            fieldsValidationMessage = "Poprawne wartości dla jednostki ".i18n +
+                englishToPolishUnits[frequencyUnitsValue] +
+                " to ".i18n +
+                unitsToMinValues[frequencyUnitsValue].toString() +
+                " - " +
+                unitsToMaxValues[frequencyUnitsValue].toString();
           });
         } else {
           setState(() {
@@ -506,8 +513,8 @@ class _EditSensorState extends State<EditSensor> {
           await _confirmSavingChanges(changedName, changedCategory,
               changedFrequencyValue, frequencyInSeconds);
         } else {
-          final snackBar =
-              new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+          final snackBar = new SnackBar(
+              content: new Text("Nie wprowadzono żadnych zmian.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

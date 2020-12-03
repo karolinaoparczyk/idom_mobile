@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:idom/enums/categories.dart';
 import 'package:flutter/material.dart';
 
+import 'package:idom/localization/sensors/sensor_details.i18n.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
@@ -98,7 +99,7 @@ class _SensorDetailsState extends State<SensorDetails> {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoader,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
           await widget.storage.resetUserData();
@@ -110,13 +111,13 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych z czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania danych z czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych z czujnika. Adres serwera nieprawidłowy."));
+                "Błąd pobierania danych z czujnika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -230,7 +231,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                   Icon(Icons.info_outline_rounded, size: 17.5),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
-                                    child: Text("Ogólne",
+                                    child: Text("Ogólne".i18n,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
@@ -244,7 +245,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                               left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Nazwa",
+                              child: Text("Nazwa".i18n,
                                   style: TextStyle(
                                       color: IdomColors.additionalColor,
                                       fontSize: 16.5,
@@ -261,7 +262,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                               left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Kategoria",
+                              child: Text("Kategoria".i18n,
                                   style: TextStyle(
                                       color: IdomColors.additionalColor,
                                       fontSize: 16.5,
@@ -293,7 +294,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         size: 17.5),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Dane z czujnika",
+                                      child: Text("Dane z czujnika".i18n,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyText1
@@ -309,7 +310,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 top: 10, left: 52.5, right: 30.0, bottom: 0.0),
                             child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Częstotliwość pobierania danych",
+                              child: Text("Częstotliwość pobierania danych".i18n,
                                   style: TextStyle(
                                       color: IdomColors.additionalColor,
                                       fontSize: 16.5,
@@ -367,7 +368,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         size: 17.5),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Okres wyświetlanych danych",
+                                      child: Text("Okres wyświetlanych danych".i18n,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyText1
@@ -396,20 +397,20 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            child: Text("Dzisiaj")))),
+                                            child: Text("Dzisiaj".i18n)))),
                                 Container(
                                     child: Center(
                                         child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
                                             child:
-                                                Text("Ostatnie 2 tygodnie")))),
+                                                Text("Ostatnie 2 tygodnie".i18n)))),
                                 Container(
                                     child: Center(
                                         child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            child: Text("Ostatnie 30 dni")))),
+                                            child: Text("Ostatnie 30 dni".i18n)))),
                               ],
                               isSelected: measurementTimeSelected,
                               onPressed: (int index) {
@@ -474,17 +475,17 @@ class _SensorDetailsState extends State<SensorDetails> {
     switch (widget.sensor.category) {
       case "temperature":
       case "water_temp":
-        label = "Aktualna temperatura";
+        label = "Aktualna temperatura".i18n;
         break;
       case "air_humidity":
       case "humidity":
-        label = "Aktualna wilgotność";
+        label = "Aktualna wilgotność".i18n;
         break;
       case "atmo_pressure":
-        label = "Aktualne ciśnienie";
+        label = "Aktualne ciśnienie".i18n;
         break;
       case "breathalyser":
-        label = "Ostatni pomiar";
+        label = "Ostatni pomiar".i18n;
         break;
     }
     return label;
@@ -501,7 +502,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             fullscreenDialog: true));
     if (result == true) {
       final snackBar =
-          new SnackBar(content: new Text("Zapisano dane czujnika."));
+          new SnackBar(content: new Text("Zapisano dane czujnika.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshSensorDetails();
     }
@@ -527,14 +528,14 @@ class _SensorDetailsState extends State<SensorDetails> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final snackBar = new SnackBar(
-            content: new Text("Odświeżenie danych czujnika nie powiodło się."));
+            content: new Text("Odświeżenie danych czujnika nie powiodło się.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -545,13 +546,13 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania danych czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych czujnika. Adres serwera nieprawidłowy."));
+                "Błąd pobierania danych czujnika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -565,7 +566,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       return Container(
           child: Padding(
         padding: const EdgeInsets.only(left: 22.5),
-        child: Text("Brak danych z wybranego okresu.",
+        child: Text("Brak danych z wybranego okresu.".i18n,
             style: TextStyle(fontSize: 16.5)),
       ));
     } else if (dataLoaded) {
