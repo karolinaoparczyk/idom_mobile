@@ -5,6 +5,7 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/cameras/new_camera.i18n.dart';
 
 class NewCamera extends StatefulWidget {
   NewCamera({@required this.storage, this.testApi});
@@ -55,7 +56,7 @@ class _NewCameraState extends State<NewCamera> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -75,7 +76,7 @@ class _NewCameraState extends State<NewCamera> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text("Dodaj kamerę"), actions: [
+            appBar: AppBar(title: Text("Dodaj kamerę".i18n), actions: [
               IconButton(
                   key: Key('saveCameraButton'),
                   icon: Icon(Icons.save),
@@ -105,7 +106,7 @@ class _NewCameraState extends State<NewCamera> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -163,7 +164,7 @@ class _NewCameraState extends State<NewCamera> {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoaderInvalidToken.currentContext,
                   rootNavigator: true)
@@ -172,7 +173,7 @@ class _NewCameraState extends State<NewCamera> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['body']
             .contains("Camera with provided name already exists")) {
-          fieldsValidationMessage = "Kamera o podanej nazwie już istnieje.";
+          fieldsValidationMessage = "Kamera o podanej nazwie już istnieje.".i18n;
           setState(() {});
           return;
         } else {
@@ -180,7 +181,7 @@ class _NewCameraState extends State<NewCamera> {
           setState(() {});
           final snackBar = new SnackBar(
               content: new Text(
-                  "Dodawanie kamery nie powiodło się. Spróbuj ponownie."));
+                  "Dodawanie kamery nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -192,13 +193,13 @@ class _NewCameraState extends State<NewCamera> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd dodawania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania kamery. Adres serwera nieprawidłowy."));
+                  "Błąd dodawania kamery. Adres serwera nieprawidłowy.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

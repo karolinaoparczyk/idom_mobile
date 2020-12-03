@@ -9,6 +9,7 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/drivers/edit_driver.i18n.dart';
 
 class EditDriver extends StatefulWidget {
   EditDriver({@required this.storage, @required this.driver, this.testApi});
@@ -71,7 +72,7 @@ class _EditDriverState extends State<EditDriver> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -91,7 +92,7 @@ class _EditDriverState extends State<EditDriver> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
-          labelText: "Kategoria",
+          labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
@@ -154,7 +155,7 @@ class _EditDriverState extends State<EditDriver> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -216,7 +217,7 @@ class _EditDriverState extends State<EditDriver> {
         setState(() {}); displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
@@ -224,14 +225,14 @@ class _EditDriverState extends State<EditDriver> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
           .contains("Driver with provided name already exists")) {
-        fieldsValidationMessage = "Sterownik o podanej nazwie już istnieje.";
+        fieldsValidationMessage = "Sterownik o podanej nazwie już istnieje.".i18n;
         setState(() {});
         return;
       } else {
         fieldsValidationMessage = null;
         setState(() {}); final snackBar = new SnackBar(
             content: new Text(
-                "Edycja sterownika nie powiodła się. Spróbuj ponownie."));
+                "Edycja sterownika nie powiodła się. Spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -243,13 +244,13 @@ class _EditDriverState extends State<EditDriver> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edytowania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania sterownika. Adres serwera nieprawidłowy."));
+                "Błąd edytowania sterownika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -258,7 +259,7 @@ class _EditDriverState extends State<EditDriver> {
   /// confirms saving changes
   _confirmSavingChanges(bool changedName, bool changedCategory) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(changedName, changedCategory);
     }
@@ -285,7 +286,7 @@ class _EditDriverState extends State<EditDriver> {
         await _confirmSavingChanges(changedName, changedCategory);
       } else {
         final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

@@ -336,6 +336,7 @@ class _SignUpState extends State<SignUp> {
         var emailExists = false;
         var telephoneExists = false;
         var telephoneInvalid = false;
+        var emailInvalid = false;
 
         if (res['statusCode'] == "201") {
           setState(() {
@@ -361,6 +362,9 @@ class _SignUpState extends State<SignUp> {
         if (res['body'].contains("Telephone number already exists")) {
           telephoneExists = true;
         }
+        if (res['body'].contains("Enter a valid email address")) {
+          emailInvalid = true;
+        }
 
         String errorText = "";
         if (loginExists && emailExists && telephoneExists)
@@ -381,7 +385,11 @@ class _SignUpState extends State<SignUp> {
         else if (telephoneExists)
           errorText = "Konto dla podanego numeru telefonu już istnieje.".i18n;
 
-        if (telephoneInvalid) errorText += " Podaj poprawny numeru telefonu.".i18n;
+        if (telephoneInvalid && emailInvalid)
+          errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
+        else if (telephoneInvalid)
+          errorText += "Numer telefonu jest nieprawidłowy.".i18n;
+        else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy".i18n;
 
         if (errorText != null) {
           FocusScope.of(context).unfocus();

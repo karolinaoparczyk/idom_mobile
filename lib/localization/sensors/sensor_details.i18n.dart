@@ -56,8 +56,8 @@ extension Localization on String {
         "en_uk": "Last measurement",
       }  +
       {
-        "pl_pl": "Zapisano dane czujnika.",
-        "en_uk": "Sensor data saved.",
+        "pl_pl": "Zapisano czujnik.",
+        "en_uk": "Sensor saved.",
       }  +
       {
         "pl_pl": "Odświeżenie danych czujnika nie powiodło się.",

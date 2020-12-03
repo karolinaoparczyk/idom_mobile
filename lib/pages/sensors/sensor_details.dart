@@ -502,7 +502,7 @@ class _SensorDetailsState extends State<SensorDetails> {
             fullscreenDialog: true));
     if (result == true) {
       final snackBar =
-          new SnackBar(content: new Text("Zapisano dane czujnika.".i18n));
+          new SnackBar(content: new Text("Zapisano czujnik.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshSensorDetails();
     }

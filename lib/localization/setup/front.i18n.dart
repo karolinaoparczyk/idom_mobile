@@ -34,6 +34,10 @@ extension Localization on String {
       {
         "pl_pl": "E-mail został wysłany. Sprawdź pocztę.",
         "en_uk": "E-mail has been sent. Check your mailbox.",
+      } +
+      {
+        "pl_pl": "Trwa ładowanie...",
+        "en_uk": "Loading...",
       };
 
   String get i18n => localize(this, _t);

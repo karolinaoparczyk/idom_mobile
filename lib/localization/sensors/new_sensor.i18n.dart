@@ -60,7 +60,7 @@ extension Localization on String {
         "en_uk": "A sensor with the given name already exists.",
       } +
       {
-        "pl_pl": "Dodawanie czujnika nie powiodła się. Spróbuj ponownie.",
+        "pl_pl": "Dodawanie czujnika nie powiodło się. Spróbuj ponownie.",
         "en_uk": "Creating sensor failed. Try again.",
       } +
       {

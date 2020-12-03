@@ -68,8 +68,16 @@ extension Localization on String {
         "en_uk": "An account for the given cell phone number already exists.",
       } +
       {
-        "pl_pl": " Podaj poprawny numeru telefonu.",
-        "en_uk": " Enter a valid phone number.",
+        "pl_pl": "Numer telefonu jest nieprawidłowy.",
+        "en_uk": "The phone number is invalid.",
+      }+
+      {
+        "pl_pl": "Adres e-mail jest nieprawidłowy",
+        "en_uk": "The e-mail address is invalid.",
+      }+
+      {
+        "pl_pl": "Adres e-mail oraz numer telefonu są nieprawidłowe.",
+        "en_uk": "The e-mail address and phone number are invalid.",
       } +
       {
         "pl_pl": "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie.",

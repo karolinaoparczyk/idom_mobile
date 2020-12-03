@@ -11,6 +11,7 @@ import 'package:idom/pages/cameras/new_camera.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
+import 'package:idom/localization/cameras/cameras.i18n.dart';
 
 class Cameras extends StatefulWidget {
   Cameras({@required this.storage, this.testApi});
@@ -59,7 +60,7 @@ class _CamerasState extends State<Cameras> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true)
             .pop();
@@ -76,13 +77,13 @@ class _CamerasState extends State<Cameras> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania kamer. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania kamer. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania kamer. Adres serwera nieprawidłowy."));
+                "Błąd pobierania kamer. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -90,14 +91,14 @@ class _CamerasState extends State<Cameras> {
 
   /// deletes camera
   _deleteCamera(Camera camera) async {
-    var decision = await confirmActionDialog(context, "Potwierdź",
-        "Czy na pewno chcesz usunąć kamerę ${camera.name}?");
+    var decision = await confirmActionDialog(context, "Potwierdź".i18n,
+        "Czy na pewno chcesz usunąć kamerę ".i18n + camera.name + "?");
     if (decision) {
       try {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Trwa usuwanie kamery...");
+            text: "Trwa usuwanie kamery...".i18n);
 
         int statusCode = await api.deleteCamera(camera.id);
         Navigator.of(_scaffoldKey.currentContext, rootNavigator: true).pop();
@@ -110,7 +111,7 @@ class _CamerasState extends State<Cameras> {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoader,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoader.currentContext,
               rootNavigator: true)
@@ -120,12 +121,12 @@ class _CamerasState extends State<Cameras> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie kamery nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie kamery nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -134,13 +135,13 @@ class _CamerasState extends State<Cameras> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie kamery nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie kamery nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -164,7 +165,7 @@ class _CamerasState extends State<Cameras> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('Kamery'),
+          title: Text('Kamery'.i18n),
           actions: [
             IconButton(
               icon: Icon(Icons.add, size: 30.0),
@@ -192,7 +193,7 @@ class _CamerasState extends State<Cameras> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
-                  "Brak kamer w systemie \nlub błąd połączenia z serwerem.",
+                  "Brak kamer w systemie".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     }
@@ -204,7 +205,7 @@ class _CamerasState extends State<Cameras> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.",
+              child: Text("Błąd połączenia z serwerem.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (_cameraList != null && _cameraList.length > 0) {
@@ -309,7 +310,7 @@ class _CamerasState extends State<Cameras> {
     if (result == true) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       final snackBar = new SnackBar(
-        content: new Text("Dodano nową kamerę."),
+        content: new Text("Dodano nową kamerę.".i18n),
         duration: Duration(seconds: 1),
       );
       _scaffoldKey.currentState.showSnackBar((snackBar));
