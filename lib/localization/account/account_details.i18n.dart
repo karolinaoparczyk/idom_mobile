@@ -30,10 +30,6 @@ extension Localization on String {
       {
         "pl_pl": "Aplikacja",
         "en_uk": "Application",
-      } +
-      {
-        "pl_pl": "Aktualne ciśnienie",
-        "en_uk": "Current pressure",
       }  +
       {
         "pl_pl": "Błąd edycji powiadomień. Spróbuj ponownie.",

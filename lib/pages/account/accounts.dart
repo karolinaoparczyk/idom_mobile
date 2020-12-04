@@ -94,13 +94,13 @@ class _AccountsState extends State<Accounts> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania kont. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania użytkowników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("No address associated with hostname")) {
         final snackBar = new SnackBar(
             content:
-                new Text("Błąd pobierania kont. Adres serwera nieprawidłowy.".i18n));
+                new Text("Błąd pobierania użytkowników. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -120,7 +120,7 @@ class _AccountsState extends State<Accounts> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Trwa usuwanie konta...".i18n);
+            text: "Trwa usuwanie użytkownika...".i18n);
         var statusCode = await api.deactivateAccount(account.id);
         Navigator.of(_scaffoldKey.currentContext).pop();
 
@@ -143,7 +143,7 @@ class _AccountsState extends State<Accounts> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
@@ -156,13 +156,13 @@ class _AccountsState extends State<Accounts> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania konta. Adres serwera nieprawidłowy.".i18n));
+                  "Błąd usuwania użytkownika. Adres serwera nieprawidłowy.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

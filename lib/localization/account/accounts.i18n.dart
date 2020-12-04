@@ -20,7 +20,7 @@ extension Localization on String {
         "en_uk": "All accounts",
       } +
       {
-        "pl_pl": "Trwa usuwanie konta...",
+        "pl_pl": "Trwa usuwanie użytkownika...",
         "en_uk": "User removal in progress...",
       } +
       {
@@ -36,23 +36,23 @@ extension Localization on String {
         "en_uk": "Are you sure you want to remove user ",
       } +
       {
-        "pl_pl": "Błąd pobierania kont. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "pl_pl": "Błąd pobierania użytkowników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
         "en_uk": "Users download error. Check the server connection and try again.",
       } +
       {
-        "pl_pl": "Błąd pobierania kont. Adres serwera nieprawidłowy.",
+        "pl_pl": "Błąd pobierania użytkowników. Adres serwera nieprawidłowy.",
         "en_uk": "Users download error. The server address is invalid.",
       } +
       {
-        "pl_pl": "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "pl_pl": "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
         "en_uk": "User removal error. Check the server connection and try again.",
       } +
       {
-        "pl_pl": "Błąd usuwania konta. Adres serwera nieprawidłowy.",
+        "pl_pl": "Błąd usuwania użytkownika. Adres serwera nieprawidłowy.",
         "en_uk": "User removal error. The server address is invalid.",
       } +
       {
-        "pl_pl": "Usunięcie konta nie powiodło się. Spróbuj ponownie.",
+        "pl_pl": "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.",
         "en_uk": "User removal failed. Try again.",
       } +
       {

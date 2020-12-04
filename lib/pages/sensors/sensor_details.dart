@@ -277,7 +277,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                       .where((element) =>
                                           element['value'] ==
                                           widget.sensor.category)
-                                      .first['text'],
+                                      .first['text'].i18n,
                                   style: TextStyle(fontSize: 21.0)))),
                       if (widget.sensor.category != "rain_sensor")
                         Padding(

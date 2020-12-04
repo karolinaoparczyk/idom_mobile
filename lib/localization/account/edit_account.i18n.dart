@@ -36,7 +36,7 @@ extension Localization on String {
         "en_uk": "The cell phone number is invalid.",
       }+
       {
-        "pl_pl": "Adres e-mail jest nieprawidłowy",
+        "pl_pl": "Adres e-mail jest nieprawidłowy.",
         "en_uk": "The e-mail address is invalid.",
       }+
       {

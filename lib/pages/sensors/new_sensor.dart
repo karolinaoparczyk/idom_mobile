@@ -6,7 +6,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/frequency_units_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
@@ -97,7 +97,7 @@ class _NewSensorState extends State<NewSensor> {
                 );
               });
           if (selectedCategory != null) {
-            _categoryController.text = selectedCategory['text'];
+            _categoryController.text = selectedCategory['text'].i18n;
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
@@ -107,7 +107,7 @@ class _NewSensorState extends State<NewSensor> {
               frequencyUnitsValue = null;
               _frequencyUnitsController.text = FrequencyUnits.values
                   .where((element) => element['value'] == "seconds")
-                  .first['text'];
+                  .first['text'].i18n;
               frequencyUnitsValue = "seconds";
               _frequencyValueController = TextEditingController(text: "30");
               setState(() {});
@@ -176,7 +176,7 @@ class _NewSensorState extends State<NewSensor> {
                 );
               });
           if (selectedFrequencyUnits != null) {
-            _frequencyUnitsController.text = selectedFrequencyUnits['text'];
+            _frequencyUnitsController.text = selectedFrequencyUnits['text'].i18n;
             frequencyUnitsValue = selectedFrequencyUnits['value'];
           }
         },

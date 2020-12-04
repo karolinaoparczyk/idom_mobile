@@ -6,7 +6,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/frequency_units_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:idom/enums/frequency_units.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -66,7 +66,7 @@ class _EditSensorState extends State<EditSensor> {
     /// setting current sensor category
     _categoryController = TextEditingController(
         text: SensorCategories.values.firstWhere(
-            (element) => element["value"] == widget.sensor.category)['text']);
+            (element) => element["value"] == widget.sensor.category)['text'].i18n);
     categoryValue = widget.sensor.category;
     if (categoryValue == "rain_sensor" ||
         categoryValue == "water_temp" ||
@@ -76,7 +76,7 @@ class _EditSensorState extends State<EditSensor> {
       frequencyUnitsValue = "seconds";
       _frequencyUnitsController.text = FrequencyUnits.values
           .where((element) => element['value'] == "seconds")
-          .first['text'];
+          .first['text'].i18n;
       _frequencyValueController.text = "30";
     } else {
       canEditFrequency = true;

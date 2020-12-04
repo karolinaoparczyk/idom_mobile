@@ -46,6 +46,18 @@ extension Localization on String {
       {
         "pl_pl": "Nie wprowadzono żadnych zmian.",
         "en_uk": "No changes have been made.",
+      } +
+      {
+        "pl_pl": "naduszacz",
+        "en_uk": "clicker",
+      } +
+      {
+        "pl_pl": "pilot",
+        "en_uk": "remote control",
+      } +
+      {
+        "pl_pl": "żarówka",
+        "en_uk": "bulb",
       };
 
   String get i18n => localize(this, _t);

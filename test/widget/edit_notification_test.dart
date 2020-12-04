@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:i18n_extension/i18n_widget.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,8 +15,25 @@ class MockApi extends Mock implements Api {}
 class MockSecureStorage extends Mock implements SecureStorage {}
 
 void main() {
-  Widget makeTestableWidget({Widget child}) {
+  Widget makePolishTestableWidget({Widget child}) {
     return MaterialApp(home: child);
+  }
+
+  Widget makeEnglishTestableWidget({Widget child}) {
+    return MaterialApp(
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('en', "UK"),
+          Locale('pl', "PL"),
+        ],
+        localeListResolutionCallback: (locales, supportedLocales) {
+          return Locale('en', "UK");
+        },
+        home: I18n(child: child));
   }
 
   /// tests if changes sms notifications with logged in user
@@ -46,7 +65,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key("smsNotifications")));
@@ -84,7 +103,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key("appNotifications")));
@@ -122,7 +141,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key("smsNotifications")));
@@ -161,7 +180,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key("appNotifications")));
@@ -210,7 +229,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key("smsNotifications")));
@@ -260,7 +279,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key("appNotifications")));
@@ -269,5 +288,44 @@ void main() {
     expect(find.text("Błąd edycji powiadomień. Spróbuj ponownie."), findsOneWidget);
 
     verify(await mockApi.editNotifications(1, "false", "true"));
+  });
+
+  /// tests if does not change sms notifications if api error, english
+  testWidgets('english does not change sms notifications if api error', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.editNotifications(1, "true", "false")).thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "400"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.setAppNotifications("true")).thenAnswer(
+            (_) async => Future.value());
+    when(mockSecureStorage.setSmsNotifications("false")).thenAnswer(
+            (_) async => Future.value());
+
+    var userJson = {"id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "telephone": "",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "false",
+      "isActive": "true",
+      "token": "token"};
+
+    when(mockSecureStorage.getCurrentUserData()).thenAnswer(
+            (_) async => Future.value(userJson));
+
+    AccountDetail page = AccountDetail(
+        storage: mockSecureStorage, username: "user1", testApi: mockApi);
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key("smsNotifications")));
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("Editing notifications error. Try again."), findsOneWidget);
+
+    verify(await mockApi.editNotifications(1, "true", "false"));
   });
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -47,7 +47,7 @@ class _EditDriverState extends State<EditDriver> {
     /// setting current driver category
     _categoryController = TextEditingController(
         text: DriverCategories.values.firstWhere(
-            (element) => element["value"] == widget.driver.category)['text']);
+            (element) => element["value"] == widget.driver.category)['text'].i18n);
     categoryValue = widget.driver.category;
   }
 
@@ -109,7 +109,7 @@ class _EditDriverState extends State<EditDriver> {
                 );
               });
           if (selectedCategory != null) {
-            _categoryController.text = selectedCategory['text'];
+            _categoryController.text = selectedCategory['text'].i18n;
             categoryValue = selectedCategory['value'];
           }
         },

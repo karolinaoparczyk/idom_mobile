@@ -261,7 +261,7 @@ class _EditAccountState extends State<EditAccount> {
         errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
       else if (telephoneInvalid)
         errorText += "Numer telefonu jest nieprawidłowy.".i18n;
-      else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy".i18n;
+      else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy.".i18n;
 
       if (errorText != "") fieldsValidationMessage = errorText;
 

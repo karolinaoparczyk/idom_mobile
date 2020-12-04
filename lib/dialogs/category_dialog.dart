@@ -61,7 +61,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                   itemCount: categories.length,
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
-                      title: Text(categories[index]['text'],
+                      title: Text(categories[index]['text'].i18n,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
                               fontWeight: FontWeight.normal, fontSize: 21.0)),
                       value: categories[index],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -98,7 +98,7 @@ class _NewDriverState extends State<NewDriver> {
                 );
               });
           if (selectedCategory != null) {
-            _categoryController.text = selectedCategory['text'];
+            _categoryController.text = selectedCategory['text'].i18n;
             categoryValue = selectedCategory['value'];
           }
         },

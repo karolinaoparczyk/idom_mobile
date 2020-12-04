@@ -339,7 +339,7 @@ class _DataDownloadState extends State<DataDownload> {
                                 ?.map((category) => TableRow(children: <Widget>[
                                       Container(
                                           padding: EdgeInsets.only(bottom: 15),
-                                          child: Text(category['text'])),
+                                          child: Text(category['text'].i18n)),
                                       GestureDetector(
                                         onTap: () => setState(() {
                                           selectedCategories.remove(category);

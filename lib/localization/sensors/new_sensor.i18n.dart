@@ -86,6 +86,65 @@ extension Localization on String {
       {
         "pl_pl": " to ",
         "en_uk": " are ",
+      } + {
+    "pl_pl": "Wybierz kategorię",
+    "en_uk": "Select a category",
+  } +
+      {
+        "pl_pl": "Anuluj",
+        "en_uk": "Cancel",
+      } +
+      {
+        "pl_pl": "alkomat",
+        "en_uk": "breathalyser",
+      } +
+      {
+        "pl_pl": "ciśnienie atmosferyczne",
+        "en_uk": "atmospheric pressure",
+      } +
+      {
+        "pl_pl": "opady atmosferyczne",
+        "en_uk": "precipitation",
+      } +
+      {
+        "pl_pl": "temperatura powietrza",
+        "en_uk": "air temperature",
+      } +
+      {
+        "pl_pl": "temperatura wody",
+        "en_uk": "water temperature",
+      } +
+      {
+        "pl_pl": "stan powietrza",
+        "en_uk": "air condition",
+      } +
+      {
+        "pl_pl": "gaz",
+        "en_uk": "gas",
+      } +
+      {
+        "pl_pl": "wilgotność gleby",
+        "en_uk": "soil moisture",
+      } +
+      {
+        "pl_pl": "wilgotność powietrza",
+        "en_uk": "air humidity",
+      }+
+      {
+        "pl_pl": "sekundy",
+        "en_uk": "seconds",
+      } +
+      {
+        "pl_pl": "minuty",
+        "en_uk": "minutes",
+      } +
+      {
+        "pl_pl": "godziny",
+        "en_uk": "hours",
+      } +
+      {
+        "pl_pl": "dni",
+        "en_uk": "days",
       };
 
   String get i18n => localize(this, _t);

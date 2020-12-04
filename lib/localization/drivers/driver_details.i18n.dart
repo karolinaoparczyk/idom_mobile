@@ -45,7 +45,11 @@ extension Localization on String {
       }+
       {
         "pl_pl": "Wysłano komendę zmiany koloru żarówki ",
-        "en_uk": "The command to change the color of the bulb ",
+        "en_uk": "The command to change the color of bulb ",
+      }+
+      {
+        "pl_pl": "Wysłano komendę zmiany jasności żarówki ",
+        "en_uk": "The command to change the brightness of bulb ",
       }+
       {
         "pl_pl": ".",

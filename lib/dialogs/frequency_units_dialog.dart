@@ -52,7 +52,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                   itemCount: frequencyUnitsList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
-                      title: Text(frequencyUnitsList[index]['text'],
+                      title: Text(frequencyUnitsList[index]['text'].i18n,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
                               fontWeight: FontWeight.normal, fontSize: 21.0)),
                       value: frequencyUnitsList[index],

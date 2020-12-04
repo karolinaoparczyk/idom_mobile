@@ -40,12 +40,16 @@ extension Localization on String {
         "en_uk": "Driver creating error. The server address is invalid.",
       } +
       {
-        "pl_pl": "Potwierdź",
-        "en_uk": "Confirm",
+        "pl_pl": "naduszacz",
+        "en_uk": "clicker",
       } +
       {
-        "pl_pl": "Czy na pewno zapisać zmiany?",
-        "en_uk": "Are you sure you want to save the changes?",
+        "pl_pl": "pilot",
+        "en_uk": "remote control",
+      } +
+      {
+        "pl_pl": "żarówka",
+        "en_uk": "bulb",
       };
 
   String get i18n => localize(this, _t);
