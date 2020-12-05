@@ -78,13 +78,15 @@ class _DriversState extends State<Drivers> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Adres serwera nieprawidłowy.".i18n));
+                "Błąd pobierania sterowników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -134,8 +136,7 @@ class _DriversState extends State<Drivers> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text(
-                  "Brak sterowników w systemie.".i18n,
+              child: Text("Brak sterowników w systemie.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     }
@@ -313,8 +314,7 @@ class _DriversState extends State<Drivers> {
                             color: IdomColors.mainFill,
                           ),
                           SizedBox(width: 5),
-                          Text('Usuń'.i18n,
-                              style: TextStyle(fontSize: 21.0)),
+                          Text('Usuń'.i18n, style: TextStyle(fontSize: 21.0)),
                         ],
                       )
                     ])),
@@ -324,7 +324,11 @@ class _DriversState extends State<Drivers> {
     );
     switch (selected) {
       case "click":
-        _clickDriver(driver);
+        if (driver.category == "bulb") {
+          _switchDriver(driver);
+        } else if (driver.category == "clicker") {
+          _clickDriver(driver);
+        }
         break;
       case "delete":
         _deleteDriver(driver);
@@ -337,12 +341,52 @@ class _DriversState extends State<Drivers> {
     if (result == 200) {
       message = "Wysłano komendę do sterownika ".i18n + driver.name + ".".i18n;
     } else {
-      message =
-          "Wysłanie komendy do sterownika ".i18n + driver.name + " nie powiodło się.".i18n;
+      message = "Wysłanie komendy do sterownika ".i18n +
+          driver.name +
+          " nie powiodło się.".i18n;
     }
     _scaffoldKey.currentState.removeCurrentSnackBar();
     final snackBar = new SnackBar(content: new Text(message));
     _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  _switchDriver(Driver driver) async {
+    var flag = driver.data == null
+        ? "on"
+        : driver.data
+            ? "off"
+            : "on";
+    var message;
+    var result;
+    if (driver.category == "bulb") {
+      result = await api.switchBulb(driver.id, flag);
+    }
+    var serverError = RegExp("50[0-4]");
+    if (result == 200) {
+      if (flag == "on") {
+        message = "Wysłano komendę włączenia sterownika ".i18n +
+            driver.name +
+            ".".i18n;
+      } else {
+        message = "Wysłano komendę wyłączenia sterownika ".i18n +
+            driver.name +
+            ".".i18n;
+      }
+      await getDrivers();
+    } else if (result == 404) {
+      message = "Nie znaleziono sterownika ".i18n +
+          driver.name +
+          " na serwerze. Odswież listę sterowników.".i18n;
+    } else if (serverError.hasMatch(result.toString())) {
+      message = "Nie udało się podłączyć do sterownika".i18n +
+          driver.name +
+          ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+    }
+    if (message != null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar = new SnackBar(content: new Text(message));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
   }
 
   _deleteDriver(Driver driver) async {
@@ -374,12 +418,14 @@ class _DriversState extends State<Drivers> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -389,13 +435,15 @@ class _DriversState extends State<Drivers> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

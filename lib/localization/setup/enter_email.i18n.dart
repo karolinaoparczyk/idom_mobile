@@ -25,7 +25,7 @@ extension Localization on String {
       } +
       {
         "pl_pl": "Konto dla podanego adresu e-mail nie istnieje.",
-        "en_uk": "Password reset error. Check the server connection and try again.",
+        "en_uk": "The account for the given e-mail address does not exist.",
       } +
       {
         "pl_pl": "Błąd resetu hasła. Adres serwera nieprawidłowy.",

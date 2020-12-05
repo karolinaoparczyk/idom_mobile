@@ -17,7 +17,7 @@ class Api {
   Client httpClient;
 
   void getApiAddress() async {
-    url = "https://" + await storage.getApiServerAddress();
+    url = "http://" + await storage.getApiServerAddress();
   }
 
   void getToken() async {

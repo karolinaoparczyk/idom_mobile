@@ -14,9 +14,10 @@ import 'package:idom/widgets/button.dart';
 
 /// allows signing in or signing up
 class Front extends StatefulWidget {
-  Front({@required this.storage});
+  Front({@required this.storage, this.testApi});
 
   final SecureStorage storage;
+  final Api testApi;
 
   @override
   _FrontState createState() => _FrontState();
@@ -24,10 +25,13 @@ class Front extends StatefulWidget {
 
 class _FrontState extends State<Front> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final Api api = Api();
+  Api api = Api();
   bool apiAddressSet;
 
   void initState() {
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     checkApiAddressSet();
     super.initState();
   }
@@ -170,7 +174,7 @@ class _FrontState extends State<Front> {
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => EnterEmail(), fullscreenDialog: true));
+              builder: (context) => EnterEmail(testApi: widget.testApi), fullscreenDialog: true));
 
       /// displays success message when the email is successfully sent
       if (result == true) {

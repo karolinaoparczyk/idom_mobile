@@ -14,10 +14,11 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user in
 class SignIn extends StatefulWidget {
-  SignIn({@required this.storage, @required this.isFromSignUp});
+  SignIn({@required this.storage, @required this.isFromSignUp, this.testApi});
 
   final SecureStorage storage;
   final bool isFromSignUp;
+  final Api testApi;
 
   @override
   _SignInState createState() => new _SignInState();
@@ -29,13 +30,16 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FocusScopeNode _node = FocusScopeNode();
-  final Api api = Api();
+  Api api = Api();
   bool _load;
   IconData _passwordIcon = Icons.visibility_outlined;
   bool _obscurePassword = true;
 
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     _load = false;
   }
 
@@ -261,7 +265,7 @@ class _SignInState extends State<SignIn> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EnterEmail(), fullscreenDialog: true));
+            builder: (context) => EnterEmail(testApi: widget.testApi), fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
     if (result == true) {

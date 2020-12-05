@@ -82,7 +82,15 @@ extension Localization on String {
       {
         "pl_pl": ".",
         "en_uk": " has been sent.",
-      };
+      } +
+      {
+        "pl_pl": "Wysłano komendę włączenia sterownika ",
+        "en_uk": "The command to turn on driver ",
+      }  +
+      {
+        "pl_pl": "Wysłano komendę wyłączenia sterownika ",
+        "en_uk": "The command to turn off driver ",
+      } ;
 
   String get i18n => localize(this, _t);
 }

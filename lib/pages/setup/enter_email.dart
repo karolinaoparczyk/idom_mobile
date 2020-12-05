@@ -8,6 +8,9 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 /// allows to enter email and send reset password request
 class EnterEmail extends StatefulWidget {
+  EnterEmail({this.testApi});
+
+  final Api testApi;
   @override
   _EnterEmailState createState() => _EnterEmailState();
 }
@@ -16,11 +19,14 @@ class _EnterEmailState extends State<EnterEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _emailController = TextEditingController();
-  final Api api = Api();
+  Api api = Api();
   bool _load;
 
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     _load = false;
   }
 
