@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:idom/models.dart';
 
-class ChooseMultipleSensorsDialog extends StatefulWidget {
-  ChooseMultipleSensorsDialog({this.sensors, this.selectedSensors});
+class ChooseDriverDialog extends StatefulWidget {
+  ChooseDriverDialog({this.drivers, this.currentDriver});
 
-  final List<Sensor> sensors;
-  final List<Sensor> selectedSensors;
+  final List<Driver> drivers;
+  final Driver currentDriver;
 
   @override
-  _ChooseMultipleSensorsDialogState createState() => _ChooseMultipleSensorsDialogState();
+  _ChooseDriverDialogState createState() => _ChooseDriverDialogState();
 }
 
-class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialog> {
+class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
   bool searchBarVisible;
   TextEditingController _searchBarController = TextEditingController();
-  List<Sensor> tempSelectedSensors = List<Sensor>();
+  Driver selectedDriver;
 
   @override
   void initState() {
     super.initState();
     searchBarVisible = false;
-    tempSelectedSensors.addAll(widget.selectedSensors);
+    selectedDriver = widget.currentDriver;
     _searchBarController.addListener(() {
       setState(() {});
     });
@@ -75,7 +75,7 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        "Wybierz czujniki",
+                        "Wybierz sterownik",
                         style: Theme.of(context)
                             .textTheme
                             .headline5
@@ -97,30 +97,24 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
             Expanded(
                 child: ListView(
                   children: (searchBarVisible
-                      ? widget.sensors.where((sensor) => sensor.name
+                      ? widget.drivers.where((driver) => driver.name
                       .toLowerCase()
                       .contains(_searchBarController.text.toLowerCase()))
-                      : widget.sensors)
-                      .map((sensor) => GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {},
-                      child: CheckboxListTile(
-                        onChanged: (checked) {
-                          setState(() {
-                            checked
-                                ?tempSelectedSensors.add(sensor)
-                                :  tempSelectedSensors.remove(sensor);
-                          });
-                        },
-                        value:  tempSelectedSensors.contains(sensor),
-                        dense: true,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: Text(sensor.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal)),
-                      )))
+                      : widget.drivers)
+                      .map(
+                        (driver) => RadioListTile(
+                      title: Text(driver.name,
+                          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                              fontWeight: FontWeight.normal, fontSize: 21.0)),
+                      value: driver,
+                      groupValue: selectedDriver,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedDriver = driver;
+                        });
+                      },
+                    ),
+                  )
                       .toList(),
                 )),
             Divider(),
@@ -138,7 +132,7 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                     child: Text("OK",
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {
-                      Navigator.pop(context,  tempSelectedSensors);
+                      Navigator.pop(context, selectedDriver);
                     }),
               ],
             ),

@@ -1478,7 +1478,7 @@ class _DriverDetailsState extends State<DriverDetails> {
         message =
             "Wysłano komendę wyłączenia sterownika ".i18n + widget.driver.name + ".".i18n;
       }
-      await _refreshSensorDetails();
+      await _refreshDriverDetails();
     } else if (result == 404) {
       message =
           "Nie znaleziono sterownika ".i18n + widget.driver.name + " na serwerze. Odswież listę sterowników.".i18n;
@@ -1519,11 +1519,11 @@ class _DriverDetailsState extends State<DriverDetails> {
       final snackBar =
           new SnackBar(content: new Text("Zapisano sterownik.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
-      await _refreshSensorDetails();
+      await _refreshDriverDetails();
     }
   }
 
-  _refreshSensorDetails() async {
+  _refreshDriverDetails() async {
     try {
       setState(() {
         _load = true;

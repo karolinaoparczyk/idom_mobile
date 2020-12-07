@@ -146,3 +146,50 @@ class Driver extends Equatable {
         data: json['data'] as bool);
   }
 }
+
+class SensorDriverAction extends Equatable {
+  int id;
+  String name;
+  String sensor;
+  int trigger;
+  String operator;
+  String driver;
+  String days;
+  String startTime;
+  String endTime;
+  String action;
+  int flag;
+
+  SensorDriverAction(
+      {@required this.id,
+      this.name,
+      this.sensor,
+      this.trigger,
+      this.operator,
+      this.driver,
+      this.days,
+      this.startTime,
+      this.endTime,
+      this.action,
+      this.flag
+      });
+
+  @override
+  List<Object> get props => [id, name];
+
+  factory SensorDriverAction.fromJson(Map<String, dynamic> json) {
+    return SensorDriverAction(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      sensor: json['sensor'] as String,
+      trigger: json['trigger'] as int,
+      operator: json['operator'] as String,
+      driver: json['driver'] as String,
+      days: json['days'] as String,
+      startTime: json['start_event'] as String,
+      endTime: json['end_event'] as String,
+      action: json['action'] as String,
+      flag: json['flag'] as int,
+    );
+  }
+}

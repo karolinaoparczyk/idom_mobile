@@ -262,4 +262,50 @@ void main() {
 
     verify(await mockApi.deleteCamera(1)).called(1);
   });
+
+  /// tests if cameras not on list if api error
+  testWidgets('cameras not on list if api error', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.getActions()).thenAnswer((_) async =>
+        Future.value(null));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    Cameras page = Cameras(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+    expect(find
+        .byType(ListTile)
+        .evaluate()
+        .length, 0);
+    expect(find.text("Błąd połączenia z serwerem."), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/video-camera.svg")), findsNothing);
+  });
+
+  /// tests if cameras not on list if api error
+  testWidgets('cameras not on list if api error', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.getActions()).thenAnswer((_) async =>
+        Future.value(null));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    Cameras page = Cameras(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+    expect(find
+        .byType(ListTile)
+        .evaluate()
+        .length, 0);
+    expect(find.text("Server connection error."), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/video-camera.svg")), findsNothing);
+  });
 }

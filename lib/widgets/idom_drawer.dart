@@ -5,6 +5,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
+import 'package:idom/pages/actions/actions.dart';
 import 'package:idom/pages/cameras/cameras.dart';
 import 'package:idom/pages/data_download/data_download.dart';
 import 'package:idom/pages/drivers/drivers.dart';
@@ -236,6 +237,18 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             Drivers(storage: widget.storage)));
+                if (widget.onGoBackAction != null) widget.onGoBackAction();
+              }
+            }),
+            customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
+              Navigator.pop(context);
+              if (widget.parentWidgetType != "Actions") {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ActionsList(storage: widget.storage)));
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
