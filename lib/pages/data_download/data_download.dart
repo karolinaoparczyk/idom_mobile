@@ -16,6 +16,7 @@ import 'package:idom/widgets/button.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:idom/localization/data_download/data_download.i18n.dart';
 
 class DataDownload extends StatefulWidget {
   DataDownload({@required this.storage, this.testApi});
@@ -65,7 +66,7 @@ class _DataDownloadState extends State<DataDownload> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
@@ -76,13 +77,15 @@ class _DataDownloadState extends State<DataDownload> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania czujników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -95,11 +98,8 @@ class _DataDownloadState extends State<DataDownload> {
         controller: _rangeDateController,
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
-          labelText: "Ilość ostatnich dni",
-          labelStyle: Theme
-              .of(context)
-              .textTheme
-              .headline5,
+          labelText: "Ilość ostatnich dni".i18n,
+          labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -125,7 +125,7 @@ class _DataDownloadState extends State<DataDownload> {
       onWillPop: _onBackButton,
       child: Scaffold(
           key: _scaffoldKey,
-          appBar: AppBar(title: Text('Pobierz dane')),
+          appBar: AppBar(title: Text('Pobierz dane'.i18n)),
           drawer: IdomDrawer(
               storage: widget.storage,
               parentWidgetType: "DataDownload",
@@ -136,11 +136,10 @@ class _DataDownloadState extends State<DataDownload> {
               child: Form(
                 key: _formKey,
                 child: Column(children: [
-                  Text("Uzupełnij filtry, aby wygenerować plik .csv z danymi",
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .headline5),
+                  Text(
+                      "Uzupełnij filtry, aby wygenerować plik .csv z danymi"
+                          .i18n,
+                      style: Theme.of(context).textTheme.headline5),
                   SizedBox(height: 20.0),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -149,11 +148,8 @@ class _DataDownloadState extends State<DataDownload> {
                       child: Row(
                         children: [
                           Text(
-                            "Czujniki",
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .bodyText1,
+                            "Czujniki".i18n,
+                            style: Theme.of(context).textTheme.bodyText1,
                             textAlign: TextAlign.left,
                           ),
                           Spacer(),
@@ -191,33 +187,31 @@ class _DataDownloadState extends State<DataDownload> {
                           1: IntrinsicColumnWidth()
                         },
                         children: selectedSensors
-                            ?.map((sensor) =>
-                            TableRow(children: <Widget>[
-                              Container(
-                                  padding: EdgeInsets.only(bottom: 15),
-                                  child: Text(sensor.name)),
-                              GestureDetector(
-                                onTap: () =>
-                                    setState(() {
-                                      selectedSensors.remove(sensor);
-                                      if (selectedSensors.isEmpty) {
-                                        categoriesMessage = null;
-                                      }
-                                    }),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 4.0),
-                                  child: SvgPicture.asset(
-                                      "assets/icons/minus.svg",
-                                      matchTextDirection: false,
-                                      width: 21,
-                                      height: 21,
-                                      color: IdomColors.error,
-                                      key: Key("deleteSensor")),
-                                ),
-                              ),
-                            ]))
-                            ?.toList() ??
+                                ?.map((sensor) => TableRow(children: <Widget>[
+                                      Container(
+                                          padding: EdgeInsets.only(bottom: 15),
+                                          child: Text(sensor.name)),
+                                      GestureDetector(
+                                        onTap: () => setState(() {
+                                          selectedSensors.remove(sensor);
+                                          if (selectedSensors.isEmpty) {
+                                            categoriesMessage = null;
+                                          }
+                                        }),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          child: SvgPicture.asset(
+                                              "assets/icons/minus.svg",
+                                              matchTextDirection: false,
+                                              width: 21,
+                                              height: 21,
+                                              color: IdomColors.error,
+                                              key: Key("deleteSensor")),
+                                        ),
+                                      ),
+                                    ]))
+                                ?.toList() ??
                             [],
                       ),
                     ),
@@ -228,7 +222,7 @@ class _DataDownloadState extends State<DataDownload> {
                       FocusScope.of(context).unfocus();
                       if (selectedCategories.isNotEmpty) {
                         sensorsMessage =
-                        "Usuń wybrane kategorie, aby wybrać czujniki.";
+                            "Usuń wybrane kategorie, aby wybrać czujniki.".i18n;
                         setState(() {});
                         return;
                       }
@@ -237,12 +231,10 @@ class _DataDownloadState extends State<DataDownload> {
                           builder: (context) {
                             return Dialog(
                                 backgroundColor:
-                                Theme
-                                    .of(context)
-                                    .dialogBackgroundColor,
+                                    Theme.of(context).dialogBackgroundColor,
                                 child: StatefulBuilder(
                                     builder: (BuildContext context,
-                                        StateSetter setState) =>
+                                            StateSetter setState) =>
                                         ChooseSensorsDialog(
                                             sensors: sensors,
                                             selectedSensors: selectedSensors)));
@@ -264,15 +256,14 @@ class _DataDownloadState extends State<DataDownload> {
                               color: selectedCategories.isEmpty
                                   ? IdomColors.additionalColor
                                   : IdomColors.darken(
-                                  IdomColors.additionalColor, 0.2),
+                                      IdomColors.additionalColor, 0.2),
                               key: Key("addSensors")),
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 8.0),
+                                const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
-                              "Dodaj",
-                              style: Theme
-                                  .of(context)
+                              "Dodaj".i18n,
+                              style: Theme.of(context)
                                   .textTheme
                                   .bodyText1
                                   .copyWith(fontWeight: FontWeight.normal),
@@ -291,11 +282,10 @@ class _DataDownloadState extends State<DataDownload> {
                       duration: Duration(milliseconds: 300),
                       firstChild: sensorsMessage != null
                           ? Text(sensorsMessage,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .bodyText1
-                              .copyWith(fontWeight: FontWeight.normal))
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontWeight: FontWeight.normal))
                           : SizedBox(),
                       secondChild: SizedBox(),
                     ),
@@ -307,11 +297,8 @@ class _DataDownloadState extends State<DataDownload> {
                       child: Row(
                         children: [
                           Text(
-                            "Kategorie",
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .bodyText1,
+                            "Kategorie".i18n,
+                            style: Theme.of(context).textTheme.bodyText1,
                             textAlign: TextAlign.left,
                           ),
                           Spacer(),
@@ -349,33 +336,31 @@ class _DataDownloadState extends State<DataDownload> {
                           1: IntrinsicColumnWidth()
                         },
                         children: selectedCategories
-                            ?.map((category) =>
-                            TableRow(children: <Widget>[
-                              Container(
-                                  padding: EdgeInsets.only(bottom: 15),
-                                  child: Text(category['text'])),
-                              GestureDetector(
-                                onTap: () =>
-                                    setState(() {
-                                      selectedCategories.remove(category);
-                                      if (selectedCategories.isEmpty) {
-                                        sensorsMessage = null;
-                                      }
-                                    }),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 4.0),
-                                  child: SvgPicture.asset(
-                                      "assets/icons/minus.svg",
-                                      matchTextDirection: false,
-                                      width: 21,
-                                      height: 21,
-                                      color: IdomColors.error,
-                                      key: Key("deleteCategory")),
-                                ),
-                              ),
-                            ]))
-                            ?.toList() ??
+                                ?.map((category) => TableRow(children: <Widget>[
+                                      Container(
+                                          padding: EdgeInsets.only(bottom: 15),
+                                          child: Text(category['text'].i18n)),
+                                      GestureDetector(
+                                        onTap: () => setState(() {
+                                          selectedCategories.remove(category);
+                                          if (selectedCategories.isEmpty) {
+                                            sensorsMessage = null;
+                                          }
+                                        }),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          child: SvgPicture.asset(
+                                              "assets/icons/minus.svg",
+                                              matchTextDirection: false,
+                                              width: 21,
+                                              height: 21,
+                                              color: IdomColors.error,
+                                              key: Key("deleteCategory")),
+                                        ),
+                                      ),
+                                    ]))
+                                ?.toList() ??
                             [],
                       ),
                     ),
@@ -386,26 +371,24 @@ class _DataDownloadState extends State<DataDownload> {
                       FocusScope.of(context).unfocus();
                       if (selectedSensors.isNotEmpty) {
                         categoriesMessage =
-                        "Usuń wybrane czujniki, aby wybrać kategorie.";
+                            "Usuń wybrane czujniki, aby wybrać kategorie.".i18n;
                         setState(() {});
                         return;
                       }
                       final selCategories =
-                      await showDialog<List<Map<String, String>>>(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                                backgroundColor:
-                                Theme
-                                    .of(context)
-                                    .dialogBackgroundColor,
-                                child: StatefulBuilder(
-                                    builder: (BuildContext context,
-                                        StateSetter setState) =>
-                                        ChooseMultipleSensorCategoriesDialog(
-                                            selectedCategories:
-                                            selectedCategories)));
-                          });
+                          await showDialog<List<Map<String, String>>>(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                    backgroundColor:
+                                        Theme.of(context).dialogBackgroundColor,
+                                    child: StatefulBuilder(
+                                        builder: (BuildContext context,
+                                                StateSetter setState) =>
+                                            ChooseMultipleSensorCategoriesDialog(
+                                                selectedCategories:
+                                                    selectedCategories)));
+                              });
                       if (selCategories != null) {
                         selectedCategories.clear();
                         selectedCategories.addAll(selCategories);
@@ -423,15 +406,14 @@ class _DataDownloadState extends State<DataDownload> {
                               color: selectedSensors.isEmpty
                                   ? IdomColors.additionalColor
                                   : IdomColors.darken(
-                                  IdomColors.additionalColor, 0.2),
+                                      IdomColors.additionalColor, 0.2),
                               key: Key("addCategories")),
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 8.0),
+                                const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
-                              "Dodaj",
-                              style: Theme
-                                  .of(context)
+                              "Dodaj".i18n,
+                              style: Theme.of(context)
                                   .textTheme
                                   .bodyText1
                                   .copyWith(fontWeight: FontWeight.normal),
@@ -450,11 +432,10 @@ class _DataDownloadState extends State<DataDownload> {
                       duration: Duration(milliseconds: 300),
                       firstChild: categoriesMessage != null
                           ? Text(categoriesMessage,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .bodyText1
-                              .copyWith(fontWeight: FontWeight.normal))
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontWeight: FontWeight.normal))
                           : SizedBox(),
                       secondChild: SizedBox(),
                     ),
@@ -465,7 +446,7 @@ class _DataDownloadState extends State<DataDownload> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: buttonWidget(context, "Generuj plik",
+                    child: buttonWidget(context, "Generuj plik".i18n,
                         Icons.arrow_right_outlined, _generateFile),
                   )
                 ]),
@@ -501,32 +482,36 @@ class _DataDownloadState extends State<DataDownload> {
       var days = int.parse(_rangeDateController.text);
       var result = await api.generateFile(
           selectedSensorsIds.isNotEmpty ? selectedSensorsIds : null,
-          selectedCategoriesValues.isNotEmpty ? selectedCategoriesValues : null, days);
+          selectedCategoriesValues.isNotEmpty ? selectedCategoriesValues : null,
+          days);
       String data = result["body"];
       if (result != null && result["statusCode"] == 200) {
         if (await requestWritePermission()) {
           try {
             final externalDirectory = await getExternalStorageDirectory();
-            var path = externalDirectory.path.replaceAll("Android/data/com.project.idom/files", "");
+            var path = externalDirectory.path
+                .replaceAll("Android/data/com.project.idom/files", "");
             var now = DateTime.now();
-            var file = File('$path/sensors_data_${DateFormat("yyy-MM-dd_hh:mm:ss").format(now)}.csv');
+            var file = File(
+                '$path/sensors_data_${DateFormat("yyy-MM-dd_hh:mm:ss").format(now)}.csv');
             await file.writeAsString(data);
             final snackBar = new SnackBar(
-                content:
-                new Text("Plik sensors_data_${DateFormat("yyy-MM-dd_hh:mm:ss").format(now)}.csv został wygenerowany i zapisany w plikach urządzenia."));
+                content: new Text("Plik ".i18n +
+                    "sensors_data_${DateFormat("yyy-MM-dd_hh:mm:ss").format(now)}.csv " +
+                    "został wygenerowany i zapisany w plikach urządzenia."
+                        .i18n));
             _scaffoldKey.currentState.showSnackBar((snackBar));
-          }
-          catch (e) {
+          } catch (e) {
             final snackBar = new SnackBar(
-                content:
-                new Text("Nie udało się wygenerować pliku. Spróbuj ponownie."));
+                content: new Text(
+                    "Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
             _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         }
       } else {
         final snackBar = new SnackBar(
             content:
-            new Text("Nie udało się wygenerować pliku. Spróbuj ponownie."));
+                new Text("Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

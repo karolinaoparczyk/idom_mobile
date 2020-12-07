@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:i18n_extension/i18n_widget.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,8 +15,25 @@ class MockApi extends Mock implements Api {}
 class MockSecureStorage extends Mock implements SecureStorage {}
 
 void main() {
-  Widget makeTestableWidget({Widget child}) {
+  Widget makePolishTestableWidget({Widget child}) {
     return MaterialApp(home: child);
+  }
+
+  Widget makeEnglishTestableWidget({Widget child}) {
+    return MaterialApp(
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('en', "UK"),
+          Locale('pl', "PL"),
+        ],
+        localeListResolutionCallback: (locales, supportedLocales) {
+          return Locale('en', "UK");
+        },
+        home: I18n(child: child));
   }
 
   /// tests if user details displayed correctly for current user, all data, notifications on
@@ -42,12 +61,19 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
+    expect(find.text("Ogólne"), findsOneWidget);
+    expect(find.text("Nazwa użytkownika"), findsOneWidget);
     expect(find.text("user1"), findsNWidgets(2));
+    expect(find.text("Adres e-mail"), findsOneWidget);
     expect(find.text("user@email.com"), findsOneWidget);
+    expect(find.text("Nr telefonu komórkowego"), findsOneWidget);
     expect(find.text("+48765677655"), findsOneWidget);
+    expect(find.text("Powiadomienia"), findsOneWidget);
+    expect(find.text("Aplikacja"), findsOneWidget);
+    expect(find.text("Sms"), findsOneWidget);
     final finderApp = find.byWidgetPredicate(
         (widget) =>
             widget is Switch &&
@@ -87,7 +113,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     expect(find.text("user1"), findsNWidgets(2));
@@ -141,7 +167,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     expect(find.text("user1"), findsNWidgets(2));
@@ -195,7 +221,7 @@ void main() {
     AccountDetail page = AccountDetail(
         storage: mockSecureStorage, username: "user1", testApi: mockApi);
 
-    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
 
     expect(find.text("user1"), findsNWidgets(2));
@@ -214,4 +240,56 @@ void main() {
             widget.value == false);
     expect(finderSms, findsOneWidget);
   });
+
+  /// tests if user details displayed correctly for current user, all data, notifications on, english
+  testWidgets('english user details displayed correctly, all data, notifications on',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+        var userJson = {
+          "id": "1",
+          "username": "user1",
+          "email": "user@email.com",
+          "telephone": "+48765677655",
+          "smsNotifications": "true",
+          "appNotifications": "true",
+          "isStaff": "false",
+          "isActive": "true",
+          "token": "token"
+        };
+
+        when(mockSecureStorage.getCurrentUserData())
+            .thenAnswer((_) async => Future.value(userJson));
+
+        AccountDetail page = AccountDetail(
+            storage: mockSecureStorage, username: "user1", testApi: mockApi);
+
+        await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+        await tester.pumpAndSettle();
+
+        expect(find.text("General"), findsOneWidget);
+        expect(find.text("Username"), findsOneWidget);
+        expect(find.text("user1"), findsNWidgets(2));
+        expect(find.text("E-mail address"), findsOneWidget);
+        expect(find.text("user@email.com"), findsOneWidget);
+        expect(find.text("Cell phone number"), findsOneWidget);
+        expect(find.text("+48765677655"), findsOneWidget);
+        expect(find.text("Notifications"), findsOneWidget);
+        expect(find.text("Application"), findsOneWidget);
+        expect(find.text("Sms"), findsOneWidget);
+        final finderApp = find.byWidgetPredicate(
+                (widget) =>
+            widget is Switch &&
+                widget.key == Key("appNotifications") &&
+                widget.value == true);
+        expect(finderApp, findsOneWidget);
+        final finderSms = find.byWidgetPredicate(
+                (widget) =>
+            widget is Switch &&
+                widget.key == Key("smsNotifications") &&
+                widget.value == true);
+        expect(finderSms, findsOneWidget);
+      });
 }

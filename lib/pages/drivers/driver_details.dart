@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:idom/localization/drivers/driver_details.i18n.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
@@ -115,7 +116,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                               Icon(Icons.info_outline_rounded, size: 17.5),
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
-                                child: Text("Ogólne",
+                                child: Text("Ogólne".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -129,7 +130,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                           left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Nazwa",
+                          child: Text("Nazwa".i18n,
                               style: TextStyle(
                                   color: IdomColors.additionalColor,
                                   fontSize: 16.5,
@@ -151,7 +152,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                               Icon(Icons.touch_app_outlined, size: 17.5),
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
-                                child: Text("Obsługa sterownika",
+                                child: Text("Obsługa sterownika".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -167,7 +168,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                             left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Aktualny stan",
+                            child: Text("Aktualny stan".i18n,
                                 style: TextStyle(
                                     color: IdomColors.additionalColor,
                                     fontSize: 16.5,
@@ -212,7 +213,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                               ),
                             ),
                           ),
-                          Text("Wciśnij przycisk",
+                          Text("Wciśnij przycisk".i18n,
                               style: TextStyle(
                                   color: IdomColors.textDark,
                                   fontSize: 21,
@@ -699,11 +700,11 @@ class _DriverDetailsState extends State<DriverDetails> {
                                                     padding:
                                                         const EdgeInsets.all(
                                                             8.0),
-                                                    child: Text("WRÓĆ",
+                                                    child: Text("WRÓĆ".i18n,
                                                         style: TextStyle(
                                                             color: IdomColors
                                                                 .additionalColor,
-                                                            fontSize: 30),
+                                                            fontSize: 27),
                                                         key: Key("goBack")),
                                                   ),
                                                 ),
@@ -1227,7 +1228,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(18.0),
-                              child: Text("Ustaw kolor",
+                              child: Text("Ustaw kolor".i18n,
                                   style: TextStyle(fontSize: 21)),
                             ),
                             SvgPicture.asset("assets/icons/enter.svg",
@@ -1283,7 +1284,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(18.0),
-                              child: Text("Ustaw jasność",
+                              child: Text("Ustaw jasność".i18n,
                                   style: TextStyle(fontSize: 21)),
                             ),
                             SvgPicture.asset("assets/icons/enter.svg",
@@ -1320,7 +1321,7 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 
   _getDataValue() {
-    return widget.driver.data ? "włączona" : "wyłączona";
+    return widget.driver.data ? "włączona".i18n : "wyłączona".i18n;
   }
 
   _colorChangeHandler(double position) {
@@ -1414,13 +1415,17 @@ class _DriverDetailsState extends State<DriverDetails> {
         _currentColor.green, _currentColor.blue);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
-      message = "Wysłano komendę zmiany koloru żarówki ${widget.driver.name}.";
+      message = "Wysłano komendę zmiany koloru żarówki ".i18n +
+          widget.driver.name +
+          ".".i18n;
     } else if (result == 404) {
-      message =
-          "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
+      message = "Nie znaleziono sterownika ".i18n +
+          widget.driver.name +
+          " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message =
-          "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
+      message = "Nie udało się podłączyć do sterownika ".i18n +
+          widget.driver.name +
+          ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
     }
     if (message != null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
@@ -1437,13 +1442,15 @@ class _DriverDetailsState extends State<DriverDetails> {
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       message =
-          "Wysłano komendę zmiany jasności żarówki ${widget.driver.name}.";
+          "Wysłano komendę zmiany jasności żarówki ".i18n + widget.driver.name + ".".i18n;
     } else if (result == 404) {
-      message =
-          "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
+      message = "Nie znaleziono sterownika ".i18n +
+          widget.driver.name +
+          " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message =
-          "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
+      message = "Nie udało się podłączyć do sterownika ".i18n +
+          widget.driver.name +
+          ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
     }
     if (message != null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
@@ -1466,18 +1473,18 @@ class _DriverDetailsState extends State<DriverDetails> {
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
-        message = "Wysłano komendę włączenia sterownika ${widget.driver.name}.";
+        message = "Wysłano komendę włączenia sterownika ".i18n + widget.driver.name + ".".i18n;
       } else {
         message =
-            "Wysłano komendę wyłączenia sterownika ${widget.driver.name}.";
+            "Wysłano komendę wyłączenia sterownika ".i18n + widget.driver.name + ".".i18n;
       }
       await _refreshSensorDetails();
     } else if (result == 404) {
       message =
-          "Nie znaleziono sterownika ${widget.driver.name} na serwerze. Odswież listę sterowników.";
+          "Nie znaleziono sterownika ".i18n + widget.driver.name + " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
       message =
-          "Nie udało się podłączyć do sterownika ${widget.driver.name}. Sprawdź podłączenie i spróbuj ponownie.";
+          "Nie udało się podłączyć do sterownika".i18n + widget.driver.name + ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
     }
     if (message != null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
@@ -1490,10 +1497,10 @@ class _DriverDetailsState extends State<DriverDetails> {
     var result = await api.startDriver(widget.driver.name);
     var message;
     if (result == 200) {
-      message = "Wysłano komendę do sterownika ${widget.driver.name}.";
+      message = "Wysłano komendę do sterownika ".i18n + widget.driver.name + ".".i18n;
     } else {
       message =
-          "Wysłanie komendy do sterownika ${widget.driver.name} nie powiodło się.";
+          "Wysłanie komendy do sterownika ".i18n + widget.driver.name + " nie powiodło się.".i18n;
     }
     _scaffoldKey.currentState.removeCurrentSnackBar();
     final snackBar = new SnackBar(content: new Text(message));
@@ -1510,7 +1517,7 @@ class _DriverDetailsState extends State<DriverDetails> {
             fullscreenDialog: true));
     if (result == true) {
       final snackBar =
-          new SnackBar(content: new Text("Zapisano dane sterownika."));
+          new SnackBar(content: new Text("Zapisano sterownik.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshSensorDetails();
     }

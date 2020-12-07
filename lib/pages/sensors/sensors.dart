@@ -4,6 +4,7 @@ import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/api.dart';
 
+import 'package:idom/localization/sensors/sensors.i18n.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
@@ -76,7 +77,7 @@ class _SensorsState extends State<Sensors> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
@@ -93,13 +94,13 @@ class _SensorsState extends State<Sensors> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania czujników. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -112,14 +113,14 @@ class _SensorsState extends State<Sensors> {
 
   /// deactivates sensor after confirmation
   _deactivateSensor(Sensor sensor) async {
-    var decision = await confirmActionDialog(context, "Potwierdź",
-        "Czy na pewno chcesz usunąć czujnik ${sensor.name}?");
+    var decision = await confirmActionDialog(context, "Potwierdź".i18n,
+        "Czy na pewno chcesz usunąć czujnik ".i18n + sensor.name + "?");
     if (decision) {
       try {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Trwa usuwanie czujnika...");
+            text: "Trwa usuwanie czujnika...".i18n);
 
         int statusCode = await api.deactivateSensor(sensor.id);
         Navigator.of(_scaffoldKey.currentContext, rootNavigator: true).pop();
@@ -132,7 +133,7 @@ class _SensorsState extends State<Sensors> {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoaderInvalidToken.currentContext,
                   rootNavigator: true)
@@ -142,12 +143,12 @@ class _SensorsState extends State<Sensors> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -156,13 +157,13 @@ class _SensorsState extends State<Sensors> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd. Usunięcie czujnika nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -179,7 +180,7 @@ class _SensorsState extends State<Sensors> {
           letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
-        hintText: "Wyszukaj...",
+        hintText: "Wyszukaj...".i18n,
         hintStyle: TextStyle(
             color: IdomColors.textLight,
             fontSize: 20,
@@ -200,7 +201,7 @@ class _SensorsState extends State<Sensors> {
 
   Future<bool> _onBackButton() async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Na pewno wyjść z aplikacji?");
+        context, "Potwierdź".i18n, "Na pewno wyjść z aplikacji?".i18n);
     return Future.value(decision);
   }
 
@@ -226,7 +227,7 @@ class _SensorsState extends State<Sensors> {
                     _scaffoldKey.currentState.openDrawer();
                   },
                 ),
-          title: _isSearching ? _buildSearchField() : Text('Czujniki'),
+          title: _isSearching ? _buildSearchField() : Text('Czujniki'.i18n),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.search, size: 25.0),
@@ -267,7 +268,7 @@ class _SensorsState extends State<Sensors> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text("Brak czujników w systemie.",
+              child: Text("Brak czujników w systemie.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     }
@@ -279,7 +280,7 @@ class _SensorsState extends State<Sensors> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.",
+              child: Text("Błąd połączenia z serwerem.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (!zeroFetchedItems &&
@@ -290,7 +291,7 @@ class _SensorsState extends State<Sensors> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text("Brak wyników wyszukiwania.",
+              child: Text("Brak wyników wyszukiwania.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (_sensorList != null && _sensorList.length > 0) {
@@ -421,24 +422,25 @@ class _SensorsState extends State<Sensors> {
       doubleData = double.tryParse(sensor.lastData);
       stringData = doubleData.toStringAsFixed(2);
     }
+    var lastDataLabel = "ostatnia dana".i18n;
     switch (sensor.category) {
       case "water_temp":
       case "temperature":
-        if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "$stringData °C";
+        if (sensor.lastData == null) return "$lastDataLabel: -";
+        return "$lastDataLabel: " + "$stringData °C";
         break;
       case "air_humidity":
       case "humidity":
-        if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "$stringData %";
+        if (sensor.lastData == null) return "$lastDataLabel: -";
+        return "$lastDataLabel: " + "$stringData %";
         break;
       case "breathalyser":
-        if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "$stringData ‰";
+        if (sensor.lastData == null) return "$lastDataLabel: -";
+        return "$lastDataLabel: " + "$stringData ‰";
         break;
       case "atmo_pressure":
-        if (sensor.lastData == null) return "ostatnia dana: -";
-        return "ostatnia dana: " + "$stringData hPa";
+        if (sensor.lastData == null) return "$lastDataLabel: -";
+        return "$lastDataLabel: " + "$stringData hPa";
         break;
       case "smoke":
       case "gas":
@@ -458,7 +460,7 @@ class _SensorsState extends State<Sensors> {
 
     /// displays success message if sensor added succesfully
     if (result == true) {
-      final snackBar = new SnackBar(content: new Text("Dodano nowy czujnik."));
+      final snackBar = new SnackBar(content: new Text("Dodano nowy czujnik.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await getSensors();
     }

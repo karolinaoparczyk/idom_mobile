@@ -412,7 +412,7 @@ void main() {
     verify(await mockApi.signUp("username", "password", "password",
             "email@email.com", "+48765678789"))
         .called(1);
-    expect(find.text(" Podaj poprawny numeru telefonu."), findsOneWidget);
+    expect(find.text("Numer telefonu jest nieprawidłowy."), findsOneWidget);
     expect(find.byType(SignUp), findsOneWidget);
   });
 }

@@ -1,3 +1,5 @@
+import 'package:idom/localization/utils/frequency_calculations.i18n.dart';
+
 class FrequencyCalculation {
   static String calculateFrequencyValue(int frequency) {
     int hours = frequency ~/ 3600;
@@ -27,38 +29,38 @@ class FrequencyCalculation {
     var firstVersion;
     switch (type) {
       case "seconds":
-        firstVersion = "sekundy";
+        firstVersion = "sekundy".i18n;
         break;
       case "minutes":
-        firstVersion = "minuty";
+        firstVersion = "minuty".i18n;
         break;
       case "hours":
-        firstVersion = "godziny";
+        firstVersion = "godziny".i18n;
         break;
     }
     var secondVersion;
     switch (type) {
       case "seconds":
-        secondVersion = "sekund";
+        secondVersion = "sekund".i18n;
         break;
       case "minutes":
-        secondVersion = "minut";
+        secondVersion = "minut".i18n;
         break;
       case "hours":
-        secondVersion = "godzin";
+        secondVersion = "godzin".i18n;
         break;
     }
 
     var thirdVersion;
     switch (type) {
       case "seconds":
-        thirdVersion = "sekunda";
+        thirdVersion = "sekunda".i18n;
         break;
       case "minutes":
-        thirdVersion = "minuta";
+        thirdVersion = "minuta".i18n;
         break;
       case "hours":
-        thirdVersion = "godzina";
+        thirdVersion = "godzina".i18n;
         break;
     }
 

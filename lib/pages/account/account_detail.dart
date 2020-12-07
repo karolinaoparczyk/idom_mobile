@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
+import 'package:idom/pages/account/edit_account.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/account/account_details.i18n.dart';
 
-import 'edit_account.dart';
 
 /// displays account details
 class AccountDetail extends StatefulWidget {
@@ -97,7 +98,7 @@ class _AccountDetailState extends State<AccountDetail> {
         _load = false;
       });
       final snackBar = new SnackBar(
-          content: new Text("Błąd pobierania danych użytkownika."));
+          content: new Text("Błąd pobierania danych użytkownika.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
@@ -157,7 +158,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 5.0),
-                                          child: Text("Ogólne",
+                                          child: Text("Ogólne".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyText1
@@ -175,7 +176,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("Login",
+                                    child: Text("Nazwa użytkownika".i18n,
                                         style: TextStyle(
                                             color: IdomColors.additionalColor,
                                             fontSize: 16.5,
@@ -198,7 +199,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("Adres e-mail",
+                                    child: Text("Adres e-mail".i18n,
                                         style: TextStyle(
                                             color: IdomColors.additionalColor,
                                             fontSize: 16.5,
@@ -221,7 +222,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("Nr telefonu komórkowego",
+                                    child: Text("Nr telefonu komórkowego".i18n,
                                         style: TextStyle(
                                             color: IdomColors.additionalColor,
                                             fontSize: 16.5,
@@ -256,7 +257,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 5.0),
-                                          child: Text("Powiadomienia",
+                                          child: Text("Powiadomienia".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyText1
@@ -280,7 +281,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text("Aplikacja",
+                                            Text("Aplikacja".i18n,
                                                 style: TextStyle(
                                                     color: IdomColors.textDark,
                                                     fontSize: 16.5,
@@ -329,7 +330,7 @@ class _AccountDetailState extends State<AccountDetail> {
         appNotificationsOn.toString(), smsNotificationsOn.toString());
     if (result != null && result['statusCode'] != "200") {
       final snackBar = new SnackBar(
-          content: new Text("Błąd edycji powiadomień. Spróbuj ponownie."));
+          content: new Text("Błąd edycji powiadomień. Spróbuj ponownie.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
     widget.storage.setAppNotifications(appNotificationsOn.toString());
@@ -348,7 +349,7 @@ class _AccountDetailState extends State<AccountDetail> {
 
     if (result == true) {
       final snackBar =
-          new SnackBar(content: new Text("Zapisano dane użytkownika."));
+          new SnackBar(content: new Text("Zapisano dane użytkownika.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshAccountDetails();
     }
@@ -368,7 +369,7 @@ class _AccountDetailState extends State<AccountDetail> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
@@ -376,7 +377,7 @@ class _AccountDetailState extends State<AccountDetail> {
       } else {
         final snackBar = new SnackBar(
             content:
-                new Text("Odświeżenie danych użytkownika nie powiodło się."));
+                new Text("Odświeżenie danych użytkownika nie powiodło się.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -387,13 +388,13 @@ class _AccountDetailState extends State<AccountDetail> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy."));
+                "Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
