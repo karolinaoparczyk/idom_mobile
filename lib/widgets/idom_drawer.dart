@@ -240,18 +240,18 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "Actions") {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ActionsList(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
-              }
-            }),
+            // customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
+            //   Navigator.pop(context);
+            //   if (widget.parentWidgetType != "Actions") {
+            //     Navigator.of(context).popUntil((route) => route.isFirst);
+            //     await Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) =>
+            //                 ActionsList(storage: widget.storage)));
+            //     if (widget.onGoBackAction != null) widget.onGoBackAction();
+            //   }
+            // }),
             customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n, () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "EditApiAddress") {
