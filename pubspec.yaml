@@ -23,7 +23,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   http:
-  flutter_secure_storage:
+  flutter_secure_storage: 3.3.3
   cookie_jar: ^1.0.0
   syncfusion_flutter_charts: ^18.3.51
   flutter_svg:

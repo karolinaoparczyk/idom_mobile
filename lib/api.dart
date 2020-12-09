@@ -494,7 +494,11 @@ class Api {
         "category": category,
       };
     } else {
-      body = {"name": name, "category": category, "data": data};
+      body = {
+        "name": name,
+        "category": category,
+        "data": data,
+      };
     }
     var res = await httpClient
         .post(

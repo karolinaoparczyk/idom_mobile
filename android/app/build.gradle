@@ -40,13 +40,15 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        checkReleaseBuilds false
+        abortOnError false
     }
 
     defaultConfig {
         applicationId "com.project.idom"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 4
+        versionCode 6
         versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
