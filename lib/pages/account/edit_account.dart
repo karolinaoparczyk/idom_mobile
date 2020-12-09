@@ -8,6 +8,7 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/account/edit_account.i18n.dart';
 
 /// allows editing account
 class EditAccount extends StatefulWidget {
@@ -40,7 +41,7 @@ class _EditAccountState extends State<EditAccount> {
         controller: _emailController,
         autofocus: true,
         decoration: InputDecoration(
-          labelText: "Adres e-mail*",
+          labelText: "Adres e-mail*".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -58,7 +59,7 @@ class _EditAccountState extends State<EditAccount> {
         style: TextStyle(fontSize: 21.0),
         controller: _telephoneController,
         decoration: InputDecoration(
-          labelText: "Nr telefonu komórkowego",
+          labelText: "Nr telefonu komórkowego".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -149,7 +150,7 @@ class _EditAccountState extends State<EditAccount> {
                                         size: 17.5),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Ogólne",
+                                      child: Text("Ogólne".i18n,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyText1
@@ -228,7 +229,7 @@ class _EditAccountState extends State<EditAccount> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
@@ -250,17 +251,17 @@ class _EditAccountState extends State<EditAccount> {
       String errorText = "";
       if (emailExists && telephoneExists)
         errorText =
-            "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.";
+            "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.".i18n;
       else if (emailExists)
-        errorText = "Konto dla podanego adresu e-mail już istnieje.";
+        errorText = "Konto dla podanego adresu e-mail już istnieje.".i18n;
       else if (telephoneExists)
-        errorText = "Konto dla podanego numeru telefonu już istnieje.";
+        errorText = "Konto dla podanego numeru telefonu już istnieje.".i18n;
 
       if (telephoneInvalid && emailInvalid)
-        errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.";
+        errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
       else if (telephoneInvalid)
-        errorText += "Numer telefonu jest nieprawidłowy.";
-      else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy";
+        errorText += "Numer telefonu jest nieprawidłowy.".i18n;
+      else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy.".i18n;
 
       if (errorText != "") fieldsValidationMessage = errorText;
 
@@ -275,13 +276,13 @@ class _EditAccountState extends State<EditAccount> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edycji użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edycji użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edycji użytkownika. Adres serwera nieprawidłowy."));
+                "Błąd edycji użytkownika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -290,7 +291,7 @@ class _EditAccountState extends State<EditAccount> {
   /// confirms saving account changes
   _confirmSavingChanges(bool changedEmail, bool changedTelephone) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(changedEmail, changedTelephone);
     }
@@ -316,7 +317,7 @@ class _EditAccountState extends State<EditAccount> {
         await _confirmSavingChanges(changedEmail, changedTelephone);
       } else {
         final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

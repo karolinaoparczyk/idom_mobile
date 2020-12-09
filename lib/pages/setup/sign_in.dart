@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:idom/localization/setup/sign_in.i18n.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/enter_email.dart';
@@ -13,10 +14,11 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 /// signs user in
 class SignIn extends StatefulWidget {
-  SignIn({@required this.storage, @required this.isFromSignUp});
+  SignIn({@required this.storage, @required this.isFromSignUp, this.testApi});
 
   final SecureStorage storage;
   final bool isFromSignUp;
+  final Api testApi;
 
   @override
   _SignInState createState() => new _SignInState();
@@ -28,20 +30,23 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FocusScopeNode _node = FocusScopeNode();
-  final Api api = Api();
+  Api api = Api();
   bool _load;
   IconData _passwordIcon = Icons.visibility_outlined;
   bool _obscurePassword = true;
 
   void initState() {
     super.initState();
+    if (widget.testApi != null){
+      api = widget.testApi;
+    }
     _load = false;
   }
 
   _displaySignUpSuccessMessage() {
     return Padding(
       padding: const EdgeInsets.only(top: 18.0),
-      child: Text("Konto zostało utworzone. Możesz się zalogować.",
+      child: Text("Konto zostało utworzone. Możesz się zalogować.".i18n,
           style: Theme.of(context)
               .textTheme
               .bodyText1
@@ -55,7 +60,7 @@ class _SignInState extends State<SignIn> {
       key: Key('username'),
       autofocus: true,
       decoration: InputDecoration(
-        labelText: "Nazwa użytkownika",
+        labelText: "Nazwa użytkownika".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -74,7 +79,7 @@ class _SignInState extends State<SignIn> {
     return TextFormField(
       key: Key('password'),
       decoration: InputDecoration(
-        labelText: "Hasło",
+        labelText: "Hasło".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: IconButton(
             color: Theme.of(context).iconTheme.color,
@@ -148,7 +153,7 @@ class _SignInState extends State<SignIn> {
             });
             final snackBar = new SnackBar(
                 content: new Text(
-                    "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie."));
+                    "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie.".i18n));
             _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         } else if (result[1] == 400) {
@@ -157,7 +162,7 @@ class _SignInState extends State<SignIn> {
           });
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje."));
+                  "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -169,12 +174,12 @@ class _SignInState extends State<SignIn> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
-            content: new Text("Błąd logowania. Adres serwera nieprawidłowy."));
+            content: new Text("Błąd logowania. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -192,7 +197,7 @@ class _SignInState extends State<SignIn> {
       child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
-            title: Text('Zaloguj się'),
+            title: Text('Zaloguj się'.i18n),
           ),
           body: SizedBox(
             height: MediaQuery.of(context).size.height - 60,
@@ -237,11 +242,11 @@ class _SignInState extends State<SignIn> {
                     ),
                     alignment: Alignment.bottomCenter,
                     child: Column(children: <Widget>[
-                      buttonWidget(context, "Zaloguj",
+                      buttonWidget(context, "Zaloguj".i18n,
                           Icons.arrow_right_outlined, signIn),
                       TextButton(
                         key: Key("passwordReset"),
-                        child: Text('Zapomniałeś/aś hasła?',
+                        child: Text('Zapomniałeś/aś hasła?'.i18n,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
@@ -260,12 +265,12 @@ class _SignInState extends State<SignIn> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EnterEmail(), fullscreenDialog: true));
+            builder: (context) => EnterEmail(testApi: widget.testApi), fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
     if (result == true) {
       final snackBar = new SnackBar(
-          content: new Text("Email został wysłany. Sprawdź pocztę."));
+          content: new Text("E-mail został wysłany. Sprawdź pocztę.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }

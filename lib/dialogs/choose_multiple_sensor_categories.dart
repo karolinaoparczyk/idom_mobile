@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:idom/enums/categories.dart';
+import 'package:idom/localization/dialogs/sensor_category.i18n.dart';
 
 class ChooseMultipleSensorCategoriesDialog extends StatefulWidget {
   ChooseMultipleSensorCategoriesDialog({this.selectedCategories});
@@ -56,7 +57,7 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                 firstChild: TextField(
                   controller: _searchBarController,
                   decoration: InputDecoration(
-                    hintText: "Wyszukaj...",
+                    hintText: "Wyszukaj...".i18n,
                     prefixIcon: IconButton(
                       onPressed: () {
                         setState(() {
@@ -78,7 +79,7 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        "Wybierz kategorie",
+                        "Wybierz kategorie".i18n,
                         style: Theme.of(context)
                             .textTheme
                             .headline5
@@ -118,7 +119,7 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                         value:  tempSelectedCategories.contains(category),
                         dense: true,
                         controlAffinity: ListTileControlAffinity.leading,
-                        title: Text(category['text'],
+                        title: Text(category['text'].i18n,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
@@ -131,7 +132,7 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                    child: Text("Anuluj",
+                    child: Text("Anuluj".i18n,
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {
                       Navigator.pop(context, null);

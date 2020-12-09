@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/localization/setup/sign_up.i18n.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/sign_in.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -53,7 +54,7 @@ class _SignUpState extends State<SignUp> {
       key: Key('username'),
       autofocus: true,
       decoration: InputDecoration(
-        labelText: "Nazwa użytkownika*",
+        labelText: "Nazwa użytkownika*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -72,7 +73,7 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('password1'),
       decoration: InputDecoration(
-        labelText: "Hasło*",
+        labelText: "Hasło*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: IconButton(
             color: Theme.of(context).iconTheme.color,
@@ -108,7 +109,7 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('password2'),
       decoration: InputDecoration(
-        labelText: "Powtórz hasło",
+        labelText: "Powtórz hasło*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: IconButton(
             color: Theme.of(context).iconTheme.color,
@@ -134,7 +135,7 @@ class _SignUpState extends State<SignUp> {
       style: TextStyle(fontSize: 21.0),
       validator: (String value) {
         if (value != _passwordController.text) {
-          return 'Hasła nie mogą się różnić';
+          return 'Hasła nie mogą się różnić'.i18n;
         }
         return null;
       },
@@ -149,7 +150,7 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('email'),
       decoration: InputDecoration(
-        labelText: "Adres e-mail*",
+        labelText: "Adres e-mail*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -169,7 +170,7 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('telephone'),
       decoration: InputDecoration(
-        labelText: "Nr telefonu komórkowego",
+        labelText: "Nr telefonu komórkowego".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -202,14 +203,14 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(title: Text('Zarejestruj się'), actions: [
+        appBar: AppBar(title: Text('Zarejestruj się'.i18n), actions: [
           IconButton(
             icon: Icon(Icons.restore_page_rounded),
             onPressed: () async {
               var decision = await confirmActionDialog(
                 context,
-                "Potwierdź",
-                "Czy na pewno wyczyścić wszystkie pola?",
+                "Potwierdź".i18n,
+                "Czy na pewno wyczyścić wszystkie pola?".i18n,
               );
               if (decision) {
                 clearFields();
@@ -335,6 +336,7 @@ class _SignUpState extends State<SignUp> {
         var emailExists = false;
         var telephoneExists = false;
         var telephoneInvalid = false;
+        var emailInvalid = false;
 
         if (res['statusCode'] == "201") {
           setState(() {
@@ -360,27 +362,34 @@ class _SignUpState extends State<SignUp> {
         if (res['body'].contains("Telephone number already exists")) {
           telephoneExists = true;
         }
+        if (res['body'].contains("Enter a valid email address")) {
+          emailInvalid = true;
+        }
 
         String errorText = "";
         if (loginExists && emailExists && telephoneExists)
           errorText =
-              "Konto dla podanej nazwy użytkownika, adresu e-mail i numeru telefonu już istnieje.";
+              "Konto dla podanej nazwy użytkownika, adresu e-mail i numeru telefonu już istnieje.".i18n;
         else if (loginExists && emailExists)
-          errorText = "Konto dla podanej nazwy użytkownika i adresu e-mail już istnieje.";
+          errorText = "Konto dla podanej nazwy użytkownika i adresu e-mail już istnieje.".i18n;
         else if (loginExists && telephoneExists)
           errorText =
-              "Konto dla podanej nazwy użytkownika i numeru telefonu już istnieje.";
+              "Konto dla podanej nazwy użytkownika i numeru telefonu już istnieje.".i18n;
         else if (emailExists && telephoneExists)
           errorText =
-              "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.";
+              "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.".i18n;
         else if (emailExists)
-          errorText = "Konto dla podanego adresu e-mail już istnieje.";
+          errorText = "Konto dla podanego adresu e-mail już istnieje.".i18n;
         else if (loginExists)
-          errorText = "Konto dla podanej nazwy użytkownika już istnieje.";
+          errorText = "Konto dla podanej nazwy użytkownika już istnieje.".i18n;
         else if (telephoneExists)
-          errorText = "Konto dla podanego numeru telefonu już istnieje.";
+          errorText = "Konto dla podanego numeru telefonu już istnieje.".i18n;
 
-        if (telephoneInvalid) errorText += " Podaj poprawny numeru telefonu.";
+        if (telephoneInvalid && emailInvalid)
+          errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
+        else if (telephoneInvalid)
+          errorText += "Numer telefonu jest nieprawidłowy.".i18n;
+        else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy".i18n;
 
         if (errorText != null) {
           FocusScope.of(context).unfocus();
@@ -401,13 +410,13 @@ class _SignUpState extends State<SignUp> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content:
-                  new Text("Błąd rejestracji. Adres serwera nieprawidłowy."));
+                  new Text("Błąd rejestracji. Adres serwera nieprawidłowy.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

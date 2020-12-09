@@ -12,6 +12,7 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:idom/localization/cameras/camera_stream.i18n.dart';
 
 class CameraStream extends StatefulWidget {
   CameraStream({@required this.storage, @required this.camera, this.testApi});
@@ -79,7 +80,7 @@ class _CameraStreamState extends State<CameraStream> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text("Otwórz w przeglądarce",
+                          Text("Otwórz w przeglądarce".i18n,
                               key: Key("goToBrowser"),
                               style: Theme.of(context).textTheme.headline5),
                           Icon(Icons.arrow_right,
@@ -146,7 +147,7 @@ class _CameraStreamState extends State<CameraStream> {
                 ),
             fullscreenDialog: true));
     if (result == true) {
-      final snackBar = new SnackBar(content: new Text("Zapisano dane kamery."));
+      final snackBar = new SnackBar(content: new Text("Zapisano kamere.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshSensorDetails();
     }
@@ -171,14 +172,14 @@ class _CameraStreamState extends State<CameraStream> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final snackBar = new SnackBar(
-            content: new Text("Odświeżenie danych kamery nie powiodło się."));
+            content: new Text("Odświeżenie danych kamery nie powiodło się.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -189,13 +190,13 @@ class _CameraStreamState extends State<CameraStream> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania danych kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych kamery. Adres serwera nieprawidłowy."));
+                "Błąd pobierania danych kamery. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

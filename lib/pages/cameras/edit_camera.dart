@@ -7,6 +7,7 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/cameras/edit_camera.i18n.dart';
 
 class EditCamera extends StatefulWidget {
   EditCamera({@required this.storage, @required this.camera, this.testApi});
@@ -60,7 +61,7 @@ class _EditCameraState extends State<EditCamera> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -110,7 +111,7 @@ class _EditCameraState extends State<EditCamera> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -167,14 +168,14 @@ class _EditCameraState extends State<EditCamera> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
           .contains("Camera with provided name already exists")) {
-        fieldsValidationMessage = "Kamera o podanej nazwie już istnieje.";
+        fieldsValidationMessage = "Kamera o podanej nazwie już istnieje.".i18n;
         setState(() {});
         return;
       } else {
@@ -182,7 +183,7 @@ class _EditCameraState extends State<EditCamera> {
         setState(() {});
         final snackBar = new SnackBar(
             content:
-                new Text("Edycja kamery nie powiodła się. Spróbuj ponownie."));
+                new Text("Edycja kamery nie powiodła się. Spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -194,13 +195,13 @@ class _EditCameraState extends State<EditCamera> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edytowania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania kamery. Adres serwera nieprawidłowy."));
+                "Błąd edytowania kamery. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -209,7 +210,7 @@ class _EditCameraState extends State<EditCamera> {
   /// confirms saving changes
   _confirmSavingChanges(bool changedName) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(changedName);
     }
@@ -231,7 +232,7 @@ class _EditCameraState extends State<EditCamera> {
         await _confirmSavingChanges(changedName);
       } else {
         final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

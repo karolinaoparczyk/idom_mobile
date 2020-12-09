@@ -17,7 +17,7 @@ class Api {
   Client httpClient;
 
   void getApiAddress() async {
-    url = "https://" + await storage.getApiServerAddress();
+    url = "http://" + await storage.getApiServerAddress();
   }
 
   void getToken() async {
@@ -484,7 +484,7 @@ class Api {
 
   /// adds driver
   Future<Map<String, String>> addDriver(String name, String category,
-      {bool data}) async {
+      {bool data = null}) async {
     await getApiAddress();
     await getToken();
     var body;
@@ -594,6 +594,61 @@ class Api {
     return null;
   }
 
+  /// requests switching bulb
+  Future<int> switchBulb(int bulbId, String flag) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.post('$url/bulbs/switch/$bulbId',
+          headers: {HttpHeaders.authorizationHeader: "Token $token"},
+          body: {"flag": flag}).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests changing bulb's color
+  Future<int> changeBulbColor(int bulbId, int red, int green, int blue) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient
+          .post('$url/bulbs/color/$bulbId',
+              headers: {
+                HttpHeaders.authorizationHeader: "Token $token",
+                HttpHeaders.contentTypeHeader: 'application/json'
+              },
+              body: jsonEncode({"red": red, "green": green, "blue": blue}))
+          .timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests changing bulb's brightness
+  Future<int> changeBulbBrightness(int bulbId, int brightness) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient
+          .post('$url/bulbs/brightness/$bulbId',
+              headers: {
+                HttpHeaders.authorizationHeader: "Token $token",
+                HttpHeaders.contentTypeHeader: 'application/json'
+              },
+              body: jsonEncode({"brightness": brightness}))
+          .timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
   /// requests generating csv file with sensor data
   Future<Map<String, dynamic>> generateFile(
       List<String> sensorIds, List<String> categoriesValues, int days) async {
@@ -617,6 +672,125 @@ class Api {
         "statusCode": res.statusCode,
       };
       return response;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+  /// gets actions
+  Future<Map<String, String>> getActions() async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.get('$url/actions/list', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> response = {
+        "body": utf8.decode(res.bodyBytes),
+        "statusCode": res.statusCode.toString(),
+      };
+      return response;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// requests deleting action
+  Future<int> deleteAction(int id) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.delete('$url/actions/delete/$id', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// adds action
+  Future<Map<String, String>> addAction(
+      String name,
+      String sensor,
+      int trigger,
+      String operator,
+      String driver,
+      String days,
+      String startTime,
+      String endTime,
+      String action,
+      int flag) async {
+    await getApiAddress();
+    await getToken();
+    var res = await httpClient
+        .post(
+          '$url/actions/add',
+          headers: {
+            HttpHeaders.authorizationHeader: "Token $token",
+            HttpHeaders.contentTypeHeader: 'application/json'
+          },
+          body: jsonEncode({
+            "name": name,
+            "sensor": sensor,
+            "trigger": trigger,
+            "operator": operator,
+            "driver": driver,
+            "days": days,
+            "start_event": startTime,
+            "end_event": endTime,
+            "action": action,
+            "flag": flag,
+          }),
+        )
+        .timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": utf8.decode(res.bodyBytes),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// edits action
+  Future<Map<String, String>> editAction(
+      int id,
+     Map<String, dynamic> body) async {
+    await getApiAddress();
+    await getToken();
+    var res = await httpClient
+        .put(
+          '$url/actions/update/$id',
+          headers: {
+            HttpHeaders.authorizationHeader: "Token $token",
+            HttpHeaders.contentTypeHeader: 'application/json'
+          },
+          body: jsonEncode(body),
+        )
+        .timeout(Duration(seconds: 5));
+    var resDict = {
+      "body": utf8.decode(res.bodyBytes),
+      "statusCode": res.statusCode.toString(),
+    };
+    return resDict;
+  }
+
+  /// gets action details
+  Future<Map<String, String>> getActionDetails(int actionId) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.get('$url/actions/detail/$actionId', headers: {
+        HttpHeaders.authorizationHeader: "Token $token"
+      }).timeout(Duration(seconds: 5));
+
+      Map<String, String> responses = {
+        "body": utf8.decode(res.bodyBytes),
+        "statusCode": res.statusCode.toString(),
+      };
+      return responses;
     } catch (e) {
       print(e);
     }

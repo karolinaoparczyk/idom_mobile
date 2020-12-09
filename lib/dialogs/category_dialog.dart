@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:idom/enums/categories.dart';
+import 'package:idom/localization/dialogs/sensor_category.i18n.dart';
+
 
 class CategoryDialog extends StatefulWidget {
   final String currentCategory;
@@ -44,7 +46,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                child: Text("Wybierz ategorię",
+                child: Text("Wybierz kategorię".i18n,
                     style: Theme.of(context)
                         .textTheme
                         .headline5
@@ -59,7 +61,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                   itemCount: categories.length,
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
-                      title: Text(categories[index]['text'],
+                      title: Text(categories[index]['text'].i18n,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
                               fontWeight: FontWeight.normal, fontSize: 21.0)),
                       value: categories[index],
@@ -78,7 +80,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      child: Text("Anuluj",
+                      child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {
                         Navigator.pop(context);

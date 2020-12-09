@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/localization/setup/front.i18n.dart';
 
 class LogotypeWidget extends StatelessWidget {
   @override
@@ -23,7 +24,7 @@ class LogotypeWidget extends StatelessWidget {
                       size: 70.0, color: Colors.transparent),
                 ]),
                 Text(
-                  'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU',
+                  'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU'.i18n,
                   style: TextStyle(
                       fontSize: 21,
                       color: IdomColors.additionalColor,
@@ -32,7 +33,7 @@ class LogotypeWidget extends StatelessWidget {
                 ),
                 Padding(
                     padding: EdgeInsets.only(top: 20.0),
-                    child: Text("Trwa ładowanie...",
+                    child: Text("Trwa ładowanie...".i18n,
                         style: Theme.of(context).textTheme.bodyText1.copyWith(
                             fontSize: 21.0, fontWeight: FontWeight.normal)))
               ])),
