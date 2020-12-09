@@ -11,6 +11,7 @@ import 'package:idom/pages/actions/new_action.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
+import 'package:idom/localization/actions/actions.i18n.dart';
 
 class ActionsList extends StatefulWidget {
   ActionsList({@required this.storage, this.testApi});
@@ -49,8 +50,9 @@ class _ActionsListState extends State<ActionsList> {
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);
         setState(() {
-          _actionList =
-              body.map((dynamic item) => SensorDriverAction.fromJson(item)).toList();
+          _actionList = body
+              .map((dynamic item) => SensorDriverAction.fromJson(item))
+              .toList();
         });
         if (_actionList.length == 0)
           zeroFetchedItems = true;
@@ -60,7 +62,7 @@ class _ActionsListState extends State<ActionsList> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
@@ -77,18 +79,18 @@ class _ActionsListState extends State<ActionsList> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania akcji. Adres serwera nieprawidłowy."));
+                "Błąd pobierania akcji. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
-
 
   onLogOutFailure(String text) {
     final snackBar = new SnackBar(content: new Text(text));
@@ -107,7 +109,7 @@ class _ActionsListState extends State<ActionsList> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('Akcje'),
+          title: Text('Akcje'.i18n),
           actions: [
             IconButton(
               icon: Icon(Icons.add, size: 30.0),
@@ -131,11 +133,10 @@ class _ActionsListState extends State<ActionsList> {
     if (zeroFetchedItems) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text(
-                  "Brak akcji w systemie \nlub błąd połączenia z serwerem.",
+              child: Text("Brak akcji w systemie.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     }
@@ -144,10 +145,10 @@ class _ActionsListState extends State<ActionsList> {
         _actionList == null) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.",
+              child: Text("Błąd połączenia z serwerem.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (_actionList != null && _actionList.length > 0) {
@@ -169,7 +170,8 @@ class _ActionsListState extends State<ActionsList> {
                                     title: Text(_actionList[index].name,
                                         style: TextStyle(fontSize: 21.0)),
                                     onTap: () {
-                                      navigateToActionDetails(_actionList[index]);
+                                      navigateToActionDetails(
+                                          _actionList[index]);
                                     },
                                     leading: SizedBox(
                                         width: 35,
@@ -187,28 +189,27 @@ class _ActionsListState extends State<ActionsList> {
                                                 key: Key(
                                                     "assets/icons/hammer.svg")))),
                                     trailing: deleteButtonTrailing(
-                                        _actionList[index])
-                                ),
+                                        _actionList[index])),
                               )))))));
     }
 
     /// shows progress indicator while fetching data
     return Padding(
       padding:
-      const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+          const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
       child: Center(child: CircularProgressIndicator()),
     );
   }
 
   _deleteAction(SensorDriverAction action) async {
-    var decision = await confirmActionDialog(context, "Potwierdź",
-        "Czy na pewno chcesz usunąć akcję ${action.name}?");
+    var decision = await confirmActionDialog(context, "Potwierdź".i18n,
+        "Czy na pewno chcesz usunąć akcję ".i18n + action.name + "?");
     if (decision) {
       try {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Trwa usuwanie akcji...");
+            text: "Trwa usuwanie akcji...".i18n);
 
         int statusCode = await api.deleteAction(action.id);
         Navigator.of(_scaffoldKey.currentContext, rootNavigator: true).pop();
@@ -221,7 +222,7 @@ class _ActionsListState extends State<ActionsList> {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoaderInvalidToken.currentContext).pop();
           await widget.storage.resetUserData();
@@ -229,12 +230,13 @@ class _ActionsListState extends State<ActionsList> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie akcji nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie akcji nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -244,13 +246,14 @@ class _ActionsListState extends State<ActionsList> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie akcji nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie akcji nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -277,7 +280,7 @@ class _ActionsListState extends State<ActionsList> {
     if (result == true) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       final snackBar = new SnackBar(
-        content: new Text("Dodano nową akcję."),
+        content: new Text("Dodano nową akcję.".i18n),
         duration: Duration(seconds: 1),
       );
       _scaffoldKey.currentState.showSnackBar((snackBar));

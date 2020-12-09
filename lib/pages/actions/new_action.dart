@@ -46,21 +46,21 @@ class _NewActionState extends State<NewAction> {
   List<Driver> drivers;
   String fieldsValidationMessage;
   String selectedOperator;
-  List<bool> daysOfWeekSelected = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+  List<bool> daysOfWeekSelected = [true, true, true, true, true, true, true];
 
   @override
   void initState() {
     super.initState();
+    _startTimeController = TextEditingController();
+    _endTimeController = TextEditingController();
     if (widget.testApi != null) {
       api = widget.testApi;
+      startTime = TimeOfDay(hour: 13, minute: 40);
+      _startTimeController =
+          TextEditingController(text: "${startTime.hour}:${startTime.minute}");
+      endTime = TimeOfDay(hour: 15, minute: 40);
+      _endTimeController =
+          TextEditingController(text: "${endTime.hour}:${endTime.minute}");
     }
     getSensors();
     getDrivers();
@@ -68,8 +68,6 @@ class _NewActionState extends State<NewAction> {
     _nameController = TextEditingController();
     _sensorController = TextEditingController();
     _driverController = TextEditingController();
-    _startTimeController = TextEditingController();
-    _endTimeController = TextEditingController();
     _sensorTriggerController = TextEditingController();
     _sensorTriggerOperatorController = TextEditingController();
   }
@@ -237,7 +235,6 @@ class _NewActionState extends State<NewAction> {
           setState(() {});
         }
       },
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       readOnly: true,
       style: TextStyle(fontSize: 21.0),
     );
@@ -573,75 +570,75 @@ class _NewActionState extends State<NewAction> {
                                 ),
                               ],
                             ))),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 30.5, top: 10, right: 20.0, bottom: 10),
-                        child: Container(
-                          width: 300.0, // hardcoded for testing purpose
-                          child: LayoutBuilder(builder: (context, constraints) {
-                            return ToggleButtons(
-                                constraints: BoxConstraints.expand(
-                                    width: 40, height: 30),
-                                borderRadius: BorderRadius.circular(30),
-                                borderColor: IdomColors.additionalColor,
-                                splashColor: Colors.transparent,
-                                fillColor: IdomColors.lighten(
-                                    IdomColors.additionalColor, 0.2),
-                                selectedColor: IdomColors.textDark,
-                                children: [
-                                  Text("pn",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
-                                  Text("wt",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
-                                  Text("śr",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
-                                  Text("czw",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
-                                  Text("pt",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
-                                  Text("sb",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
-                                  Text("nd",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
-                                ],
-                                isSelected: daysOfWeekSelected,
-                                onPressed: (int index) {
-                                  setState(() {
-                                    daysOfWeekSelected[index] =
-                                        !daysOfWeekSelected[index];
-                                  });
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.5, top: 10, right: 20.0, bottom: 10),
+                      child: Container(
+                        width: 300.0, // hardcoded for testing purpose
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return ToggleButtons(
+                              constraints:
+                                  BoxConstraints.expand(width: 40, height: 30),
+                              borderRadius: BorderRadius.circular(30),
+                              borderColor: IdomColors.additionalColor,
+                              splashColor: Colors.transparent,
+                              fillColor: IdomColors.lighten(
+                                  IdomColors.additionalColor, 0.2),
+                              selectedColor: IdomColors.textDark,
+                              children: [
+                                Text("pn",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("wt",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("śr",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("czw",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("pt",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("sb",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("nd",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                              ],
+                              isSelected: daysOfWeekSelected,
+                              onPressed: (int index) {
+                                setState(() {
+                                  daysOfWeekSelected[index] =
+                                      !daysOfWeekSelected[index];
                                 });
-                          }),
-                        ),
+                              });
+                        }),
                       ),
+                    ),
                     Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 30.0),
@@ -704,6 +701,17 @@ class _NewActionState extends State<NewAction> {
       }
     }
     var daysString = daysList.join(", ");
+    if (daysList.isEmpty) {
+      setState(() {
+        fieldsValidationMessage =
+            "Należy wybrać przynajmniej jeden dzień działania akcji.";
+      });
+      return null;
+    } else {
+      setState(() {
+        fieldsValidationMessage = null;
+      });
+    }
     return daysString;
   }
 
@@ -726,7 +734,8 @@ class _NewActionState extends State<NewAction> {
     FocusScope.of(context).unfocus();
     final formState = _formKey.currentState;
     var timeValidated = _validateTime();
-    if (formState.validate() && timeValidated) {
+    var daysString = _getDaysSelectedString();
+    if (formState.validate() && timeValidated && daysString != null) {
       setState(() {
         _load = true;
       });
@@ -738,23 +747,23 @@ class _NewActionState extends State<NewAction> {
         var sensor;
         var operator;
         var trigger;
-        if (selectedSensor == null){
+        if (selectedSensor == null) {
           sensor = null;
           operator = null;
           trigger = null;
-        }
-        else{
+        } else {
           sensor = selectedSensor.name;
           operator = selectedOperator;
-          trigger =  int.tryParse(_sensorTriggerController.text);
+          trigger = int.tryParse(_sensorTriggerController.text);
         }
+
         var res = await api.addAction(
             _nameController.text,
             sensor,
             trigger,
             operator,
             selectedDriver.name,
-            _getDaysSelectedString(),
+            daysString.toString(),
             "${startTime.hour}:${startTime.minute}",
             endTimeString,
             "action",
