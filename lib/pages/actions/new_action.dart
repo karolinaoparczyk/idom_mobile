@@ -12,6 +12,7 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/actions/new_action.i18n.dart';
 
 class NewAction extends StatefulWidget {
   NewAction({@required this.storage, this.testApi});
@@ -110,7 +111,7 @@ class _NewActionState extends State<NewAction> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
@@ -121,13 +122,15 @@ class _NewActionState extends State<NewAction> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania czujników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -148,7 +151,7 @@ class _NewActionState extends State<NewAction> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
@@ -159,13 +162,15 @@ class _NewActionState extends State<NewAction> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania sterowników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -175,7 +180,7 @@ class _NewActionState extends State<NewAction> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -196,7 +201,7 @@ class _NewActionState extends State<NewAction> {
       controller: _sensorController,
       focusNode: _sensorFocusNode,
       decoration: InputDecoration(
-        labelText: "Czujnik",
+        labelText: "Czujnik".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: selectedSensor == null
             ? Icon(Icons.arrow_drop_down, color: IdomColors.brightGrey)
@@ -253,7 +258,7 @@ class _NewActionState extends State<NewAction> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            labelText: "Wartość",
+            labelText: "Wartość".i18n,
             labelStyle: Theme.of(context)
                 .textTheme
                 .headline5
@@ -261,14 +266,14 @@ class _NewActionState extends State<NewAction> {
           ),
           validator: (String value) {
             if (selectedSensor != null && value.isEmpty) {
-              return "Pole wymagane";
+              return "Pole wymagane".i18n;
             }
             if (value.contains(',')) {
               value = value.replaceFirst(',', '.');
             }
             var doubleValue = double.tryParse(value);
             if (doubleValue == null) {
-              return "Podaj liczbę";
+              return "Podaj liczbę".i18n;
             }
             return null;
           },
@@ -294,16 +299,17 @@ class _NewActionState extends State<NewAction> {
             builder: (context) {
               return Dialog(
                 child: SensorTriggerOperatorDialog(
-                    currentOperator: _sensorTriggerOperatorController.text),
+                    currentOperator: selectedOperator),
               );
             });
         if (operator != null) {
-          _sensorTriggerOperatorController.text = operator;
+          _sensorTriggerOperatorController.text = operator.i18n;
           selectedOperator = operator.substring(0, 1);
           setState(() {});
         }
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: TriggerValueOperatorFieldValidator.validate,
       readOnly: true,
       style: TextStyle(fontSize: 21.0),
     );
@@ -315,7 +321,7 @@ class _NewActionState extends State<NewAction> {
         key: Key("driversButton"),
         controller: _driverController,
         decoration: InputDecoration(
-          labelText: "Sterownik",
+          labelText: "Sterownik".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
@@ -358,9 +364,9 @@ class _NewActionState extends State<NewAction> {
         onTap: () async {
           var now = DateTime.now();
           final TimeOfDay time = await showTimePicker(
-            cancelText: "Anuluj",
+            cancelText: "Anuluj".i18n,
             confirmText: "OK",
-            helpText: "Wybierz godzinę",
+            helpText: "Wybierz godzinę".i18n,
             builder: (BuildContext context, Widget child) {
               return Theme(
                 data: ThemeData.light().copyWith(
@@ -397,7 +403,7 @@ class _NewActionState extends State<NewAction> {
         controller: _endTimeController,
         focusNode: _endTimeFocusNode,
         decoration: InputDecoration(
-          labelText: "Koniec",
+          labelText: "Koniec".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: endTime == null
               ? Icon(Icons.arrow_drop_down)
@@ -413,7 +419,8 @@ class _NewActionState extends State<NewAction> {
                       });
                     });
                   },
-                  child: Icon(Icons.close, color: IdomColors.brightGrey)),
+                  child: Icon(Icons.close,
+                      color: IdomColors.brightGrey, key: Key("removeEndTime"))),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -424,9 +431,9 @@ class _NewActionState extends State<NewAction> {
           }
           var now = DateTime.now();
           final TimeOfDay time = await showTimePicker(
-            cancelText: "Anuluj",
+            cancelText: "Anuluj".i18n,
             confirmText: "OK",
-            helpText: "Wybierz godzinę",
+            helpText: "Wybierz godzinę".i18n,
             builder: (BuildContext context, Widget child) {
               return Theme(
                 data: ThemeData.light().copyWith(
@@ -461,7 +468,7 @@ class _NewActionState extends State<NewAction> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text("Dodaj akcję"), actions: [
+            appBar: AppBar(title: Text("Dodaj akcję".i18n), actions: [
               IconButton(
                   key: Key('saveActionButton'),
                   icon: Icon(Icons.save),
@@ -491,7 +498,7 @@ class _NewActionState extends State<NewAction> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -527,7 +534,7 @@ class _NewActionState extends State<NewAction> {
                                   Icon(Icons.info_outline_rounded, size: 17.5),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
-                                    child: Text("Wyzwalacz na czujniku",
+                                    child: Text("Wyzwalacz na czujniku".i18n,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
@@ -543,7 +550,7 @@ class _NewActionState extends State<NewAction> {
                         child: Row(
                           children: [
                             Flexible(
-                                flex: 1,
+                                flex: 2,
                                 child: _buildTriggerValueOperatorField()),
                             SizedBox(width: 10),
                             Flexible(
@@ -561,7 +568,7 @@ class _NewActionState extends State<NewAction> {
                                 Icon(Icons.access_time, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Czas działania akcji",
+                                  child: Text("Czas działania akcji".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -586,43 +593,43 @@ class _NewActionState extends State<NewAction> {
                                   IdomColors.additionalColor, 0.2),
                               selectedColor: IdomColors.textDark,
                               children: [
-                                Text("pn",
+                                Text("pn".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("wt",
+                                Text("wt".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("śr",
+                                Text("śr".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("czw",
+                                Text("czw".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("pt",
+                                Text("pt".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("sb",
+                                Text("sb".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("nd",
+                                Text("nd".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -682,7 +689,8 @@ class _NewActionState extends State<NewAction> {
       if (!isCorrect) {
         setState(() {
           fieldsValidationMessage =
-              "Godzina zakończenia musi być późniejsza od godziny rozpoczęcia.";
+              "Godzina zakończenia musi być późniejsza od godziny rozpoczęcia."
+                  .i18n;
         });
       } else {
         setState(() {
@@ -704,7 +712,7 @@ class _NewActionState extends State<NewAction> {
     if (daysList.isEmpty) {
       setState(() {
         fieldsValidationMessage =
-            "Należy wybrać przynajmniej jeden dzień działania akcji.";
+            "Należy wybrać przynajmniej jeden dzień działania akcji.".i18n;
       });
       return null;
     } else {
@@ -763,38 +771,60 @@ class _NewActionState extends State<NewAction> {
             trigger,
             operator,
             selectedDriver.name,
-            daysString.toString(),
+            daysString,
             "${startTime.hour}:${startTime.minute}",
             endTimeString,
             "action",
             _getFlag());
+        setState(() {
+          _load = false;
+        });
         if (res['statusCode'] == "201") {
+          fieldsValidationMessage = null;
+          setState(() {});
           Navigator.pop(context, true);
         } else if (res['statusCode'] == "401") {
+          fieldsValidationMessage = null;
+          setState(() {});
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoader,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
           await widget.storage.resetUserData();
           Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (res['body']
+            .contains("Action with provided name already exists")) {
+          fieldsValidationMessage =
+              "Akcja o podanej nazwie już istnieje.".i18n;
+          setState(() {});
+          return;
+        } else {
+          fieldsValidationMessage = null;
+          setState(() {});
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Dodawanie akcji nie powiodło się. Spróbuj ponownie.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
         print(e.toString());
         setState(() {
+          fieldsValidationMessage = null;
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd dodawania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania akcji. Adres serwera nieprawidłowy."));
+                  "Błąd dodawania akcji. Adres serwera nieprawidłowy.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

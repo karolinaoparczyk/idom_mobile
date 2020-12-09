@@ -14,13 +14,21 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/actions/edit_action.i18n.dart';
 
 class EditAction extends StatefulWidget {
-  EditAction({@required this.storage, @required this.action, this.testApi});
+  EditAction(
+      {@required this.storage,
+      @required this.action,
+      this.testApi,
+      this.testStartTime,
+      this.testEndTime});
 
   final SecureStorage storage;
   final SensorDriverAction action;
   final Api testApi;
+  final String testStartTime;
+  final String testEndTime;
 
   @override
   _EditActionState createState() => _EditActionState();
@@ -55,11 +63,11 @@ class _EditActionState extends State<EditAction> {
   @override
   void initState() {
     super.initState();
-    getSensors();
-    getDrivers();
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+    getSensors();
+    getDrivers();
     _load = false;
     if (widget.action.sensor != null) {
       _sensorController.text = widget.action.sensor;
@@ -71,30 +79,42 @@ class _EditActionState extends State<EditAction> {
           TextEditingController(text: widget.action.trigger.toString());
     }
     if (widget.action.operator != null) {
+      selectedOperator = Operators.values.firstWhere((element) =>
+          element.contains(widget.action.operator.toString()));
       _sensorTriggerOperatorController = TextEditingController(
-          text: Operators.values.firstWhere((element) =>
-              element.contains(widget.action.operator.toString())));
-      selectedOperator = _sensorTriggerOperatorController.text;
+          text: selectedOperator.i18n);
     }
     startTime = TimeOfDay(
         hour: int.parse(widget.action.startTime.split(":")[0]),
         minute: int.parse(widget.action.startTime.split(":")[1]));
-    _startTimeController = TextEditingController(
-        text: widget.action.startTime
-            .substring(0, widget.action.startTime.length - 3));
+    _startTimeController = TextEditingController(text: widget.action.startTime);
     if (widget.action.endTime != null) {
       endTime = TimeOfDay(
           hour: int.parse(widget.action.endTime.split(":")[0]),
           minute: int.parse(widget.action.endTime.split(":")[1]));
-      _endTimeController = TextEditingController(
-          text: widget.action.endTime
-              .substring(0, widget.action.endTime.length - 3));
+      _endTimeController = TextEditingController(text: widget.action.endTime);
     }
     for (int i = 0; i < 7; i++) {
       if (widget.action.days.contains(i.toString())) {
         daysOfWeekSelected.add(true);
       } else {
         daysOfWeekSelected.add(false);
+      }
+    }
+    if (widget.testStartTime != null) {
+      startTime = TimeOfDay(
+          hour: int.parse(widget.testStartTime.split(":")[0]),
+          minute: int.parse(widget.testStartTime.split(":")[1]));
+      _startTimeController =
+          TextEditingController(text: widget.testStartTime);
+      if (widget.testEndTime != null){
+      endTime = TimeOfDay(
+          hour: int.parse(widget.testEndTime.split(":")[0]),
+            minute: int.parse(widget.testEndTime.split(":")[1]));
+        _endTimeController = TextEditingController(text: widget.testEndTime);}
+      else{
+        endTime = null;
+        _endTimeController = TextEditingController(text: "");
       }
     }
   }
@@ -139,7 +159,7 @@ class _EditActionState extends State<EditAction> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
@@ -150,13 +170,13 @@ class _EditActionState extends State<EditAction> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania czujników. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -179,7 +199,7 @@ class _EditActionState extends State<EditAction> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
@@ -190,13 +210,13 @@ class _EditActionState extends State<EditAction> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania sterowników. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -206,7 +226,7 @@ class _EditActionState extends State<EditAction> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -227,7 +247,7 @@ class _EditActionState extends State<EditAction> {
       controller: _sensorController,
       focusNode: _sensorFocusNode,
       decoration: InputDecoration(
-        labelText: "Czujnik",
+        labelText: "Czujnik".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: selectedSensor == null
             ? Icon(Icons.arrow_drop_down, color: IdomColors.brightGrey)
@@ -285,7 +305,7 @@ class _EditActionState extends State<EditAction> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            labelText: "Wartość",
+            labelText: "Wartość".i18n,
             labelStyle: Theme.of(context)
                 .textTheme
                 .headline5
@@ -293,14 +313,14 @@ class _EditActionState extends State<EditAction> {
           ),
           validator: (String value) {
             if (selectedSensor != null && value.isEmpty) {
-              return "Pole wymagane";
+              return "Pole wymagane".i18n;
             }
             if (value.contains(',')) {
               value = value.replaceFirst(',', '.');
             }
             var doubleValue = double.tryParse(value);
             if (doubleValue == null) {
-              return "Podaj liczbę";
+              return "Podaj liczbę".i18n;
             }
             return null;
           },
@@ -326,11 +346,11 @@ class _EditActionState extends State<EditAction> {
             builder: (context) {
               return Dialog(
                 child: SensorTriggerOperatorDialog(
-                    currentOperator: _sensorTriggerOperatorController.text),
+                    currentOperator: selectedOperator),
               );
             });
         if (operator != null) {
-          _sensorTriggerOperatorController.text = operator;
+          _sensorTriggerOperatorController.text = operator.i18n;
           selectedOperator = operator.substring(0, 1);
           setState(() {});
         }
@@ -347,7 +367,7 @@ class _EditActionState extends State<EditAction> {
         key: Key("driversButton"),
         controller: _driverController,
         decoration: InputDecoration(
-          labelText: "Sterownik",
+          labelText: "Sterownik".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
@@ -390,9 +410,9 @@ class _EditActionState extends State<EditAction> {
         onTap: () async {
           var now = DateTime.now();
           final TimeOfDay time = await showTimePicker(
-            cancelText: "Anuluj",
+            cancelText: "Anuluj".i18n,
             confirmText: "OK",
-            helpText: "Wybierz godzinę",
+            helpText: "Wybierz godzinę".i18n,
             builder: (BuildContext context, Widget child) {
               return Theme(
                 data: ThemeData.light().copyWith(
@@ -429,7 +449,7 @@ class _EditActionState extends State<EditAction> {
         controller: _endTimeController,
         focusNode: _endTimeFocusNode,
         decoration: InputDecoration(
-          labelText: "Koniec",
+          labelText: "Koniec".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: endTime == null
               ? Icon(Icons.arrow_drop_down)
@@ -456,9 +476,9 @@ class _EditActionState extends State<EditAction> {
           }
           var now = DateTime.now();
           final TimeOfDay time = await showTimePicker(
-            cancelText: "Anuluj",
+            cancelText: "Anuluj".i18n,
             confirmText: "OK",
-            helpText: "Wybierz godzinę",
+            helpText: "Wybierz godzinę".i18n,
             builder: (BuildContext context, Widget child) {
               return Theme(
                 data: ThemeData.light().copyWith(
@@ -493,7 +513,7 @@ class _EditActionState extends State<EditAction> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text("Edytuj akcję"), actions: [
+            appBar: AppBar(title: Text("Edytuj akcję".i18n), actions: [
               IconButton(
                   key: Key('saveActionButton'),
                   icon: Icon(Icons.save),
@@ -523,7 +543,7 @@ class _EditActionState extends State<EditAction> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -559,7 +579,7 @@ class _EditActionState extends State<EditAction> {
                                   Icon(Icons.info_outline_rounded, size: 17.5),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
-                                    child: Text("Wyzwalacz na czujniku",
+                                    child: Text("Wyzwalacz na czujniku".i18n,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
@@ -575,7 +595,7 @@ class _EditActionState extends State<EditAction> {
                         child: Row(
                           children: [
                             Flexible(
-                                flex: 1,
+                                flex: 2,
                                 child: _buildTriggerValueOperatorField()),
                             SizedBox(width: 10),
                             Flexible(
@@ -593,7 +613,7 @@ class _EditActionState extends State<EditAction> {
                                 Icon(Icons.access_time, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Czas działania akcji",
+                                  child: Text("Czas działania akcji".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -618,43 +638,43 @@ class _EditActionState extends State<EditAction> {
                                   IdomColors.additionalColor, 0.2),
                               selectedColor: IdomColors.textDark,
                               children: [
-                                Text("pn",
+                                Text("pn".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("wt",
+                                Text("wt".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("śr",
+                                Text("śr".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("czw",
+                                Text("czw".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("pt",
+                                Text("pt".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("sb",
+                                Text("sb".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .copyWith(
                                             fontWeight: FontWeight.normal)),
-                                Text("nd",
+                                Text("nd".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -714,7 +734,7 @@ class _EditActionState extends State<EditAction> {
       if (!isCorrect) {
         setState(() {
           fieldsValidationMessage =
-              "Godzina zakończenia musi być późniejsza od godziny rozpoczęcia.";
+              "Godzina zakończenia musi być późniejsza od godziny rozpoczęcia.".i18n;
         });
       } else {
         setState(() {
@@ -743,8 +763,12 @@ class _EditActionState extends State<EditAction> {
     var trigger;
     var operator;
     trigger =
-    changedTrigger ? int.tryParse(_sensorTriggerController.text) : null;
-    operator = changedOperator ? selectedOperator.substring(0, 1) : null;
+        changedTrigger ? int.tryParse(_sensorTriggerController.text) : null;
+    operator = !changedOperator
+        ? null
+        : selectedOperator != null
+            ? selectedOperator.substring(0, 1)
+            : null;
 
     if (changedSensor && selectedSensor != null) {
       sensor = selectedSensor.name;
@@ -864,18 +888,22 @@ class _EditActionState extends State<EditAction> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-      else{
+      } else if (res['body']
+          .contains("Action with provided name already exists")) {
+        fieldsValidationMessage =
+            "Akcja o podanej nazwie już istnieje.".i18n;
+        setState(() {});
+        return;
+      }  else {
         final snackBar = new SnackBar(
             content: new Text(
-                "Edytowanie akcji nie powiodło się. Spróbuj ponownie."));
+                "Edytowanie akcji nie powiodło się. Spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
-
       }
     } catch (e) {
       print(e.toString());
@@ -885,13 +913,13 @@ class _EditActionState extends State<EditAction> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edytowania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania akcji. Adres serwera nieprawidłowy."));
+                "Błąd edytowania akcji. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -910,7 +938,7 @@ class _EditActionState extends State<EditAction> {
       bool changedStartTime,
       bool changedEndTime}) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(
           changedName: changedName,
@@ -954,9 +982,9 @@ class _EditActionState extends State<EditAction> {
   /// verifies data changes
   _verifyChanges() async {
     var name = _nameController.text;
-    var sensor = "";
+    var sensor;
     var trigger;
-    var operator = "";
+    var operator;
     if (selectedSensor != null) {
       sensor = selectedSensor.name;
       trigger = int.tryParse(_sensorTriggerController.text);
@@ -1011,14 +1039,10 @@ class _EditActionState extends State<EditAction> {
       if (flag != widget.action.flag) {
         changedFlag = true;
       }
-      if (start !=
-          widget.action.startTime
-              .substring(0, widget.action.startTime.length - 3)) {
+      if (start != widget.action.startTime) {
         changedStartTime = true;
       }
-      if (end !=
-          widget.action.endTime
-              .substring(0, widget.action.endTime.length - 3)) {
+      if (end != widget.action.endTime) {
         changedEndTime = true;
       }
 
@@ -1045,7 +1069,7 @@ class _EditActionState extends State<EditAction> {
             changedEndTime: changedEndTime);
       } else {
         final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

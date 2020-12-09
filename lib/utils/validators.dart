@@ -142,7 +142,7 @@ class CategoryFieldValidator {
 class DriverFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Pole wymagane';
+      return 'Pole wymagane'.i18n;
     }
     return null;
   }
@@ -152,7 +152,7 @@ class DriverFieldValidator {
 class TimeFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Pole wymagane';
+      return 'Pole wymagane'.i18n;
     }
     return null;
   }
@@ -174,6 +174,17 @@ class LastDaysAmountFieldValidator {
 
 /// validates frequency units field
 class FrequencyUnitsFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane'.i18n;
+    }
+    return null;
+  }
+}
+
+
+/// validates trigger value operator field
+class TriggerValueOperatorFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;

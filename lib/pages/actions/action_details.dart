@@ -299,9 +299,9 @@ class _ActionDetailsState extends State<ActionDetails> {
 
   _getHours() {
     if (widget.action.endTime != null) {
-      return "${widget.action.startTime.substring(0, widget.action.startTime.length - 3)} - ${widget.action.endTime.substring(0, widget.action.endTime.length - 3)}";
+      return "${widget.action.startTime} - ${widget.action.endTime}";
     } else {
-      return "${widget.action.startTime.substring(0, widget.action.startTime.length - 3)}";
+      return "${widget.action.startTime}";
     }
   }
 
