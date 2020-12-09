@@ -29,8 +29,8 @@ void main() {
         "name": "action1",
         "sensor_id": 1,
         "driver_id": 1,
-        "startTime": "17:30",
-        "endTime": "19:30",
+        "start_time": "17:30",
+        "end_time": "19:30",
         "action": "action",
       },
       {
@@ -38,8 +38,8 @@ void main() {
         "name": "action2",
         "sensor_id": 2,
         "driver_id": 2,
-        "startTime": "13:20",
-        "endTime": "16:40",
+        "start_time": "13:20",
+        "end_time": "16:40",
         "action": "action",
       }
     ];
