@@ -152,6 +152,7 @@ class _FrontState extends State<Front> {
 
   /// navigates to editing api server address
   navigateToEditApiAddress() async {
+    _scaffoldKey.currentState.removeCurrentSnackBar();
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -171,6 +172,7 @@ class _FrontState extends State<Front> {
   /// navigates to sending reset password request page
   navigateToEnterEmail() async {
     if (apiAddressSet != null && apiAddressSet) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
@@ -189,6 +191,7 @@ class _FrontState extends State<Front> {
   /// navigates to signing in page
   void navigateToSignIn() async {
     if (apiAddressSet != null && apiAddressSet) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -200,6 +203,7 @@ class _FrontState extends State<Front> {
   /// navigates to signing up page
   void navigateToSignUp() async {
     if (apiAddressSet != null && apiAddressSet) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
       Navigator.push(
           context,
           MaterialPageRoute(
