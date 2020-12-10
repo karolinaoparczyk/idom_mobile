@@ -47,6 +47,7 @@ class SecureStorage {
     storage.write(key: _username, value: username);
     storage.write(key: _password, value: password);
     storage.write(key: _email, value: email);
+    storage.write(key: _telephone, value: telephone);
     storage.write(key: _userId, value: userId);
     storage.write(key: _smsNotifications, value: smsNotifications);
     storage.write(key: _appNotifications, value: appNotifications);
@@ -59,6 +60,7 @@ class SecureStorage {
   Future<Map<String, dynamic>> getCurrentUserData() async {
     var username = await storage.read(key: _username);
     var email = await storage.read(key: _email);
+    var telephone = await storage.read(key: _telephone);
     var id = await storage.read(key: _userId);
     var smsNotifications = await storage.read(key: _smsNotifications);
     var appNotifications = await storage.read(key: _appNotifications);
@@ -68,6 +70,7 @@ class SecureStorage {
     return {
       "username": username,
       "email": email,
+      "telephone": telephone,
       "id": id,
       "smsNotifications": smsNotifications,
       "appNotifications": appNotifications,
@@ -81,6 +84,7 @@ class SecureStorage {
     storage.delete(key: _username);
     storage.delete(key: _password);
     storage.delete(key: _email);
+    storage.delete(key: _telephone);
     storage.delete(key: _userId);
     storage.delete(key: _smsNotifications);
     storage.delete(key: _appNotifications);

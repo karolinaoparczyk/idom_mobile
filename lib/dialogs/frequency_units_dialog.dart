@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:idom/enums/frequency_units.dart';
+import 'package:idom/localization/dialogs/frequency_units.i18n.dart';
 
 class FrequencyUnitsDialog extends StatefulWidget {
   final String currentFrequencyUnits;
@@ -37,7 +38,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                child: Text("Wybierz jednostki",
+                child: Text("Wybierz jednostki".i18n,
                     style: Theme.of(context)
                         .textTheme
                         .headline5
@@ -51,7 +52,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                   itemCount: frequencyUnitsList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
-                      title: Text(frequencyUnitsList[index]['text'],
+                      title: Text(frequencyUnitsList[index]['text'].i18n,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
                               fontWeight: FontWeight.normal, fontSize: 21.0)),
                       value: frequencyUnitsList[index],
@@ -70,7 +71,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      child: Text("Anuluj",
+                      child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {
                         Navigator.pop(context);

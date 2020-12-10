@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/drivers/edit_driver.i18n.dart';
 
 class EditDriver extends StatefulWidget {
   EditDriver({@required this.storage, @required this.driver, this.testApi});
@@ -29,16 +30,15 @@ class _EditDriverState extends State<EditDriver> {
   TextEditingController _categoryController;
   String categoryValue;
   Api api = Api();
-  String _token;
   bool _load;
+  String fieldsValidationMessage;
 
   @override
   void initState() {
     super.initState();
-    if (widget.testApi != null){
+    if (widget.testApi != null) {
       api = widget.testApi;
     }
-    getToken();
     _load = false;
 
     /// seting current driver name
@@ -47,12 +47,8 @@ class _EditDriverState extends State<EditDriver> {
     /// setting current driver category
     _categoryController = TextEditingController(
         text: DriverCategories.values.firstWhere(
-            (element) => element["value"] == widget.driver.category)['text']);
+            (element) => element["value"] == widget.driver.category)['text'].i18n);
     categoryValue = widget.driver.category;
-  }
-
-  Future<void> getToken() async {
-    _token = await widget.storage.getToken();
   }
 
   @override
@@ -76,7 +72,7 @@ class _EditDriverState extends State<EditDriver> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -96,7 +92,7 @@ class _EditDriverState extends State<EditDriver> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
-          labelText: "Kategoria",
+          labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
@@ -113,7 +109,7 @@ class _EditDriverState extends State<EditDriver> {
                 );
               });
           if (selectedCategory != null) {
-            _categoryController.text = selectedCategory['text'];
+            _categoryController.text = selectedCategory['text'].i18n;
             categoryValue = selectedCategory['value'];
           }
         },
@@ -137,7 +133,7 @@ class _EditDriverState extends State<EditDriver> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "DriverDetails",
+                parentWidgetType: "EditDriver",
                 onLogOutFailure: onLogOutFailure),
 
             /// builds form with driver's properties
@@ -159,7 +155,7 @@ class _EditDriverState extends State<EditDriver> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -178,6 +174,24 @@ class _EditDriverState extends State<EditDriver> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildCategoryField())),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      child: AnimatedCrossFade(
+                        crossFadeState: fieldsValidationMessage != null
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration: Duration(milliseconds: 300),
+                        firstChild: fieldsValidationMessage != null
+                            ? Text(fieldsValidationMessage,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                .copyWith(fontWeight: FontWeight.normal))
+                            : SizedBox(),
+                        secondChild: SizedBox(),
+                      ),
+                    ),
                   ])),
             )));
   }
@@ -192,43 +206,60 @@ class _EditDriverState extends State<EditDriver> {
     });
     try {
       var res = await api.editDriver(widget.driver.id, name, category);
+      setState(() {
+        _load = false;
+      });
       if (res['statusCode'] == "200") {
-        Navigator.pop(context, true);
+        fieldsValidationMessage = null;
+        setState(() {});  Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
-        displayProgressDialog(
+        fieldsValidationMessage = null;
+        setState(() {}); displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
+      } else if (res['body']
+          .contains("Driver with provided name already exists")) {
+        fieldsValidationMessage = "Sterownik o podanej nazwie już istnieje.".i18n;
+        setState(() {});
+        return;
+      } else {
+        fieldsValidationMessage = null;
+        setState(() {}); final snackBar = new SnackBar(
+            content: new Text(
+                "Edycja sterownika nie powiodła się. Spróbuj ponownie.".i18n));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
       print(e.toString());
       setState(() {
         _load = false;
+        fieldsValidationMessage = null;
       });
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edytowania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania sterownika. Adres serwera nieprawidłowy."));
+                "Błąd edytowania sterownika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
 
-  /// confirms saving account changes
+  /// confirms saving changes
   _confirmSavingChanges(bool changedName, bool changedCategory) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(changedName, changedCategory);
     }
@@ -255,7 +286,7 @@ class _EditDriverState extends State<EditDriver> {
         await _confirmSavingChanges(changedName, changedCategory);
       } else {
         final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

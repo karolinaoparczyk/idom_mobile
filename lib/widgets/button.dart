@@ -13,25 +13,7 @@ Widget buttonWidget(
             elevation: 15,
             key: Key(text),
             onPressed: onPressed,
-            child: iconData != null
-                ? Row(mainAxisSize: MainAxisSize.min, children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: text.length > 11 ? 28.0 : 48.0, right: 8.0),
-                      child: Text(text,
-                          style: TextStyle(
-                              color: IdomColors.textLight,
-                              fontSize: 21,
-                              fontWeight: FontWeight.normal)),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Icon(iconData, color: IdomColors.textLight),
-                      ),
-                    ),
-                  ])
-                : Text(text,
+            child: Text(text,
                     style: TextStyle(
                         color: IdomColors.textLight,
                         fontSize: 21,

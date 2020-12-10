@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:idom/models.dart';
 
-class ChooseSensorsDialog extends StatefulWidget {
-  ChooseSensorsDialog({this.sensors, this.selectedSensors});
+class ChooseMultipleSensorsDialog extends StatefulWidget {
+  ChooseMultipleSensorsDialog({this.sensors, this.selectedSensors});
 
   final List<Sensor> sensors;
   final List<Sensor> selectedSensors;
 
   @override
-  _ChooseSensorsDialogState createState() => _ChooseSensorsDialogState();
+  _ChooseMultipleSensorsDialogState createState() => _ChooseMultipleSensorsDialogState();
 }
 
-class _ChooseSensorsDialogState extends State<ChooseSensorsDialog> {
+class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialog> {
   bool searchBarVisible;
   TextEditingController _searchBarController = TextEditingController();
   List<Sensor> tempSelectedSensors = List<Sensor>();
@@ -65,9 +65,9 @@ class _ChooseSensorsDialogState extends State<ChooseSensorsDialog> {
                     ),
                     suffixIcon: _searchBarController.text.isNotEmpty
                         ? IconButton(
-                            onPressed: () => _searchBarController.clear(),
-                            icon: const Icon(Icons.clear),
-                          )
+                      onPressed: () => _searchBarController.clear(),
+                      icon: const Icon(Icons.clear),
+                    )
                         : null,
                   ),
                 ),
@@ -96,12 +96,12 @@ class _ChooseSensorsDialogState extends State<ChooseSensorsDialog> {
             Divider(),
             Expanded(
                 child: ListView(
-              children: (searchBarVisible
+                  children: (searchBarVisible
                       ? widget.sensors.where((sensor) => sensor.name
-                          .toLowerCase()
-                          .contains(_searchBarController.text.toLowerCase()))
+                      .toLowerCase()
+                      .contains(_searchBarController.text.toLowerCase()))
                       : widget.sensors)
-                  .map((sensor) => GestureDetector(
+                      .map((sensor) => GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {},
                       child: CheckboxListTile(
@@ -121,8 +121,8 @@ class _ChooseSensorsDialogState extends State<ChooseSensorsDialog> {
                                 .bodyText1
                                 .copyWith(fontWeight: FontWeight.normal)),
                       )))
-                  .toList(),
-            )),
+                      .toList(),
+                )),
             Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

@@ -1,11 +1,12 @@
 import 'package:idom/utils/idom_colors.dart';
 import 'package:flutter/material.dart';
 
+import 'package:idom/localization/sensors/edit_sensor.i18n.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/frequency_units_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:idom/enums/frequency_units.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -40,14 +41,15 @@ class _EditSensorState extends State<EditSensor> {
   Api api = Api();
   bool _load;
   String fieldsValidationMessage;
+  String nameValidationMessage;
   bool canEditFrequency = true;
 
   List<DropdownMenuItem<String>> units;
   Map<String, String> englishToPolishUnits = {
-    "seconds": "sekundy",
-    "minutes": "minuty",
-    "hours": "godziny",
-    "days": "dni"
+    "seconds": "sekundy".i18n,
+    "minutes": "minuty".i18n,
+    "hours": "godziny".i18n,
+    "days": "dni".i18n
   };
 
   @override
@@ -64,16 +66,17 @@ class _EditSensorState extends State<EditSensor> {
     /// setting current sensor category
     _categoryController = TextEditingController(
         text: SensorCategories.values.firstWhere(
-            (element) => element["value"] == widget.sensor.category)['text']);
+            (element) => element["value"] == widget.sensor.category)['text'].i18n);
     categoryValue = widget.sensor.category;
-    if (categoryValue == "rain_sensor" || categoryValue == "water_temp" ||
+    if (categoryValue == "rain_sensor" ||
+        categoryValue == "water_temp" ||
         categoryValue == "breathalyser" ||
         categoryValue == "smoke") {
       canEditFrequency = false;
       frequencyUnitsValue = "seconds";
       _frequencyUnitsController.text = FrequencyUnits.values
           .where((element) => element['value'] == "seconds")
-          .first['text'];
+          .first['text'].i18n;
       _frequencyValueController.text = "30";
     } else {
       canEditFrequency = true;
@@ -90,12 +93,11 @@ class _EditSensorState extends State<EditSensor> {
     frequencyUnitsValue = "seconds";
   }
 
-
   /// builds sensor name form field
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -115,7 +117,7 @@ class _EditSensorState extends State<EditSensor> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
-          labelText: "Kategoria",
+          labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
@@ -136,8 +138,7 @@ class _EditSensorState extends State<EditSensor> {
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
-                selectedCategory['value'] == "breathalyser"
-            ) {
+                selectedCategory['value'] == "breathalyser") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -170,7 +171,7 @@ class _EditSensorState extends State<EditSensor> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            labelText: "Wartość",
+            labelText: "Wartość".i18n,
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
@@ -187,7 +188,7 @@ class _EditSensorState extends State<EditSensor> {
         enabled: canEditFrequency,
         controller: _frequencyUnitsController,
         decoration: InputDecoration(
-          labelText: "Jednostki",
+          labelText: "Jednostki".i18n,
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
@@ -264,7 +265,7 @@ class _EditSensorState extends State<EditSensor> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -295,7 +296,7 @@ class _EditSensorState extends State<EditSensor> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
                                     child: Text(
-                                        "Częstotliwość pobierania danych",
+                                        "Częstotliwość pobierania danych".i18n,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
@@ -343,6 +344,24 @@ class _EditSensorState extends State<EditSensor> {
                           secondChild: SizedBox(),
                         ),
                       ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      child: AnimatedCrossFade(
+                        crossFadeState: nameValidationMessage != null
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration: Duration(milliseconds: 300),
+                        firstChild: nameValidationMessage != null
+                            ? Text(nameValidationMessage,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontWeight: FontWeight.normal))
+                            : SizedBox(),
+                        secondChild: SizedBox(),
+                      ),
+                    ),
                   ])),
             )));
   }
@@ -360,13 +379,20 @@ class _EditSensorState extends State<EditSensor> {
     try {
       var res = await api.editSensor(
           widget.sensor.id, name, category, frequencyValue);
+      setState(() {
+        _load = false;
+      });
       if (res['statusCode'] == "200") {
+        nameValidationMessage = null;
+        setState(() {});
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
+        nameValidationMessage = null;
+        setState(() {});
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
@@ -374,38 +400,44 @@ class _EditSensorState extends State<EditSensor> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else if (res['body']
           .contains("Sensor with provided name already exists")) {
+        nameValidationMessage = "Czujnik o podanej nazwie już istnieje.".i18n;
+        setState(() {});
+        return;
+      } else {
+        nameValidationMessage = null;
+        setState(() {});
         final snackBar = new SnackBar(
-            content: new Text("Czujnik o podanej nazwie już istnieje."));
+            content: new Text(
+                "Edycja czujnika nie powiodła się. Spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
-        setState(() {
-          _load = false;
-        });
       }
     } catch (e) {
       print(e.toString());
       setState(() {
+        nameValidationMessage = null;
         _load = false;
       });
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania czujnika. Adres serwera nieprawidłowy."));
+                "Błąd edytowania czujnika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }
 
-  /// confirms saving account changes
+  /// confirms saving changes
   _confirmSavingChanges(bool changedName, bool changedCategory,
       bool changedFrequencyValue, int frequencyInSeconds) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(changedName, changedCategory, changedFrequencyValue,
           frequencyInSeconds);
@@ -440,19 +472,24 @@ class _EditSensorState extends State<EditSensor> {
         int valInt = int.tryParse(_frequencyValueController.text);
         if (valInt == null) {
           fieldsValidationMessage =
-          'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+              'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.'
+                  .i18n;
           setState(() {});
           return;
         }
 
         /// validates if frequency value is valid for given frequency units
         var validFrequencyValue =
-        SensorFrequencyFieldValidator.isFrequencyValueValid(
-            _frequencyValueController.text, frequencyUnitsValue);
+            SensorFrequencyFieldValidator.isFrequencyValueValid(
+                _frequencyValueController.text, frequencyUnitsValue);
         if (!validFrequencyValue) {
           setState(() {
-            fieldsValidationMessage =
-            "Poprawne wartości dla jednostki ${englishToPolishUnits[frequencyUnitsValue]} to ${unitsToMinValues[frequencyUnitsValue]} - ${unitsToMaxValues[frequencyUnitsValue]}";
+            fieldsValidationMessage = "Poprawne wartości dla jednostki ".i18n +
+                englishToPolishUnits[frequencyUnitsValue] +
+                " to ".i18n +
+                unitsToMinValues[frequencyUnitsValue].toString() +
+                " - " +
+                unitsToMaxValues[frequencyUnitsValue].toString();
           });
         } else {
           setState(() {
@@ -460,24 +497,24 @@ class _EditSensorState extends State<EditSensor> {
           });
         }
       }
-        /// converts frequency value to seconds
-        frequencyInSeconds = int.parse(_frequencyValueController.text);
-        if (frequencyUnitsValue != "seconds") {
-          if (frequencyUnitsValue == "minutes")
-            frequencyInSeconds = frequencyInSeconds * 60;
-          else if (frequencyUnitsValue == "hours")
-            frequencyInSeconds = frequencyInSeconds * 60 * 60;
-          else if (frequencyUnitsValue == "days")
-            frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
 
+      /// converts frequency value to seconds
+      frequencyInSeconds = int.parse(_frequencyValueController.text);
+      if (frequencyUnitsValue != "seconds") {
+        if (frequencyUnitsValue == "minutes")
+          frequencyInSeconds = frequencyInSeconds * 60;
+        else if (frequencyUnitsValue == "hours")
+          frequencyInSeconds = frequencyInSeconds * 60 * 60;
+        else if (frequencyUnitsValue == "days")
+          frequencyInSeconds = frequencyInSeconds * 24 * 60 * 60;
       }
       if (fieldsValidationMessage == null) {
         if (changedName || changedCategory || changedFrequencyValue) {
           await _confirmSavingChanges(changedName, changedCategory,
               changedFrequencyValue, frequencyInSeconds);
         } else {
-          final snackBar =
-              new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+          final snackBar = new SnackBar(
+              content: new Text("Nie wprowadzono żadnych zmian.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

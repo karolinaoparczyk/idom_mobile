@@ -8,13 +8,15 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/account/edit_account.i18n.dart';
 
 /// allows editing account
 class EditAccount extends StatefulWidget {
-  EditAccount({@required this.storage, @required this.account});
+  EditAccount({@required this.storage, @required this.account, this.testApi});
 
   final SecureStorage storage;
   final Account account;
+  final Api testApi;
 
   @override
   _EditAccountState createState() => new _EditAccountState();
@@ -24,9 +26,10 @@ class _EditAccountState extends State<EditAccount> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
-  final Api api = Api();
+  Api api = Api();
   bool _load;
   String fieldsValidationMessage;
+  String currentUsername;
 
   TextEditingController _emailController;
   TextEditingController _telephoneController;
@@ -38,7 +41,7 @@ class _EditAccountState extends State<EditAccount> {
         controller: _emailController,
         autofocus: true,
         decoration: InputDecoration(
-          labelText: "Adres e-mail*",
+          labelText: "Adres e-mail*".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -56,7 +59,7 @@ class _EditAccountState extends State<EditAccount> {
         style: TextStyle(fontSize: 21.0),
         controller: _telephoneController,
         decoration: InputDecoration(
-          labelText: "Nr telefonu komórkowego",
+          labelText: "Nr telefonu komórkowego".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -69,10 +72,18 @@ class _EditAccountState extends State<EditAccount> {
   @override
   void initState() {
     super.initState();
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
+    _getCurrentUser();
     _load = false;
     _emailController = TextEditingController(text: widget.account.email);
     _telephoneController =
         TextEditingController(text: widget.account.telephone);
+  }
+
+  _getCurrentUser() async {
+    currentUsername = await widget.storage.getUsername();
   }
 
   @override
@@ -106,7 +117,10 @@ class _EditAccountState extends State<EditAccount> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(title: Text(widget.account.username), actions: [
-              IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+              IconButton(
+                  key: Key("saveAccountButton"),
+                  icon: Icon(Icons.save),
+                  onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
@@ -136,7 +150,7 @@ class _EditAccountState extends State<EditAccount> {
                                         size: 17.5),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Ogólne",
+                                      child: Text("Ogólne".i18n,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyText1
@@ -195,10 +209,7 @@ class _EditAccountState extends State<EditAccount> {
       _load = true;
     });
     try {
-      Navigator.of(context).pop(true);
-      var res =
-          await api.editAccount(widget.account.id, email, telephone);
-      var loginExists = false;
+      var res = await api.editAccount(widget.account.id, email, telephone);
       var emailExists = false;
       var emailInvalid = false;
       var telephoneExists = false;
@@ -209,22 +220,21 @@ class _EditAccountState extends State<EditAccount> {
           _load = false;
           fieldsValidationMessage = null;
         });
-        widget.storage.setEmail(_emailController.text);
-        widget.storage.setTelephone(_telephoneController.text);
+        if (widget.account.username == currentUsername) {
+          widget.storage.setEmail(_emailController.text);
+          widget.storage.setTelephone(_telephoneController.text);
+        }
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-      if (res['body'].contains("Username already exists")) {
-        loginExists = true;
       }
       if (res['body'].contains("Email address already exists")) {
         emailExists = true;
@@ -239,28 +249,19 @@ class _EditAccountState extends State<EditAccount> {
         telephoneExists = true;
       }
       String errorText = "";
-      if (loginExists && emailExists && telephoneExists)
+      if (emailExists && telephoneExists)
         errorText =
-            "Konto dla podanego loginu, adresu e-mail i numeru telefonu już istnieje.";
-      else if (loginExists && emailExists)
-        errorText = "Konto dla podanego loginu i adresu e-mail już istnieje.";
-      else if (loginExists && telephoneExists)
-        errorText = "Konto dla podanego loginu i numeru telefonu już istnieje.";
-      else if (emailExists && telephoneExists)
-        errorText =
-            "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.";
+            "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.".i18n;
       else if (emailExists)
-        errorText = "Konto dla podanego adresu e-mail już istnieje.";
-      else if (loginExists)
-        errorText = "Konto dla podanego loginu już istnieje.";
+        errorText = "Konto dla podanego adresu e-mail już istnieje.".i18n;
       else if (telephoneExists)
-        errorText = "Konto dla podanego numeru telefonu już istnieje.";
+        errorText = "Konto dla podanego numeru telefonu już istnieje.".i18n;
 
       if (telephoneInvalid && emailInvalid)
-        errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.";
+        errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
       else if (telephoneInvalid)
-        errorText += "Numer telefonu jest nieprawidłowy.";
-      else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy";
+        errorText += "Numer telefonu jest nieprawidłowy.".i18n;
+      else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy.".i18n;
 
       if (errorText != "") fieldsValidationMessage = errorText;
 
@@ -275,13 +276,13 @@ class _EditAccountState extends State<EditAccount> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edycji użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd edycji użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edycji użytkownika. Adres serwera nieprawidłowy."));
+                "Błąd edycji użytkownika. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -290,7 +291,7 @@ class _EditAccountState extends State<EditAccount> {
   /// confirms saving account changes
   _confirmSavingChanges(bool changedEmail, bool changedTelephone) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(changedEmail, changedTelephone);
     }
@@ -316,7 +317,7 @@ class _EditAccountState extends State<EditAccount> {
         await _confirmSavingChanges(changedEmail, changedTelephone);
       } else {
         final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

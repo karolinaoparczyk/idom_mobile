@@ -1,11 +1,12 @@
 import 'package:idom/enums/frequency_units.dart';
 import 'package:flutter/material.dart';
 
+import 'package:idom/localization/sensors/new_sensor.i18n.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/frequency_units_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
-import 'package:idom/dialogs/sensor_category_dialog.dart';
+import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
@@ -36,7 +37,14 @@ class _NewSensorState extends State<NewSensor> {
   String frequencyUnitsValue;
   bool _load;
   String fieldsValidationMessage;
+  String nameValidationMessage;
   bool canEditFrequency = true;
+  Map<String, String> englishToPolishUnits = {
+    "seconds": "sekundy".i18n,
+    "minutes": "minuty".i18n,
+    "hours": "godziny".i18n,
+    "days": "dni".i18n
+  };
 
   @override
   void initState() {
@@ -51,7 +59,7 @@ class _NewSensorState extends State<NewSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -71,7 +79,7 @@ class _NewSensorState extends State<NewSensor> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
-          labelText: "Kategoria",
+          labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
@@ -89,18 +97,21 @@ class _NewSensorState extends State<NewSensor> {
                 );
               });
           if (selectedCategory != null) {
-            _categoryController.text = selectedCategory['text'];
+            _categoryController.text = selectedCategory['text'].i18n;
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
                 selectedCategory['value'] == "breathalyser" ||
                 selectedCategory['value'] == "smoke") {
-              canEditFrequency = false;
-              frequencyUnitsValue = "seconds";
+              _frequencyUnitsController = TextEditingController();
+              frequencyUnitsValue = null;
               _frequencyUnitsController.text = FrequencyUnits.values
                   .where((element) => element['value'] == "seconds")
-                  .first['text'];
-              _frequencyValueController.text = "30";
+                  .first['text'].i18n;
+              frequencyUnitsValue = "seconds";
+              _frequencyValueController = TextEditingController(text: "30");
+              setState(() {});
+              canEditFrequency = false;
             } else {
               canEditFrequency = true;
             }
@@ -127,7 +138,7 @@ class _NewSensorState extends State<NewSensor> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            labelText: "Wartość",
+            labelText: "Wartość".i18n,
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
@@ -144,7 +155,7 @@ class _NewSensorState extends State<NewSensor> {
         controller: _frequencyUnitsController,
         enabled: canEditFrequency,
         decoration: InputDecoration(
-          labelText: "Jednostki",
+          labelText: "Jednostki".i18n,
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
@@ -165,7 +176,7 @@ class _NewSensorState extends State<NewSensor> {
                 );
               });
           if (selectedFrequencyUnits != null) {
-            _frequencyUnitsController.text = selectedFrequencyUnits['text'];
+            _frequencyUnitsController.text = selectedFrequencyUnits['text'].i18n;
             frequencyUnitsValue = selectedFrequencyUnits['value'];
           }
         },
@@ -177,14 +188,16 @@ class _NewSensorState extends State<NewSensor> {
 
   clearFields() {
     _formKey.currentState.reset();
-    _nameController.text = "";
-    _categoryController.text = "";
-    _frequencyValueController.text = "";
-    _frequencyUnitsController.text = "";
-    categoryValue = null;
-    frequencyUnitsValue = null;
-    canEditFrequency = true;
-    setState(() {});
+    setState(() {
+      _nameController = TextEditingController();
+      _categoryController = TextEditingController();
+      _frequencyValueController = TextEditingController();
+      _frequencyUnitsController = TextEditingController();
+      categoryValue = null;
+      frequencyUnitsValue = null;
+      canEditFrequency = true;
+    });
+    FocusScope.of(context).unfocus();
   }
 
   onLogOutFailure(String text) {
@@ -203,12 +216,12 @@ class _NewSensorState extends State<NewSensor> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text("Dodaj czujnik"), actions: [
+            appBar: AppBar(title: Text("Dodaj czujnik".i18n), actions: [
               IconButton(
                 icon: Icon(Icons.restore_page_rounded),
                 onPressed: () async {
-                  var decision = await confirmActionDialog(context, "Potwierdź",
-                      "Czy na pewno wyczyścić wszystkie pola?");
+                  var decision = await confirmActionDialog(context, "Potwierdź".i18n,
+                      "Czy na pewno wyczyścić wszystkie pola?".i18n);
                   if (decision) {
                     clearFields();
                   }
@@ -252,7 +265,7 @@ class _NewSensorState extends State<NewSensor> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 5.0),
-                                          child: Text("Ogólne",
+                                          child: Text("Ogólne".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyText1
@@ -289,7 +302,7 @@ class _NewSensorState extends State<NewSensor> {
                                             padding: const EdgeInsets.only(
                                                 left: 5.0),
                                             child: Text(
-                                                "Częstotliwość pobierania danych",
+                                                "Częstotliwość pobierania danych".i18n,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyText1
@@ -346,6 +359,25 @@ class _NewSensorState extends State<NewSensor> {
                                   secondChild: SizedBox(),
                                 ),
                               ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 30.0),
+                              child: AnimatedCrossFade(
+                                crossFadeState: nameValidationMessage != null
+                                    ? CrossFadeState.showFirst
+                                    : CrossFadeState.showSecond,
+                                duration: Duration(milliseconds: 300),
+                                firstChild: nameValidationMessage != null
+                                    ? Text(nameValidationMessage,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                fontWeight: FontWeight.normal))
+                                    : SizedBox(),
+                                secondChild: SizedBox(),
+                              ),
+                            ),
                           ])))),
             ]))));
   }
@@ -357,7 +389,7 @@ class _NewSensorState extends State<NewSensor> {
       int valInt = int.tryParse(_frequencyValueController.text);
       if (valInt == null || valInt <= 0) {
         fieldsValidationMessage =
-            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.';
+            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.'.i18n;
         setState(() {});
         return;
       }
@@ -368,10 +400,12 @@ class _NewSensorState extends State<NewSensor> {
               _frequencyValueController.text, frequencyUnitsValue);
       if (!validFrequencyValue) {
         var text =
-            "Maksymalna częstotliwość to co ${unitsToMaxValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}";
-        if (frequencyUnitsValue == "seconds")
-          text =
-              "Minimalna częstotliwość to co ${unitsToMinValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}, a maksymalna to co ${unitsToMaxValues[frequencyUnitsValue]} ${FrequencyUnits.values.where((element) => element['value'] == frequencyUnitsValue).first['text']}";
+            "Poprawne wartości dla jednostki ".i18n +
+                englishToPolishUnits[frequencyUnitsValue] +
+                " to ".i18n +
+                unitsToMinValues[frequencyUnitsValue].toString() +
+                " - " +
+                unitsToMaxValues[frequencyUnitsValue].toString();
         setState(() {
           fieldsValidationMessage = text;
         });
@@ -398,17 +432,21 @@ class _NewSensorState extends State<NewSensor> {
       try {
         var res = await api.addSensor(
             _nameController.text, categoryValue, frequencyInSeconds);
+        setState(() {
+          _load = false;
+        });
 
         if (res['statusCodeSen'] == "201") {
-          setState(() {
-            _load = false;
-          });
+          nameValidationMessage = null;
+          setState(() {});
           Navigator.pop(context, true);
         } else if (res['statusCodeSen'] == "401") {
+          nameValidationMessage = null;
+          setState(() {});
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoaderInvalidToken.currentContext,
                   rootNavigator: true)
@@ -417,28 +455,33 @@ class _NewSensorState extends State<NewSensor> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['bodySen']
             .contains("Sensor with provided name already exists")) {
+          nameValidationMessage = "Czujnik o podanej nazwie już istnieje.".i18n;
+          setState(() {});
+          return;
+        } else {
+          nameValidationMessage = null;
+          setState(() {});
           final snackBar = new SnackBar(
-              content: new Text("Czujnik o podanej nazwie już istnieje."));
+              content: new Text(
+                  "Dodawanie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
-          setState(() {
-            _load = false;
-          });
         }
       } catch (e) {
         print(e);
         setState(() {
+          nameValidationMessage = null;
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania czujnika. Adres serwera nieprawidłowy."));
+                  "Błąd dodawania czujnika. Adres serwera nieprawidłowy.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

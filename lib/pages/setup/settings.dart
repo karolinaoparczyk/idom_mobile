@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 
+import 'package:idom/localization/setup/settings.i18n.dart';
 import 'package:idom/push_notifications.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
@@ -80,11 +81,18 @@ class _SettingsState extends State<Settings> {
         controller: _apiAddressController,
         focusNode: _apiAddressFocusNode,
         decoration: InputDecoration(
-          labelText: "Adres serwera",
+          labelText: "Adres serwera".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           prefixText: "https://",
+          prefixStyle: TextStyle(fontSize: 21,  color: IdomColors.textDark),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
+          ),
+          suffixIcon: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("/api", style: TextStyle(fontSize: 21, color: IdomColors.textDark)),
+            ],
           ),
         ),
         style: TextStyle(fontSize: 21.0),
@@ -107,7 +115,7 @@ class _SettingsState extends State<Settings> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text('Ustawienia'), actions: [
+            appBar: AppBar(title: Text('Ustawienia'.i18n), actions: [
               IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
             ]),
             drawer: _isUserLoggedIn == "true"
@@ -140,7 +148,7 @@ class _SettingsState extends State<Settings> {
                                           Row(
                                             children: [
                                               Text(
-                                                "Plik google_services.json",
+                                                "Plik google_services.json".i18n,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .headline5,
@@ -239,10 +247,10 @@ class _SettingsState extends State<Settings> {
   }
 
   _pickFile() async {
-    FilePickerResult result =
-        await FilePicker.platform.pickFiles(type: FileType.custom);
+    File result =
+        await FilePicker.getFile(type: FileType.custom);
     if (result != null) {
-      file = File(result.files.single.path);
+      file = File(result.path);
       try {
         final Map<String, dynamic> googleServicesJson =
             jsonDecode(file.readAsStringSync());
@@ -251,9 +259,10 @@ class _SettingsState extends State<Settings> {
         mobileAppId =
             googleServicesJson['client'][0]['client_info']['mobilesdk_app_id'];
         apiKey = googleServicesJson['client'][0]['api_key'][0]['current_key'];
+        fieldsValidationMessage = null;
       } catch (e) {
         fieldsValidationMessage =
-            "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie.";
+            "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie.".i18n;
       }
     }
     setState(() {});
@@ -268,16 +277,7 @@ class _SettingsState extends State<Settings> {
     var changedGoogleServicesFile = false;
 
     final formState = _formKey.currentState;
-    var formValidated = formState.validate();
-    if (_isUserLoggedIn == "true" &&
-        file == null &&
-        (currentFirebaseParams == null ||
-            currentFirebaseParams['fileName'] == null)) {
-      fieldsValidationMessage = "Należy dodać plik.";
-      setState(() {});
-      return;
-    }
-    if (formValidated) {
+    if (formState.validate()) {
       /// sends request only if data has changed
       if (address != currentAddress) {
         changedAddress = true;
@@ -293,7 +293,7 @@ class _SettingsState extends State<Settings> {
             changedPort, changedGoogleServicesFile);
       } else {
         final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian."));
+            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -303,7 +303,7 @@ class _SettingsState extends State<Settings> {
   _confirmSavingChanges(bool changedProtocol, bool changedAddress,
       bool changedPort, bool changedGoogleServicesFile) async {
     var decision = await confirmActionDialog(
-        context, "Potwierdź", "Czy na pewno zapisać zmiany?");
+        context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
       await _saveChanges(changedProtocol, changedAddress, changedPort,
           changedGoogleServicesFile);
@@ -325,7 +325,7 @@ class _SettingsState extends State<Settings> {
       }
       if (_isUserLoggedIn == "true") {
         final snackBar = new SnackBar(
-            content: new Text("Ustawienia zostały zapisane."),
+            content: new Text("Ustawienia zostały zapisane.".i18n),
             duration: Duration(seconds: 2));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       } else {

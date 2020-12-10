@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:idom/localization/drivers/drivers.i18n.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -60,7 +61,7 @@ class _DriversState extends State<Drivers> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
@@ -77,13 +78,15 @@ class _DriversState extends State<Drivers> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania sterowników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -106,7 +109,7 @@ class _DriversState extends State<Drivers> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('Sterowniki'),
+          title: Text('Sterowniki'.i18n),
           actions: [
             IconButton(
               icon: Icon(Icons.add, size: 30.0),
@@ -133,8 +136,7 @@ class _DriversState extends State<Drivers> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text(
-                  "Brak sterowników w systemie \nlub błąd połączenia z serwerem.",
+              child: Text("Brak sterowników w systemie.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     }
@@ -146,7 +148,7 @@ class _DriversState extends State<Drivers> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.",
+              child: Text("Błąd połączenia z serwerem.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (_driverList != null && _driverList.length > 0) {
@@ -207,6 +209,9 @@ class _DriversState extends State<Drivers> {
       case "remote_control":
         imageUrl = "assets/icons/controller.svg";
         break;
+      case "bulb":
+        imageUrl = "assets/icons/light-bulb.svg";
+        break;
     }
     return SvgPicture.asset(imageUrl,
         matchTextDirection: false,
@@ -226,13 +231,13 @@ class _DriversState extends State<Drivers> {
         PopupMenuItem<String>(
             key: Key("click"),
             child: SizedBox(
-              width: 140,
+              width: 180,
               child: Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   columnWidths: {
                     0: FlexColumnWidth(1),
                     1: FlexColumnWidth(1),
-                    2: FlexColumnWidth(8),
+                    2: FlexColumnWidth(10),
                   },
                   children: [
                     if (driver.category == "clicker")
@@ -242,12 +247,13 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/play.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 25,
-                            height: 25,
+                            width: 35,
+                            height: 35,
                             color: IdomColors.green,
                           ),
                           SizedBox(width: 5),
-                          Text('Wciśnij przycisk'),
+                          Text('Wciśnij przycisk'.i18n,
+                              style: TextStyle(fontSize: 21.0)),
                         ],
                       ),
                     if (driver.category == "remote_control")
@@ -257,12 +263,29 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/turn-off.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 25,
-                            height: 25,
+                            width: 35,
+                            height: 35,
                             color: IdomColors.error,
                           ),
                           SizedBox(width: 5),
-                          Text('Włącz/wyłącz pilot'),
+                          Text('Włącz/wyłącz pilot'.i18n,
+                              style: TextStyle(fontSize: 21.0)),
+                        ],
+                      ),
+                    if (driver.category == "bulb")
+                      TableRow(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/icons/turn-off.svg",
+                            matchTextDirection: false,
+                            alignment: Alignment.centerRight,
+                            width: 35,
+                            height: 35,
+                            color: IdomColors.error,
+                          ),
+                          SizedBox(width: 5),
+                          Text('Włącz/wyłącz żarówkę'.i18n,
+                              style: TextStyle(fontSize: 21.0)),
                         ],
                       ),
                   ]),
@@ -271,13 +294,13 @@ class _DriversState extends State<Drivers> {
         PopupMenuItem<String>(
             key: Key("delete"),
             child: SizedBox(
-                width: 120,
+                width: 180,
                 child: Table(
                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                     columnWidths: {
                       0: FlexColumnWidth(1),
                       1: FlexColumnWidth(1),
-                      2: FlexColumnWidth(6),
+                      2: FlexColumnWidth(10),
                     },
                     children: [
                       TableRow(
@@ -286,12 +309,12 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/dustbin.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 25,
-                            height: 25,
+                            width: 35,
+                            height: 35,
                             color: IdomColors.mainFill,
                           ),
                           SizedBox(width: 5),
-                          Text('Usuń'),
+                          Text('Usuń'.i18n, style: TextStyle(fontSize: 21.0)),
                         ],
                       )
                     ])),
@@ -301,7 +324,11 @@ class _DriversState extends State<Drivers> {
     );
     switch (selected) {
       case "click":
-        _clickDriver(driver);
+        if (driver.category == "bulb") {
+          _switchDriver(driver);
+        } else if (driver.category == "clicker") {
+          _clickDriver(driver);
+        }
         break;
       case "delete":
         _deleteDriver(driver);
@@ -312,25 +339,65 @@ class _DriversState extends State<Drivers> {
     var result = await api.startDriver(driver.name);
     var message;
     if (result == 200) {
-      message = "Wysłano komendę do sterownika ${driver.name}.";
+      message = "Wysłano komendę do sterownika ".i18n + driver.name + ".".i18n;
     } else {
-      message =
-          "Wysłanie komendy do sterownika ${driver.name} nie powiodło się.";
+      message = "Wysłanie komendy do sterownika ".i18n +
+          driver.name +
+          " nie powiodło się.".i18n;
     }
     _scaffoldKey.currentState.removeCurrentSnackBar();
     final snackBar = new SnackBar(content: new Text(message));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
+  _switchDriver(Driver driver) async {
+    var flag = driver.data == null
+        ? "on"
+        : driver.data
+            ? "off"
+            : "on";
+    var message;
+    var result;
+    if (driver.category == "bulb") {
+      result = await api.switchBulb(driver.id, flag);
+    }
+    var serverError = RegExp("50[0-4]");
+    if (result == 200) {
+      if (flag == "on") {
+        message = "Wysłano komendę włączenia sterownika ".i18n +
+            driver.name +
+            ".".i18n;
+      } else {
+        message = "Wysłano komendę wyłączenia sterownika ".i18n +
+            driver.name +
+            ".".i18n;
+      }
+      await getDrivers();
+    } else if (result == 404) {
+      message = "Nie znaleziono sterownika ".i18n +
+          driver.name +
+          " na serwerze. Odswież listę sterowników.".i18n;
+    } else if (serverError.hasMatch(result.toString())) {
+      message = "Nie udało się podłączyć do sterownika".i18n +
+          driver.name +
+          ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+    }
+    if (message != null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar = new SnackBar(content: new Text(message));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
+  }
+
   _deleteDriver(Driver driver) async {
-    var decision = await confirmActionDialog(context, "Potwierdź",
-        "Czy na pewno chcesz usunąć sterownik ${driver.name}?");
+    var decision = await confirmActionDialog(context, "Potwierdź".i18n,
+        "Czy na pewno chcesz usunąć sterownik ".i18n + driver.name + "?");
     if (decision) {
       try {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Trwa usuwanie sterownika...");
+            text: "Trwa usuwanie sterownika...".i18n);
 
         int statusCode = await api.deleteDriver(driver.id);
         Navigator.of(_scaffoldKey.currentContext, rootNavigator: true).pop();
@@ -343,7 +410,7 @@ class _DriversState extends State<Drivers> {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoaderInvalidToken.currentContext).pop();
           await widget.storage.resetUserData();
@@ -351,12 +418,14 @@ class _DriversState extends State<Drivers> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -366,13 +435,15 @@ class _DriversState extends State<Drivers> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie sterownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -399,7 +470,7 @@ class _DriversState extends State<Drivers> {
     if (result == true) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       final snackBar = new SnackBar(
-        content: new Text("Dodano nowy sterownik."),
+        content: new Text("Dodano nowy sterownik.".i18n),
         duration: Duration(seconds: 1),
       );
       _scaffoldKey.currentState.showSnackBar((snackBar));

@@ -5,6 +5,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/pages/account/accounts.dart';
+import 'package:idom/pages/actions/actions.dart';
 import 'package:idom/pages/cameras/cameras.dart';
 import 'package:idom/pages/data_download/data_download.dart';
 import 'package:idom/pages/drivers/drivers.dart';
@@ -12,6 +13,7 @@ import 'package:idom/pages/setup/settings.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:idom/localization/widgets/idom_drawer.i18n.dart';
 
 class IdomDrawer extends StatefulWidget {
   IdomDrawer({
@@ -158,7 +160,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                                   size: 50.0, color: Colors.transparent),
                             ]),
                             Text(
-                              'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU',
+                              'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU'.i18n,
                               style: TextStyle(
                                   fontSize: 13.0,
                                   color: IdomColors.textDark,
@@ -170,7 +172,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                         userRow(),
                       ]),
                 )),
-            customMenuTile("assets/icons/man.svg", "Moje konto", () async {
+            customMenuTile("assets/icons/man.svg", "Moje konto".i18n, () async {
               Navigator.pop(context);
               var toPush = false;
               if (widget.parentWidgetType == "AccountDetail") {
@@ -191,7 +193,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
               }
             }),
             isUserStaff == "true"
-                ? customMenuTile("assets/icons/team.svg", "Wszystkie konta",
+                ? customMenuTile("assets/icons/team.svg", "Wszystkie konta".i18n,
                     () async {
                     Navigator.pop(context);
                     if (widget.parentWidgetType != "Accounts") {
@@ -206,7 +208,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     }
                   })
                 : SizedBox(),
-            customMenuTile("assets/icons/motion-sensor.svg", "Czujniki",
+            customMenuTile("assets/icons/motion-sensor.svg", "Czujniki".i18n,
                 () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Sensors") {
@@ -214,7 +216,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/video-camera.svg", "Kamery", () async {
+            customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n, () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Cameras") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -226,7 +228,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/tap.svg", "Sterowniki", () async {
+            customMenuTile("assets/icons/tap.svg", "Sterowniki".i18n, () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Drivers") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -238,7 +240,19 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/settings.svg", "Ustawienia", () async {
+            // customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
+            //   Navigator.pop(context);
+            //   if (widget.parentWidgetType != "Actions") {
+            //     Navigator.of(context).popUntil((route) => route.isFirst);
+            //     await Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) =>
+            //                 ActionsList(storage: widget.storage)));
+            //     if (widget.onGoBackAction != null) widget.onGoBackAction();
+            //   }
+            // }),
+            customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n, () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "EditApiAddress") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -250,7 +264,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/download.svg", "Pobierz dane",
+            customMenuTile("assets/icons/download.svg", "Pobierz dane".i18n,
                 () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "DataDownload") {
@@ -263,11 +277,11 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/logout.svg", "Wyloguj", () async {
+            customMenuTile("assets/icons/logout.svg", "Wyloguj".i18n, () async {
               Navigator.pop(context);
               await _logOut();
             }),
-            customMenuTile("assets/icons/info.svg", "O projekcie", () async {
+            customMenuTile("assets/icons/info.svg", "O projekcie".i18n, () async {
               Navigator.pop(context);
               _navigateToProjectWebPage();
             }),

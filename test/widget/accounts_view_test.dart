@@ -21,7 +21,7 @@ void main() {
   }
 
   /// tests if accounts on list, user not staff
-  testWidgets('accounts on list, user is not staff',
+  testWidgets('accounts on list, user is not staff, search results',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     List<Map<String, dynamic>> accounts = [
@@ -37,7 +37,7 @@ void main() {
       },
       {
         "id": 2,
-        "username": "user2",
+        "username": "USER2",
         "email": "user@2email.com",
         "telephone": "",
         "sms_notifications": true,
@@ -63,7 +63,22 @@ void main() {
     expect(find.byType(ListTile).evaluate().length, 2);
     expect(find.byKey(Key("deleteButton")).evaluate().length, 0);
     expect(find.text("user1"), findsOneWidget);
-    expect(find.text("user2"), findsOneWidget);
+    expect(find.text("USER2"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, 'user');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+    expect(find.text("user1"), findsOneWidget);
+    expect(find.text("USER2"), findsOneWidget);
+
+    await tester.enterText(searchField, '1');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 1);
+    expect(find.text("user1"), findsOneWidget);
+    expect(find.text("USER2"), findsNothing);
   });
 
   /// tests if can delete if is staff

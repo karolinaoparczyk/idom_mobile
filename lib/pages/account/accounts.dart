@@ -10,6 +10,7 @@ import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
+import 'package:idom/localization/account/accounts.i18n.dart';
 
 /// displays all accounts
 class Accounts extends StatefulWidget {
@@ -76,7 +77,7 @@ class _AccountsState extends State<Accounts> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
             .pop();
@@ -93,13 +94,13 @@ class _AccountsState extends State<Accounts> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania kont. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania użytkowników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("No address associated with hostname")) {
         final snackBar = new SnackBar(
             content:
-                new Text("Błąd pobierania kont. Adres serwera nieprawidłowy."));
+                new Text("Błąd pobierania użytkowników. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -112,14 +113,14 @@ class _AccountsState extends State<Accounts> {
 
   /// deactivates user after confirmation
   _deactivateAccount(Account account) async {
-    var decision = await confirmActionDialog(context, "Potwierdź",
-        "Czy na pewno chcesz usunąć konto ${account.username}?");
+    var decision = await confirmActionDialog(context, "Potwierdź".i18n,
+        "Czy na pewno chcesz usunąć konto ".i18n + account.username + "?");
     if (decision) {
       try {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Trwa usuwanie konta...");
+            text: "Trwa usuwanie użytkownika...".i18n);
         var statusCode = await api.deactivateAccount(account.id);
         Navigator.of(_scaffoldKey.currentContext).pop();
 
@@ -132,7 +133,7 @@ class _AccountsState extends State<Accounts> {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoaderInvalidToken.currentContext,
                   rootNavigator: true)
@@ -142,12 +143,12 @@ class _AccountsState extends State<Accounts> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."));
+                  "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -155,13 +156,13 @@ class _AccountsState extends State<Accounts> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania konta. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania konta. Adres serwera nieprawidłowy."));
+                  "Błąd usuwania użytkownika. Adres serwera nieprawidłowy.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -170,15 +171,22 @@ class _AccountsState extends State<Accounts> {
 
   _buildSearchField() {
     return TextField(
+      key: Key("searchField"),
       controller: _searchController,
       onChanged: (value) {
         filterSearchResults(value);
       },
-      style: Theme.of(context).appBarTheme.textTheme.headline6,
+      style: TextStyle(
+          color: IdomColors.textLight,
+          fontSize: 20,
+          letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
-        hintText: "Wyszukaj...",
-        hintStyle: Theme.of(context).appBarTheme.textTheme.headline6,
+        hintText: "Wyszukaj...".i18n,
+        hintStyle: TextStyle(
+            color: IdomColors.textLight,
+            fontSize: 20,
+            letterSpacing: 2.0),
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
@@ -216,7 +224,7 @@ class _AccountsState extends State<Accounts> {
                       },
                     ),
               title:
-                  _isSearching ? _buildSearchField() : Text('Wszystkie konta'),
+                  _isSearching ? _buildSearchField() : Text('Wszystkie konta'.i18n),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.search, size: 25.0),
@@ -251,7 +259,7 @@ class _AccountsState extends State<Accounts> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
-                  "Brak kont w systemie \nlub błąd połączenia z serwerem.",
+                  "Brak kont w systemie.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     }
@@ -263,7 +271,7 @@ class _AccountsState extends State<Accounts> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.",
+              child: Text("Błąd połączenia z serwerem.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (!zeroFetchedItems &&
@@ -274,7 +282,7 @@ class _AccountsState extends State<Accounts> {
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
-              child: Text("Brak wyników wyszukiwania.",
+              child: Text("Brak wyników wyszukiwania.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
     } else if (_accountList != null && _accountList.length > 0) {
@@ -335,12 +343,13 @@ class _AccountsState extends State<Accounts> {
   }
 
   void filterSearchResults(String query) {
+    query = query.toLowerCase();
     List<Account> dummySearchList = List<Account>();
     dummySearchList.addAll(_duplicateAccountList);
     if (query.isNotEmpty) {
       List<Account> dummyListData = List<Account>();
       dummySearchList.forEach((item) {
-        if (item.username.contains(query)) {
+        if (item.username.toLowerCase().contains(query)) {
           dummyListData.add(item);
         }
       });
