@@ -7,6 +7,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/edit_driver.dart';
+import 'package:idom/remote_control.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -189,7 +190,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 ? Column(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 30.0),
                                         child: TextFormField(
                                           key: Key('channelNumber'),
                                           readOnly: true,
@@ -600,7 +602,13 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               ),
                                             ),
                                             InkWell(
-                                              onTap: () {},
+                                              onTap: () {
+                                                _sendCommandToRemoteControl(
+                                                    "Channel",
+                                                    channel: int.tryParse(
+                                                        _channelNumberController
+                                                            .text));
+                                              },
                                               highlightColor: digitsVisible
                                                   ? IdomColors.grey
                                                   : Colors.transparent,
@@ -652,14 +660,14 @@ class _DriverDetailsState extends State<DriverDetails> {
                                                 child: Center(
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.all(8.0),
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text("WRÓĆ",
                                                         style: TextStyle(
                                                             color: IdomColors
                                                                 .additionalColor,
                                                             fontSize: 30),
-                                                        key: Key(
-                                                            "goBack")),
+                                                        key: Key("goBack")),
                                                   ),
                                                 ),
                                               ),
@@ -671,20 +679,20 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     ],
                                   )
                                 : SizedBox(),
-                            secondChild: Table(
-                              columnWidths: {
-                                0:FlexColumnWidth(1),
-                                1:FlexColumnWidth(1),
-                                2:FlexColumnWidth(2),
-                                3:FlexColumnWidth(1),
-                                4:FlexColumnWidth(1),
-                              },
-                                children: [
+                            secondChild: Table(columnWidths: {
+                              0: FlexColumnWidth(1),
+                              1: FlexColumnWidth(1),
+                              2: FlexColumnWidth(2),
+                              3: FlexColumnWidth(1),
+                              4: FlexColumnWidth(1),
+                            }, children: [
                               TableRow(
                                 children: [
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Menu");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -694,7 +702,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/menu.svg",
                                             matchTextDirection: false,
@@ -711,7 +720,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Power");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -721,7 +732,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.error, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/turn-off.svg",
                                             matchTextDirection: false,
@@ -742,7 +754,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Up");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -752,7 +766,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/up-arrow.svg",
                                             matchTextDirection: false,
@@ -774,7 +789,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Left");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -784,7 +801,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/left-arrow.svg",
                                             matchTextDirection: false,
@@ -799,7 +817,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   ),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("OK");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -809,7 +829,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: Text("OK",
                                             style: TextStyle(
                                                 fontSize: 35,
@@ -821,7 +842,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   ),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Right");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -831,7 +854,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/right-arrow.svg",
                                             matchTextDirection: false,
@@ -853,7 +877,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Down");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -863,7 +889,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/down-arrow.svg",
                                             matchTextDirection: false,
@@ -884,7 +911,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 children: [
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Mute");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -894,7 +923,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, bottom: 16.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/no-sound.svg",
                                             matchTextDirection: false,
@@ -902,8 +932,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                             width: 35,
                                             height: 35,
                                             color: IdomColors.additionalColor,
-                                            key:
-                                                Key("assets/icons/no-sound.svg")),
+                                            key: Key(
+                                                "assets/icons/no-sound.svg")),
                                       ),
                                     ),
                                   ),
@@ -912,7 +942,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Back");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -922,7 +954,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               IdomColors.additionalColor, 0.3),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, bottom: 16.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/return.svg",
                                             matchTextDirection: false,
@@ -930,184 +963,174 @@ class _DriverDetailsState extends State<DriverDetails> {
                                             width: 35,
                                             height: 35,
                                             color: IdomColors.additionalColor,
-                                            key: Key("assets/icons/return.svg")),
+                                            key:
+                                                Key("assets/icons/return.svg")),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              TableRow(
-                                  children: [
-                                    Center(
-                                      child: InkWell(
-                                        onTap: () {},
-                                        highlightColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.grey,
-                                        splashColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.lighten(
-                                                IdomColors.additionalColor,
-                                                0.3),
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                          child: SvgPicture.asset(
-                                              "assets/icons/volume-up.svg",
-                                              matchTextDirection: false,
-                                              alignment:
-                                                  Alignment.centerRight,
-                                              width: 35,
-                                              height: 35,
-                                              color:
-                                                  IdomColors.additionalColor,
-                                              key: Key(
-                                                  "assets/icons/volume-up.svg")),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(),
-                                    Center(
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            digitsVisible = true;
-                                          });
-                                        },
-                                        highlightColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.grey,
-                                        splashColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.lighten(
-                                            IdomColors.additionalColor,
-                                            0.3),
-                                        borderRadius:
-                                        BorderRadius.circular(50.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/cubes.svg",
-                                            matchTextDirection: false,
-                                            alignment:
-                                            Alignment.centerRight,
-                                            width: 55,
-                                            height: 55,
-                                            color:
-                                            IdomColors.additionalColor,
-                                            key: Key(
-                                                "assets/icons/cubes.svg")),
-                                      ),
-                                    ),
-                                    SizedBox(),
-                                    Center(
-                                      child: InkWell(
-                                        onTap: () {},
-                                        highlightColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.grey,
-                                        splashColor: digitsVisible
-                                            ? Colors.transparent
-                                            : IdomColors.lighten(
-                                            IdomColors.additionalColor,
-                                            0.3),
-                                        borderRadius:
-                                        BorderRadius.circular(50.0),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                          child: SvgPicture.asset(
-                                              "assets/icons/next_channel.svg",
-                                              matchTextDirection: false,
-                                              alignment:
-                                              Alignment.centerRight,
-                                              width: 35,
-                                              height: 35,
-                                              color:
-                                              IdomColors.additionalColor,
-                                              key: Key(
-                                                  "assets/icons/next_channel.svg")),
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                              TableRow(
-                                children:[
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Text("VOL",
-                                          style: TextStyle(fontSize: 21.0)),
-                                    ),
-                                  ),
-                                  SizedBox(),
-                                  SizedBox(),
-
-                                  SizedBox(),
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Text("CH",
-                                          style: TextStyle(fontSize: 21.0)),
-                                    ),
-                                  ), ]
-                              ),
                               TableRow(children: [
                                 Center(
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      _sendCommandToRemoteControl("Vol+");
+                                    },
                                     highlightColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.grey,
                                     splashColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.lighten(
-                                        IdomColors.additionalColor,
-                                        0.3),
-                                    borderRadius:
-                                    BorderRadius.circular(50.0),
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: SvgPicture.asset(
+                                          "assets/icons/volume-up.svg",
+                                          matchTextDirection: false,
+                                          alignment: Alignment.centerRight,
+                                          width: 35,
+                                          height: 35,
+                                          color: IdomColors.additionalColor,
+                                          key: Key(
+                                              "assets/icons/volume-up.svg")),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(),
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        digitsVisible = true;
+                                      });
+                                    },
+                                    highlightColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.grey,
+                                    splashColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.lighten(
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    child: SvgPicture.asset(
+                                        "assets/icons/cubes.svg",
+                                        matchTextDirection: false,
+                                        alignment: Alignment.centerRight,
+                                        width: 55,
+                                        height: 55,
+                                        color: IdomColors.additionalColor,
+                                        key: Key("assets/icons/cubes.svg")),
+                                  ),
+                                ),
+                                SizedBox(),
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {
+                                      _sendCommandToRemoteControl("CH+");
+                                    },
+                                    highlightColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.grey,
+                                    splashColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.lighten(
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: SvgPicture.asset(
+                                          "assets/icons/next_channel.svg",
+                                          matchTextDirection: false,
+                                          alignment: Alignment.centerRight,
+                                          width: 35,
+                                          height: 35,
+                                          color: IdomColors.additionalColor,
+                                          key: Key(
+                                              "assets/icons/next_channel.svg")),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Text("VOL",
+                                        style: TextStyle(fontSize: 21.0)),
+                                  ),
+                                ),
+                                SizedBox(),
+                                SizedBox(),
+                                SizedBox(),
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Text("CH",
+                                        style: TextStyle(fontSize: 21.0)),
+                                  ),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {
+                                      _sendCommandToRemoteControl("Vol-");
+                                    },
+                                    highlightColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.grey,
+                                    splashColor: digitsVisible
+                                        ? Colors.transparent
+                                        : IdomColors.lighten(
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
                                       child: SvgPicture.asset(
                                           "assets/icons/volume-down.svg",
                                           matchTextDirection: false,
-                                          alignment:
-                                          Alignment.centerRight,
+                                          alignment: Alignment.centerRight,
                                           width: 35,
                                           height: 35,
-                                          color:
-                                          IdomColors.additionalColor,
+                                          color: IdomColors.additionalColor,
                                           key: Key(
                                               "assets/icons/volume-down.svg")),
                                     ),
                                   ),
                                 ),
                                 SizedBox(),
-
                                 SizedBox(),
                                 SizedBox(),
                                 Center(
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      _sendCommandToRemoteControl("CH-");
+                                    },
                                     highlightColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.grey,
                                     splashColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.lighten(
-                                        IdomColors.additionalColor,
-                                        0.3),
-                                    borderRadius:
-                                    BorderRadius.circular(50.0),
+                                            IdomColors.additionalColor, 0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
                                       child: SvgPicture.asset(
                                           "assets/icons/previous_channel.svg",
                                           matchTextDirection: false,
-                                          alignment:
-                                          Alignment.centerRight,
+                                          alignment: Alignment.centerRight,
                                           width: 35,
                                           height: 35,
-                                          color:
-                                          IdomColors.additionalColor,
+                                          color: IdomColors.additionalColor,
                                           key: Key(
                                               "assets/icons/previous_channel.svg")),
                                     ),
@@ -1132,6 +1155,65 @@ class _DriverDetailsState extends State<DriverDetails> {
     _scaffoldKey.currentState.removeCurrentSnackBar();
     final snackBar = new SnackBar(content: new Text(message));
     _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  _sendCommandToRemoteControl(String command, {int channel}) async {
+    if (widget.driver.ipAddress == null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar =
+          new SnackBar(content: new Text("Pilot nie posiada adresu IP."));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+      return;
+    }
+    setState(() {
+      _load = true;
+    });
+    var result;
+    try {
+      switch (command) {
+        case "Mute":
+        case "Back":
+        case "Vol+":
+        case "Vol-":
+        case "CH+":
+        case "CH-":
+        case "OK":
+        case "Power":
+        case "Menu":
+        case "Up":
+        case "Down":
+        case "Left":
+        case "Right":
+          result = await RemoteControl.sendCommand(widget.driver, command);
+          break;
+        case "Channel":
+          result = await RemoteControl.sendCommand(widget.driver, command,
+              channel: channel);
+          break;
+      }
+      setState(() {
+        _load = false;
+      });
+      if (result != null) {
+        if (result == 200) {
+          final snackBar =
+              new SnackBar(content: new Text("Komenda wysłana do pilota."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content:
+                  new Text("Wysłanie komendy do pilota nie powiodło się."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _load = false;
+      });
+      final snackBar = new SnackBar(
+          content: new Text("Wysłanie komendy do pilota nie powiodło się."));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
   }
 
   _navigateToEditDriver() async {

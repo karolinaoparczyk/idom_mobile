@@ -51,7 +51,7 @@ class _EnterEmailState extends State<EnterEmail> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
-          key: _scaffoldKey,
+            key: _scaffoldKey,
             appBar: AppBar(
               title: Text('Reset hasła'),
             ),
@@ -104,7 +104,10 @@ class _EnterEmailState extends State<EnterEmail> {
                             ),
                             alignment: Alignment.bottomCenter,
                             child: Column(children: <Widget>[
-                              buttonWidget(context, "Resetuj hasło", Icons.arrow_right_outlined,
+                              buttonWidget(
+                                  context,
+                                  "Resetuj hasło",
+                                  Icons.arrow_right_outlined,
                                   sendResetPasswordRequest)
                             ])))
                   ])),
@@ -151,6 +154,11 @@ class _EnterEmailState extends State<EnterEmail> {
         final snackBar = new SnackBar(
             content:
                 new Text("Błąd resetu hasła. Adres serwera nieprawidłowy."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      } else {
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd resetu hasła. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

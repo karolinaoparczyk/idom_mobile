@@ -31,7 +31,7 @@ class Api {
       "username": username,
       "password": password,
     }).timeout(Duration(seconds: 5));
-    return [utf8.decode(result.body.runes.toList()), result.statusCode];
+    return [utf8.decode(result.bodyBytes), result.statusCode];
   }
 
   /// registers user

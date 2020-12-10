@@ -404,6 +404,12 @@ class _SignUpState extends State<SignUp> {
                   new Text("Błąd rejestracji. Adres serwera nieprawidłowy."));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
+        else  {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
       }
     } else {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
