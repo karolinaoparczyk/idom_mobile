@@ -9,6 +9,7 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/actions/action_details.i18n.dart';
 
 /// displays action details
 class ActionDetails extends StatefulWidget {
@@ -90,7 +91,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                               Icon(Icons.info_outline_rounded, size: 17.5),
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
-                                child: Text("Ogólne",
+                                child: Text("Ogólne".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -104,7 +105,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                           left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Nazwa",
+                          child: Text("Nazwa".i18n,
                               style: TextStyle(
                                   color: IdomColors.additionalColor,
                                   fontSize: 16.5,
@@ -116,31 +117,12 @@ class _ActionDetailsState extends State<ActionDetails> {
                           alignment: Alignment.centerLeft,
                           child: Text(widget.action.name,
                               style: TextStyle(fontSize: 21.0)))),
-                  if (widget.action.sensor != null)
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("Czujnik",
-                                style: TextStyle(
-                                    color: IdomColors.additionalColor,
-                                    fontSize: 16.5,
-                                    fontWeight: FontWeight.bold)))),
-                  if (widget.action.sensor != null)
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 52.5, top: 0, right: 30.0, bottom: 0.0),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(widget.action.sensor,
-                                style: TextStyle(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
                           left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Sterownik",
+                          child: Text("Sterownik".i18n,
                               style: TextStyle(
                                   color: IdomColors.additionalColor,
                                   fontSize: 16.5,
@@ -155,6 +137,25 @@ class _ActionDetailsState extends State<ActionDetails> {
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
+                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Czujnik".i18n,
+                                style: TextStyle(
+                                    color: IdomColors.additionalColor,
+                                    fontSize: 16.5,
+                                    fontWeight: FontWeight.bold)))),
+                  if (widget.action.sensor != null)
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(widget.action.sensor,
+                                style: TextStyle(fontSize: 21.0)))),
+                  if (widget.action.sensor != null)
+                    Padding(
+                        padding: EdgeInsets.only(
                             left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
@@ -163,7 +164,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Wyzwalacz",
+                                  child: Text("Wyzwalacz".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -174,15 +175,15 @@ class _ActionDetailsState extends State<ActionDetails> {
                             ))),
                   if (widget.action.sensor != null)
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Wartość z czujnika",
-                              style: TextStyle(
-                                  color: IdomColors.additionalColor,
-                                  fontSize: 16.5,
-                                  fontWeight: FontWeight.bold)))),
+                        padding: EdgeInsets.only(
+                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Wartość z czujnika".i18n,
+                                style: TextStyle(
+                                    color: IdomColors.additionalColor,
+                                    fontSize: 16.5,
+                                    fontWeight: FontWeight.bold)))),
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -202,7 +203,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                               Icon(Icons.access_time, size: 17.5),
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
-                                child: Text("Czas działania akcji",
+                                child: Text("Czas działania akcji".i18n,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -216,7 +217,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                           left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Dni tygodnia",
+                          child: Text("Dni tygodnia".i18n,
                               style: TextStyle(
                                   color: IdomColors.additionalColor,
                                   fontSize: 16.5,
@@ -234,7 +235,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                             left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Godzina",
+                            child: Text("Godzina".i18n,
                                 style: TextStyle(
                                     color: IdomColors.additionalColor,
                                     fontSize: 16.5,
@@ -245,7 +246,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                             left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Godziny",
+                            child: Text("Godziny".i18n,
                                 style: TextStyle(
                                     color: IdomColors.additionalColor,
                                     fontSize: 16.5,
@@ -269,28 +270,28 @@ class _ActionDetailsState extends State<ActionDetails> {
       var dayInt = int.parse(daysList[i]);
       switch (dayInt) {
         case 0:
-          daysString += "pn";
+          daysString += "pn".i18n;
           break;
         case 1:
-          daysString += "wt";
+          daysString += "wt".i18n;
           break;
         case 2:
-          daysString += "śr";
+          daysString += "śr".i18n;
           break;
         case 3:
-          daysString += "czw";
+          daysString += "czw".i18n;
           break;
         case 4:
-          daysString += "pt";
+          daysString += "pt".i18n;
           break;
         case 5:
-          daysString += "sb";
+          daysString += "sb".i18n;
           break;
         case 6:
-          daysString += "nd";
+          daysString += "nd".i18n;
           break;
       }
-      if (i < daysList.length - 1){
+      if (i < daysList.length - 1) {
         daysString += ", ";
       }
     }
@@ -314,7 +315,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                 EditAction(storage: widget.storage, action: widget.action),
             fullscreenDialog: true));
     if (result == true) {
-      final snackBar = new SnackBar(content: new Text("Zapisano dane akcji."));
+      final snackBar = new SnackBar(content: new Text("Zapisano akcję.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshActionDetails();
     }
@@ -335,14 +336,14 @@ class _ActionDetailsState extends State<ActionDetails> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final snackBar = new SnackBar(
-            content: new Text("Odświeżenie danych akcji nie powiodło się."));
+            content: new Text("Odświeżenie danych akcji nie powiodło się.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -353,13 +354,13 @@ class _ActionDetailsState extends State<ActionDetails> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania danych akcji. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych akcji. Adres serwera nieprawidłowy."));
+                "Błąd pobierania danych akcji. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
