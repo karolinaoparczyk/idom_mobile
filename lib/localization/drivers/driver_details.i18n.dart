@@ -94,6 +94,18 @@ extension Localization on String {
       {
         "pl_pl": "Zapisano sterownik.",
         "en_uk": "Driver saved.",
+      } +
+      {
+        "pl_pl": "Pilot nie posiada adresu IP.",
+        "en_uk": "The remote control does not have an IP address.",
+      } +
+      {
+        "pl_pl": "Komenda wysłana do pilota.",
+        "en_uk": "Command has been sent to the remote control.",
+      } +
+      {
+        "pl_pl": "Wysłanie komendy do pilota nie powiodło się.",
+        "en_uk": "Sending a command to the remote control has failed.",
       };
 
   String get i18n => localize(this, _t);
