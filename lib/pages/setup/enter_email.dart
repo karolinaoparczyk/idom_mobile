@@ -159,6 +159,11 @@ class _EnterEmailState extends State<EnterEmail> {
             content:
                 new Text("Błąd resetu hasła. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
+      } else {
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd resetu hasła. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
   }

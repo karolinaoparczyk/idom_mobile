@@ -164,6 +164,14 @@ class _SignInState extends State<SignIn> {
               content: new Text(
                   "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else  {
+          setState(() {
+            _load = false;
+          });
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     } catch (e) {
@@ -180,6 +188,11 @@ class _SignInState extends State<SignIn> {
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text("Błąd logowania. Adres serwera nieprawidłowy.".i18n));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      }else  {
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
