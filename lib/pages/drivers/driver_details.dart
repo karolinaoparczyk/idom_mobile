@@ -1542,7 +1542,7 @@ class _DriverDetailsState extends State<DriverDetails> {
     if (widget.driver.ipAddress == null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       final snackBar =
-          new SnackBar(content: new Text("Pilot nie posiada adresu IP."));
+          new SnackBar(content: new Text("Pilot nie posiada adresu IP.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }
@@ -1578,12 +1578,12 @@ class _DriverDetailsState extends State<DriverDetails> {
       if (result != null) {
         if (result == 200) {
           final snackBar =
-              new SnackBar(content: new Text("Komenda wysłana do pilota."));
+              new SnackBar(content: new Text("Komenda wysłana do pilota.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content:
-                  new Text("Wysłanie komendy do pilota nie powiodło się."));
+                  new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -1592,7 +1592,7 @@ class _DriverDetailsState extends State<DriverDetails> {
         _load = false;
       });
       final snackBar = new SnackBar(
-          content: new Text("Wysłanie komendy do pilota nie powiodło się."));
+          content: new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
