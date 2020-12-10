@@ -263,33 +263,12 @@ void main() {
     verify(await mockApi.deleteCamera(1)).called(1);
   });
 
-  /// tests if cameras not on list if api error
-  testWidgets('cameras not on list if api error', (WidgetTester tester) async {
+
+
+  /// tests if cameras not on list if api error, english
+  testWidgets('english cameras not on list if api error', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.getActions()).thenAnswer((_) async =>
-        Future.value(null));
-
-    MockSecureStorage mockSecureStorage = MockSecureStorage();
-
-    Cameras page = Cameras(
-      storage: mockSecureStorage,
-      testApi: mockApi,
-    );
-
-    await tester.pumpWidget(makePolishTestableWidget(child: page));
-    await tester.pumpAndSettle();
-    expect(find
-        .byType(ListTile)
-        .evaluate()
-        .length, 0);
-    expect(find.text("Błąd połączenia z serwerem."), findsOneWidget);
-    expect(find.byKey(Key("assets/icons/video-camera.svg")), findsNothing);
-  });
-
-  /// tests if cameras not on list if api error
-  testWidgets('cameras not on list if api error', (WidgetTester tester) async {
-    MockApi mockApi = MockApi();
-    when(mockApi.getActions()).thenAnswer((_) async =>
+    when(mockApi.getCameras()).thenAnswer((_) async =>
         Future.value(null));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();

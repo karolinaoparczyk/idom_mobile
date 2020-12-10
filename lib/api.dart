@@ -17,7 +17,17 @@ class Api {
   Client httpClient;
 
   void getApiAddress() async {
-    url = "http://" + await storage.getApiServerAddress();
+    var apiAddress = "http://" + await storage.getApiServerAddress();
+
+    if (apiAddress.substring(
+        apiAddress.length - 4,
+            apiAddress.length) ==
+        "/api") {
+      url = apiAddress;
+    }
+    else{
+      url = apiAddress + "/api";
+    }
   }
 
   void getToken() async {
@@ -677,6 +687,7 @@ class Api {
     }
     return null;
   }
+
   /// gets actions
   Future<Map<String, String>> getActions() async {
     await getApiAddress();
@@ -756,8 +767,7 @@ class Api {
 
   /// edits action
   Future<Map<String, String>> editAction(
-      int id,
-     Map<String, dynamic> body) async {
+      int id, Map<String, dynamic> body) async {
     await getApiAddress();
     await getToken();
     var res = await httpClient

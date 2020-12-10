@@ -84,8 +84,15 @@ class _SettingsState extends State<Settings> {
           labelText: "Adres serwera".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           prefixText: "https://",
+          prefixStyle: TextStyle(fontSize: 21,  color: IdomColors.textDark),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
+          ),
+          suffixIcon: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("/api", style: TextStyle(fontSize: 21, color: IdomColors.textDark)),
+            ],
           ),
         ),
         style: TextStyle(fontSize: 21.0),

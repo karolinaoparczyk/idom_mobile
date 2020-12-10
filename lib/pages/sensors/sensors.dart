@@ -250,9 +250,6 @@ class _SensorsState extends State<Sensors> {
         drawer: IdomDrawer(
             storage: widget.storage,
             parentWidgetType: "Sensors",
-            onGoBackAction: () async {
-              await getSensors();
-            },
             onLogOutFailure: onLogOutFailure),
 
         /// builds sensor's list
