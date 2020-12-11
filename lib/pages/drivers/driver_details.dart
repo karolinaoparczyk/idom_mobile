@@ -162,7 +162,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                               ),
                             ],
                           ))),
-                  if (widget.driver.category == "bulb" &&
+                  if ((widget.driver.category == "bulb" ||
+                      widget.driver.category == "roller_blind") &&
                       widget.driver.data != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -174,7 +175,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     color: IdomColors.additionalColor,
                                     fontSize: 16.5,
                                     fontWeight: FontWeight.bold)))),
-                  if (widget.driver.category == "bulb" &&
+                  if ((widget.driver.category == "bulb" ||
+                          widget.driver.category == "roller_blind") &&
                       widget.driver.data != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -1345,14 +1347,71 @@ class _DriverDetailsState extends State<DriverDetails> {
                               key: Key("assets/icons/light_bulb_filled.svg")),
                         ),
                       ),
-                    )
+                    ),
+                  if (widget.driver.category == "roller_blind")
+                    Table(columnWidths: {
+                      0: FlexColumnWidth(1),
+                      1: FlexColumnWidth(1),
+                    }, children: [
+                      TableRow(children: [
+                        Container(
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.all(18.0),
+                          child: Text("Podnieś rolety".i18n,
+                              style: TextStyle(fontSize: 21)),
+                        ),
+                        Container(
+                            padding: const EdgeInsets.all(18.0),
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                                onTap: () {},
+                                borderRadius: BorderRadius.circular(50.0),
+                                splashColor: IdomColors.additionalColor,
+                                child: SvgPicture.asset(
+                                    "assets/icons/up-arrow.svg",
+                                    matchTextDirection: false,
+                                    alignment: Alignment.centerRight,
+                                    width: 25,
+                                    height: 25,
+                                    color: IdomColors.additionalColor,
+                                    key: Key("assets/icons/up-arrow.svg")))),
+                      ]),
+                      TableRow(children: [
+                        Container(
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.all(18.0),
+                          child: Text("Opuść rolety".i18n,
+                              style: TextStyle(fontSize: 21)),
+                        ),
+                        Container(
+                            padding: const EdgeInsets.all(18.0),
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                                onTap: () {},
+                                borderRadius: BorderRadius.circular(50.0),
+                                splashColor: IdomColors.additionalColor,
+                                child: SvgPicture.asset(
+                                    "assets/icons/down-arrow.svg",
+                                    matchTextDirection: false,
+                                    alignment: Alignment.centerRight,
+                                    width: 25,
+                                    height: 25,
+                                    color: IdomColors.additionalColor,
+                                    key: Key("assets/icons/down-arrow.svg")))),
+                      ]),
+                    ])
                 ]),
               ),
             ))));
   }
 
   _getDataValue() {
-    return widget.driver.data ? "włączona".i18n : "wyłączona".i18n;
+    if (widget.driver.category == "bulb") {
+      return widget.driver.data ? "włączona".i18n : "wyłączona".i18n;
+    }
+    else if (widget.driver.category == "roller_blind") {
+      return widget.driver.data ? "podniesione".i18n : "opuszczone".i18n;
+    }
   }
 
   _colorChangeHandler(double position) {
@@ -1472,8 +1531,9 @@ class _DriverDetailsState extends State<DriverDetails> {
     var result = await api.changeBulbBrightness(widget.driver.id, brightness);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
-      message =
-          "Wysłano komendę zmiany jasności żarówki ".i18n + widget.driver.name + ".".i18n;
+      message = "Wysłano komendę zmiany jasności żarówki ".i18n +
+          widget.driver.name +
+          ".".i18n;
     } else if (result == 404) {
       message = "Nie znaleziono sterownika ".i18n +
           widget.driver.name +
@@ -1504,18 +1564,23 @@ class _DriverDetailsState extends State<DriverDetails> {
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
-        message = "Wysłano komendę włączenia sterownika ".i18n + widget.driver.name + ".".i18n;
+        message = "Wysłano komendę włączenia sterownika ".i18n +
+            widget.driver.name +
+            ".".i18n;
       } else {
-        message =
-            "Wysłano komendę wyłączenia sterownika ".i18n + widget.driver.name + ".".i18n;
+        message = "Wysłano komendę wyłączenia sterownika ".i18n +
+            widget.driver.name +
+            ".".i18n;
       }
       await _refreshDriverDetails();
     } else if (result == 404) {
-      message =
-          "Nie znaleziono sterownika ".i18n + widget.driver.name + " na serwerze. Odswież listę sterowników.".i18n;
+      message = "Nie znaleziono sterownika ".i18n +
+          widget.driver.name +
+          " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message =
-          "Nie udało się podłączyć do sterownika".i18n + widget.driver.name + ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+      message = "Nie udało się podłączyć do sterownika".i18n +
+          widget.driver.name +
+          ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
     }
     if (message != null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
@@ -1528,10 +1593,12 @@ class _DriverDetailsState extends State<DriverDetails> {
     var result = await api.startDriver(widget.driver.name);
     var message;
     if (result == 200) {
-      message = "Wysłano komendę do sterownika ".i18n + widget.driver.name + ".".i18n;
-    } else {
       message =
-          "Wysłanie komendy do sterownika ".i18n + widget.driver.name + " nie powiodło się.".i18n;
+          "Wysłano komendę do sterownika ".i18n + widget.driver.name + ".".i18n;
+    } else {
+      message = "Wysłanie komendy do sterownika ".i18n +
+          widget.driver.name +
+          " nie powiodło się.".i18n;
     }
     _scaffoldKey.currentState.removeCurrentSnackBar();
     final snackBar = new SnackBar(content: new Text(message));
@@ -1577,13 +1644,13 @@ class _DriverDetailsState extends State<DriverDetails> {
       });
       if (result != null) {
         if (result == 200) {
-          final snackBar =
-              new SnackBar(content: new Text("Komenda wysłana do pilota.".i18n));
+          final snackBar = new SnackBar(
+              content: new Text("Komenda wysłana do pilota.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
-              content:
-                  new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
+              content: new Text(
+                  "Wysłanie komendy do pilota nie powiodło się.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -1592,7 +1659,8 @@ class _DriverDetailsState extends State<DriverDetails> {
         _load = false;
       });
       final snackBar = new SnackBar(
-          content: new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
+          content:
+              new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }

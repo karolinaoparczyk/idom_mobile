@@ -58,6 +58,10 @@ extension Localization on String {
       {
         "pl_pl": "żarówka",
         "en_uk": "bulb",
+      }+
+      {
+        "pl_pl": "rolety",
+        "en_uk": "blinds",
       };
 
   String get i18n => localize(this, _t);

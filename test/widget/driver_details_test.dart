@@ -77,6 +77,41 @@ void main() {
     expect(find.text("Wysłano komendę do sterownika driver1."), findsOneWidget);
   });
 
+  /// tests if displays blinds's details, sends command to blinds
+  testWidgets('displays blinds details, sends command to blinds',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(id: 1, name: "driver1", category: "roller_blind", data: true);
+
+    when(mockApi.startDriver("driver1"))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver1"), findsNWidgets(2));
+    expect(find.text("Nazwa"), findsOneWidget);
+    expect(find.text("Ogólne"), findsOneWidget);
+    expect(find.text("Obsługa sterownika"), findsOneWidget);
+    expect(find.text("Aktualny stan"), findsOneWidget);
+    expect(find.text("podniesione"), findsOneWidget);
+    expect(find.text("opuszczone"), findsNothing);
+    expect(find.text("Podnieś rolety"), findsOneWidget);
+    expect(find.text("Opuść rolety"), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/up-arrow.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/down-arrow.svg")), findsOneWidget);
+  });
+
   /// tests if displays remote controller driver's details
   testWidgets('displays remote controller driver details',
       (WidgetTester tester) async {
@@ -642,4 +677,40 @@ void main() {
     expect(find.text("off"), findsOneWidget);
     verify(await mockApi.switchBulb(1, "off")).called(1);
   });
+
+  /// tests if displays blinds's details, sends command to blinds, english
+  testWidgets('english displays blinds details, sends command to blinds',
+          (WidgetTester tester) async {
+        MockApi mockApi = MockApi();
+        Driver driver = Driver(id: 1, name: "driver1", category: "roller_blind", data: true);
+
+        when(mockApi.startDriver("driver1"))
+            .thenAnswer((_) async => Future.value(200));
+
+        MockSecureStorage mockSecureStorage = MockSecureStorage();
+        when(mockSecureStorage.getToken())
+            .thenAnswer((_) async => Future.value("token"));
+
+        DriverDetails page = DriverDetails(
+          storage: mockSecureStorage,
+          driver: driver,
+          testApi: mockApi,
+        );
+
+        await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+        await tester.pumpAndSettle();
+
+        expect(find.text("driver1"), findsNWidgets(2));
+        expect(find.text("Name"), findsOneWidget);
+        expect(find.text("General"), findsOneWidget);
+        expect(find.text("Driver handler"), findsOneWidget);
+        expect(find.text("Current state"), findsOneWidget);
+        expect(find.text("raised"), findsOneWidget);
+        expect(find.text("lowered"), findsNothing);
+        expect(find.text("Raise blinds"), findsOneWidget);
+        expect(find.text("Lower blinds"), findsOneWidget);
+        expect(find.byKey(Key("assets/icons/up-arrow.svg")), findsOneWidget);
+        expect(find.byKey(Key("assets/icons/down-arrow.svg")), findsOneWidget);
+      });
+
 }

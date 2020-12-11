@@ -75,7 +75,8 @@ void main() {
     expect(find.text("Anuluj"), findsOneWidget);
     expect(find.text("naduszacz"), findsNWidgets(2));
     expect(find.text("pilot"), findsOneWidget);
-    expect(find.text("żarówka"), findsOneWidget);
+    expect(find.text("rolety"), findsOneWidget);
+    await tester.tap(find.text("żarówka").last);
     await tester.tap(find.text("żarówka").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -399,6 +400,7 @@ void main() {
     expect(find.text("clicker"), findsNWidgets(2));
     expect(find.text("remote control"), findsOneWidget);
     expect(find.text("bulb"), findsOneWidget);
+    expect(find.text("blinds"), findsOneWidget);
     await tester.tap(find.text("bulb").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
