@@ -17,7 +17,7 @@ class Api {
   Client httpClient;
 
   void getApiAddress() async {
-    var apiAddress = "http://" + await storage.getApiServerAddress();
+    var apiAddress = "https://" + await storage.getApiServerAddress();
 
     if (apiAddress.substring(
         apiAddress.length - 4,
