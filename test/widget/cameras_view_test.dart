@@ -73,6 +73,7 @@ void main() {
     expect(find.text("camera1"), findsOneWidget);
     expect(find.text("camera2"), findsOneWidget);
     expect(find.byKey(Key("assets/icons/video-camera.svg")), findsNWidgets(2));
+    expect(find.byKey(Key("assets/icons/battery.svg")), findsNWidgets(2));
   });
 
   /// tests if deletes camera

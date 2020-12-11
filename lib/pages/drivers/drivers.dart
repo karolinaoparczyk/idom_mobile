@@ -167,29 +167,21 @@ class _DriversState extends State<Drivers> {
                               height: 80,
                               child: Card(
                                 child: ListTile(
-                                  key: Key(_driverList[index].name),
-                                  title: Text(_driverList[index].name,
-                                      style: TextStyle(fontSize: 21.0)),
-                                  onTap: () {
-                                    navigateToDriverDetails(_driverList[index]);
-                                  },
-                                  leading: SizedBox(
-                                      width: 35,
-                                      child: Container(
-                                          padding: EdgeInsets.only(top: 5),
-                                          alignment: Alignment.centerRight,
-                                          child: _getDriverImage(
-                                              _driverList[index]))),
-                                  trailing: GestureDetector(
-                                    onTapDown: (TapDownDetails details) async {
-                                      _showPopupMenu(details.globalPosition,
+                                    key: Key(_driverList[index].name),
+                                    title: Text(_driverList[index].name,
+                                        style: TextStyle(fontSize: 21.0)),
+                                    onTap: () {
+                                      navigateToDriverDetails(
                                           _driverList[index]);
                                     },
-                                    child: Container(
-                                        child: Icon(Icons.more_vert_outlined,
-                                            size: 30)),
-                                  ),
-                                ),
+                                    leading: SizedBox(
+                                        width: 35,
+                                        child: Container(
+                                            padding: EdgeInsets.only(top: 5),
+                                            alignment: Alignment.centerRight,
+                                            child: _getDriverImage(
+                                                _driverList[index]))),
+                                    trailing: getTrailing(_driverList[index])),
                               )))))));
     }
 
@@ -198,6 +190,40 @@ class _DriversState extends State<Drivers> {
       padding:
           const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
       child: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  getTrailing(Driver driver) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+            width: 40,
+            child: Container(
+                alignment: Alignment.center,
+                child: SizedBox(
+                    width: 40,
+                    child: Stack(children: [
+                      Container(
+                          padding: EdgeInsets.all(5),
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            "assets/icons/battery.svg",
+                            key: Key("assets/icons/battery.svg"),
+                            matchTextDirection: false,
+                            width: 36,
+                            height: 36,
+                            color: IdomColors.additionalColor,
+                          )),
+                      Container(alignment: Alignment.center, child: Text(""))
+                    ])))),
+        GestureDetector(
+          onTapDown: (TapDownDetails details) async {
+            _showPopupMenu(details.globalPosition, driver);
+          },
+          child: Container(child: Icon(Icons.more_vert_outlined, size: 30)),
+        ),
+      ],
     );
   }
 
@@ -213,7 +239,7 @@ class _DriversState extends State<Drivers> {
       case "bulb":
         imageUrl = "assets/icons/light-bulb.svg";
         break;
-        case "roller_blind":
+      case "roller_blind":
         imageUrl = "assets/icons/blinds.svg";
         break;
     }
@@ -348,7 +374,7 @@ class _DriversState extends State<Drivers> {
           _switchDriver(driver);
         } else if (driver.category == "clicker") {
           _clickDriver(driver);
-        }else if (driver.category == "remote_control") {
+        } else if (driver.category == "remote_control") {
           _sendCommandToRemoteControl(driver);
         }
         break;
@@ -361,12 +387,12 @@ class _DriversState extends State<Drivers> {
     if (driver.ipAddress == null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       final snackBar =
-      new SnackBar(content: new Text("Pilot nie posiada adresu IP.".i18n));
+          new SnackBar(content: new Text("Pilot nie posiada adresu IP.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }
-    try{
-    var result = await RemoteControl.sendCommand(driver, "Power");
+    try {
+      var result = await RemoteControl.sendCommand(driver, "Power");
       if (result != null) {
         if (result == 200) {
           final snackBar = new SnackBar(
@@ -382,7 +408,7 @@ class _DriversState extends State<Drivers> {
     } catch (e) {
       final snackBar = new SnackBar(
           content:
-          new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
+              new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }

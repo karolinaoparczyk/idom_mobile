@@ -79,6 +79,7 @@ void main() {
     expect(find.text("driver2"), findsOneWidget);
     expect(find.byKey(Key("assets/icons/tap.svg")), findsNWidgets(2));
     expect(find.byIcon(Icons.more_vert_outlined), findsNWidgets(2));
+    expect(find.byKey(Key("assets/icons/battery.svg")), findsNWidgets(2));
 
     await tester.tap(find.byIcon(Icons.more_vert_outlined).first);
     await tester.pumpAndSettle();

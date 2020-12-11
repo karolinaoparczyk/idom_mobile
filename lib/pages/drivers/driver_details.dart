@@ -145,6 +145,22 @@ class _DriverDetailsState extends State<DriverDetails> {
                               style: TextStyle(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
+                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Poziom baterii".i18n,
+                              style: TextStyle(
+                                  color: IdomColors.additionalColor,
+                                  fontSize: 16.5,
+                                  fontWeight: FontWeight.bold)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("- %"))),
+                  Padding(
+                      padding: EdgeInsets.only(
                           left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,

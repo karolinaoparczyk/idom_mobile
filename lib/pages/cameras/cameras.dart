@@ -241,7 +241,7 @@ class _CamerasState extends State<Cameras> {
                                             color: IdomColors.additionalColor,
                                             key: Key("assets/icons/video-camera.svg")
                                           ))),
-                                    trailing: deleteButtonTrailing(_cameraList[index])
+                                    trailing: getTrailing(_cameraList[index])
                                 ),
                               )))))));
     }
@@ -269,34 +269,58 @@ class _CamerasState extends State<Cameras> {
     await getCameras();
   }
 
-  /// deletes sensor
-  deleteButtonTrailing(Camera camera) {
-    return SizedBox(
-        width: 35,
-        child: Container(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              key: Key("deleteButton"),
-              child: SizedBox(
-                  width: 35,
-                  child: Container(
-                      padding: EdgeInsets.only(top: 5),
-                      alignment: Alignment.topRight,
-                      child: SvgPicture.asset(
-                        "assets/icons/dustbin.svg",
-                        matchTextDirection: false,
-                        width: 32,
-                        height: 32,
-                        color: IdomColors.mainFill,
-                      ))),
-              onPressed: () {
-                setState(() {
-                  _deleteCamera(camera);
-                });
-              },
-            )));
-  }
+  getTrailing(Camera camera) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+            width: 40,
+            child: Container(
+                alignment: Alignment.center,
+                child: SizedBox(
+                    width: 40,
+                    child: Stack(
+                        children: [ Container(
+                            padding: EdgeInsets.all(5),
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              "assets/icons/battery.svg",
+                              key: Key("assets/icons/battery.svg"),
+                              matchTextDirection: false,
+                              width: 36,
+                              height: 36,
+                              color: IdomColors.additionalColor,
+                            )),
+                          Container(alignment: Alignment.center,child: Text(""))]
+                    )))),
+        SizedBox(
+            width: 35,
+            child: Container(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  key: Key("deleteButton"),
+                  child: SizedBox(
+                      width: 35,
+                      child: Container(
+                          padding: EdgeInsets.only(top: 5),
+                          alignment: Alignment.topRight,
+                          child: SvgPicture.asset(
+                            "assets/icons/dustbin.svg",
+                            matchTextDirection: false,
+                            width: 32,
+                            height: 32,
+                            color: IdomColors.mainFill,
+                          ))),
+                  onPressed: () {
+                    setState(() {
+                      _deleteCamera(camera);
+                    });
+                  },
+                ))),
 
+      ],
+    );
+  }
 
   /// navigates to adding camera page
   navigateToNewCamera() async {
