@@ -58,7 +58,7 @@ class _EnterEmailState extends State<EnterEmail> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
-          key: _scaffoldKey,
+            key: _scaffoldKey,
             appBar: AppBar(
               title: Text('Reset hasła'.i18n),
             ),
