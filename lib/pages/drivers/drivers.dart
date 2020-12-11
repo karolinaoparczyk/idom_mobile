@@ -9,6 +9,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/driver_details.dart';
 import 'package:idom/pages/drivers/new_driver.dart';
+import 'package:idom/remote_control.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -212,6 +213,9 @@ class _DriversState extends State<Drivers> {
       case "bulb":
         imageUrl = "assets/icons/light-bulb.svg";
         break;
+        case "roller_blind":
+        imageUrl = "assets/icons/blinds.svg";
+        break;
     }
     return SvgPicture.asset(imageUrl,
         matchTextDirection: false,
@@ -231,13 +235,13 @@ class _DriversState extends State<Drivers> {
         PopupMenuItem<String>(
             key: Key("click"),
             child: SizedBox(
-              width: 180,
+              width: 260,
               child: Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   columnWidths: {
-                    0: FlexColumnWidth(1),
+                    0: FlexColumnWidth(2),
                     1: FlexColumnWidth(1),
-                    2: FlexColumnWidth(10),
+                    2: FlexColumnWidth(11),
                   },
                   children: [
                     if (driver.category == "clicker")
@@ -247,8 +251,8 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/play.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 35,
-                            height: 35,
+                            width: 25,
+                            height: 25,
                             color: IdomColors.green,
                           ),
                           SizedBox(width: 5),
@@ -263,8 +267,8 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/turn-off.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 35,
-                            height: 35,
+                            width: 25,
+                            height: 25,
                             color: IdomColors.error,
                           ),
                           SizedBox(width: 5),
@@ -279,12 +283,28 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/turn-off.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 35,
-                            height: 35,
+                            width: 25,
+                            height: 25,
                             color: IdomColors.error,
                           ),
                           SizedBox(width: 5),
                           Text('Włącz/wyłącz żarówkę'.i18n,
+                              style: TextStyle(fontSize: 21.0)),
+                        ],
+                      ),
+                    if (driver.category == "roller_blind")
+                      TableRow(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/icons/up-and-down.svg",
+                            matchTextDirection: false,
+                            alignment: Alignment.centerRight,
+                            width: 25,
+                            height: 25,
+                            color: IdomColors.additionalColor,
+                          ),
+                          SizedBox(width: 5),
+                          Text('Podnieś/opuść rolety'.i18n,
                               style: TextStyle(fontSize: 21.0)),
                         ],
                       ),
@@ -294,13 +314,13 @@ class _DriversState extends State<Drivers> {
         PopupMenuItem<String>(
             key: Key("delete"),
             child: SizedBox(
-                width: 180,
+                width: 260,
                 child: Table(
                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                     columnWidths: {
-                      0: FlexColumnWidth(1),
+                      0: FlexColumnWidth(2),
                       1: FlexColumnWidth(1),
-                      2: FlexColumnWidth(10),
+                      2: FlexColumnWidth(11),
                     },
                     children: [
                       TableRow(
@@ -309,8 +329,8 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/dustbin.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 35,
-                            height: 35,
+                            width: 25,
+                            height: 25,
                             color: IdomColors.mainFill,
                           ),
                           SizedBox(width: 5),
@@ -328,10 +348,42 @@ class _DriversState extends State<Drivers> {
           _switchDriver(driver);
         } else if (driver.category == "clicker") {
           _clickDriver(driver);
+        }else if (driver.category == "remote_control") {
+          _sendCommandToRemoteControl(driver);
         }
         break;
       case "delete":
         _deleteDriver(driver);
+    }
+  }
+
+  _sendCommandToRemoteControl(Driver driver) async {
+    if (driver.ipAddress == null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar =
+      new SnackBar(content: new Text("Pilot nie posiada adresu IP.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+      return;
+    }
+    try{
+    var result = await RemoteControl.sendCommand(driver, "Power");
+      if (result != null) {
+        if (result == 200) {
+          final snackBar = new SnackBar(
+              content: new Text("Komenda wysłana do pilota.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Wysłanie komendy do pilota nie powiodło się.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      }
+    } catch (e) {
+      final snackBar = new SnackBar(
+          content:
+          new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
 

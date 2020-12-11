@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:idom/enums/categories.dart';
-import 'package:idom/localization/dialogs/sensor_category.i18n.dart';
+import 'package:idom/localization/dialogs/category.i18n.dart';
 
 
 class CategoryDialog extends StatefulWidget {

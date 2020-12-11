@@ -106,6 +106,22 @@ extension Localization on String {
       {
         "pl_pl": "Wysłanie komendy do pilota nie powiodło się.",
         "en_uk": "Sending a command to the remote control has failed.",
+      } +
+      {
+        "pl_pl": "Podnieś rolety",
+        "en_uk": "Raise blinds",
+      } +
+      {
+        "pl_pl": "Opuść rolety",
+        "en_uk": "Lower blinds",
+      }+
+      {
+        "pl_pl": "podniesione",
+        "en_uk": "raised",
+      }+
+      {
+        "pl_pl": "opuszczone",
+        "en_uk": "lowered",
       };
 
   String get i18n => localize(this, _t);
