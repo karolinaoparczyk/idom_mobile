@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 
 class IdomColors {
-  static const Color mainFill = Color(0xFF0E1111);
+  /// light mode
+  static const Color mainBackgroundLight = Color(0xFFFFFFFF);
+  static const Color blackTextLight = Color(0xFF0E1111);
+  static const Color brighterBlackTextLight = Color(0xFF202022);
+  static const Color whiteTextLight = Color(0xFFFFFFFF);
+  static const Color cardLight = Color(0xFFFFFFFF);
+
+  /// dark mode
+  static const Color mainBackgroundDark = Color(0xFF202022);
+  static const Color blackTextDark = Color(0xFFFFFFFF);
+  static const Color brighterBlackTextDark = Color(0xFFBDBDBD);
+  static const Color whiteTextDark = Color(0xFF0E1111);
+  static const Color cardDark = Colors.black87;
+
+  static const Color mainFill = Color(0xFF0C0C0F);
   static const Color error = Color(0xFF9C1F03);
-  static const Color mainBackground = Color(0xFFFFFFFF);
-  static const Color buttonBackground = Color(0xFF0E1111);
-  static const Color textLight = Color(0xFFFFFFFF);
+  static const Color buttonBackground = Color(0xFF0C0C0F);
   static const Color iconLight = Color(0xFFFFFFFF);
   static const Color grey = Color(0xFFE5E5E5);
-  static const Color textDark = Color(0xFF0E1111);
   static const Color iconDark = Color(0xFF0E1111);
   static const Color additionalColor = Color(0xFFDAA520);
   static const Color lightBlack = Color(0xFF3B3736);

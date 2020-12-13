@@ -10,12 +10,12 @@ Widget buttonWidget(
       SizedBox(
         width: 180,
         child: RaisedButton(
-            elevation: 15,
+            elevation: 5,
             key: Key(text),
             onPressed: onPressed,
             child: Text(text,
                     style: TextStyle(
-                        color: IdomColors.textLight,
+                        color: IdomColors.whiteTextLight,
                         fontSize: 21,
                         fontWeight: FontWeight.normal),
                     textAlign: TextAlign.center),

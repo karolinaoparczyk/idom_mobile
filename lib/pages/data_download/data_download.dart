@@ -105,7 +105,10 @@ class _DataDownloadState extends State<DataDownload> {
           ),
         ),
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        style: TextStyle(fontSize: 17.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: LastDaysAmountFieldValidator.validate);
   }
 
@@ -149,7 +152,7 @@ class _DataDownloadState extends State<DataDownload> {
                         children: [
                           Text(
                             "Czujniki".i18n,
-                            style: Theme.of(context).textTheme.bodyText1,
+                            style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.bold),
                             textAlign: TextAlign.left,
                           ),
                           Spacer(),
@@ -169,7 +172,9 @@ class _DataDownloadState extends State<DataDownload> {
                                     matchTextDirection: false,
                                     width: 21,
                                     height: 21,
-                                    color: IdomColors.textDark,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1.color,
                                     key: Key("deleteSensors")),
                               ),
                             )
@@ -190,7 +195,11 @@ class _DataDownloadState extends State<DataDownload> {
                                 ?.map((sensor) => TableRow(children: <Widget>[
                                       Container(
                                           padding: EdgeInsets.only(bottom: 15),
-                                          child: Text(sensor.name)),
+                                          child: Text(sensor.name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(fontSize: 21.0))),
                                       GestureDetector(
                                         onTap: () => setState(() {
                                           selectedSensors.remove(sensor);
@@ -265,8 +274,7 @@ class _DataDownloadState extends State<DataDownload> {
                               "Dodaj".i18n,
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyText1
-                                  .copyWith(fontWeight: FontWeight.normal),
+                                  .bodyText1,
                             ),
                           )
                         ],
@@ -284,8 +292,7 @@ class _DataDownloadState extends State<DataDownload> {
                           ? Text(sensorsMessage,
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyText1
-                                  .copyWith(fontWeight: FontWeight.normal))
+                                  .bodyText1)
                           : SizedBox(),
                       secondChild: SizedBox(),
                     ),
@@ -298,7 +305,7 @@ class _DataDownloadState extends State<DataDownload> {
                         children: [
                           Text(
                             "Kategorie".i18n,
-                            style: Theme.of(context).textTheme.bodyText1,
+                            style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.bold),
                             textAlign: TextAlign.left,
                           ),
                           Spacer(),
@@ -318,7 +325,9 @@ class _DataDownloadState extends State<DataDownload> {
                                     matchTextDirection: false,
                                     width: 21,
                                     height: 21,
-                                    color: IdomColors.textDark,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1.color,
                                     key: Key("deleteCategories")),
                               ),
                             )
@@ -339,7 +348,11 @@ class _DataDownloadState extends State<DataDownload> {
                                 ?.map((category) => TableRow(children: <Widget>[
                                       Container(
                                           padding: EdgeInsets.only(bottom: 15),
-                                          child: Text(category['text'].i18n)),
+                                          child: Text(category['text'].i18n,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(fontSize: 21.0))),
                                       GestureDetector(
                                         onTap: () => setState(() {
                                           selectedCategories.remove(category);
@@ -415,8 +428,7 @@ class _DataDownloadState extends State<DataDownload> {
                               "Dodaj".i18n,
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyText1
-                                  .copyWith(fontWeight: FontWeight.normal),
+                                  .bodyText1,
                             ),
                           )
                         ],
@@ -434,8 +446,7 @@ class _DataDownloadState extends State<DataDownload> {
                           ? Text(categoriesMessage,
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyText1
-                                  .copyWith(fontWeight: FontWeight.normal))
+                                  .bodyText1)
                           : SizedBox(),
                       secondChild: SizedBox(),
                     ),

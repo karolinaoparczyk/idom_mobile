@@ -6,14 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
+import 'package:idom/dialogs/progress_indicator_dialog.dart';
 
 import 'package:idom/localization/setup/settings.i18n.dart';
 import 'package:idom/push_notifications.dart';
+import 'package:idom/utils/app_state_notifier.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:provider/provider.dart';
 
 /// allows to enter email and send reset password request
 class Settings extends StatefulWidget {
@@ -28,6 +31,7 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final Api api = Api();
   TextEditingController _apiAddressController = TextEditingController();
   String currentAddress;
@@ -84,18 +88,27 @@ class _SettingsState extends State<Settings> {
           labelText: "Adres serwera".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           prefixText: "https://",
-          prefixStyle: TextStyle(fontSize: 21,  color: IdomColors.textDark),
+          prefixStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontSize: 21.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
           suffixIcon: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("/api", style: TextStyle(fontSize: 21, color: IdomColors.textDark)),
+              Text("/api", style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  .copyWith(fontSize: 21.0)),
             ],
           ),
         ),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: UrlFieldValidator.validate);
   }
 
@@ -173,10 +186,7 @@ class _SettingsState extends State<Settings> {
                                                             .last,
                                                     style: Theme.of(context)
                                                         .textTheme
-                                                        .bodyText1
-                                                        .copyWith(
-                                                            fontWeight: FontWeight
-                                                                .normal)),
+                                                        .bodyText1.copyWith(fontSize: 21.0)),
                                               ),
                                               SizedBox(width: 30),
                                               IconButton(
@@ -207,7 +217,9 @@ class _SettingsState extends State<Settings> {
                                                 icon: Icon(
                                                     Icons
                                                         .add_circle_outline_rounded,
-                                                    color: IdomColors.textDark),
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1.color),
                                                 onPressed: _pickFile,
                                               ),
                                             ],
@@ -228,14 +240,16 @@ class _SettingsState extends State<Settings> {
                                                         fieldsValidationMessage,
                                                         style: Theme.of(context)
                                                             .textTheme
-                                                            .bodyText1
-                                                            .copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal))
+                                                            .bodyText1)
                                                     : SizedBox(),
                                             secondChild: SizedBox(),
                                           ),
+                                        Switch(
+                                          value: Provider.of<AppStateNotifier>(context, listen: false).isDarkMode,
+                                          onChanged: (boolVal) {
+                                            Provider.of<AppStateNotifier>(context, listen: false).updateTheme(boolVal);
+                                          },
+                                        )
                                       ],
                                     ),
                                   ),
@@ -320,8 +334,10 @@ class _SettingsState extends State<Settings> {
       if (changedFirebaseParams) {
         widget.storage.setFirebaseParams(firebaseUrl, storageBucket,
             mobileAppId, apiKey, file.path.split("/").last);
+        displayProgressDialog(context: context, key: _keyLoader, text: "Zapisywanie sutawień...");
         await _createSensorsNotificationsChannel();
         await sendDeviceToken();
+        Navigator.pop(context);
       }
       if (_isUserLoggedIn == "true") {
         final snackBar = new SnackBar(

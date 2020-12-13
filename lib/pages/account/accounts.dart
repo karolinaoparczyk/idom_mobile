@@ -177,14 +177,14 @@ class _AccountsState extends State<Accounts> {
         filterSearchResults(value);
       },
       style: TextStyle(
-          color: IdomColors.textLight,
+          color: IdomColors.whiteTextLight,
           fontSize: 20,
           letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...".i18n,
         hintStyle: TextStyle(
-            color: IdomColors.textLight,
+            color: IdomColors.whiteTextLight,
             fontSize: 20,
             letterSpacing: 2.0),
         border: UnderlineInputBorder(
@@ -243,7 +243,7 @@ class _AccountsState extends State<Accounts> {
                 onLogOutFailure: onLogOutFailure),
             /// accounts' list builder
             body:
-                Container(child: Column(children: <Widget>[listAccounts()]))));
+                Container(child: listAccounts())));
   }
 
   onLogOutFailure(String text) {
@@ -253,27 +253,43 @@ class _AccountsState extends State<Accounts> {
 
   Widget listAccounts() {
     if (zeroFetchedItems) {
-      return Padding(
+      return RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
                   "Brak kont w systemie.".i18n,
-                  style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  style:  Theme.of(context)
+                      .textTheme
+                      .bodyText1,
+                  textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
         _accountList == null) {
-      return Padding(
+      return RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Błąd połączenia z serwerem.".i18n,
-                  style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  style:  Theme.of(context)
+                      .textTheme
+                      .bodyText1,
+                  textAlign: TextAlign.center)))));
     } else if (!zeroFetchedItems &&
         _accountList != null &&
         _accountList.length == 0) {
@@ -283,47 +299,57 @@ class _AccountsState extends State<Accounts> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.".i18n,
-                  style: TextStyle(fontSize: 16.5),
+                  style:  Theme.of(context)
+                      .textTheme
+                      .bodyText1,
                   textAlign: TextAlign.center)));
     } else if (_accountList != null && _accountList.length > 0) {
-      return Expanded(
-          child: Scrollbar(
-              child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10.0, top: 10, right: 10.0, bottom: 0.0),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _accountList.length,
-                      itemBuilder: (context, index) => Container(
-                          height: 80,
-                          child: Card(
-                              child: ListTile(
-                                  key: Key(_accountList[index].username),
-                                  title: Text(_accountList[index].username,
-                                      style: TextStyle(fontSize: 21.0)),
-                                  onTap: () {
-                                    navigateToAccountDetails(
-                                        _accountList[index]);
-                                  },
-                                  leading: SizedBox(
-                                      width: 35,
-                                      child: Container(
-                                          alignment: Alignment.centerRight,
-                                          child: SvgPicture.asset(
-                                            "assets/icons/man.svg",
-                                            matchTextDirection: false,
-                                            width: 32,
-                                            height: 32,
-                                            color: IdomColors.additionalColor,
-                                          ))),
+      return Column(
+        children: [
+          Expanded(
+              child: Scrollbar(
+                  child: RefreshIndicator(
+                      backgroundColor: IdomColors.mainBackgroundDark,
+                      onRefresh: _pullRefresh,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _accountList.length,
+                          itemBuilder: (context, index) => Container(
+                              height: 80,
+                              child: Card(
+                                  child: ListTile(
+                                      key: Key(_accountList[index].username),
+                                      title: Text(_accountList[index].username,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(fontSize: 21.0)),
+                                      onTap: () {
+                                        navigateToAccountDetails(
+                                            _accountList[index]);
+                                      },
+                                      leading: SizedBox(
+                                          width: 35,
+                                          child: Container(
+                                              alignment: Alignment.centerRight,
+                                              child: SvgPicture.asset(
+                                                "assets/icons/man.svg",
+                                                matchTextDirection: false,
+                                                width: 32,
+                                                height: 32,
+                                                color: IdomColors.additionalColor,
+                                              ))),
 
-                                  /// delete sensor button
-                                  trailing: deleteButtonTrailing(
-                                      _accountList[index])))),
-                    ),
-                  ))));
+                                      /// delete sensor button
+                                      trailing: deleteButtonTrailing(
+                                          _accountList[index])))),
+                        ),
+                      )))),
+        ],
+      );
     }
 
     /// shows progress indicator while fetching data
@@ -387,7 +413,11 @@ class _AccountsState extends State<Accounts> {
                   matchTextDirection: false,
                   width: 32,
                   height: 32,
-                  color: IdomColors.mainFill,
+                  color: Theme.of(
+                      context)
+                      .textTheme
+                      .bodyText1
+                      .color,
                 ),
                 onPressed: () {
                   setState(() {

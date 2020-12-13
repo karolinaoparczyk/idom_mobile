@@ -101,8 +101,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                                   .textTheme
                                   .bodyText1
                                   .copyWith(
-                                      fontSize: 21.0,
-                                      fontWeight: FontWeight.normal)),
+                                      fontSize: 21.0)),
                         ),
                       ],
                     ),
@@ -127,7 +126,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
-                    .copyWith(fontSize: 25.0))
+                    .copyWith(fontSize: 25.0, color: IdomColors.whiteTextDark, fontWeight: FontWeight.bold))
           ]);
     return SizedBox();
   }
@@ -137,6 +136,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
     return SafeArea(
       child: Drawer(
         child: Container(
+          color: Theme.of(context).backgroundColor,
           child: ListView(children: [
             DrawerHeader(
                 decoration: BoxDecoration(
@@ -153,7 +153,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                               Text(
                                 'IDOM',
                                 style: TextStyle(
-                                    fontSize: 70.0, color: IdomColors.textDark),
+                                    fontSize: 70.0, color: IdomColors.blackTextLight),
                                 textAlign: TextAlign.center,
                               ),
                               Icon(Icons.roofing_rounded,
@@ -163,7 +163,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                               'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU'.i18n,
                               style: TextStyle(
                                   fontSize: 13.0,
-                                  color: IdomColors.textDark,
+                                  color: IdomColors.blackTextLight,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),

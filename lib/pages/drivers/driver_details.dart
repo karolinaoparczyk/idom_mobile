@@ -118,11 +118,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
                                 child: Text("Ogólne".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                               ),
                             ],
                           ))),
@@ -142,7 +139,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(widget.driver.name,
-                              style: TextStyle(fontSize: 21.0)))),
+                              style:  Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
                           left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
@@ -154,16 +154,13 @@ class _DriverDetailsState extends State<DriverDetails> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
                                 child: Text("Obsługa sterownika".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                               ),
                             ],
                           ))),
                   if ((widget.driver.category == "bulb" ||
-                      widget.driver.category == "roller_blind") &&
+                          widget.driver.category == "roller_blind") &&
                       widget.driver.data != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -184,7 +181,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(_getDataValue(),
-                                style: TextStyle(fontSize: 21.0)))),
+                                style:  Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontSize: 21.0)))),
                   if (widget.driver.category == "clicker")
                     Padding(
                       padding: const EdgeInsets.only(
@@ -217,10 +217,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                             ),
                           ),
                           Text("Wciśnij przycisk".i18n,
-                              style: TextStyle(
-                                  color: IdomColors.textDark,
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.normal)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                     ),
@@ -244,7 +244,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                                           readOnly: true,
                                           keyboardType: TextInputType.number,
                                           controller: _channelNumberController,
-                                          style: TextStyle(fontSize: 21.0),
+                                          style:  Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(fontSize: 21.0),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                               borderRadius:
@@ -713,7 +716,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                                         style: TextStyle(
                                                             color: IdomColors
                                                                 .additionalColor,
-                                                            fontSize: 27),
+                                                            fontSize: 25),
                                                         key: Key("goBack")),
                                                   ),
                                                 ),
@@ -1194,7 +1197,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                           Center(
                             child: InkWell(
                               onTap: () {
-                                _switchDriver();
+                                _switchBulb();
                               },
                               highlightColor: digitsVisible
                                   ? Colors.transparent
@@ -1262,7 +1265,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                             Padding(
                               padding: const EdgeInsets.all(18.0),
                               child: Text("Ustaw kolor".i18n,
-                                  style: TextStyle(fontSize: 21)),
+                                  style:  Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontSize: 21.0)),
                             ),
                             SvgPicture.asset("assets/icons/enter.svg",
                                 matchTextDirection: false,
@@ -1318,7 +1324,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                             Padding(
                               padding: const EdgeInsets.all(18.0),
                               child: Text("Ustaw jasność".i18n,
-                                  style: TextStyle(fontSize: 21)),
+                                  style:  Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontSize: 21.0)),
                             ),
                             SvgPicture.asset("assets/icons/enter.svg",
                                 matchTextDirection: false,
@@ -1358,7 +1367,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                           alignment: Alignment.centerRight,
                           padding: const EdgeInsets.all(18.0),
                           child: Text("Podnieś rolety".i18n,
-                              style: TextStyle(fontSize: 21)),
+                              style:  Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ),
                         Container(
                             padding: const EdgeInsets.all(18.0),
@@ -1381,7 +1393,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                           alignment: Alignment.centerRight,
                           padding: const EdgeInsets.all(18.0),
                           child: Text("Opuść rolety".i18n,
-                              style: TextStyle(fontSize: 21)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ),
                         Container(
                             padding: const EdgeInsets.all(18.0),
@@ -1408,8 +1423,7 @@ class _DriverDetailsState extends State<DriverDetails> {
   _getDataValue() {
     if (widget.driver.category == "bulb") {
       return widget.driver.data ? "włączona".i18n : "wyłączona".i18n;
-    }
-    else if (widget.driver.category == "roller_blind") {
+    } else if (widget.driver.category == "roller_blind") {
       return widget.driver.data ? "podniesione".i18n : "opuszczone".i18n;
     }
   }
@@ -1501,8 +1515,11 @@ class _DriverDetailsState extends State<DriverDetails> {
 
   _changeBulbColor() async {
     var message;
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     var result = await api.changeBulbColor(widget.driver.id, _currentColor.red,
         _currentColor.green, _currentColor.blue);
+    Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       message = "Wysłano komendę zmiany koloru żarówki ".i18n +
@@ -1528,7 +1545,10 @@ class _DriverDetailsState extends State<DriverDetails> {
     var message;
     if (_shadeSliderPosition == 0) _shadeSliderPosition = 1;
     int brightness = (_shadeSliderPosition / 255 * 100).round();
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     var result = await api.changeBulbBrightness(widget.driver.id, brightness);
+    Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       message = "Wysłano komendę zmiany jasności żarówki ".i18n +
@@ -1550,7 +1570,7 @@ class _DriverDetailsState extends State<DriverDetails> {
     }
   }
 
-  _switchDriver() async {
+  _switchBulb() async {
     var flag = widget.driver.data == null
         ? "on"
         : widget.driver.data
@@ -1558,27 +1578,30 @@ class _DriverDetailsState extends State<DriverDetails> {
             : "on";
     var message;
     var result;
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     if (widget.driver.category == "bulb") {
       result = await api.switchBulb(widget.driver.id, flag);
     }
+    Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
-        message = "Wysłano komendę włączenia sterownika ".i18n +
+        message = "Wysłano komendę włączenia żarówki ".i18n +
             widget.driver.name +
             ".".i18n;
       } else {
-        message = "Wysłano komendę wyłączenia sterownika ".i18n +
+        message = "Wysłano komendę wyłączenia żarówki ".i18n +
             widget.driver.name +
             ".".i18n;
       }
       await _refreshDriverDetails();
     } else if (result == 404) {
-      message = "Nie znaleziono sterownika ".i18n +
+      message = "Nie znaleziono żarówki ".i18n +
           widget.driver.name +
           " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message = "Nie udało się podłączyć do sterownika".i18n +
+      message = "Nie udało się podłączyć do żarówki".i18n +
           widget.driver.name +
           ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
     }
@@ -1590,7 +1613,10 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 
   _clickDriver() async {
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     var result = await api.startDriver(widget.driver.name);
+    Navigator.pop(context);
     var message;
     if (result == 200) {
       message =
@@ -1613,10 +1639,9 @@ class _DriverDetailsState extends State<DriverDetails> {
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }
-    setState(() {
-      _load = true;
-    });
     var result;
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     try {
       switch (command) {
         case "Mute":
@@ -1639,9 +1664,7 @@ class _DriverDetailsState extends State<DriverDetails> {
               channel: channel);
           break;
       }
-      setState(() {
-        _load = false;
-      });
+      Navigator.pop(context);
       if (result != null) {
         if (result == 200) {
           final snackBar = new SnackBar(
@@ -1655,9 +1678,7 @@ class _DriverDetailsState extends State<DriverDetails> {
         }
       }
     } catch (e) {
-      setState(() {
-        _load = false;
-      });
+      Navigator.pop(context);
       final snackBar = new SnackBar(
           content:
               new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));

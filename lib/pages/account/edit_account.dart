@@ -48,7 +48,10 @@ class _EditAccountState extends State<EditAccount> {
           ),
         ),
         keyboardType: TextInputType.emailAddress,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: EmailFieldValidator.validate);
   }
 
@@ -56,7 +59,10 @@ class _EditAccountState extends State<EditAccount> {
   Widget _buildTelephone() {
     return TextFormField(
         key: Key('telephone'),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         controller: _telephoneController,
         decoration: InputDecoration(
           labelText: "Nr telefonu komórkowego".i18n,

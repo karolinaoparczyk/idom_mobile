@@ -44,7 +44,10 @@ class _EnterEmailState extends State<EnterEmail> {
         ),
         autofocus: true,
         keyboardType: TextInputType.emailAddress,
-        style: TextStyle(fontSize: 17.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: EmailFieldValidator.validate);
   }
 
@@ -87,10 +90,7 @@ class _EnterEmailState extends State<EnterEmail> {
                                         "Podaj adres e-mail połączony z Twoim kontem".i18n,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight:
-                                                    FontWeight.normal))),
+                                            .bodyText1)),
                                 Padding(
                                     padding: EdgeInsets.only(
                                         left: 30.0,

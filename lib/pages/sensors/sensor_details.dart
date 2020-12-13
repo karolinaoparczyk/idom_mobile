@@ -111,13 +111,15 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych z czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania danych z czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych z czujnika. Adres serwera nieprawidłowy.".i18n));
+                "Błąd pobierania danych z czujnika. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -234,9 +236,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                     child: Text("Ogólne".i18n,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal)),
+                                            .bodyText1),
                                   ),
                                 ],
                               ))),
@@ -255,8 +255,13 @@ class _SensorDetailsState extends State<SensorDetails> {
                               left: 52.5, top: 0, right: 30.0, bottom: 0.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text(widget.sensor.name,
-                                  style: TextStyle(fontSize: 21.0)))),
+                              child: Text(
+                                widget.sensor.name,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontSize: 21.0),
+                              ))),
                       Padding(
                           padding: EdgeInsets.only(
                               left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
@@ -273,12 +278,17 @@ class _SensorDetailsState extends State<SensorDetails> {
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                  SensorCategories.values
-                                      .where((element) =>
-                                          element['value'] ==
-                                          widget.sensor.category)
-                                      .first['text'].i18n,
-                                  style: TextStyle(fontSize: 21.0)))),
+                                SensorCategories.values
+                                    .where((element) =>
+                                        element['value'] ==
+                                        widget.sensor.category)
+                                    .first['text']
+                                    .i18n,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontSize: 21.0),
+                              ))),
                       if (widget.sensor.category != "rain_sensor")
                         Padding(
                             padding: EdgeInsets.only(
@@ -297,10 +307,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                                       child: Text("Dane z czujnika".i18n,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyText1
-                                              .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
+                                              .bodyText1),
                                     ),
                                   ],
                                 ))),
@@ -310,7 +317,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 top: 10, left: 52.5, right: 30.0, bottom: 0.0),
                             child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Częstotliwość pobierania danych".i18n,
+                              child: Text(
+                                  "Częstotliwość pobierania danych".i18n,
                                   style: TextStyle(
                                       color: IdomColors.additionalColor,
                                       fontSize: 16.5,
@@ -323,12 +331,16 @@ class _SensorDetailsState extends State<SensorDetails> {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                  FrequencyCalculation.calculateFrequencyValue(
-                                      widget.sensor.frequency),
-                                  style: TextStyle(fontSize: 21.0)),
+                                FrequencyCalculation.calculateFrequencyValue(
+                                    widget.sensor.frequency),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontSize: 21.0),
+                              ),
                             )),
                       if (widget.sensor.category != "rain_sensor" &&
-                          widget.sensor.category != "smoke"&&
+                          widget.sensor.category != "smoke" &&
                           widget.sensor.category != "gas")
                         Padding(
                             padding: EdgeInsets.only(
@@ -342,17 +354,22 @@ class _SensorDetailsState extends State<SensorDetails> {
                                       fontWeight: FontWeight.bold)),
                             )),
                       if (widget.sensor.category != "rain_sensor" &&
-                          widget.sensor.category != "smoke"&&
+                          widget.sensor.category != "smoke" &&
                           widget.sensor.category != "gas")
                         Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: 0.0, horizontal: 52.5),
                             child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text(getSensorLastData(),
-                                    style: TextStyle(fontSize: 21.0)))),
+                                child: Text(
+                                  getSensorLastData(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontSize: 21.0),
+                                ))),
                       if (widget.sensor.category != "rain_sensor" &&
-                          widget.sensor.category != "smoke"&&
+                          widget.sensor.category != "smoke" &&
                           widget.sensor.category != "gas")
                         Padding(
                             padding: EdgeInsets.only(
@@ -368,18 +385,16 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         size: 17.5),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Okres wyświetlanych danych".i18n,
+                                      child: Text(
+                                          "Okres wyświetlanych danych".i18n,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyText1
-                                              .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
+                                              .bodyText1),
                                     ),
                                   ],
                                 ))),
                       if (widget.sensor.category != "rain_sensor" &&
-                          widget.sensor.category != "smoke"&&
+                          widget.sensor.category != "smoke" &&
                           widget.sensor.category != "gas")
                         Padding(
                           padding: EdgeInsets.only(
@@ -390,27 +405,74 @@ class _SensorDetailsState extends State<SensorDetails> {
                               splashColor: Colors.transparent,
                               fillColor: IdomColors.lighten(
                                   IdomColors.additionalColor, 0.2),
-                              selectedColor: IdomColors.textDark,
+                              selectedColor: IdomColors.blackTextLight,
                               children: [
                                 Container(
                                     child: Center(
                                         child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            child: Text("Dzisiaj".i18n)))),
+                                            child: Text(
+                                              "Dzisiaj".i18n,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      color:
+                                                          measurementTimeSelected[
+                                                                  0]
+                                                              ? IdomColors
+                                                                  .whiteTextDark
+                                                              : Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color),
+                                            )))),
                                 Container(
                                     child: Center(
                                         child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            child:
-                                                Text("Ostatnie 2 tygodnie".i18n)))),
+                                            child: Text(
+                                              "Ostatnie 2 tygodnie".i18n,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      color:
+                                                          measurementTimeSelected[
+                                                                  1]
+                                                              ? IdomColors
+                                                                  .whiteTextDark
+                                                              : Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color),
+                                            )))),
                                 Container(
                                     child: Center(
                                         child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            child: Text("Ostatnie 30 dni".i18n)))),
+                                            child: Text(
+                                              "Ostatnie 30 dni".i18n,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      color:
+                                                          measurementTimeSelected[
+                                                                  2]
+                                                              ? IdomColors
+                                                                  .whiteTextDark
+                                                              : Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color),
+                                            )))),
                               ],
                               isSelected: measurementTimeSelected,
                               onPressed: (int index) {
@@ -535,7 +597,8 @@ class _SensorDetailsState extends State<SensorDetails> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final snackBar = new SnackBar(
-            content: new Text("Odświeżenie danych czujnika nie powiodło się.".i18n));
+            content:
+                new Text("Odświeżenie danych czujnika nie powiodło się.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -546,13 +609,15 @@ class _SensorDetailsState extends State<SensorDetails> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania danych czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych czujnika. Adres serwera nieprawidłowy.".i18n));
+                "Błąd pobierania danych czujnika. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -566,16 +631,29 @@ class _SensorDetailsState extends State<SensorDetails> {
       return Container(
           child: Padding(
         padding: const EdgeInsets.only(left: 22.5),
-        child: Text("Brak danych z wybranego okresu.".i18n,
-            style: TextStyle(fontSize: 16.5)),
+        child: Text(
+          "Brak danych z wybranego okresu.".i18n,
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
       ));
     } else if (dataLoaded) {
       return SfCartesianChart(
           zoomPanBehavior: ZoomPanBehavior(enablePinching: true),
           enableAxisAnimation: true,
-          primaryXAxis: CategoryAxis(plotOffset: 32),
+          primaryXAxis: CategoryAxis(
+              plotOffset: 32,
+              labelStyle: TextStyle(color: Theme.of(
+                  context)
+                  .textTheme
+                  .bodyText1
+                  .color)),
           primaryYAxis: NumericAxis(
-              labelFormat: "{value} ${getFormattedSensorDataUnitsForChart()}"),
+              labelFormat: "{value} ${getFormattedSensorDataUnitsForChart()}",
+              labelStyle: TextStyle(color: Theme.of(
+                  context)
+                  .textTheme
+                  .bodyText1
+                  .color)),
           tooltipBehavior: TooltipBehavior(
               enable: true,
               canShowMarker: false,
@@ -593,12 +671,18 @@ class _SensorDetailsState extends State<SensorDetails> {
                       children: [
                         Text(
                           '${point.x}',
-                          style: TextStyle(fontSize: 16.5),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              .copyWith(color: IdomColors.whiteTextDark),
                           textAlign: TextAlign.center,
                         ),
                         Text(
                           '${data.data} ${getFormattedSensorDataUnitsForChart()}',
-                          style: TextStyle(fontSize: 16.5),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              .copyWith(color: IdomColors.whiteTextDark),
                           textAlign: TextAlign.center,
                         ),
                       ],
