@@ -48,7 +48,7 @@ android {
         applicationId "com.project.idom"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 8
+        versionCode 9
         versionName "1.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
