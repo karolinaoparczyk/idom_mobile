@@ -680,7 +680,7 @@ class Api {
     try {
       var res = await httpClient.get('$url/actions/list', headers: {
         HttpHeaders.authorizationHeader: "Token $token"
-      }).timeout(Duration(seconds: 5));
+      }).timeout(Duration(seconds: 10));
 
       Map<String, String> response = {
         "body": utf8.decode(res.bodyBytes),
@@ -700,7 +700,7 @@ class Api {
     try {
       var res = await httpClient.delete('$url/actions/delete/$id', headers: {
         HttpHeaders.authorizationHeader: "Token $token"
-      }).timeout(Duration(seconds: 5));
+      }).timeout(Duration(seconds: 10));
       return res.statusCode;
     } catch (e) {
       print(e);
@@ -741,8 +741,7 @@ class Api {
             "action": action,
             "flag": flag,
           }),
-        )
-        .timeout(Duration(seconds: 5));
+        );
     var resDict = {
       "body": utf8.decode(res.bodyBytes),
       "statusCode": res.statusCode.toString(),
@@ -765,7 +764,7 @@ class Api {
           },
           body: jsonEncode(body),
         )
-        .timeout(Duration(seconds: 5));
+        .timeout(Duration(seconds: 10));
     var resDict = {
       "body": utf8.decode(res.bodyBytes),
       "statusCode": res.statusCode.toString(),
@@ -780,7 +779,7 @@ class Api {
     try {
       var res = await httpClient.get('$url/actions/detail/$actionId', headers: {
         HttpHeaders.authorizationHeader: "Token $token"
-      }).timeout(Duration(seconds: 5));
+      }).timeout(Duration(seconds: 10));
 
       Map<String, String> responses = {
         "body": utf8.decode(res.bodyBytes),

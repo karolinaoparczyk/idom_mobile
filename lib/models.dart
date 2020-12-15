@@ -151,7 +151,7 @@ class SensorDriverAction extends Equatable {
   int id;
   String name;
   String sensor;
-  int trigger;
+  String trigger;
   String operator;
   String driver;
   String days;
@@ -182,7 +182,7 @@ class SensorDriverAction extends Equatable {
       id: json['id'] as int,
       name: json['name'] as String,
       sensor: json['sensor'] as String,
-      trigger: json['trigger'] as int,
+      trigger: json['trigger'] as String,
       operator: json['operator'] as String,
       driver: json['driver'] as String,
       days: json['days'] as String,

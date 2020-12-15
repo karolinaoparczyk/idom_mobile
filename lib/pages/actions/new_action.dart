@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alarmclock/alarmclock.dart';
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/choose_driver_dialog.dart';
@@ -48,6 +49,7 @@ class _NewActionState extends State<NewAction> {
   String fieldsValidationMessage;
   String selectedOperator;
   List<bool> daysOfWeekSelected = [true, true, true, true, true, true, true];
+  bool setAlarm = false;
 
   @override
   void initState() {
@@ -646,6 +648,29 @@ class _NewActionState extends State<NewAction> {
                         }),
                       ),
                     ),
+                    if (endTime == null)
+                      Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 30.0),
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                activeColor: IdomColors.additionalColor,
+                                value: setAlarm,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    setAlarm = value;
+                                  });
+                                },
+                              ),
+                              Text("Ustaw budzik".i18n,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontWeight: FontWeight.normal))
+                            ],
+                          )),
                     Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 30.0),
@@ -764,6 +789,12 @@ class _NewActionState extends State<NewAction> {
           operator = selectedOperator;
           trigger = int.tryParse(_sensorTriggerController.text);
         }
+        if (endTime == null && setAlarm) {
+          await Alarmclock.setAlarm(
+              hour: startTime.hour,
+              minute: startTime.minute,
+              message: "akcja".i18n + _nameController.text);
+        }
 
         var res = await api.addAction(
             _nameController.text,
@@ -780,6 +811,18 @@ class _NewActionState extends State<NewAction> {
           _load = false;
         });
         if (res['statusCode'] == "201") {
+          if (endTime == null && setAlarm) {
+            var daysList = [];
+            for (int i = 0; i < daysOfWeekSelected.length; i++) {
+              if (daysOfWeekSelected[i]) {
+                daysList.add(i);
+              }
+            }
+            await Alarmclock.setAlarm(
+                hour: startTime.hour,
+                minute: startTime.minute,
+                message: "akcja".i18n + " ${_nameController.text}");
+          }
           fieldsValidationMessage = null;
           setState(() {});
           Navigator.pop(context, true);
@@ -796,8 +839,7 @@ class _NewActionState extends State<NewAction> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['body']
             .contains("Action with provided name already exists")) {
-          fieldsValidationMessage =
-              "Akcja o podanej nazwie już istnieje.".i18n;
+          fieldsValidationMessage = "Akcja o podanej nazwie już istnieje.".i18n;
           setState(() {});
           return;
         } else {

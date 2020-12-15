@@ -191,7 +191,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                                "${widget.action.operator} ${widget.action.trigger.toStringAsFixed(2)}",
+                                "${widget.action.operator} ${widget.action.trigger}",
                                 style: TextStyle(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
