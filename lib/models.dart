@@ -57,6 +57,7 @@ class Sensor extends Equatable {
   String category;
   int frequency;
   String lastData;
+  int batteryLevel;
 
   Sensor({
     @required this.id,
@@ -64,6 +65,7 @@ class Sensor extends Equatable {
     @required this.category,
     @required this.frequency,
     @required this.lastData,
+    @required this.batteryLevel,
   });
 
   @override
@@ -75,7 +77,8 @@ class Sensor extends Equatable {
         name: json['name'] as String,
         category: json['category'] as String,
         frequency: json['frequency'] as int,
-        lastData: json['last_data'] as String);
+        lastData: json['last_data'] as String,
+        batteryLevel: json['battery_level'] as int);
   }
 }
 
@@ -171,8 +174,7 @@ class SensorDriverAction extends Equatable {
       this.startTime,
       this.endTime,
       this.action,
-      this.flag
-      });
+      this.flag});
 
   @override
   List<Object> get props => [id, name];

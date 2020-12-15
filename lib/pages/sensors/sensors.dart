@@ -181,7 +181,7 @@ class _SensorsState extends State<Sensors> {
       key: Key('searchField'),
       controller: _searchController,
       style: TextStyle(
-          color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+          color: IdomColors.textLight, fontSize: 20, letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...".i18n,
@@ -356,15 +356,12 @@ class _SensorsState extends State<Sensors> {
                                           },
                                           leading: getCategoryImage(
                                               _sensorList[index]),
-
-                                          /// delete sensor button
-                                          trailing: deleteButtonTrailing(
-                                              buildContext,
-                                              _sensorList[index])))),
-                        ),
-                      )))),
-        ],
-      );
+                                        
+                                      /// delete sensor button
+                                      trailing: getTrailing(
+                                          buildContext, _sensorList[index])))),
+                    ),
+                  ))));
     }
 
     /// shows progress indicator while fetching data
@@ -509,33 +506,59 @@ class _SensorsState extends State<Sensors> {
     await getSensors();
   }
 
-  /// deletes sensor
-  deleteButtonTrailing(BuildContext buildContext, Sensor sensor) {
-    return SizedBox(
-        width: 35,
-        child: Container(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              key: Key("deleteButton"),
-              child: SizedBox(
-                  width: 35,
-                  child: Container(
-                      padding: EdgeInsets.only(top: 5),
-                      alignment: Alignment.topRight,
-                      child: SvgPicture.asset(
-                        "assets/icons/dustbin.svg",
-                        matchTextDirection: false,
-                        width: 32,
-                        height: 32,
-                        color: Theme.of(context)
-                            .textTheme
-                            .bodyText1.color,
-                      ))),
-              onPressed: () {
-                setState(() {
-                  _deactivateSensor(sensor);
-                });
-              },
-            )));
+  getTrailing(BuildContext buildContext, Sensor sensor) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+            width: 40,
+            child: Container(
+                alignment: Alignment.center,
+                child: SizedBox(
+                    width: 40,
+                    child: Stack(children: [
+                      Container(
+                          padding: EdgeInsets.all(5),
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            "assets/icons/battery.svg",
+                            key: Key("assets/icons/battery.svg"),
+                            matchTextDirection: false,
+                            width: 36,
+                            height: 36,
+                            color: IdomColors.additionalColor,
+                          )),
+                      Container(
+                          alignment: Alignment.center,
+                          child: Text(sensor.batteryLevel != null
+                              ? sensor.batteryLevel.toString() + "%"
+                              : "-%"))
+                    ])))),
+        SizedBox(
+            width: 35,
+            child: Container(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  key: Key("deleteButton"),
+                  child: SizedBox(
+                      width: 35,
+                      child: Container(
+                          padding: EdgeInsets.only(top: 5),
+                          alignment: Alignment.topRight,
+                          child: SvgPicture.asset(
+                            "assets/icons/dustbin.svg",
+                            matchTextDirection: false,
+                            width: 32,
+                            height: 32,
+                            color: IdomColors.mainFill,
+                          ))),
+                  onPressed: () {
+                    setState(() {
+                      _deactivateSensor(sensor);
+                    });
+                  },
+                ))),
+      ],
+    );
   }
 }

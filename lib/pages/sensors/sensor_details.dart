@@ -278,17 +278,31 @@ class _SensorDetailsState extends State<SensorDetails> {
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                SensorCategories.values
-                                    .where((element) =>
-                                        element['value'] ==
-                                        widget.sensor.category)
-                                    .first['text']
-                                    .i18n,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontSize: 21.0),
-                              ))),
+                                  SensorCategories.values
+                                      .where((element) =>
+                                          element['value'] ==
+                                          widget.sensor.category)
+                                      .first['text']
+                                      .i18n,
+                                  style: TextStyle(fontSize: 21.0)))),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Poziom baterii".i18n,
+                                  style: TextStyle(
+                                      color: IdomColors.additionalColor,
+                                      fontSize: 16.5,
+                                      fontWeight: FontWeight.bold)))),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                  "${widget.sensor.batteryLevel != null ? widget.sensor.batteryLevel : "-"} %",
+                                  style: TextStyle(fontSize: 21.0)))),
                       if (widget.sensor.category != "rain_sensor")
                         Padding(
                             padding: EdgeInsets.only(

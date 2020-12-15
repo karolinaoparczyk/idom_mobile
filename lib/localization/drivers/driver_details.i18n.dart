@@ -138,6 +138,10 @@ extension Localization on String {
       {
         "pl_pl": "opuszczone",
         "en_uk": "lowered",
+      } +
+      {
+        "pl_pl": "Poziom baterii",
+        "en_uk": "Battery level",
       }+
       {
         "pl_pl": "Wysyłanie komendy...",

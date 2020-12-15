@@ -198,19 +198,7 @@ class _DriversState extends State<Drivers> {
                                               alignment: Alignment.centerRight,
                                               child: _getDriverImage(
                                                   _driverList[index]))),
-                                      trailing: GestureDetector(
-                                        onTapDown: (TapDownDetails details) async {
-                                          _showPopupMenu(details.globalPosition,
-                                              _driverList[index]);
-                                        },
-                                        child: Container(
-                                            child: Icon(Icons.more_vert_outlined,
-                                                size: 30, color: Theme.of(
-                                                    context)
-                                                    .textTheme
-                                                    .bodyText1
-                                                    .color)),
-                                      ),
+                                     trailing: getTrailing(_driverList[index])),
                                     ),
                                   ))))))),
         ],
@@ -222,6 +210,15 @@ class _DriversState extends State<Drivers> {
       padding:
           const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
       child: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  getTrailing(Driver driver) {
+    return GestureDetector(
+      onTapDown: (TapDownDetails details) async {
+        _showPopupMenu(details.globalPosition, driver);
+      },
+      child: Container(child: Icon(Icons.more_vert_outlined, size: 30)),
     );
   }
 
@@ -237,7 +234,7 @@ class _DriversState extends State<Drivers> {
       case "bulb":
         imageUrl = "assets/icons/light-bulb.svg";
         break;
-        case "roller_blind":
+      case "roller_blind":
         imageUrl = "assets/icons/blinds.svg";
         break;
     }
@@ -393,7 +390,7 @@ class _DriversState extends State<Drivers> {
           _switchBulb(driver);
         } else if (driver.category == "clicker") {
           _clickDriver(driver);
-        }else if (driver.category == "remote_control") {
+        } else if (driver.category == "remote_control") {
           _sendCommandToRemoteControl(driver);
         }
         break;
@@ -406,12 +403,12 @@ class _DriversState extends State<Drivers> {
     if (driver.ipAddress == null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       final snackBar =
-      new SnackBar(content: new Text("Pilot nie posiada adresu IP.".i18n));
+          new SnackBar(content: new Text("Pilot nie posiada adresu IP.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }
-    try{
-    var result = await RemoteControl.sendCommand(driver, "Power");
+    try {
+      var result = await RemoteControl.sendCommand(driver, "Power");
       if (result != null) {
         if (result == 200) {
           final snackBar = new SnackBar(
@@ -427,7 +424,7 @@ class _DriversState extends State<Drivers> {
     } catch (e) {
       final snackBar = new SnackBar(
           content:
-          new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
+              new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }

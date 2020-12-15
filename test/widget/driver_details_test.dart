@@ -102,6 +102,8 @@ void main() {
     expect(find.text("driver1"), findsNWidgets(2));
     expect(find.text("Nazwa"), findsOneWidget);
     expect(find.text("Ogólne"), findsOneWidget);
+    expect(find.text("Poziom baterii"), findsOneWidget);
+    expect(find.text("- %"), findsOneWidget);
     expect(find.text("Obsługa sterownika"), findsOneWidget);
     expect(find.text("Aktualny stan"), findsOneWidget);
     expect(find.text("podniesione"), findsOneWidget);
@@ -397,6 +399,8 @@ void main() {
     expect(find.text("driver1"), findsNWidgets(2));
     expect(find.text("Name"), findsOneWidget);
     expect(find.text("General"), findsOneWidget);
+    expect(find.text("Battery level"), findsOneWidget);
+    expect(find.text("- %"), findsOneWidget);
     expect(find.text("Driver handler"), findsOneWidget);
     expect(find.text("Press the button"), findsOneWidget);
     expect(find.text("Current state"), findsNothing);
