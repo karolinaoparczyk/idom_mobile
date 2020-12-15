@@ -284,7 +284,10 @@ class _SensorDetailsState extends State<SensorDetails> {
                                           widget.sensor.category)
                                       .first['text']
                                       .i18n,
-                                  style: TextStyle(fontSize: 21.0)))),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontSize: 21.0)))),
                       Padding(
                           padding: EdgeInsets.only(
                               left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
@@ -302,7 +305,10 @@ class _SensorDetailsState extends State<SensorDetails> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                   "${widget.sensor.batteryLevel != null ? widget.sensor.batteryLevel : "-"} %",
-                                  style: TextStyle(fontSize: 21.0)))),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontSize: 21.0)))),
                       if (widget.sensor.category != "rain_sensor")
                         Padding(
                             padding: EdgeInsets.only(

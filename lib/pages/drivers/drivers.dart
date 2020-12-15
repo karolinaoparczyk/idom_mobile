@@ -200,7 +200,7 @@ class _DriversState extends State<Drivers> {
                                                   _driverList[index]))),
                                      trailing: getTrailing(_driverList[index])),
                                     ),
-                                  ))))))),
+                                  )))))),
         ],
       );
     }
@@ -218,7 +218,11 @@ class _DriversState extends State<Drivers> {
       onTapDown: (TapDownDetails details) async {
         _showPopupMenu(details.globalPosition, driver);
       },
-      child: Container(child: Icon(Icons.more_vert_outlined, size: 30)),
+      child: Container(child: Icon(Icons.more_vert_outlined, size: 30, color: Theme.of(
+          context)
+          .textTheme
+          .bodyText1
+          .color)),
     );
   }
 

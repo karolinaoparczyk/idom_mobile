@@ -181,7 +181,7 @@ class _SensorsState extends State<Sensors> {
       key: Key('searchField'),
       controller: _searchController,
       style: TextStyle(
-          color: IdomColors.textLight, fontSize: 20, letterSpacing: 2.0),
+          color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...".i18n,
@@ -262,42 +262,37 @@ class _SensorsState extends State<Sensors> {
 
   Widget listSensors() {
     if (zeroFetchedItems) {
-      return  RefreshIndicator(
+      return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
           onRefresh: _pullRefresh,
           child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
               child: Container(
                   height: MediaQuery.of(context).size.height,
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text("Brak czujników w systemie.".i18n,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1,
-                  textAlign: TextAlign.center)))));
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("Brak czujników w systemie.".i18n,
+                          style: Theme.of(context).textTheme.bodyText1,
+                          textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
         _sensorList == null) {
-      return
-        RefreshIndicator(
-            backgroundColor: IdomColors.mainBackgroundDark,
-            onRefresh: _pullRefresh,
-            child: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Container(
-                    height: MediaQuery.of(context).size.height,
-                    padding: EdgeInsets.only(
-                        left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-                    alignment: Alignment.topCenter,
-                    child: Text("Błąd połączenia z serwerem.".i18n,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1,
-                        textAlign: TextAlign.center))),
+      return RefreshIndicator(
+        backgroundColor: IdomColors.mainBackgroundDark,
+        onRefresh: _pullRefresh,
+        child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Container(
+                height: MediaQuery.of(context).size.height,
+                padding: EdgeInsets.only(
+                    left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                alignment: Alignment.topCenter,
+                child: Text("Błąd połączenia z serwerem.".i18n,
+                    style: Theme.of(context).textTheme.bodyText1,
+                    textAlign: TextAlign.center))),
       );
     } else if (!zeroFetchedItems &&
         _sensorList != null &&
@@ -308,60 +303,58 @@ class _SensorsState extends State<Sensors> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.".i18n,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1,
+                  style: Theme.of(context).textTheme.bodyText1,
                   textAlign: TextAlign.center)));
     } else if (_sensorList != null && _sensorList.length > 0) {
-      return Column(
-        children: [
-          Expanded(
-              child: Scrollbar(
-                  child: RefreshIndicator(
-                      backgroundColor: IdomColors.mainBackgroundDark,
-                      onRefresh: _pullRefresh,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10.0, top: 10, right: 10.0, bottom: 0.0),
-                        child: ListView.builder(
-                          key: Key("SensorsList"),
-                          shrinkWrap: true,
-                          itemCount: _sensorList.length,
-                          itemBuilder: (BuildContext buildContext, index) =>
-                              Container(
-                                  height: 80,
-                                  child: Card(
-                                      child: ListTile(
-                                          key: Key(_sensorList[index].name),
-                                          title: Text(
-                                            _sensorList[index].name,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1
-                                                .copyWith(fontSize: 21.0),
-                                          ),
-                                          subtitle: Text(
-                                            sensorData(_sensorList[index]),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2
-                                                .copyWith(
-                                                    fontSize: 16.5,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                          onTap: () {
-                                            navigateToSensorDetails(
-                                                _sensorList[index]);
-                                          },
-                                          leading: getCategoryImage(
-                                              _sensorList[index]),
-                                        
-                                      /// delete sensor button
-                                      trailing: getTrailing(
-                                          buildContext, _sensorList[index])))),
-                    ),
-                  ))));
+      return Column(children: [
+        Expanded(
+            child: Scrollbar(
+                child: RefreshIndicator(
+                    backgroundColor: IdomColors.mainBackgroundDark,
+                    onRefresh: _pullRefresh,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                      child: ListView.builder(
+                        key: Key("SensorsList"),
+                        shrinkWrap: true,
+                        itemCount: _sensorList.length,
+                        itemBuilder: (BuildContext buildContext, index) =>
+                            Container(
+                                height: 80,
+                                child: Card(
+                                    child: ListTile(
+                                        key: Key(_sensorList[index].name),
+                                        title: Text(
+                                          _sensorList[index].name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(fontSize: 21.0),
+                                        ),
+                                        subtitle: Text(
+                                          sensorData(_sensorList[index]),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText2
+                                              .copyWith(
+                                                  fontSize: 16.5,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                        ),
+                                        onTap: () {
+                                          navigateToSensorDetails(
+                                              _sensorList[index]);
+                                        },
+                                        leading: getCategoryImage(
+                                            _sensorList[index]),
+
+                                        /// delete sensor button
+                                        trailing: getTrailing(buildContext,
+                                            _sensorList[index])))),
+                      ),
+                    ))))
+      ]);
     }
 
     /// shows progress indicator while fetching data
@@ -530,9 +523,14 @@ class _SensorsState extends State<Sensors> {
                           )),
                       Container(
                           alignment: Alignment.center,
-                          child: Text(sensor.batteryLevel != null
-                              ? sensor.batteryLevel.toString() + "%"
-                              : "-%"))
+                          child: Text(
+                              sensor.batteryLevel != null
+                                  ? sensor.batteryLevel.toString() + "%"
+                                  : "-%",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 13.5)))
                     ])))),
         SizedBox(
             width: 35,
@@ -550,7 +548,7 @@ class _SensorsState extends State<Sensors> {
                             matchTextDirection: false,
                             width: 32,
                             height: 32,
-                            color: IdomColors.mainFill,
+                            color: Theme.of(context).textTheme.bodyText1.color,
                           ))),
                   onPressed: () {
                     setState(() {

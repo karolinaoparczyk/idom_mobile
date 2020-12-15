@@ -311,7 +311,7 @@ class _CamerasState extends State<Cameras> {
                             matchTextDirection: false,
                             width: 32,
                             height: 32,
-                            color: IdomColors.mainFill,
+                            color: Theme.of(context).textTheme.bodyText1.color,
                           ))),
                   onPressed: () {
                     setState(() {

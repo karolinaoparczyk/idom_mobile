@@ -90,7 +90,11 @@ class _NewDriverState extends State<NewDriver> {
         decoration: InputDecoration(
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down, color: IdomColors.blackTextDark),
+          suffixIcon: Icon(Icons.arrow_drop_down, color: Theme.of(
+              context)
+              .textTheme
+              .bodyText1
+              .color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -111,7 +115,10 @@ class _NewDriverState extends State<NewDriver> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: CategoryFieldValidator.validate);
   }
 
