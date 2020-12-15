@@ -186,7 +186,7 @@ class _SensorsState extends State<Sensors> {
       decoration: InputDecoration(
         hintText: "Wyszukaj...".i18n,
         hintStyle: TextStyle(
-            color: IdomColors.textLight, fontSize: 20, letterSpacing: 2.0),
+            color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
@@ -255,33 +255,50 @@ class _SensorsState extends State<Sensors> {
             onLogOutFailure: onLogOutFailure),
 
         /// builds sensor's list
-        body: Container(child: Column(children: <Widget>[listSensors()])),
+        body: Container(child: listSensors()),
       ),
     );
   }
 
   Widget listSensors() {
     if (zeroFetchedItems) {
-      return Padding(
+      return  RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak czujników w systemie.".i18n,
-                  style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1,
+                  textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
         _sensorList == null) {
-      return Padding(
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.".i18n,
-                  style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+      return
+        RefreshIndicator(
+            backgroundColor: IdomColors.mainBackgroundDark,
+            onRefresh: _pullRefresh,
+            child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    padding: EdgeInsets.only(
+                        left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                    alignment: Alignment.topCenter,
+                    child: Text("Błąd połączenia z serwerem.".i18n,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1,
+                        textAlign: TextAlign.center))),
+      );
     } else if (!zeroFetchedItems &&
         _sensorList != null &&
         _sensorList.length == 0) {
@@ -291,40 +308,55 @@ class _SensorsState extends State<Sensors> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.".i18n,
-                  style: TextStyle(fontSize: 16.5),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1,
                   textAlign: TextAlign.center)));
     } else if (_sensorList != null && _sensorList.length > 0) {
-      return Expanded(
-          child: Scrollbar(
-              child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10.0, top: 10, right: 10.0, bottom: 0.0),
-                    child: ListView.builder(
-                      key: Key("SensorsList"),
-                      shrinkWrap: true,
-                      itemCount: _sensorList.length,
-                      itemBuilder: (BuildContext buildContext, index) =>
-                          Container(
-                              height: 80,
-                              child: Card(
-                                  child: ListTile(
-                                      key: Key(_sensorList[index].name),
-                                      title: Text(_sensorList[index].name,
-                                          style: TextStyle(fontSize: 21.0)),
-                                      subtitle: Text(
-                                          sensorData(_sensorList[index]),
-                                          style: TextStyle(
-                                              fontSize: 16.5,
-                                              color: IdomColors.textDark)),
-                                      onTap: () {
-                                        navigateToSensorDetails(
-                                            _sensorList[index]);
-                                      },
-                                      leading:
-                                          getCategoryImage(_sensorList[index]),
-
+      return Column(
+        children: [
+          Expanded(
+              child: Scrollbar(
+                  child: RefreshIndicator(
+                      backgroundColor: IdomColors.mainBackgroundDark,
+                      onRefresh: _pullRefresh,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                        child: ListView.builder(
+                          key: Key("SensorsList"),
+                          shrinkWrap: true,
+                          itemCount: _sensorList.length,
+                          itemBuilder: (BuildContext buildContext, index) =>
+                              Container(
+                                  height: 80,
+                                  child: Card(
+                                      child: ListTile(
+                                          key: Key(_sensorList[index].name),
+                                          title: Text(
+                                            _sensorList[index].name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1
+                                                .copyWith(fontSize: 21.0),
+                                          ),
+                                          subtitle: Text(
+                                            sensorData(_sensorList[index]),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText2
+                                                .copyWith(
+                                                    fontSize: 16.5,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                          ),
+                                          onTap: () {
+                                            navigateToSensorDetails(
+                                                _sensorList[index]);
+                                          },
+                                          leading: getCategoryImage(
+                                              _sensorList[index]),
+                                        
                                       /// delete sensor button
                                       trailing: getTrailing(
                                           buildContext, _sensorList[index])))),

@@ -64,11 +64,18 @@ class _NewSensorState extends State<NewSensor> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
+          counterStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontSize: 12.5)
         ),
         autofocus: true,
         key: Key('name'),
         maxLength: 30,
-        style: TextStyle(fontSize: 17.0),
+        style:Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         controller: _nameController,
         validator: SensorNameFieldValidator.validate);
   }
@@ -81,8 +88,11 @@ class _NewSensorState extends State<NewSensor> {
         decoration: InputDecoration(
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
-          prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
+          suffixIcon: Icon(Icons.arrow_drop_down, color: Theme.of(
+              context)
+              .textTheme
+              .bodyText1
+              .color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -114,13 +124,19 @@ class _NewSensorState extends State<NewSensor> {
               canEditFrequency = false;
             } else {
               canEditFrequency = true;
+              frequencyUnitsValue = null;
+              _frequencyUnitsController = TextEditingController();
+              _frequencyValueController = TextEditingController();
             }
             setState(() {});
           }
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 17.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: CategoryFieldValidator.validate);
   }
 
@@ -133,7 +149,10 @@ class _NewSensorState extends State<NewSensor> {
           enabled: canEditFrequency,
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
-          style: TextStyle(fontSize: 17.0),
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontSize: 21.0),
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
@@ -142,7 +161,7 @@ class _NewSensorState extends State<NewSensor> {
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
-                    : IdomColors.textDark),
+                    : IdomColors.blackTextDark),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -159,9 +178,12 @@ class _NewSensorState extends State<NewSensor> {
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
-                  : IdomColors.textDark),
-          suffixIcon: Icon(Icons.arrow_drop_down),
-          prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
+                  : IdomColors.blackTextDark),
+          suffixIcon: Icon(Icons.arrow_drop_down, color: Theme.of(
+              context)
+              .textTheme
+              .bodyText1
+              .color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -182,7 +204,10 @@ class _NewSensorState extends State<NewSensor> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 17.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: FrequencyUnitsFieldValidator.validate);
   }
 
@@ -268,10 +293,7 @@ class _NewSensorState extends State<NewSensor> {
                                           child: Text("Ogólne".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal)),
+                                                  .bodyText1),
                                         ),
                                       ],
                                     ))),
@@ -305,10 +327,7 @@ class _NewSensorState extends State<NewSensor> {
                                                 "Częstotliwość pobierania danych".i18n,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .bodyText1
-                                                    .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.normal)),
+                                                    .bodyText1),
                                           ),
                                         ],
                                       ))),
@@ -351,10 +370,7 @@ class _NewSensorState extends State<NewSensor> {
                                       ? Text(fieldsValidationMessage,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyText1
-                                              .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal))
+                                              .bodyText1)
                                       : SizedBox(),
                                   secondChild: SizedBox(),
                                 ),
@@ -371,9 +387,7 @@ class _NewSensorState extends State<NewSensor> {
                                     ? Text(nameValidationMessage,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal))
+                                            .bodyText1)
                                     : SizedBox(),
                                 secondChild: SizedBox(),
                               ),

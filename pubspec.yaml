@@ -35,6 +35,7 @@ dependencies:
   permission_handler: ^5.0.1
   flex_color_picker:
   i18n_extension: ^1.4.5
+  provider:
 
 dev_dependencies:
   flutter_test:

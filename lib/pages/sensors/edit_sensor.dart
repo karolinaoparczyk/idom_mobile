@@ -102,9 +102,16 @@ class _EditSensorState extends State<EditSensor> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
+            counterStyle: Theme.of(context)
+                .textTheme
+                .bodyText1
+                .copyWith(fontSize: 12.5)
         ),
         key: Key('name'),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -119,7 +126,11 @@ class _EditSensorState extends State<EditSensor> {
         decoration: InputDecoration(
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
+          suffixIcon: Icon(Icons.arrow_drop_down, color: Theme.of(
+              context)
+              .textTheme
+              .bodyText1
+              .color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -153,7 +164,10 @@ class _EditSensorState extends State<EditSensor> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: CategoryFieldValidator.validate);
   }
 
@@ -166,7 +180,10 @@ class _EditSensorState extends State<EditSensor> {
           enabled: canEditFrequency,
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
-          style: TextStyle(fontSize: 21.0),
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontSize: 21.0),
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
@@ -175,7 +192,11 @@ class _EditSensorState extends State<EditSensor> {
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
-                    : IdomColors.textDark),
+                    : Theme.of(
+                    context)
+                    .textTheme
+                    .bodyText1
+                    .color),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -192,8 +213,12 @@ class _EditSensorState extends State<EditSensor> {
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
-                  : IdomColors.textDark),
-          suffixIcon: Icon(Icons.arrow_drop_down),
+                  : Theme.of(
+                  context)
+                  .textTheme
+                  .bodyText1
+                  .color),
+          suffixIcon: Icon(Icons.arrow_drop_down, color: IdomColors.blackTextDark),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -215,7 +240,10 @@ class _EditSensorState extends State<EditSensor> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: UrlFieldValidator.validate);
   }
 
@@ -268,9 +296,7 @@ class _EditSensorState extends State<EditSensor> {
                                   child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
@@ -299,9 +325,7 @@ class _EditSensorState extends State<EditSensor> {
                                         "Częstotliwość pobierania danych".i18n,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal)),
+                                            .bodyText1),
                                   ),
                                 ],
                               ))),
@@ -338,8 +362,7 @@ class _EditSensorState extends State<EditSensor> {
                               ? Text(fieldsValidationMessage,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .bodyText1
-                                      .copyWith(fontWeight: FontWeight.normal))
+                                      .bodyText1)
                               : SizedBox(),
                           secondChild: SizedBox(),
                         ),
@@ -356,8 +379,7 @@ class _EditSensorState extends State<EditSensor> {
                             ? Text(nameValidationMessage,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                    .bodyText1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),

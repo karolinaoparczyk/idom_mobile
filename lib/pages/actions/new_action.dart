@@ -497,9 +497,7 @@ class _NewActionState extends State<NewAction> {
                                   child: Text("Ogólne",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
@@ -533,9 +531,7 @@ class _NewActionState extends State<NewAction> {
                                     child: Text("Wyzwalacz na czujniku",
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal)),
+                                            .bodyText1),
                                   ),
                                 ],
                               ))),
@@ -567,9 +563,7 @@ class _NewActionState extends State<NewAction> {
                                   child: Text("Czas działania akcji",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
@@ -587,50 +581,36 @@ class _NewActionState extends State<NewAction> {
                                 splashColor: Colors.transparent,
                                 fillColor: IdomColors.lighten(
                                     IdomColors.additionalColor, 0.2),
-                                selectedColor: IdomColors.textDark,
+                                selectedColor: IdomColors.blackTextLight,
                                 children: [
                                   Text("pn",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                   Text("wt",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                   Text("śr",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                   Text("czw",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                   Text("pt",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                   Text("sb",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                   Text("nd",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ],
                                 isSelected: daysOfWeekSelected,
                                 onPressed: (int index) {
@@ -664,8 +644,7 @@ class _NewActionState extends State<NewAction> {
                             ? Text(fieldsValidationMessage,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                    .bodyText1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),

@@ -118,8 +118,7 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                         title: Text(sensor.name,
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal)),
+                                .bodyText1),
                       )))
                       .toList(),
                 )),

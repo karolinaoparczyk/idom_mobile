@@ -122,8 +122,7 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                         title: Text(category['text'].i18n,
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal)),
+                                .bodyText1),
                       )))
                       .toList(),
                 )),

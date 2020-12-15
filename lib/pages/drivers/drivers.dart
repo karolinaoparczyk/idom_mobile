@@ -125,64 +125,84 @@ class _DriversState extends State<Drivers> {
             onLogOutFailure: onLogOutFailure),
 
         /// builds cameras' list
-        body: Container(child: Column(children: <Widget>[listDrivers()])),
+        body: Container(child: listDrivers()),
       ),
     );
   }
 
   Widget listDrivers() {
     if (zeroFetchedItems) {
-      return Padding(
+      return  RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak sterowników w systemie.".i18n,
                   style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
         _driverList == null) {
-      return Padding(
+      return  RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Błąd połączenia z serwerem.".i18n,
                   style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  textAlign: TextAlign.center)))));
     } else if (_driverList != null && _driverList.length > 0) {
-      return Expanded(
-          child: Scrollbar(
-              child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10.0, top: 10, right: 10.0, bottom: 0.0),
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _driverList.length,
-                          itemBuilder: (context, index) => Container(
-                              height: 80,
-                              child: Card(
-                                child: ListTile(
-                                    key: Key(_driverList[index].name),
-                                    title: Text(_driverList[index].name,
-                                        style: TextStyle(fontSize: 21.0)),
-                                    onTap: () {
-                                      navigateToDriverDetails(
-                                          _driverList[index]);
-                                    },
-                                    leading: SizedBox(
-                                        width: 35,
-                                        child: Container(
-                                            padding: EdgeInsets.only(top: 5),
-                                            alignment: Alignment.centerRight,
-                                            child: _getDriverImage(
-                                                _driverList[index]))),
-                                    trailing: getTrailing(_driverList[index])),
-                              )))))));
+      return Column(
+        children: [
+          Expanded(
+              child: Scrollbar(
+                  child: RefreshIndicator(
+                      backgroundColor: IdomColors.mainBackgroundDark,
+                      onRefresh: _pullRefresh,
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: _driverList.length,
+                              itemBuilder: (context, index) => Container(
+                                  height: 80,
+                                  child: Card(
+                                    child: ListTile(
+                                      key: Key(_driverList[index].name),
+                                      title: Text(_driverList[index].name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(fontSize: 21.0)),
+                                      onTap: () {
+                                        navigateToDriverDetails(_driverList[index]);
+                                      },
+                                      leading: SizedBox(
+                                          width: 35,
+                                          child: Container(
+                                              padding: EdgeInsets.only(top: 5),
+                                              alignment: Alignment.centerRight,
+                                              child: _getDriverImage(
+                                                  _driverList[index]))),
+                                     trailing: getTrailing(_driverList[index])),
+                                    ),
+                                  ))))))),
+        ],
+      );
     }
 
     /// shows progress indicator while fetching data
@@ -229,7 +249,9 @@ class _DriversState extends State<Drivers> {
   _showPopupMenu(Offset offset, Driver driver) async {
     double left = offset.dx;
     double top = offset.dy;
-    var selected = await showMenu(
+    var selected = await showMenu(color: Theme.of(
+        context)
+        .backgroundColor,
       context: context,
       position: RelativeRect.fromLTRB(left, top, 0, 0),
       items: [
@@ -258,7 +280,10 @@ class _DriversState extends State<Drivers> {
                           ),
                           SizedBox(width: 5),
                           Text('Wciśnij przycisk'.i18n,
-                              style: TextStyle(fontSize: 21.0)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                     if (driver.category == "remote_control")
@@ -274,7 +299,10 @@ class _DriversState extends State<Drivers> {
                           ),
                           SizedBox(width: 5),
                           Text('Włącz/wyłącz pilot'.i18n,
-                              style: TextStyle(fontSize: 21.0)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                     if (driver.category == "bulb")
@@ -290,7 +318,10 @@ class _DriversState extends State<Drivers> {
                           ),
                           SizedBox(width: 5),
                           Text('Włącz/wyłącz żarówkę'.i18n,
-                              style: TextStyle(fontSize: 21.0)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                     if (driver.category == "roller_blind")
@@ -306,7 +337,10 @@ class _DriversState extends State<Drivers> {
                           ),
                           SizedBox(width: 5),
                           Text('Podnieś/opuść rolety'.i18n,
-                              style: TextStyle(fontSize: 21.0)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                   ]),
@@ -332,10 +366,17 @@ class _DriversState extends State<Drivers> {
                             alignment: Alignment.centerRight,
                             width: 25,
                             height: 25,
-                            color: IdomColors.mainFill,
+                            color: Theme.of(
+                                context)
+                                .textTheme
+                                .bodyText1
+                                .color,
                           ),
                           SizedBox(width: 5),
-                          Text('Usuń'.i18n, style: TextStyle(fontSize: 21.0)),
+                          Text('Usuń'.i18n, style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              .copyWith(fontSize: 21.0)),
                         ],
                       )
                     ])),
@@ -346,7 +387,7 @@ class _DriversState extends State<Drivers> {
     switch (selected) {
       case "click":
         if (driver.category == "bulb") {
-          _switchDriver(driver);
+          _switchBulb(driver);
         } else if (driver.category == "clicker") {
           _clickDriver(driver);
         } else if (driver.category == "remote_control") {
@@ -403,7 +444,7 @@ class _DriversState extends State<Drivers> {
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
-  _switchDriver(Driver driver) async {
+  _switchBulb(Driver driver) async {
     var flag = driver.data == null
         ? "on"
         : driver.data
@@ -417,21 +458,21 @@ class _DriversState extends State<Drivers> {
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
-        message = "Wysłano komendę włączenia sterownika ".i18n +
+        message = "Wysłano komendę włączenia żarówki ".i18n +
             driver.name +
             ".".i18n;
       } else {
-        message = "Wysłano komendę wyłączenia sterownika ".i18n +
+        message = "Wysłano komendę wyłączenia żarówki ".i18n +
             driver.name +
             ".".i18n;
       }
       await getDrivers();
     } else if (result == 404) {
-      message = "Nie znaleziono sterownika ".i18n +
+      message = "Nie znaleziono żarówki ".i18n +
           driver.name +
           " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message = "Nie udało się podłączyć do sterownika".i18n +
+      message = "Nie udało się podłączyć do żarówki ".i18n +
           driver.name +
           ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
     }
