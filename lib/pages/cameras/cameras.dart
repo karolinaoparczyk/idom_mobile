@@ -270,29 +270,7 @@ class _CamerasState extends State<Cameras> {
   }
 
   getTrailing(Camera camera) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-            width: 40,
-            child: Container(
-                alignment: Alignment.center,
-                child: SizedBox(
-                    width: 40,
-                    child: Stack(
-                        children: [ Container(
-                            padding: EdgeInsets.all(5),
-                            alignment: Alignment.center,
-                            child: SvgPicture.asset(
-                              "assets/icons/battery.svg",
-                              key: Key("assets/icons/battery.svg"),
-                              matchTextDirection: false,
-                              width: 36,
-                              height: 36,
-                              color: IdomColors.additionalColor,
-                            )),
-                          Container(alignment: Alignment.center,child: Text(""))]
-                    )))),
+    return
         SizedBox(
             width: 35,
             child: Container(
@@ -316,10 +294,7 @@ class _CamerasState extends State<Cameras> {
                       _deleteCamera(camera);
                     });
                   },
-                ))),
-
-      ],
-    );
+                )));
   }
 
   /// navigates to adding camera page

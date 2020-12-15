@@ -94,13 +94,15 @@ class _SensorsState extends State<Sensors> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy.".i18n));
+                "Błąd pobierania czujników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -143,12 +145,14 @@ class _SensorsState extends State<Sensors> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -157,13 +161,15 @@ class _SensorsState extends State<Sensors> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -175,16 +181,12 @@ class _SensorsState extends State<Sensors> {
       key: Key('searchField'),
       controller: _searchController,
       style: TextStyle(
-          color: IdomColors.textLight,
-          fontSize: 20,
-          letterSpacing: 2.0),
+          color: IdomColors.textLight, fontSize: 20, letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...".i18n,
         hintStyle: TextStyle(
-            color: IdomColors.textLight,
-            fontSize: 20,
-            letterSpacing: 2.0),
+            color: IdomColors.textLight, fontSize: 20, letterSpacing: 2.0),
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
@@ -457,7 +459,8 @@ class _SensorsState extends State<Sensors> {
 
     /// displays success message if sensor added succesfully
     if (result == true) {
-      final snackBar = new SnackBar(content: new Text("Dodano nowy czujnik.".i18n));
+      final snackBar =
+          new SnackBar(content: new Text("Dodano nowy czujnik.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await getSensors();
     }
@@ -481,8 +484,8 @@ class _SensorsState extends State<Sensors> {
                 alignment: Alignment.center,
                 child: SizedBox(
                     width: 40,
-                    child: Stack(
-                      children: [ Container(
+                    child: Stack(children: [
+                      Container(
                           padding: EdgeInsets.all(5),
                           alignment: Alignment.center,
                           child: SvgPicture.asset(
@@ -493,8 +496,12 @@ class _SensorsState extends State<Sensors> {
                             height: 36,
                             color: IdomColors.additionalColor,
                           )),
-                        Container(alignment: Alignment.center,child: Text(""))]
-                    )))),
+                      Container(
+                          alignment: Alignment.center,
+                          child: Text(sensor.batteryLevel != null
+                              ? sensor.batteryLevel.toString() + "%"
+                              : "-%"))
+                    ])))),
         SizedBox(
             width: 35,
             child: Container(
@@ -519,7 +526,6 @@ class _SensorsState extends State<Sensors> {
                     });
                   },
                 ))),
-
       ],
     );
   }
