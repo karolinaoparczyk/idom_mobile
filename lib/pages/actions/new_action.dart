@@ -336,7 +336,9 @@ class _NewActionState extends State<NewAction> {
               builder: (context) {
                 return Dialog(
                   child: ChooseDriverDialog(
-                      drivers: drivers, currentDriver: selectedDriver),
+                      drivers: drivers.where((element) =>
+                      element.category !=
+                          "remote_control").toList(), currentDriver: selectedDriver),
                 );
               });
           if (driver != null) {
