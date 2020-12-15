@@ -105,7 +105,7 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
                         (sensor) => RadioListTile(
                       title: Text(sensor.name,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontWeight: FontWeight.normal, fontSize: 21.0)),
+                              fontSize: 21.0)),
                       value: sensor,
                       groupValue: selectedSensor,
                       onChanged: (value) {

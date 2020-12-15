@@ -60,12 +60,20 @@ extension Localization on String {
         "en_uk": "Driver ",
       }+
       {
+        "pl_pl": "Nie znaleziono żarówki ",
+        "en_uk": "Bulb ",
+      }+
+      {
         "pl_pl": " na serwerze. Odswież listę sterowników.",
         "en_uk": " not found on the server. Refresh the driver list. ",
       } +
       {
         "pl_pl": "Nie udało się podłączyć do sterownika ",
         "en_uk": "Failed to connect to driver ",
+      } +
+      {
+        "pl_pl": "Nie udało się podłączyć do żarówki ",
+        "en_uk": "Failed to connect to bulb ",
       }  +
       {
         "pl_pl": ". Sprawdź podłączenie i spróbuj ponownie.",
@@ -78,6 +86,14 @@ extension Localization on String {
       {
         "pl_pl": "Wysłano komendę wyłączenia sterownika ",
         "en_uk": "The command to turn off driver ",
+      }  +
+      {
+        "pl_pl": "Wysłano komendę włączenia żarówki ",
+        "en_uk": "The command to turn on bulb ",
+      }  +
+      {
+        "pl_pl": "Wysłano komendę wyłączenia żarówki ",
+        "en_uk": "The command to turn off bulb ",
       }  +
       {
         "pl_pl": "Wysłano komendę do sterownika ",
@@ -122,6 +138,10 @@ extension Localization on String {
       {
         "pl_pl": "opuszczone",
         "en_uk": "lowered",
+      }+
+      {
+        "pl_pl": "Wysyłanie komendy...",
+        "en_uk": "Sending a command...",
       };
 
   String get i18n => localize(this, _t);

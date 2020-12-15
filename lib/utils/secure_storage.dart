@@ -18,6 +18,7 @@ class SecureStorage {
   static const String _mobileAppId = "mobileAppId";
   static const String _apiKey = "mobileAppId";
   static const String _fileName = "fileName";
+  static const String _themeMode = "themeMode";
 
   FlutterSecureStorage storage;
 
@@ -31,6 +32,14 @@ class SecureStorage {
 
   Future<String> getApiServerAddress() {
     return storage.read(key: _apiServerAddress);
+  }
+
+  void setThemeMode(String themeMode) {
+    storage.write(key: _themeMode, value: themeMode);
+  }
+
+  Future<String> getThemeMode() {
+    return storage.read(key: _themeMode);
   }
 
   void setUserData(

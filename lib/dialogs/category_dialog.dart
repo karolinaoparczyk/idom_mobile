@@ -63,7 +63,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                     return RadioListTile(
                       title: Text(categories[index]['text'].i18n,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontWeight: FontWeight.normal, fontSize: 21.0)),
+                              fontSize: 21.0)),
                       value: categories[index],
                       groupValue: _selectedCategory,
                       onChanged: (value) {

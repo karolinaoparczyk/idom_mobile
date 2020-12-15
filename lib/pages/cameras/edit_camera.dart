@@ -61,14 +61,15 @@ class _EditCameraState extends State<EditCamera> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
+            labelText: "Nazwa".i18n,
+            labelStyle: Theme.of(context).textTheme.headline5,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            counterStyle:
+                Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -134,10 +135,10 @@ class _EditCameraState extends State<EditCamera> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontWeight: FontWeight.normal))
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),
@@ -182,8 +183,8 @@ class _EditCameraState extends State<EditCamera> {
         fieldsValidationMessage = null;
         setState(() {});
         final snackBar = new SnackBar(
-            content:
-                new Text("Edycja kamery nie powiodła się. Spróbuj ponownie.".i18n));
+            content: new Text(
+                "Edycja kamery nie powiodła się. Spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -195,7 +196,8 @@ class _EditCameraState extends State<EditCamera> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edytowania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd edytowania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
@@ -231,8 +233,8 @@ class _EditCameraState extends State<EditCamera> {
       if (changedName) {
         await _confirmSavingChanges(changedName);
       } else {
-        final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
+        final snackBar = new SnackBar(
+            content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

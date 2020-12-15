@@ -53,7 +53,9 @@ class _CameraStreamState extends State<CameraStream> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: IdomColors.white,
+        backgroundColor: Theme.of(
+            context)
+            .backgroundColor,
         key: _scaffoldKey,
         appBar: AppBar(title: Text(widget.camera.name), actions: [
           IconButton(

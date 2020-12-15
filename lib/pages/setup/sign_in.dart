@@ -7,6 +7,7 @@ import 'package:idom/localization/setup/sign_in.i18n.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/enter_email.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
@@ -49,8 +50,7 @@ class _SignInState extends State<SignIn> {
       child: Text("Konto zostało utworzone. Możesz się zalogować.".i18n,
           style: Theme.of(context)
               .textTheme
-              .bodyText1
-              .copyWith(fontWeight: FontWeight.normal)),
+              .bodyText1),
     );
   }
 
@@ -67,7 +67,10 @@ class _SignInState extends State<SignIn> {
         ),
       ),
       controller: _usernameController,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -103,7 +106,10 @@ class _SignInState extends State<SignIn> {
       ),
       controller: _passwordController,
       validator: PasswordFieldValidator.validate,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.done,
@@ -262,8 +268,7 @@ class _SignInState extends State<SignIn> {
                         child: Text('Zapomniałeś/aś hasła?'.i18n,
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal)),
+                                .bodyText1),
                         onPressed: navigateToEnterEmail,
                       ),
                     ]))
