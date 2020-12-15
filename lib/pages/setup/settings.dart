@@ -52,13 +52,21 @@ class _SettingsState extends State<Settings> {
     "name": "Sensors",
     "description": "Sensors notifications",
   };
+  List<bool> selectedMode = List<bool>();
 
   void initState() {
     super.initState();
     _load = true;
+    getThemeMode();
     getApiAddress();
     getFirebaseParams();
     checkIfUserIsSignedIn();
+  }
+
+  Future<void> getThemeMode() async {
+    bool isDarkMode = await DarkMode.getStorageThemeMode();
+    selectedMode.add(!isDarkMode ? true : false);
+    selectedMode.add(isDarkMode ? true : false);
   }
 
   Future<void> getApiAddress() async {
@@ -88,27 +96,23 @@ class _SettingsState extends State<Settings> {
           labelText: "Adres serwera".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           prefixText: "https://",
-          prefixStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              .copyWith(fontSize: 21.0),
+          prefixStyle:
+              Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
           suffixIcon: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("/api", style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  .copyWith(fontSize: 21.0)),
+              Text("/api",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      .copyWith(fontSize: 21.0)),
             ],
           ),
         ),
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
         validator: UrlFieldValidator.validate);
   }
 
@@ -143,7 +147,7 @@ class _SettingsState extends State<Settings> {
                   flex: 30,
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(left: 13.5, top: 30, right: 13.5),
+                        const EdgeInsets.only(left: 13.5, top: 20, right: 13.5),
                     child: _load
                         ? loadingIndicator(true)
                         : Column(children: <Widget>[
@@ -154,6 +158,33 @@ class _SettingsState extends State<Settings> {
                                     key: _formKey,
                                     child: Column(
                                       children: [
+                                        Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 0.0,
+                                                top: 0.0,
+                                                right: 0.0,
+                                                bottom: 10.0),
+                                            child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                        Icons
+                                                            .settings,
+                                                        size: 17.5),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 5.0),
+                                                      child: Text(
+                                                          "Konfiguracja".i18n,
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyText1),
+                                                    ),
+                                                  ],
+                                                ))),
                                         _buildApiAddress(),
                                         if (_isUserLoggedIn == "true")
                                           SizedBox(height: 20.0),
@@ -161,7 +192,8 @@ class _SettingsState extends State<Settings> {
                                           Row(
                                             children: [
                                               Text(
-                                                "Plik google_services.json".i18n,
+                                                "Plik google_services.json"
+                                                    .i18n,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .headline5,
@@ -186,7 +218,9 @@ class _SettingsState extends State<Settings> {
                                                             .last,
                                                     style: Theme.of(context)
                                                         .textTheme
-                                                        .bodyText1.copyWith(fontSize: 21.0)),
+                                                        .bodyText1
+                                                        .copyWith(
+                                                            fontSize: 21.0)),
                                               ),
                                               SizedBox(width: 30),
                                               IconButton(
@@ -219,7 +253,8 @@ class _SettingsState extends State<Settings> {
                                                         .add_circle_outline_rounded,
                                                     color: Theme.of(context)
                                                         .textTheme
-                                                        .bodyText1.color),
+                                                        .bodyText1
+                                                        .color),
                                                 onPressed: _pickFile,
                                               ),
                                             ],
@@ -244,12 +279,122 @@ class _SettingsState extends State<Settings> {
                                                     : SizedBox(),
                                             secondChild: SizedBox(),
                                           ),
-                                        Switch(
-                                          value: Provider.of<AppStateNotifier>(context, listen: false).isDarkMode,
-                                          onChanged: (boolVal) {
-                                            Provider.of<AppStateNotifier>(context, listen: false).updateTheme(boolVal);
-                                          },
-                                        )
+                                        if (_isUserLoggedIn == "true")
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 0.0,
+                                                  top: 10.0,
+                                                  right: 0.0,
+                                                  bottom: 10.0),
+                                              child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                          Icons
+                                                              .brightness_4_outlined,
+                                                          size: 17.5),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 5.0),
+                                                        child: Text(
+                                                            "Preferencje".i18n,
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyText1),
+                                                      ),
+                                                    ],
+                                                  ))),
+                                        if (_isUserLoggedIn == "true")
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "Motyw".i18n,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline5,
+                                              ),
+                                              SizedBox(width: 10),
+                                              ToggleButtons(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                borderColor:
+                                                    IdomColors.additionalColor,
+                                                splashColor: Colors.transparent,
+                                                fillColor: IdomColors.lighten(
+                                                    IdomColors.additionalColor,
+                                                    0.2),
+                                                selectedColor:
+                                                    IdomColors.blackTextLight,
+                                                children: [
+                                                  Container(
+                                                    width: 60,
+                                                    child: Text("jasny".i18n,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1
+                                                            .copyWith(
+                                                                color: selectedMode[
+                                                                        0]
+                                                                    ? IdomColors
+                                                                        .whiteTextDark
+                                                                    : Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .bodyText1
+                                                                        .color)),
+                                                  ),
+                                                  Container(
+                                                    width: 60,
+                                                    child: Text("ciemny".i18n,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1
+                                                            .copyWith(
+                                                                color: selectedMode[
+                                                                        1]
+                                                                    ? IdomColors
+                                                                        .whiteTextDark
+                                                                    : Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .bodyText1
+                                                                        .color)),
+                                                  )
+                                                ],
+                                                isSelected: selectedMode,
+                                                onPressed: (int index) async {
+                                                  if (selectedMode[index] ==
+                                                      false) {
+                                                    var theme = index == 0
+                                                        ? "light"
+                                                        : "dark";
+                                                    await DarkMode
+                                                        .setStorageThemeMode(
+                                                            theme);
+                                                    setState(() {
+                                                      Provider.of<AppStateNotifier>(
+                                                              context,
+                                                              listen: false)
+                                                          .updateTheme();
+                                                      selectedMode[0] =
+                                                          !selectedMode[0];
+                                                      selectedMode[1] =
+                                                          !selectedMode[1];
+                                                    });
+                                                  }
+                                                },
+                                              ),
+                                            ],
+                                          )
                                       ],
                                     ),
                                   ),
@@ -261,8 +406,7 @@ class _SettingsState extends State<Settings> {
   }
 
   _pickFile() async {
-    File result =
-        await FilePicker.getFile(type: FileType.custom);
+    File result = await FilePicker.getFile(type: FileType.custom);
     if (result != null) {
       file = File(result.path);
       try {
@@ -276,7 +420,8 @@ class _SettingsState extends State<Settings> {
         fieldsValidationMessage = null;
       } catch (e) {
         fieldsValidationMessage =
-            "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie.".i18n;
+            "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie."
+                .i18n;
       }
     }
     setState(() {});
@@ -306,8 +451,8 @@ class _SettingsState extends State<Settings> {
         await _confirmSavingChanges(changedProtocol, changedAddress,
             changedPort, changedGoogleServicesFile);
       } else {
-        final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
+        final snackBar = new SnackBar(
+            content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -334,7 +479,8 @@ class _SettingsState extends State<Settings> {
       if (changedFirebaseParams) {
         widget.storage.setFirebaseParams(firebaseUrl, storageBucket,
             mobileAppId, apiKey, file.path.split("/").last);
-        displayProgressDialog(context: context, key: _keyLoader, text: "Zapisywanie sutawień...");
+        displayProgressDialog(
+            context: context, key: _keyLoader, text: "Zapisywanie sutawień...");
         await _createSensorsNotificationsChannel();
         await sendDeviceToken();
         Navigator.pop(context);

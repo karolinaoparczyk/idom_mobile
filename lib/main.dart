@@ -6,7 +6,10 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DarkMode.init();
+
   runApp(
     ChangeNotifierProvider<AppStateNotifier>(
       create: (context) => AppStateNotifier(),
@@ -39,8 +42,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: IdomColors.mainBackgroundLight,
           dialogBackgroundColor: IdomColors.mainBackgroundLight,
           backgroundColor: IdomColors.mainBackgroundLight,
-          cardTheme:
-              CardTheme(elevation: 15, color: IdomColors.cardLight),
+          cardTheme: CardTheme(elevation: 15, color: IdomColors.cardLight),
           errorColor: IdomColors.error,
           iconTheme: IconThemeData(color: IdomColors.additionalColor),
           dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
@@ -89,8 +91,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: IdomColors.mainBackgroundDark,
           dialogBackgroundColor: IdomColors.mainBackgroundDark,
           backgroundColor: IdomColors.mainBackgroundDark,
-          cardTheme:
-              CardTheme(elevation: 15, color: IdomColors.cardDark),
+          cardTheme: CardTheme(elevation: 15, color: IdomColors.cardDark),
           errorColor: IdomColors.error,
           iconTheme: IconThemeData(color: IdomColors.additionalColor),
           dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
@@ -130,7 +131,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         home: SafeArea(child: I18n(child: Home())),
-        themeMode: appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        themeMode: DarkMode.getTheme() ? ThemeMode.dark : ThemeMode.light,
       );
     });
   }
