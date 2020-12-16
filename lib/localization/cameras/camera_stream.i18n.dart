@@ -9,7 +9,7 @@ extension Localization on String {
       } +
       {
         "pl_pl": "Zapisano kamere.",
-        "en_uk": "Camera been saved.",
+        "en_uk": "Camera has been saved.",
       } +
       {
         "pl_pl": "Sesja użytkownika wygasła. \nTrwa wylogowywanie...",

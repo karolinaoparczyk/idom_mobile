@@ -9,6 +9,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/driver_details.dart';
 import 'package:idom/pages/drivers/new_driver.dart';
+import 'package:idom/remote_control.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -124,72 +125,84 @@ class _DriversState extends State<Drivers> {
             onLogOutFailure: onLogOutFailure),
 
         /// builds cameras' list
-        body: Container(child: Column(children: <Widget>[listDrivers()])),
+        body: Container(child: listDrivers()),
       ),
     );
   }
 
   Widget listDrivers() {
     if (zeroFetchedItems) {
-      return Padding(
+      return  RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak sterowników w systemie.".i18n,
                   style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
         _driverList == null) {
-      return Padding(
+      return  RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Błąd połączenia z serwerem.".i18n,
                   style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  textAlign: TextAlign.center)))));
     } else if (_driverList != null && _driverList.length > 0) {
-      return Expanded(
-          child: Scrollbar(
-              child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10.0, top: 10, right: 10.0, bottom: 0.0),
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _driverList.length,
-                          itemBuilder: (context, index) => Container(
-                              height: 80,
-                              child: Card(
-                                child: ListTile(
-                                  key: Key(_driverList[index].name),
-                                  title: Text(_driverList[index].name,
-                                      style: TextStyle(fontSize: 21.0)),
-                                  onTap: () {
-                                    navigateToDriverDetails(_driverList[index]);
-                                  },
-                                  leading: SizedBox(
-                                      width: 35,
-                                      child: Container(
-                                          padding: EdgeInsets.only(top: 5),
-                                          alignment: Alignment.centerRight,
-                                          child: _getDriverImage(
-                                              _driverList[index]))),
-                                  trailing: GestureDetector(
-                                    onTapDown: (TapDownDetails details) async {
-                                      _showPopupMenu(details.globalPosition,
-                                          _driverList[index]);
-                                    },
-                                    child: Container(
-                                        child: Icon(Icons.more_vert_outlined,
-                                            size: 30)),
-                                  ),
-                                ),
-                              )))))));
+      return Column(
+        children: [
+          Expanded(
+              child: Scrollbar(
+                  child: RefreshIndicator(
+                      backgroundColor: IdomColors.mainBackgroundDark,
+                      onRefresh: _pullRefresh,
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: _driverList.length,
+                              itemBuilder: (context, index) => Container(
+                                  height: 80,
+                                  child: Card(
+                                    child: ListTile(
+                                      key: Key(_driverList[index].name),
+                                      title: Text(_driverList[index].name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(fontSize: 21.0)),
+                                      onTap: () {
+                                        navigateToDriverDetails(_driverList[index]);
+                                      },
+                                      leading: SizedBox(
+                                          width: 35,
+                                          child: Container(
+                                              padding: EdgeInsets.only(top: 5),
+                                              alignment: Alignment.centerRight,
+                                              child: _getDriverImage(
+                                                  _driverList[index]))),
+                                     trailing: getTrailing(_driverList[index])),
+                                    ),
+                                  )))))),
+        ],
+      );
     }
 
     /// shows progress indicator while fetching data
@@ -197,6 +210,19 @@ class _DriversState extends State<Drivers> {
       padding:
           const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
       child: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  getTrailing(Driver driver) {
+    return GestureDetector(
+      onTapDown: (TapDownDetails details) async {
+        _showPopupMenu(details.globalPosition, driver);
+      },
+      child: Container(child: Icon(Icons.more_vert_outlined, size: 30, color: Theme.of(
+          context)
+          .textTheme
+          .bodyText1
+          .color)),
     );
   }
 
@@ -212,6 +238,9 @@ class _DriversState extends State<Drivers> {
       case "bulb":
         imageUrl = "assets/icons/light-bulb.svg";
         break;
+      case "roller_blind":
+        imageUrl = "assets/icons/blinds.svg";
+        break;
     }
     return SvgPicture.asset(imageUrl,
         matchTextDirection: false,
@@ -224,20 +253,22 @@ class _DriversState extends State<Drivers> {
   _showPopupMenu(Offset offset, Driver driver) async {
     double left = offset.dx;
     double top = offset.dy;
-    var selected = await showMenu(
+    var selected = await showMenu(color: Theme.of(
+        context)
+        .backgroundColor,
       context: context,
       position: RelativeRect.fromLTRB(left, top, 0, 0),
       items: [
         PopupMenuItem<String>(
             key: Key("click"),
             child: SizedBox(
-              width: 180,
+              width: 260,
               child: Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   columnWidths: {
-                    0: FlexColumnWidth(1),
+                    0: FlexColumnWidth(2),
                     1: FlexColumnWidth(1),
-                    2: FlexColumnWidth(10),
+                    2: FlexColumnWidth(11),
                   },
                   children: [
                     if (driver.category == "clicker")
@@ -247,13 +278,16 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/play.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 35,
-                            height: 35,
+                            width: 25,
+                            height: 25,
                             color: IdomColors.green,
                           ),
                           SizedBox(width: 5),
                           Text('Wciśnij przycisk'.i18n,
-                              style: TextStyle(fontSize: 21.0)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                     if (driver.category == "remote_control")
@@ -263,13 +297,16 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/turn-off.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 35,
-                            height: 35,
+                            width: 25,
+                            height: 25,
                             color: IdomColors.error,
                           ),
                           SizedBox(width: 5),
                           Text('Włącz/wyłącz pilot'.i18n,
-                              style: TextStyle(fontSize: 21.0)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                     if (driver.category == "bulb")
@@ -279,13 +316,35 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/turn-off.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 35,
-                            height: 35,
+                            width: 25,
+                            height: 25,
                             color: IdomColors.error,
                           ),
                           SizedBox(width: 5),
                           Text('Włącz/wyłącz żarówkę'.i18n,
-                              style: TextStyle(fontSize: 21.0)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
+                        ],
+                      ),
+                    if (driver.category == "roller_blind")
+                      TableRow(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/icons/up-and-down.svg",
+                            matchTextDirection: false,
+                            alignment: Alignment.centerRight,
+                            width: 25,
+                            height: 25,
+                            color: IdomColors.additionalColor,
+                          ),
+                          SizedBox(width: 5),
+                          Text('Podnieś/opuść rolety'.i18n,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                   ]),
@@ -294,13 +353,13 @@ class _DriversState extends State<Drivers> {
         PopupMenuItem<String>(
             key: Key("delete"),
             child: SizedBox(
-                width: 180,
+                width: 260,
                 child: Table(
                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                     columnWidths: {
-                      0: FlexColumnWidth(1),
+                      0: FlexColumnWidth(2),
                       1: FlexColumnWidth(1),
-                      2: FlexColumnWidth(10),
+                      2: FlexColumnWidth(11),
                     },
                     children: [
                       TableRow(
@@ -309,12 +368,19 @@ class _DriversState extends State<Drivers> {
                             "assets/icons/dustbin.svg",
                             matchTextDirection: false,
                             alignment: Alignment.centerRight,
-                            width: 35,
-                            height: 35,
-                            color: IdomColors.mainFill,
+                            width: 25,
+                            height: 25,
+                            color: Theme.of(
+                                context)
+                                .textTheme
+                                .bodyText1
+                                .color,
                           ),
                           SizedBox(width: 5),
-                          Text('Usuń'.i18n, style: TextStyle(fontSize: 21.0)),
+                          Text('Usuń'.i18n, style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              .copyWith(fontSize: 21.0)),
                         ],
                       )
                     ])),
@@ -325,13 +391,45 @@ class _DriversState extends State<Drivers> {
     switch (selected) {
       case "click":
         if (driver.category == "bulb") {
-          _switchDriver(driver);
+          _switchBulb(driver);
         } else if (driver.category == "clicker") {
           _clickDriver(driver);
+        } else if (driver.category == "remote_control") {
+          _sendCommandToRemoteControl(driver);
         }
         break;
       case "delete":
         _deleteDriver(driver);
+    }
+  }
+
+  _sendCommandToRemoteControl(Driver driver) async {
+    if (driver.ipAddress == null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar =
+          new SnackBar(content: new Text("Pilot nie posiada adresu IP.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+      return;
+    }
+    try {
+      var result = await RemoteControl.sendCommand(driver, "Power");
+      if (result != null) {
+        if (result == 200) {
+          final snackBar = new SnackBar(
+              content: new Text("Komenda wysłana do pilota.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Wysłanie komendy do pilota nie powiodło się.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      }
+    } catch (e) {
+      final snackBar = new SnackBar(
+          content:
+              new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
 
@@ -350,7 +448,7 @@ class _DriversState extends State<Drivers> {
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
-  _switchDriver(Driver driver) async {
+  _switchBulb(Driver driver) async {
     var flag = driver.data == null
         ? "on"
         : driver.data
@@ -364,21 +462,21 @@ class _DriversState extends State<Drivers> {
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
-        message = "Wysłano komendę włączenia sterownika ".i18n +
+        message = "Wysłano komendę włączenia żarówki ".i18n +
             driver.name +
             ".".i18n;
       } else {
-        message = "Wysłano komendę wyłączenia sterownika ".i18n +
+        message = "Wysłano komendę wyłączenia żarówki ".i18n +
             driver.name +
             ".".i18n;
       }
       await getDrivers();
     } else if (result == 404) {
-      message = "Nie znaleziono sterownika ".i18n +
+      message = "Nie znaleziono żarówki ".i18n +
           driver.name +
           " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message = "Nie udało się podłączyć do sterownika".i18n +
+      message = "Nie udało się podłączyć do żarówki ".i18n +
           driver.name +
           ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
     }

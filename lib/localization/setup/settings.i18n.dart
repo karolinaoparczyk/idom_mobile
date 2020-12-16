@@ -38,6 +38,34 @@ extension Localization on String {
       {
         "pl_pl": "Ustawienia zostały zapisane.",
         "en_uk": "The settings have been saved.",
+      }+
+      {
+        "pl_pl": "Konfiguracja",
+        "en_uk": "Configuration",
+      }+
+      {
+        "pl_pl": "Preferencje",
+        "en_uk": "Preferences",
+      }+
+      {
+        "pl_pl": "Motyw",
+        "en_uk": "Theme",
+      }+
+      {
+        "pl_pl": "jasny",
+        "en_uk": "light",
+      }+
+      {
+        "pl_pl": "ciemny",
+        "en_uk": "dark",
+      }+
+      {
+        "pl_pl": "Dane",
+        "en_uk": "Data",
+      }+
+      {
+        "pl_pl": "Jak mogę usunąć dane?",
+        "en_uk": "How can I delete my data?",
       };
 
   String get i18n => localize(this, _t);

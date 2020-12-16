@@ -44,7 +44,10 @@ class _EnterEmailState extends State<EnterEmail> {
         ),
         autofocus: true,
         keyboardType: TextInputType.emailAddress,
-        style: TextStyle(fontSize: 17.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: EmailFieldValidator.validate);
   }
 
@@ -58,7 +61,7 @@ class _EnterEmailState extends State<EnterEmail> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
-          key: _scaffoldKey,
+            key: _scaffoldKey,
             appBar: AppBar(
               title: Text('Reset hasła'.i18n),
             ),
@@ -87,10 +90,7 @@ class _EnterEmailState extends State<EnterEmail> {
                                         "Podaj adres e-mail połączony z Twoim kontem".i18n,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight:
-                                                    FontWeight.normal))),
+                                            .bodyText1)),
                                 Padding(
                                     padding: EdgeInsets.only(
                                         left: 30.0,
@@ -158,6 +158,11 @@ class _EnterEmailState extends State<EnterEmail> {
         final snackBar = new SnackBar(
             content:
                 new Text("Błąd resetu hasła. Adres serwera nieprawidłowy.".i18n));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      } else {
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd resetu hasła. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

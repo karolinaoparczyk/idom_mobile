@@ -19,5 +19,6 @@ class DriverCategories {
     {"text": "naduszacz".i18n, "value": "clicker"},
     {"text": "pilot".i18n, "value": "remote_control"},
     {"text": "żarówka".i18n, "value": "bulb"},
+    {"text": "rolety".i18n, "value": "roller_blind"},
   ];
 }

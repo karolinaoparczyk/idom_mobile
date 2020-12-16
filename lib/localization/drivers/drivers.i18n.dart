@@ -66,7 +66,23 @@ extension Localization on String {
       {
         "pl_pl": "Potwierdź",
         "en_uk": "Confirm",
+      }  +
+      {
+        "pl_pl": "Wysłano komendę włączenia żarówki ",
+        "en_uk": "The command to turn on bulb ",
       } +
+      {
+        "pl_pl": "Nie znaleziono żarówki ",
+        "en_uk": "Bulb ",
+      }+
+      {
+        "pl_pl": " na serwerze. Odswież listę sterowników.",
+        "en_uk": " not found on the server. Refresh the driver list. ",
+      }  +
+      {
+        "pl_pl": "Wysłano komendę wyłączenia żarówki ",
+        "en_uk": "The command to turn off bulb ",
+      }+
       {
         "pl_pl": "Wysłano komendę do sterownika ",
         "en_uk": "The command to driver ",
@@ -74,6 +90,22 @@ extension Localization on String {
       {
         "pl_pl": "Wysłanie komendy do sterownika ",
         "en_uk": "Sending the command to driver ",
+      }  +
+      {
+        "pl_pl": "Nie udało się podłączyć do żarówki ",
+        "en_uk": "Failed to connect to bulb ",
+      } +
+      {
+        "pl_pl": ". Sprawdź podłączenie i spróbuj ponownie.",
+        "en_uk": ". Check the connection and try again.",
+      } +
+      {
+        "pl_pl": "Wysłano komendę włączenia sterownika ",
+        "en_uk": "The command to turn on driver ",
+      }  +
+      {
+        "pl_pl": "Wysłano komendę wyłączenia sterownika ",
+        "en_uk": "The command to turn off driver ",
       } +
       {
         "pl_pl": " nie powiodło się.",
@@ -90,7 +122,23 @@ extension Localization on String {
       {
         "pl_pl": "Wysłano komendę wyłączenia sterownika ",
         "en_uk": "The command to turn off driver ",
-      } ;
+      } +
+      {
+        "pl_pl": "Podnieś/opuść rolety",
+        "en_uk": "Raise/lower blinds",
+      }  +
+      {
+        "pl_pl": "Pilot nie posiada adresu IP.",
+        "en_uk": "The remote control does not have an IP address.",
+      } +
+      {
+        "pl_pl": "Komenda wysłana do pilota.",
+        "en_uk": "Command has been sent to the remote control.",
+      } +
+      {
+        "pl_pl": "Wysłanie komendy do pilota nie powiodło się.",
+        "en_uk": "Sending a command to the remote control has failed.",
+      };
 
   String get i18n => localize(this, _t);
 }

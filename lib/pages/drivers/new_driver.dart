@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/category_dialog.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -66,9 +67,15 @@ class _NewDriverState extends State<NewDriver> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-        ),
+            counterStyle: Theme.of(context)
+                .textTheme
+                .bodyText1
+                .copyWith(fontSize: 12.5) ),
         key: Key('name'),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -83,7 +90,11 @@ class _NewDriverState extends State<NewDriver> {
         decoration: InputDecoration(
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
+          suffixIcon: Icon(Icons.arrow_drop_down, color: Theme.of(
+              context)
+              .textTheme
+              .bodyText1
+              .color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -104,7 +115,10 @@ class _NewDriverState extends State<NewDriver> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         validator: CategoryFieldValidator.validate);
   }
 

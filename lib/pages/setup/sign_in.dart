@@ -49,8 +49,7 @@ class _SignInState extends State<SignIn> {
       child: Text("Konto zostało utworzone. Możesz się zalogować.".i18n,
           style: Theme.of(context)
               .textTheme
-              .bodyText1
-              .copyWith(fontWeight: FontWeight.normal)),
+              .bodyText1),
     );
   }
 
@@ -67,7 +66,10 @@ class _SignInState extends State<SignIn> {
         ),
       ),
       controller: _usernameController,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -103,7 +105,10 @@ class _SignInState extends State<SignIn> {
       ),
       controller: _passwordController,
       validator: PasswordFieldValidator.validate,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.done,
@@ -164,6 +169,14 @@ class _SignInState extends State<SignIn> {
               content: new Text(
                   "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else  {
+          setState(() {
+            _load = false;
+          });
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
     } catch (e) {
@@ -180,6 +193,11 @@ class _SignInState extends State<SignIn> {
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text("Błąd logowania. Adres serwera nieprawidłowy.".i18n));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      }else  {
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -249,8 +267,7 @@ class _SignInState extends State<SignIn> {
                         child: Text('Zapomniałeś/aś hasła?'.i18n,
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal)),
+                                .bodyText1),
                         onPressed: navigateToEnterEmail,
                       ),
                     ]))

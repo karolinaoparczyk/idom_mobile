@@ -180,70 +180,94 @@ class _CamerasState extends State<Cameras> {
             onLogOutFailure: onLogOutFailure),
 
         /// builds cameras' list
-        body: Container(child: Column(children: <Widget>[listCameras()])),
+        body: Container(child: listCameras()),
       ),
     );
   }
 
   Widget listCameras() {
     if (zeroFetchedItems) {
-      return Padding(
+      return RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
                   "Brak kamer w systemie".i18n,
-                  style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1,
+                  textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
         _cameraList == null) {
-      return Padding(
+      return RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Błąd połączenia z serwerem.".i18n,
-                  style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1,
+                  textAlign: TextAlign.center)))));
     } else if (_cameraList != null && _cameraList.length > 0) {
-      return Expanded(
-          child: Scrollbar(
-              child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10.0, top: 10, right: 10.0, bottom: 0.0),
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _cameraList.length,
-                          itemBuilder: (context, index) => Container(
-                              height: 80,
-                              child: Card(
-                                child: ListTile(
-                                  key: Key(_cameraList[index].name),
-                                  title: Text(_cameraList[index].name,
-                                      style: TextStyle(fontSize: 21.0)),
-                                  onTap: () {
-                                    navigateToCameraStream(_cameraList[index]);
-                                  },
-                                  leading: SizedBox(
-                                      width: 35,
-                                      child: Container(
-                                          alignment: Alignment.centerRight,
-                                          child: SvgPicture.asset(
-                                            "assets/icons/video-camera.svg",
-                                            matchTextDirection: false,
-                                            width: 32,
-                                            height: 32,
-                                            color: IdomColors.additionalColor,
-                                            key: Key("assets/icons/video-camera.svg")
-                                          ))),
-                                    trailing: deleteButtonTrailing(_cameraList[index])
-                                ),
-                              )))))));
+      return Column(
+        children: [
+          Expanded(
+              child: Scrollbar(
+                  child: RefreshIndicator(
+                      backgroundColor: IdomColors.mainBackgroundDark,
+                      onRefresh: _pullRefresh,
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: _cameraList.length,
+                              itemBuilder: (context, index) => Container(
+                                  height: 80,
+                                  child: Card(
+                                    child: ListTile(
+                                      key: Key(_cameraList[index].name),
+                                      title: Text(_cameraList[index].name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(fontSize: 21.0)),
+                                      onTap: () {
+                                        navigateToCameraStream(_cameraList[index]);
+                                      },
+                                      leading: SizedBox(
+                                          width: 35,
+                                          child: Container(
+                                              alignment: Alignment.centerRight,
+                                              child: SvgPicture.asset(
+                                                "assets/icons/video-camera.svg",
+                                                matchTextDirection: false,
+                                                width: 32,
+                                                height: 32,
+                                                color: IdomColors.additionalColor,
+                                                key: Key("assets/icons/video-camera.svg")
+                                              ))),
+                                        trailing: getTrailing(_cameraList[index])
+                                    ),
+                                  ))))))),
+        ],
+      );
     }
 
     /// shows progress indicator while fetching data
@@ -269,34 +293,33 @@ class _CamerasState extends State<Cameras> {
     await getCameras();
   }
 
-  /// deletes sensor
-  deleteButtonTrailing(Camera camera) {
-    return SizedBox(
-        width: 35,
-        child: Container(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              key: Key("deleteButton"),
-              child: SizedBox(
-                  width: 35,
-                  child: Container(
-                      padding: EdgeInsets.only(top: 5),
-                      alignment: Alignment.topRight,
-                      child: SvgPicture.asset(
-                        "assets/icons/dustbin.svg",
-                        matchTextDirection: false,
-                        width: 32,
-                        height: 32,
-                        color: IdomColors.mainFill,
-                      ))),
-              onPressed: () {
-                setState(() {
-                  _deleteCamera(camera);
-                });
-              },
-            )));
+  getTrailing(Camera camera) {
+    return
+        SizedBox(
+            width: 35,
+            child: Container(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  key: Key("deleteButton"),
+                  child: SizedBox(
+                      width: 35,
+                      child: Container(
+                          padding: EdgeInsets.only(top: 5),
+                          alignment: Alignment.topRight,
+                          child: SvgPicture.asset(
+                            "assets/icons/dustbin.svg",
+                            matchTextDirection: false,
+                            width: 32,
+                            height: 32,
+                            color: Theme.of(context).textTheme.bodyText1.color,
+                          ))),
+                  onPressed: () {
+                    setState(() {
+                      _deleteCamera(camera);
+                    });
+                  },
+                )));
   }
-
 
   /// navigates to adding camera page
   navigateToNewCamera() async {

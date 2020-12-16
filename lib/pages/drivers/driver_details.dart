@@ -8,6 +8,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/edit_driver.dart';
+import 'package:idom/remote_control.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -117,11 +118,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
                                 child: Text("Ogólne".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                               ),
                             ],
                           ))),
@@ -141,7 +139,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(widget.driver.name,
-                              style: TextStyle(fontSize: 21.0)))),
+                              style:  Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
                           left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
@@ -153,15 +154,13 @@ class _DriverDetailsState extends State<DriverDetails> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
                                 child: Text("Obsługa sterownika".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                               ),
                             ],
                           ))),
-                  if (widget.driver.category == "bulb" &&
+                  if ((widget.driver.category == "bulb" ||
+                          widget.driver.category == "roller_blind") &&
                       widget.driver.data != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -173,7 +172,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     color: IdomColors.additionalColor,
                                     fontSize: 16.5,
                                     fontWeight: FontWeight.bold)))),
-                  if (widget.driver.category == "bulb" &&
+                  if ((widget.driver.category == "bulb" ||
+                          widget.driver.category == "roller_blind") &&
                       widget.driver.data != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -181,7 +181,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(_getDataValue(),
-                                style: TextStyle(fontSize: 21.0)))),
+                                style:  Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontSize: 21.0)))),
                   if (widget.driver.category == "clicker")
                     Padding(
                       padding: const EdgeInsets.only(
@@ -214,10 +217,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                             ),
                           ),
                           Text("Wciśnij przycisk".i18n,
-                              style: TextStyle(
-                                  color: IdomColors.textDark,
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.normal)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       ),
                     ),
@@ -241,7 +244,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                                           readOnly: true,
                                           keyboardType: TextInputType.number,
                                           controller: _channelNumberController,
-                                          style: TextStyle(fontSize: 21.0),
+                                          style:  Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(fontSize: 21.0),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                               borderRadius:
@@ -646,7 +652,13 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               ),
                                             ),
                                             InkWell(
-                                              onTap: () {},
+                                              onTap: () {
+                                                _sendCommandToRemoteControl(
+                                                    "Channel",
+                                                    channel: int.tryParse(
+                                                        _channelNumberController
+                                                            .text));
+                                              },
                                               highlightColor: digitsVisible
                                                   ? IdomColors.grey
                                                   : Colors.transparent,
@@ -704,7 +716,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                                         style: TextStyle(
                                                             color: IdomColors
                                                                 .additionalColor,
-                                                            fontSize: 27),
+                                                            fontSize: 25),
                                                         key: Key("goBack")),
                                                   ),
                                                 ),
@@ -728,7 +740,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 children: [
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Menu");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -757,7 +771,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   Center(
                                     child: InkWell(
                                       onTap: () {
-                                        _switchDriver();
+                                        _sendCommandToRemoteControl("Power");
                                       },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
@@ -790,7 +804,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Up");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -823,7 +839,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Left");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -849,7 +867,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   ),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("OK");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -872,7 +892,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   ),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Right");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -905,7 +927,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Down");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -937,7 +961,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 children: [
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Mute");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -966,7 +992,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   SizedBox(),
                                   Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _sendCommandToRemoteControl("Back");
+                                      },
                                       highlightColor: digitsVisible
                                           ? Colors.transparent
                                           : IdomColors.grey,
@@ -995,7 +1023,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                               TableRow(children: [
                                 Center(
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      _sendCommandToRemoteControl("Vol+");
+                                    },
                                     highlightColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.grey,
@@ -1048,7 +1078,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 SizedBox(),
                                 Center(
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      _sendCommandToRemoteControl("CH+");
+                                    },
                                     highlightColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.grey,
@@ -1097,7 +1129,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                               TableRow(children: [
                                 Center(
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      _sendCommandToRemoteControl("Vol-");
+                                    },
                                     highlightColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.grey,
@@ -1126,7 +1160,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 SizedBox(),
                                 Center(
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      _sendCommandToRemoteControl("CH-");
+                                    },
                                     highlightColor: digitsVisible
                                         ? Colors.transparent
                                         : IdomColors.grey,
@@ -1161,7 +1197,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                           Center(
                             child: InkWell(
                               onTap: () {
-                                _switchDriver();
+                                _switchBulb();
                               },
                               highlightColor: digitsVisible
                                   ? Colors.transparent
@@ -1229,7 +1265,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                             Padding(
                               padding: const EdgeInsets.all(18.0),
                               child: Text("Ustaw kolor".i18n,
-                                  style: TextStyle(fontSize: 21)),
+                                  style:  Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontSize: 21.0)),
                             ),
                             SvgPicture.asset("assets/icons/enter.svg",
                                 matchTextDirection: false,
@@ -1285,7 +1324,10 @@ class _DriverDetailsState extends State<DriverDetails> {
                             Padding(
                               padding: const EdgeInsets.all(18.0),
                               child: Text("Ustaw jasność".i18n,
-                                  style: TextStyle(fontSize: 21)),
+                                  style:  Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontSize: 21.0)),
                             ),
                             SvgPicture.asset("assets/icons/enter.svg",
                                 matchTextDirection: false,
@@ -1314,14 +1356,76 @@ class _DriverDetailsState extends State<DriverDetails> {
                               key: Key("assets/icons/light_bulb_filled.svg")),
                         ),
                       ),
-                    )
+                    ),
+                  if (widget.driver.category == "roller_blind")
+                    Table(columnWidths: {
+                      0: FlexColumnWidth(1),
+                      1: FlexColumnWidth(1),
+                    }, children: [
+                      TableRow(children: [
+                        Container(
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.all(18.0),
+                          child: Text("Podnieś rolety".i18n,
+                              style:  Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
+                        ),
+                        Container(
+                            padding: const EdgeInsets.all(18.0),
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                                onTap: () {},
+                                borderRadius: BorderRadius.circular(50.0),
+                                splashColor: IdomColors.additionalColor,
+                                child: SvgPicture.asset(
+                                    "assets/icons/up-arrow.svg",
+                                    matchTextDirection: false,
+                                    alignment: Alignment.centerRight,
+                                    width: 25,
+                                    height: 25,
+                                    color: IdomColors.additionalColor,
+                                    key: Key("assets/icons/up-arrow.svg")))),
+                      ]),
+                      TableRow(children: [
+                        Container(
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.all(18.0),
+                          child: Text("Opuść rolety".i18n,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
+                        ),
+                        Container(
+                            padding: const EdgeInsets.all(18.0),
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                                onTap: () {},
+                                borderRadius: BorderRadius.circular(50.0),
+                                splashColor: IdomColors.additionalColor,
+                                child: SvgPicture.asset(
+                                    "assets/icons/down-arrow.svg",
+                                    matchTextDirection: false,
+                                    alignment: Alignment.centerRight,
+                                    width: 25,
+                                    height: 25,
+                                    color: IdomColors.additionalColor,
+                                    key: Key("assets/icons/down-arrow.svg")))),
+                      ]),
+                    ])
                 ]),
               ),
             ))));
   }
 
   _getDataValue() {
-    return widget.driver.data ? "włączona".i18n : "wyłączona".i18n;
+    if (widget.driver.category == "bulb") {
+      return widget.driver.data ? "włączona".i18n : "wyłączona".i18n;
+    } else if (widget.driver.category == "roller_blind") {
+      return widget.driver.data ? "podniesione".i18n : "opuszczone".i18n;
+    }
   }
 
   _colorChangeHandler(double position) {
@@ -1411,8 +1515,11 @@ class _DriverDetailsState extends State<DriverDetails> {
 
   _changeBulbColor() async {
     var message;
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     var result = await api.changeBulbColor(widget.driver.id, _currentColor.red,
         _currentColor.green, _currentColor.blue);
+    Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       message = "Wysłano komendę zmiany koloru żarówki ".i18n +
@@ -1438,11 +1545,15 @@ class _DriverDetailsState extends State<DriverDetails> {
     var message;
     if (_shadeSliderPosition == 0) _shadeSliderPosition = 1;
     int brightness = (_shadeSliderPosition / 255 * 100).round();
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     var result = await api.changeBulbBrightness(widget.driver.id, brightness);
+    Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
-      message =
-          "Wysłano komendę zmiany jasności żarówki ".i18n + widget.driver.name + ".".i18n;
+      message = "Wysłano komendę zmiany jasności żarówki ".i18n +
+          widget.driver.name +
+          ".".i18n;
     } else if (result == 404) {
       message = "Nie znaleziono sterownika ".i18n +
           widget.driver.name +
@@ -1459,7 +1570,7 @@ class _DriverDetailsState extends State<DriverDetails> {
     }
   }
 
-  _switchDriver() async {
+  _switchBulb() async {
     var flag = widget.driver.data == null
         ? "on"
         : widget.driver.data
@@ -1467,24 +1578,32 @@ class _DriverDetailsState extends State<DriverDetails> {
             : "on";
     var message;
     var result;
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     if (widget.driver.category == "bulb") {
       result = await api.switchBulb(widget.driver.id, flag);
     }
+    Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
-        message = "Wysłano komendę włączenia sterownika ".i18n + widget.driver.name + ".".i18n;
+        message = "Wysłano komendę włączenia żarówki ".i18n +
+            widget.driver.name +
+            ".".i18n;
       } else {
-        message =
-            "Wysłano komendę wyłączenia sterownika ".i18n + widget.driver.name + ".".i18n;
+        message = "Wysłano komendę wyłączenia żarówki ".i18n +
+            widget.driver.name +
+            ".".i18n;
       }
       await _refreshDriverDetails();
     } else if (result == 404) {
-      message =
-          "Nie znaleziono sterownika ".i18n + widget.driver.name + " na serwerze. Odswież listę sterowników.".i18n;
+      message = "Nie znaleziono żarówki ".i18n +
+          widget.driver.name +
+          " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message =
-          "Nie udało się podłączyć do sterownika".i18n + widget.driver.name + ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+      message = "Nie udało się podłączyć do żarówki".i18n +
+          widget.driver.name +
+          ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
     }
     if (message != null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
@@ -1494,17 +1613,77 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 
   _clickDriver() async {
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     var result = await api.startDriver(widget.driver.name);
+    Navigator.pop(context);
     var message;
     if (result == 200) {
-      message = "Wysłano komendę do sterownika ".i18n + widget.driver.name + ".".i18n;
-    } else {
       message =
-          "Wysłanie komendy do sterownika ".i18n + widget.driver.name + " nie powiodło się.".i18n;
+          "Wysłano komendę do sterownika ".i18n + widget.driver.name + ".".i18n;
+    } else {
+      message = "Wysłanie komendy do sterownika ".i18n +
+          widget.driver.name +
+          " nie powiodło się.".i18n;
     }
     _scaffoldKey.currentState.removeCurrentSnackBar();
     final snackBar = new SnackBar(content: new Text(message));
     _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  _sendCommandToRemoteControl(String command, {int channel}) async {
+    if (widget.driver.ipAddress == null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar =
+          new SnackBar(content: new Text("Pilot nie posiada adresu IP.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+      return;
+    }
+    var result;
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
+    try {
+      switch (command) {
+        case "Mute":
+        case "Back":
+        case "Vol+":
+        case "Vol-":
+        case "CH+":
+        case "CH-":
+        case "OK":
+        case "Power":
+        case "Menu":
+        case "Up":
+        case "Down":
+        case "Left":
+        case "Right":
+          result = await RemoteControl.sendCommand(widget.driver, command);
+          break;
+        case "Channel":
+          result = await RemoteControl.sendCommand(widget.driver, command,
+              channel: channel);
+          break;
+      }
+      Navigator.pop(context);
+      if (result != null) {
+        if (result == 200) {
+          final snackBar = new SnackBar(
+              content: new Text("Komenda wysłana do pilota.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Wysłanie komendy do pilota nie powiodło się.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      final snackBar = new SnackBar(
+          content:
+              new Text("Wysłanie komendy do pilota nie powiodło się.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+    }
   }
 
   _navigateToEditDriver() async {

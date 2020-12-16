@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:idom/enums/categories.dart';
-import 'package:idom/localization/dialogs/sensor_category.i18n.dart';
+import 'package:idom/localization/dialogs/category.i18n.dart';
 
 class ChooseMultipleSensorCategoriesDialog extends StatefulWidget {
   ChooseMultipleSensorCategoriesDialog({this.selectedCategories});
@@ -122,8 +122,7 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                         title: Text(category['text'].i18n,
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyText1
-                                .copyWith(fontWeight: FontWeight.normal)),
+                                .bodyText1),
                       )))
                       .toList(),
                 )),

@@ -160,10 +160,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                           child: Text("Ogólne".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal)),
+                                                  .bodyText1),
                                         ),
                                       ],
                                     ))),
@@ -189,7 +186,10 @@ class _AccountDetailState extends State<AccountDetail> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(account.username,
-                                        style: TextStyle(fontSize: 21.0)))),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(fontSize: 21.0)))),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 52.5,
@@ -212,7 +212,10 @@ class _AccountDetailState extends State<AccountDetail> {
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(account.email,
-                                        style: TextStyle(fontSize: 21.0)))),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(fontSize: 21.0)))),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 52.5,
@@ -239,7 +242,10 @@ class _AccountDetailState extends State<AccountDetail> {
                                                 account.telephone != ""
                                             ? account.telephone
                                             : "-",
-                                        style: TextStyle(fontSize: 21.0)))),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(fontSize: 21.0)))),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
@@ -259,10 +265,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                           child: Text("Powiadomienia".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal)),
+                                                  .bodyText1),
                                         ),
                                       ],
                                     ))),
@@ -281,11 +284,9 @@ class _AccountDetailState extends State<AccountDetail> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text("Aplikacja".i18n,
-                                                style: TextStyle(
-                                                    color: IdomColors.textDark,
-                                                    fontSize: 16.5,
-                                                    fontWeight:
-                                                        FontWeight.normal)),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1),
                                             Switch(
                                               key: Key("appNotifications"),
                                               value: appNotificationsOn,
@@ -302,11 +303,9 @@ class _AccountDetailState extends State<AccountDetail> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text("Sms",
-                                                style: TextStyle(
-                                                    color: IdomColors.textDark,
-                                                    fontSize: 16.5,
-                                                    fontWeight:
-                                                        FontWeight.normal)),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1),
                                             Switch(
                                               key: Key("smsNotifications"),
                                               value: smsNotificationsOn,

@@ -233,9 +233,60 @@ void main() {
     await tester.tap(find.byKey(Key("click")));
     await tester.pumpAndSettle();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Wysłano komendę wyłączenia sterownika driver1."),
+    expect(find.text("Wysłano komendę wyłączenia żarówki driver1."),
         findsOneWidget);
     verify(await mockApi.switchBulb(1, "off")).called(1);
+  });
+
+  /// tests if raise/lower blinds from context menu
+  testWidgets('raise/lower blinds from context menu',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "roller_blind",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "remote_control",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+    when(mockApi.switchBulb(1, "off"))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getApiServerAddress())
+        .thenAnswer((_) async => Future.value("apiAddress"));
+
+    Drivers page = Drivers(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+    expect(find.text("driver1"), findsOneWidget);
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/blinds.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/controller.svg")), findsOneWidget);
+    expect(find.byIcon(Icons.more_vert_outlined), findsNWidgets(2));
+
+    await tester.tap(find.byIcon(Icons.more_vert_outlined).first);
+    await tester.pumpAndSettle();
+    expect(find.text("Podnieś/opuść rolety"), findsOneWidget);
+    expect(find.text("Usuń"), findsOneWidget);
+    await tester.tap(find.byKey(Key("click")));
+    await tester.pumpAndSettle();
   });
 
   /// tests if drivers on list, send command to driver from context menu, english

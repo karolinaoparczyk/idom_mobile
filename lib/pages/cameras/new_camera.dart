@@ -56,14 +56,18 @@ class _NewCameraState extends State<NewCamera> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
+            labelText: "Nazwa".i18n,
+            labelStyle: Theme.of(context).textTheme.headline5,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            counterStyle:
+                Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            .copyWith(fontSize: 21.0),
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -173,7 +177,8 @@ class _NewCameraState extends State<NewCamera> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['body']
             .contains("Camera with provided name already exists")) {
-          fieldsValidationMessage = "Kamera o podanej nazwie już istnieje.".i18n;
+          fieldsValidationMessage =
+              "Kamera o podanej nazwie już istnieje.".i18n;
           setState(() {});
           return;
         } else {
@@ -193,7 +198,8 @@ class _NewCameraState extends State<NewCamera> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd dodawania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {

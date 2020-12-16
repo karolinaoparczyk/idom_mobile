@@ -6,6 +6,7 @@ import 'package:idom/api.dart';
 import 'package:idom/localization/setup/sign_up.i18n.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/sign_in.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -61,7 +62,10 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _usernameController,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -96,7 +100,10 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _passwordController,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       validator: PasswordFieldValidator.validate,
       obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
@@ -132,7 +139,10 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _confirmPasswordController,
-      style: TextStyle(fontSize: 21.0),
+      style:Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       validator: (String value) {
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić'.i18n;
@@ -158,7 +168,10 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       validator: EmailFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -178,7 +191,10 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _telephoneController,
       keyboardType: TextInputType.phone,
-      style: TextStyle(fontSize: 21.0),
+      style:Theme.of(context)
+          .textTheme
+          .bodyText1
+          .copyWith(fontSize: 21.0),
       validator: TelephoneFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -299,10 +315,7 @@ class _SignUpState extends State<SignUp> {
                                           ? Text(fieldsValidationMessage,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal))
+                                                  .bodyText1)
                                           : SizedBox(),
                                       secondChild: SizedBox(),
                                     ),
@@ -347,7 +360,8 @@ class _SignUpState extends State<SignUp> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SignIn(storage: widget.storage, isFromSignUp: true)));
+                  builder: (context) =>
+                      SignIn(storage: widget.storage, isFromSignUp: true)));
           return;
         }
         if (res['body'].contains("Username already exists")) {
@@ -369,15 +383,20 @@ class _SignUpState extends State<SignUp> {
         String errorText = "";
         if (loginExists && emailExists && telephoneExists)
           errorText =
-              "Konto dla podanej nazwy użytkownika, adresu e-mail i numeru telefonu już istnieje.".i18n;
+              "Konto dla podanej nazwy użytkownika, adresu e-mail i numeru telefonu już istnieje."
+                  .i18n;
         else if (loginExists && emailExists)
-          errorText = "Konto dla podanej nazwy użytkownika i adresu e-mail już istnieje.".i18n;
+          errorText =
+              "Konto dla podanej nazwy użytkownika i adresu e-mail już istnieje."
+                  .i18n;
         else if (loginExists && telephoneExists)
           errorText =
-              "Konto dla podanej nazwy użytkownika i numeru telefonu już istnieje.".i18n;
+              "Konto dla podanej nazwy użytkownika i numeru telefonu już istnieje."
+                  .i18n;
         else if (emailExists && telephoneExists)
           errorText =
-              "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.".i18n;
+              "Konto dla podanego adresu e-mail i numeru telefonu już istnieje."
+                  .i18n;
         else if (emailExists)
           errorText = "Konto dla podanego adresu e-mail już istnieje.".i18n;
         else if (loginExists)
@@ -386,10 +405,12 @@ class _SignUpState extends State<SignUp> {
           errorText = "Konto dla podanego numeru telefonu już istnieje.".i18n;
 
         if (telephoneInvalid && emailInvalid)
-          errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
+          errorText +=
+              "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
         else if (telephoneInvalid)
           errorText += "Numer telefonu jest nieprawidłowy.".i18n;
-        else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy".i18n;
+        else if (emailInvalid)
+          errorText += "Adres e-mail jest nieprawidłowy".i18n;
 
         if (errorText != null) {
           FocusScope.of(context).unfocus();
@@ -410,13 +431,19 @@ class _SignUpState extends State<SignUp> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
-              content:
-                  new Text("Błąd rejestracji. Adres serwera nieprawidłowy.".i18n));
+              content: new Text(
+                  "Błąd rejestracji. Adres serwera nieprawidłowy.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

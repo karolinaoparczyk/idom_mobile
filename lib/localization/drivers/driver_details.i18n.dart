@@ -60,12 +60,20 @@ extension Localization on String {
         "en_uk": "Driver ",
       }+
       {
+        "pl_pl": "Nie znaleziono żarówki ",
+        "en_uk": "Bulb ",
+      }+
+      {
         "pl_pl": " na serwerze. Odswież listę sterowników.",
         "en_uk": " not found on the server. Refresh the driver list. ",
       } +
       {
         "pl_pl": "Nie udało się podłączyć do sterownika ",
         "en_uk": "Failed to connect to driver ",
+      } +
+      {
+        "pl_pl": "Nie udało się podłączyć do żarówki ",
+        "en_uk": "Failed to connect to bulb ",
       }  +
       {
         "pl_pl": ". Sprawdź podłączenie i spróbuj ponownie.",
@@ -78,6 +86,14 @@ extension Localization on String {
       {
         "pl_pl": "Wysłano komendę wyłączenia sterownika ",
         "en_uk": "The command to turn off driver ",
+      }  +
+      {
+        "pl_pl": "Wysłano komendę włączenia żarówki ",
+        "en_uk": "The command to turn on bulb ",
+      }  +
+      {
+        "pl_pl": "Wysłano komendę wyłączenia żarówki ",
+        "en_uk": "The command to turn off bulb ",
       }  +
       {
         "pl_pl": "Wysłano komendę do sterownika ",
@@ -94,6 +110,42 @@ extension Localization on String {
       {
         "pl_pl": "Zapisano sterownik.",
         "en_uk": "Driver saved.",
+      } +
+      {
+        "pl_pl": "Pilot nie posiada adresu IP.",
+        "en_uk": "The remote control does not have an IP address.",
+      } +
+      {
+        "pl_pl": "Komenda wysłana do pilota.",
+        "en_uk": "Command has been sent to the remote control.",
+      } +
+      {
+        "pl_pl": "Wysłanie komendy do pilota nie powiodło się.",
+        "en_uk": "Sending a command to the remote control has failed.",
+      } +
+      {
+        "pl_pl": "Podnieś rolety",
+        "en_uk": "Raise blinds",
+      } +
+      {
+        "pl_pl": "Opuść rolety",
+        "en_uk": "Lower blinds",
+      }+
+      {
+        "pl_pl": "podniesione",
+        "en_uk": "raised",
+      }+
+      {
+        "pl_pl": "opuszczone",
+        "en_uk": "lowered",
+      } +
+      {
+        "pl_pl": "Poziom baterii",
+        "en_uk": "Battery level",
+      }+
+      {
+        "pl_pl": "Wysyłanie komendy...",
+        "en_uk": "Sending a command...",
       };
 
   String get i18n => localize(this, _t);
