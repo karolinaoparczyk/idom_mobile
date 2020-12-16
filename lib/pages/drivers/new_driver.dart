@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/category_dialog.dart';
+import 'package:idom/models.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
@@ -25,6 +28,7 @@ class _NewDriverState extends State<NewDriver> {
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   TextEditingController _nameController;
   TextEditingController _categoryController;
+  TextEditingController _ipAddressController;
   String categoryValue;
   Api api = Api();
   bool _load;
@@ -39,6 +43,7 @@ class _NewDriverState extends State<NewDriver> {
     _load = false;
     _nameController = TextEditingController();
     _categoryController = TextEditingController();
+    _ipAddressController = TextEditingController();
   }
 
   @override
@@ -62,20 +67,15 @@ class _NewDriverState extends State<NewDriver> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-            counterStyle: Theme.of(context)
-                .textTheme
-                .bodyText1
-                .copyWith(fontSize: 12.5) ),
+            labelText: "Nazwa".i18n,
+            labelStyle: Theme.of(context).textTheme.headline5,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            counterStyle:
+                Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -90,11 +90,8 @@ class _NewDriverState extends State<NewDriver> {
         decoration: InputDecoration(
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down, color: Theme.of(
-              context)
-              .textTheme
-              .bodyText1
-              .color),
+          suffixIcon: Icon(Icons.arrow_drop_down,
+              color: Theme.of(context).textTheme.bodyText1.color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -111,15 +108,32 @@ class _NewDriverState extends State<NewDriver> {
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'].i18n;
             categoryValue = selectedCategory['value'];
+            setState(() {});
           }
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
         validator: CategoryFieldValidator.validate);
+  }
+
+  /// build ip address form field
+  Widget _buildIpAddress() {
+    return TextFormField(
+        key: Key("ipAddress"),
+        controller: _ipAddressController,
+        decoration: InputDecoration(
+          labelText: "Adres ip żarówki".i18n,
+          labelStyle: Theme.of(context).textTheme.headline5,
+          prefixText: "https://",
+          prefixStyle:
+              Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        validator: UrlFieldValidator.validate);
   }
 
   @override
@@ -177,6 +191,13 @@ class _NewDriverState extends State<NewDriver> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildCategoryField())),
+                    if (categoryValue != null && categoryValue == "bulb")
+                      Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 30.0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: _buildIpAddress())),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 30.0),
@@ -213,6 +234,14 @@ class _NewDriverState extends State<NewDriver> {
           _load = false;
         });
         if (res['statusCode'] == "201") {
+          if (categoryValue == "bulb" && _ipAddressController.text.isNotEmpty) {
+            var driver = Driver.fromJson(jsonDecode(res['body']));
+            var resBulb =
+                await api.addIpAddress(driver.id, _ipAddressController.text);
+            if (resBulb != 200) {
+              throw Exception;
+            }
+          }
           fieldsValidationMessage = null;
           setState(() {});
           Navigator.pop(context, true);
@@ -231,7 +260,12 @@ class _NewDriverState extends State<NewDriver> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['body']
             .contains("Driver with provided name already exists")) {
-          fieldsValidationMessage = "Sterownik o podanej nazwie już istnieje.".i18n;
+          fieldsValidationMessage =
+              "Sterownik o podanej nazwie już istnieje.".i18n;
+          setState(() {});
+          return;
+        } else if (res['body'].contains("Enter a valid IPv4 or IPv6 address")) {
+          fieldsValidationMessage = "Adres IP jest nieprawidłowy".i18n;
           setState(() {});
           return;
         } else {
@@ -239,7 +273,8 @@ class _NewDriverState extends State<NewDriver> {
           setState(() {});
           final snackBar = new SnackBar(
               content: new Text(
-                  "Dodawanie sterownika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Dodawanie sterownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -251,13 +286,21 @@ class _NewDriverState extends State<NewDriver> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd dodawania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania sterownika. Adres serwera nieprawidłowy.".i18n));
+                  "Błąd dodawania sterownika. Adres serwera nieprawidłowy."
+                      .i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Dodawanie sterownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

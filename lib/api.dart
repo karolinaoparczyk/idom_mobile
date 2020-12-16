@@ -54,7 +54,7 @@ class Api {
       "password2": password2,
       "email": email,
       "telephone": telephone,
-    }).timeout(Duration(seconds: 5));
+    }).timeout(Duration(seconds: 10));
     var resDict = {
       "body": res.body.toString(),
       "statusCode": res.statusCode.toString(),
@@ -501,7 +501,7 @@ class Api {
     if (data == null) {
       body = {
         "name": name,
-        "category": category,
+        "category": category
       };
     } else {
       body = {
@@ -597,6 +597,24 @@ class Api {
       var res = await httpClient.post('$url/drivers/action',
           headers: {HttpHeaders.authorizationHeader: "Token $token"},
           body: {"name": name}).timeout(Duration(seconds: 5));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// adds ip address to bulb
+  Future<int> addIpAddress(int id, String ipAddress) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.post('$url/bulbs/ip/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $token",
+            HttpHeaders.contentTypeHeader: 'application/json'
+          },
+          body: jsonEncode({"ip_address": ipAddress})).timeout(Duration(seconds: 5));
+      var strrr = utf8.decode(res.bodyBytes);
       return res.statusCode;
     } catch (e) {
       print(e);

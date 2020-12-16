@@ -143,6 +143,27 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   .textTheme
                                   .bodyText1
                                   .copyWith(fontSize: 21.0)))),
+                  if (widget.driver.category == "bulb")
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Adres IP".i18n,
+                              style: TextStyle(
+                                  color: IdomColors.additionalColor,
+                                  fontSize: 16.5,
+                                  fontWeight: FontWeight.bold)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(widget.driver.ipAddress != null ? widget.driver.ipAddress : "-",
+                              style:  Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
                           left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),

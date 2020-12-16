@@ -29,6 +29,7 @@ class _EditDriverState extends State<EditDriver> {
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   TextEditingController _nameController;
   TextEditingController _categoryController;
+  TextEditingController _ipAddressController;
   String categoryValue;
   Api api = Api();
   bool _load;
@@ -50,6 +51,8 @@ class _EditDriverState extends State<EditDriver> {
         text: DriverCategories.values.firstWhere(
             (element) => element["value"] == widget.driver.category)['text'].i18n);
     categoryValue = widget.driver.category;
+
+    _ipAddressController = TextEditingController(text: widget.driver.ipAddress);
   }
 
   @override
@@ -129,6 +132,25 @@ class _EditDriverState extends State<EditDriver> {
             .bodyText1
             .copyWith(fontSize: 21.0),
         validator: CategoryFieldValidator.validate);
+  }
+
+  /// build ip address form field
+  Widget _buildIpAddress() {
+    return TextFormField(
+        key: Key("ipAddress"),
+        controller: _ipAddressController,
+        decoration: InputDecoration(
+          labelText: "Adres ip żarówki".i18n,
+          labelStyle: Theme.of(context).textTheme.headline5,
+          prefixText: "https://",
+          prefixStyle:
+          Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        validator: UrlFieldValidator.validate);
   }
 
   @override

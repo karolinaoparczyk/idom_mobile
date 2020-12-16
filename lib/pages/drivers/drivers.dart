@@ -144,7 +144,7 @@ class _DriversState extends State<Drivers> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak sterowników w systemie.".i18n,
-                  style: TextStyle(fontSize: 16.5),
+                  style:Theme.of(context).textTheme.bodyText1,
                   textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
@@ -162,7 +162,7 @@ class _DriversState extends State<Drivers> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Błąd połączenia z serwerem.".i18n,
-                  style: TextStyle(fontSize: 16.5),
+                  style: Theme.of(context).textTheme.bodyText1,
                   textAlign: TextAlign.center)))));
     } else if (_driverList != null && _driverList.length > 0) {
       return Column(
