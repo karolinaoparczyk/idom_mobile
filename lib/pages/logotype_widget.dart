@@ -17,7 +17,10 @@ class LogotypeWidget extends StatelessWidget {
                   Text(
                     'IDOM',
                     style:
-                        TextStyle(fontSize: 100.0, color: IdomColors.blackTextLight),
+                    Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        .copyWith(fontSize: 100.0),
                     textAlign: TextAlign.center,
                   ),
                   Icon(Icons.roofing_rounded,

@@ -17,6 +17,7 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// allows to enter email and send reset password request
 class Settings extends StatefulWidget {
@@ -168,9 +169,7 @@ class _SettingsState extends State<Settings> {
                                                 alignment: Alignment.centerLeft,
                                                 child: Row(
                                                   children: [
-                                                    Icon(
-                                                        Icons
-                                                            .settings,
+                                                    Icon(Icons.settings,
                                                         size: 17.5),
                                                     Padding(
                                                       padding:
@@ -394,7 +393,53 @@ class _SettingsState extends State<Settings> {
                                                 },
                                               ),
                                             ],
-                                          )
+                                          ),
+                                        if (_isUserLoggedIn == "true")
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 0.0,
+                                                  top: 20.0,
+                                                  right: 0.0,
+                                                  bottom: 10.0),
+                                              child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(Icons.data_usage,
+                                                          size: 17.5),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 5.0),
+                                                        child: Text("Dane".i18n,
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyText1),
+                                                      ),
+                                                    ],
+                                                  ))),
+                                        if (_isUserLoggedIn == "true")
+                                          Container(
+                                          alignment: Alignment.centerLeft,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                          child: RaisedButton(
+                                              color:
+                                                  Theme.of(context).cardTheme.color,
+                                              child: Text(
+                                                  "Jak mogę usunąć dane?".i18n,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headline5),
+                                              onPressed: () {
+                                                _navigateToProjectWebPage();
+                                              }),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -403,6 +448,14 @@ class _SettingsState extends State<Settings> {
                   )),
               Expanded(flex: 1, child: SizedBox(width: 1)),
             ])));
+  }
+
+  _navigateToProjectWebPage() async {
+    try {
+      await launch("https://adriannajmrocki.github.io/idom-website/");
+    } catch (e) {
+      throw 'Could not launch page';
+    }
   }
 
   _pickFile() async {

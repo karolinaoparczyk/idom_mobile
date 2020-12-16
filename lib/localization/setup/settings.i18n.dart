@@ -58,6 +58,14 @@ extension Localization on String {
       {
         "pl_pl": "ciemny",
         "en_uk": "dark",
+      }+
+      {
+        "pl_pl": "Dane",
+        "en_uk": "Data",
+      }+
+      {
+        "pl_pl": "Jak mogę usunąć dane?",
+        "en_uk": "How can I delete my data?",
       };
 
   String get i18n => localize(this, _t);

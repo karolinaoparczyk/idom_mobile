@@ -7,7 +7,6 @@ import 'package:idom/localization/setup/sign_in.i18n.dart';
 import 'package:idom/api.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/setup/enter_email.dart';
-import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/button.dart';
