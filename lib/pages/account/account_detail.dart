@@ -12,7 +12,6 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/account/account_details.i18n.dart';
 
-
 /// displays account details
 class AccountDetail extends StatefulWidget {
   AccountDetail(
@@ -327,13 +326,15 @@ class _AccountDetailState extends State<AccountDetail> {
   _updateNotifications() async {
     var result = await api.editNotifications(account.id,
         appNotificationsOn.toString(), smsNotificationsOn.toString());
+    if (result != null && result['statusCode'] == "200") {
+      widget.storage.setAppNotifications(appNotificationsOn.toString());
+      widget.storage.setSmsNotifications(smsNotificationsOn.toString());
+    }
     if (result != null && result['statusCode'] != "200") {
       final snackBar = new SnackBar(
           content: new Text("Błąd edycji powiadomień. Spróbuj ponownie.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
-    widget.storage.setAppNotifications(appNotificationsOn.toString());
-    widget.storage.setSmsNotifications(smsNotificationsOn.toString());
   }
 
   _navigateToEditAccount() async {
@@ -375,8 +376,8 @@ class _AccountDetailState extends State<AccountDetail> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final snackBar = new SnackBar(
-            content:
-                new Text("Odświeżenie danych użytkownika nie powiodło się.".i18n));
+            content: new Text(
+                "Odświeżenie danych użytkownika nie powiodło się.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -387,13 +388,15 @@ class _AccountDetailState extends State<AccountDetail> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania danych użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy.".i18n));
+                "Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
