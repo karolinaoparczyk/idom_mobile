@@ -79,7 +79,6 @@ void main() {
     expect(find.text("driver2"), findsOneWidget);
     expect(find.byKey(Key("assets/icons/tap.svg")), findsNWidgets(2));
     expect(find.byIcon(Icons.more_vert_outlined), findsNWidgets(2));
-    expect(find.byKey(Key("assets/icons/battery.svg")), findsNWidgets(2));
 
     await tester.tap(find.byIcon(Icons.more_vert_outlined).first);
     await tester.pumpAndSettle();
@@ -234,7 +233,7 @@ void main() {
     await tester.tap(find.byKey(Key("click")));
     await tester.pumpAndSettle();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Wysłano komendę wyłączenia sterownika driver1."),
+    expect(find.text("Wysłano komendę wyłączenia żarówki driver1."),
         findsOneWidget);
     verify(await mockApi.switchBulb(1, "off")).called(1);
   });

@@ -102,8 +102,6 @@ void main() {
     expect(find.text("driver1"), findsNWidgets(2));
     expect(find.text("Nazwa"), findsOneWidget);
     expect(find.text("Ogólne"), findsOneWidget);
-    expect(find.text("Poziom baterii"), findsOneWidget);
-    expect(find.text("- %"), findsOneWidget);
     expect(find.text("Obsługa sterownika"), findsOneWidget);
     expect(find.text("Aktualny stan"), findsOneWidget);
     expect(find.text("podniesione"), findsOneWidget);
@@ -285,7 +283,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Wysłano komendę włączenia sterownika driver1."),
+    expect(find.text("Wysłano komendę włączenia żarówki driver1."),
         findsOneWidget);
     verify(await mockApi.switchBulb(1, "on")).called(1);
   });
@@ -326,7 +324,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Wysłano komendę włączenia sterownika driver1."),
+    expect(find.text("Wysłano komendę włączenia żarówki driver1."),
         findsOneWidget);
     expect(find.text("włączona"), findsOneWidget);
     verify(await mockApi.switchBulb(1, "on")).called(1);
@@ -368,7 +366,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Wysłano komendę wyłączenia sterownika driver1."),
+    expect(find.text("Wysłano komendę wyłączenia żarówki driver1."),
         findsOneWidget);
     expect(find.text("wyłączona"), findsOneWidget);
     verify(await mockApi.switchBulb(1, "off")).called(1);
@@ -399,8 +397,6 @@ void main() {
     expect(find.text("driver1"), findsNWidgets(2));
     expect(find.text("Name"), findsOneWidget);
     expect(find.text("General"), findsOneWidget);
-    expect(find.text("Battery level"), findsOneWidget);
-    expect(find.text("- %"), findsOneWidget);
     expect(find.text("Driver handler"), findsOneWidget);
     expect(find.text("Press the button"), findsOneWidget);
     expect(find.text("Current state"), findsNothing);
@@ -593,7 +589,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("The command to turn on driver driver1 has been sent."),
+    expect(find.text("The command to turn on bulb driver1 has been sent."),
         findsOneWidget);
     verify(await mockApi.switchBulb(1, "on")).called(1);
   });
@@ -634,7 +630,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("The command to turn on driver driver1 has been sent."),
+    expect(find.text("The command to turn on bulb driver1 has been sent."),
         findsOneWidget);
     expect(find.text("on"), findsOneWidget);
     verify(await mockApi.switchBulb(1, "on")).called(1);
@@ -676,7 +672,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("The command to turn off driver driver1 has been sent."),
+    expect(find.text("The command to turn off bulb driver1 has been sent."),
         findsOneWidget);
     expect(find.text("off"), findsOneWidget);
     verify(await mockApi.switchBulb(1, "off")).called(1);
