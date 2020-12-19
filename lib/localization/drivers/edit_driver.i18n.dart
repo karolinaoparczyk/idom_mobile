@@ -62,6 +62,22 @@ extension Localization on String {
       {
         "pl_pl": "rolety",
         "en_uk": "blinds",
+      }+
+      {
+        "pl_pl": "Adres IP",
+        "en_uk": "IP address",
+      }+
+      {
+        "pl_pl": "Podczas dodawania żarówki nie udało się zapisać adresu IP. Spróbuj ponownie.",
+        "en_uk": "IP address could not be saved while adding bulb. Try again.",
+      }+
+      {
+        "pl_pl": "Sterownik o podanej nazwie już istnieje. Adres IP jest niepoprawny.",
+        "en_uk": "A driver with the given name already exists. The IP address is incorrect.",
+      }+
+      {
+        "pl_pl": "Adres IP jest niepoprawny.",
+        "en_uk": "The IP address is incorrect.",
       };
 
   String get i18n => localize(this, _t);

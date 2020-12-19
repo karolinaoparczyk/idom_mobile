@@ -143,6 +143,27 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   .textTheme
                                   .bodyText1
                                   .copyWith(fontSize: 21.0)))),
+                  if (widget.driver.category == "bulb")
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Adres IP".i18n,
+                              style: TextStyle(
+                                  color: IdomColors.additionalColor,
+                                  fontSize: 16.5,
+                                  fontWeight: FontWeight.bold)))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(widget.driver.ipAddress != null ? widget.driver.ipAddress : "-",
+                              style:  Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
                           left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
@@ -1514,6 +1535,13 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 
   _changeBulbColor() async {
+    if (widget.driver.ipAddress == null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar =
+      new SnackBar(content: new Text("Żarówka nie posiada adresu IP.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+      return;
+    }
     var message;
     displayProgressDialog(
         context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
@@ -1542,6 +1570,13 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 
   _changeBulbBrightness() async {
+    if (widget.driver.ipAddress == null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar =
+      new SnackBar(content: new Text("Żarówka nie posiada adresu IP.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+      return;
+    }
     var message;
     if (_shadeSliderPosition == 0) _shadeSliderPosition = 1;
     int brightness = (_shadeSliderPosition / 255 * 100).round();
@@ -1571,6 +1606,13 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 
   _switchBulb() async {
+    if (widget.driver.ipAddress == null) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      final snackBar =
+      new SnackBar(content: new Text("Żarówka nie posiada adresu IP.".i18n));
+      _scaffoldKey.currentState.showSnackBar((snackBar));
+      return;
+    }
     var flag = widget.driver.data == null
         ? "on"
         : widget.driver.data

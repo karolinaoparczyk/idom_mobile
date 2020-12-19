@@ -81,7 +81,8 @@ void main() {
   testWidgets('displays blinds details, sends command to blinds',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver = Driver(id: 1, name: "driver1", category: "roller_blind", data: true);
+    Driver driver =
+        Driver(id: 1, name: "driver1", category: "roller_blind", data: true);
 
     when(mockApi.startDriver("driver1"))
         .thenAnswer((_) async => Future.value(200));
@@ -180,8 +181,12 @@ void main() {
   testWidgets('displays bulbs details, change color',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: true);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: true);
 
     when(mockApi.changeBulbColor(1, 128, 128, 128))
         .thenAnswer((_) async => Future.value(200));
@@ -218,8 +223,12 @@ void main() {
   /// tests if changes bulb's brightness
   testWidgets('change bulb brightness', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: false);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: false);
 
     when(mockApi.changeBulbBrightness(1, 50))
         .thenAnswer((_) async => Future.value(200));
@@ -248,11 +257,83 @@ void main() {
     verify(await mockApi.changeBulbBrightness(1, 50)).called(1);
   });
 
+  /// tests if displays bulb's details, change color, no ip
+  testWidgets('displays bulbs details, change color, no ip',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: null,
+        data: true);
+
+    when(mockApi.changeBulbColor(1, 128, 128, 128))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key("assets/icons/enter.svg")).first);
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("Żarówka nie posiada adresu IP."),
+        findsOneWidget);
+    verifyNever(await mockApi.changeBulbColor(1, 128, 128, 128));
+  });
+
+  /// tests if changes bulb's brightness, no ip
+  testWidgets('change bulb brightness, no ip', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: null,
+        data: false);
+
+    when(mockApi.changeBulbBrightness(1, 50))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key("assets/icons/enter.svg")).last);
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("Żarówka nie posiada adresu IP."),
+        findsOneWidget);
+    verifyNever(await mockApi.changeBulbBrightness(1, 50));
+  });
+
   /// tests if turns bulb on, data null
   testWidgets('turn bulb on, data null', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: null);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: null);
 
     Map<String, dynamic> bulb = {
       "id": 1,
@@ -291,8 +372,12 @@ void main() {
   /// tests if turns bulb on, data false
   testWidgets('turn bulb on, data false', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: false);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: false);
 
     Map<String, dynamic> bulb = {
       "id": 1,
@@ -330,11 +415,58 @@ void main() {
     verify(await mockApi.switchBulb(1, "on")).called(1);
   });
 
+  /// tests if turns bulb on, data false, no ip
+  testWidgets('turn bulb on, data false, no ip', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: null,
+        data: false);
+
+    Map<String, dynamic> bulb = {
+      "id": 1,
+      "name": "driver1",
+      "category": "bulb",
+      "data": true
+    };
+    when(mockApi.switchBulb(1, "on"))
+        .thenAnswer((_) async => Future.value(200));
+    when(mockApi.getDriverDetails(1)).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(bulb), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("Żarówka nie posiada adresu IP."),
+        findsOneWidget);
+    expect(find.text("wyłączona"), findsOneWidget);
+    verifyNever(await mockApi.switchBulb(1, "on"));
+  });
+
   /// tests if turns bulb off, data true
   testWidgets('turn bulb off, data true', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: true);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: true);
 
     Map<String, dynamic> bulb = {
       "id": 1,
@@ -478,8 +610,12 @@ void main() {
   testWidgets('english displays bulbs details, change color',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: true);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: true);
 
     when(mockApi.changeBulbColor(1, 128, 128, 128))
         .thenAnswer((_) async => Future.value(200));
@@ -518,8 +654,12 @@ void main() {
   /// tests if changes bulb's brightness, english
   testWidgets('english change bulb brightness', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: false);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: false);
 
     when(mockApi.changeBulbBrightness(1, 50))
         .thenAnswer((_) async => Future.value(200));
@@ -557,8 +697,12 @@ void main() {
   /// tests if turns bulb on, data null, english
   testWidgets('english turn bulb on, data null', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: null);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: null);
 
     Map<String, dynamic> bulb = {
       "id": 1,
@@ -597,8 +741,12 @@ void main() {
   /// tests if turns bulb on, data false, english
   testWidgets('english turn bulb on, data false', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: false);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: false);
 
     Map<String, dynamic> bulb = {
       "id": 1,
@@ -639,8 +787,12 @@ void main() {
   /// tests if turns bulb off, data true, english
   testWidgets('english turn bulb off, data true', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver =
-        Driver(id: 1, name: "driver1", category: "bulb", data: true);
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.222.33.44",
+        data: true);
 
     Map<String, dynamic> bulb = {
       "id": 1,
@@ -680,11 +832,52 @@ void main() {
 
   /// tests if displays blinds's details, sends command to blinds, english
   testWidgets('english displays blinds details, sends command to blinds',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver =
+        Driver(id: 1, name: "driver1", category: "roller_blind", data: true);
+
+    when(mockApi.startDriver("driver1"))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver1"), findsNWidgets(2));
+    expect(find.text("Name"), findsOneWidget);
+    expect(find.text("General"), findsOneWidget);
+    expect(find.text("Driver handler"), findsOneWidget);
+    expect(find.text("Current state"), findsOneWidget);
+    expect(find.text("raised"), findsOneWidget);
+    expect(find.text("lowered"), findsNothing);
+    expect(find.text("Raise blinds"), findsOneWidget);
+    expect(find.text("Lower blinds"), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/up-arrow.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/down-arrow.svg")), findsOneWidget);
+  });
+
+  /// tests if displays bulb's details, change color, no ip, english
+  testWidgets('english displays bulbs details, change color, no ip',
           (WidgetTester tester) async {
         MockApi mockApi = MockApi();
-        Driver driver = Driver(id: 1, name: "driver1", category: "roller_blind", data: true);
+        Driver driver = Driver(
+            id: 1,
+            name: "driver1",
+            category: "bulb",
+            ipAddress: null,
+            data: true);
 
-        when(mockApi.startDriver("driver1"))
+        when(mockApi.changeBulbColor(1, 128, 128, 128))
             .thenAnswer((_) async => Future.value(200));
 
         MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -699,18 +892,88 @@ void main() {
 
         await tester.pumpWidget(makeEnglishTestableWidget(child: page));
         await tester.pumpAndSettle();
-
-        expect(find.text("driver1"), findsNWidgets(2));
-        expect(find.text("Name"), findsOneWidget);
-        expect(find.text("General"), findsOneWidget);
-        expect(find.text("Driver handler"), findsOneWidget);
-        expect(find.text("Current state"), findsOneWidget);
-        expect(find.text("raised"), findsOneWidget);
-        expect(find.text("lowered"), findsNothing);
-        expect(find.text("Raise blinds"), findsOneWidget);
-        expect(find.text("Lower blinds"), findsOneWidget);
-        expect(find.byKey(Key("assets/icons/up-arrow.svg")), findsOneWidget);
-        expect(find.byKey(Key("assets/icons/down-arrow.svg")), findsOneWidget);
+        await tester.tap(find.byKey(Key("assets/icons/enter.svg")).first);
+        await tester.pump();
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(find.text("The bulb does not have an IP address."),
+            findsOneWidget);
+        verifyNever(await mockApi.changeBulbColor(1, 128, 128, 128));
       });
 
+  /// tests if changes bulb's brightness, no ip, english
+  testWidgets('english change bulb brightness, no ip', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: null,
+        data: false);
+
+    when(mockApi.changeBulbBrightness(1, 50))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key("assets/icons/enter.svg")).last);
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("The bulb does not have an IP address."),
+        findsOneWidget);
+    verifyNever(await mockApi.changeBulbBrightness(1, 50));
+  });
+
+  /// tests if turns bulb on, data false, no ip, english
+  testWidgets('english urn bulb on, data false, no ip', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: null,
+        data: false);
+
+    Map<String, dynamic> bulb = {
+      "id": 1,
+      "name": "driver1",
+      "category": "bulb",
+      "data": true
+    };
+    when(mockApi.switchBulb(1, "on"))
+        .thenAnswer((_) async => Future.value(200));
+    when(mockApi.getDriverDetails(1)).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(bulb), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("The bulb does not have an IP address."),
+        findsOneWidget);
+    expect(find.text("off"), findsOneWidget);
+    verifyNever(await mockApi.switchBulb(1, "on"));
+  });
 }

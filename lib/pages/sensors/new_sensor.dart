@@ -112,7 +112,8 @@ class _NewSensorState extends State<NewSensor> {
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
                 selectedCategory['value'] == "breathalyser" ||
-                selectedCategory['value'] == "smoke") {
+                selectedCategory['value'] == "smoke"||
+                selectedCategory['value'] == "gas") {
               _frequencyUnitsController = TextEditingController();
               frequencyUnitsValue = null;
               _frequencyUnitsController.text = FrequencyUnits.values

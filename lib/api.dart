@@ -501,7 +501,7 @@ class Api {
     if (data == null) {
       body = {
         "name": name,
-        "category": category,
+        "category": category
       };
     } else {
       body = {
@@ -597,6 +597,23 @@ class Api {
       var res = await httpClient.post('$url/drivers/action',
           headers: {HttpHeaders.authorizationHeader: "Token $token"},
           body: {"name": name}).timeout(Duration(seconds: 10));
+      return res.statusCode;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// adds ip address to bulb
+  Future<int> addIpAddress(int id, String ipAddress) async {
+    await getApiAddress();
+    await getToken();
+    try {
+      var res = await httpClient.put('$url/bulbs/ip/$id',
+          headers: {HttpHeaders.authorizationHeader: "Token $token",
+            HttpHeaders.contentTypeHeader: 'application/json'
+          },
+          body: jsonEncode({"ip_address": ipAddress})).timeout(Duration(seconds: 10));
       return res.statusCode;
     } catch (e) {
       print(e);
