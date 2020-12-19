@@ -65,18 +65,22 @@ class _EditSensorState extends State<EditSensor> {
 
     /// setting current sensor category
     _categoryController = TextEditingController(
-        text: SensorCategories.values.firstWhere(
-            (element) => element["value"] == widget.sensor.category)['text'].i18n);
+        text: SensorCategories.values
+            .firstWhere(
+                (element) => element["value"] == widget.sensor.category)['text']
+            .i18n);
     categoryValue = widget.sensor.category;
     if (categoryValue == "rain_sensor" ||
         categoryValue == "water_temp" ||
         categoryValue == "breathalyser" ||
-        categoryValue == "smoke") {
+        categoryValue == "smoke" ||
+        categoryValue == "gas") {
       canEditFrequency = false;
       frequencyUnitsValue = "seconds";
       _frequencyUnitsController.text = FrequencyUnits.values
           .where((element) => element['value'] == "seconds")
-          .first['text'].i18n;
+          .first['text']
+          .i18n;
       _frequencyValueController.text = "30";
     } else {
       canEditFrequency = true;
@@ -97,21 +101,15 @@ class _EditSensorState extends State<EditSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-            counterStyle: Theme.of(context)
-                .textTheme
-                .bodyText1
-                .copyWith(fontSize: 12.5)
-        ),
+            labelText: "Nazwa".i18n,
+            labelStyle: Theme.of(context).textTheme.headline5,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            counterStyle:
+                Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -126,11 +124,8 @@ class _EditSensorState extends State<EditSensor> {
         decoration: InputDecoration(
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down, color: Theme.of(
-              context)
-              .textTheme
-              .bodyText1
-              .color),
+          suffixIcon: Icon(Icons.arrow_drop_down,
+              color: Theme.of(context).textTheme.bodyText1.color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -149,7 +144,9 @@ class _EditSensorState extends State<EditSensor> {
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
-                selectedCategory['value'] == "breathalyser") {
+                selectedCategory['value'] == "breathalyser" ||
+                selectedCategory['value'] == "smoke" ||
+                selectedCategory['value'] == "gas") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -164,10 +161,7 @@ class _EditSensorState extends State<EditSensor> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
         validator: CategoryFieldValidator.validate);
   }
 
@@ -180,10 +174,7 @@ class _EditSensorState extends State<EditSensor> {
           enabled: canEditFrequency,
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
-          style: Theme.of(context)
-              .textTheme
-              .bodyText1
-              .copyWith(fontSize: 21.0),
+          style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
@@ -192,11 +183,7 @@ class _EditSensorState extends State<EditSensor> {
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
-                    : Theme.of(
-                    context)
-                    .textTheme
-                    .bodyText1
-                    .color),
+                    : Theme.of(context).textTheme.bodyText1.color),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -213,12 +200,9 @@ class _EditSensorState extends State<EditSensor> {
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
-                  : Theme.of(
-                  context)
-                  .textTheme
-                  .bodyText1
-                  .color),
-          suffixIcon: Icon(Icons.arrow_drop_down, color: IdomColors.blackTextDark),
+                  : Theme.of(context).textTheme.bodyText1.color),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.blackTextDark),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -240,10 +224,7 @@ class _EditSensorState extends State<EditSensor> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
         validator: UrlFieldValidator.validate);
   }
 
@@ -360,9 +341,7 @@ class _EditSensorState extends State<EditSensor> {
                           duration: Duration(milliseconds: 300),
                           firstChild: fieldsValidationMessage != null
                               ? Text(fieldsValidationMessage,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1)
+                                  style: Theme.of(context).textTheme.bodyText1)
                               : SizedBox(),
                           secondChild: SizedBox(),
                         ),
@@ -377,9 +356,7 @@ class _EditSensorState extends State<EditSensor> {
                         duration: Duration(milliseconds: 300),
                         firstChild: nameValidationMessage != null
                             ? Text(nameValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1)
+                                style: Theme.of(context).textTheme.bodyText1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),

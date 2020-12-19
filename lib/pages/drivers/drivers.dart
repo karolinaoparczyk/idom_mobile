@@ -132,38 +132,38 @@ class _DriversState extends State<Drivers> {
 
   Widget listDrivers() {
     if (zeroFetchedItems) {
-      return  RefreshIndicator(
+      return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
           onRefresh: _pullRefresh,
           child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
               child: Container(
                   height: MediaQuery.of(context).size.height,
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text("Brak sterowników w systemie.".i18n,
-                  style:Theme.of(context).textTheme.bodyText1,
-                  textAlign: TextAlign.center)))));
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("Brak sterowników w systemie.".i18n,
+                          style: Theme.of(context).textTheme.bodyText1,
+                          textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
         _driverList == null) {
-      return  RefreshIndicator(
+      return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
           onRefresh: _pullRefresh,
           child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
               child: Container(
                   height: MediaQuery.of(context).size.height,
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.".i18n,
-                  style: Theme.of(context).textTheme.bodyText1,
-                  textAlign: TextAlign.center)))));
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("Błąd połączenia z serwerem.".i18n,
+                          style: Theme.of(context).textTheme.bodyText1,
+                          textAlign: TextAlign.center)))));
     } else if (_driverList != null && _driverList.length > 0) {
       return Column(
         children: [
@@ -179,26 +179,30 @@ class _DriversState extends State<Drivers> {
                               shrinkWrap: true,
                               itemCount: _driverList.length,
                               itemBuilder: (context, index) => Container(
-                                  height: 80,
-                                  child: Card(
-                                    child: ListTile(
-                                      key: Key(_driverList[index].name),
-                                      title: Text(_driverList[index].name,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1
-                                              .copyWith(fontSize: 21.0)),
-                                      onTap: () {
-                                        navigateToDriverDetails(_driverList[index]);
-                                      },
-                                      leading: SizedBox(
-                                          width: 35,
-                                          child: Container(
-                                              padding: EdgeInsets.only(top: 5),
-                                              alignment: Alignment.centerRight,
-                                              child: _getDriverImage(
-                                                  _driverList[index]))),
-                                     trailing: getTrailing(_driverList[index])),
+                                    height: 80,
+                                    child: Card(
+                                      child: ListTile(
+                                          key: Key(_driverList[index].name),
+                                          title: Text(_driverList[index].name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(fontSize: 21.0)),
+                                          onTap: () {
+                                            navigateToDriverDetails(
+                                                _driverList[index]);
+                                          },
+                                          leading: SizedBox(
+                                              width: 35,
+                                              child: Container(
+                                                  padding:
+                                                      EdgeInsets.only(top: 5),
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: _getDriverImage(
+                                                      _driverList[index]))),
+                                          trailing:
+                                              getTrailing(_driverList[index])),
                                     ),
                                   )))))),
         ],
@@ -218,11 +222,9 @@ class _DriversState extends State<Drivers> {
       onTapDown: (TapDownDetails details) async {
         _showPopupMenu(details.globalPosition, driver);
       },
-      child: Container(child: Icon(Icons.more_vert_outlined, size: 30, color: Theme.of(
-          context)
-          .textTheme
-          .bodyText1
-          .color)),
+      child: Container(
+          child: Icon(Icons.more_vert_outlined,
+              size: 30, color: Theme.of(context).textTheme.bodyText1.color)),
     );
   }
 
@@ -253,9 +255,8 @@ class _DriversState extends State<Drivers> {
   _showPopupMenu(Offset offset, Driver driver) async {
     double left = offset.dx;
     double top = offset.dy;
-    var selected = await showMenu(color: Theme.of(
-        context)
-        .backgroundColor,
+    var selected = await showMenu(
+      color: Theme.of(context).backgroundColor,
       context: context,
       position: RelativeRect.fromLTRB(left, top, 0, 0),
       items: [
@@ -370,17 +371,14 @@ class _DriversState extends State<Drivers> {
                             alignment: Alignment.centerRight,
                             width: 25,
                             height: 25,
-                            color: Theme.of(
-                                context)
-                                .textTheme
-                                .bodyText1
-                                .color,
+                            color: Theme.of(context).textTheme.bodyText1.color,
                           ),
                           SizedBox(width: 5),
-                          Text('Usuń'.i18n, style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              .copyWith(fontSize: 21.0)),
+                          Text('Usuń'.i18n,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 21.0)),
                         ],
                       )
                     ])),
@@ -462,13 +460,11 @@ class _DriversState extends State<Drivers> {
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
-        message = "Wysłano komendę włączenia żarówki ".i18n +
-            driver.name +
-            ".".i18n;
+        message =
+            "Wysłano komendę włączenia żarówki ".i18n + driver.name + ".".i18n;
       } else {
-        message = "Wysłano komendę wyłączenia żarówki ".i18n +
-            driver.name +
-            ".".i18n;
+        message =
+            "Wysłano komendę wyłączenia żarówki ".i18n + driver.name + ".".i18n;
       }
       await getDrivers();
     } else if (result == 404) {

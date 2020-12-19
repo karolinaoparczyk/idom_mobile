@@ -609,12 +609,11 @@ class Api {
     await getApiAddress();
     await getToken();
     try {
-      var res = await httpClient.post('$url/bulbs/ip/$id',
+      var res = await httpClient.put('$url/bulbs/ip/$id',
           headers: {HttpHeaders.authorizationHeader: "Token $token",
             HttpHeaders.contentTypeHeader: 'application/json'
           },
-          body: jsonEncode({"ip_address": ipAddress})).timeout(Duration(seconds: 5));
-      var strrr = utf8.decode(res.bodyBytes);
+          body: jsonEncode({"ip_address": ipAddress})).timeout(Duration(seconds: 10));
       return res.statusCode;
     } catch (e) {
       print(e);

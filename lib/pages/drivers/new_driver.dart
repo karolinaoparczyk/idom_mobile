@@ -5,7 +5,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/models.dart';
-import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/pages/drivers/edit_driver.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -123,11 +123,8 @@ class _NewDriverState extends State<NewDriver> {
         key: Key("ipAddress"),
         controller: _ipAddressController,
         decoration: InputDecoration(
-          labelText: "Adres ip żarówki".i18n,
+          labelText: "Adres IP".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          prefixText: "https://",
-          prefixStyle:
-              Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -239,12 +236,13 @@ class _NewDriverState extends State<NewDriver> {
             var resBulb =
                 await api.addIpAddress(driver.id, _ipAddressController.text);
             if (resBulb != 200) {
-              throw Exception;
+              _navigateToEditDriver(driver);
+            } else {
+              fieldsValidationMessage = null;
+              setState(() {});
+              Navigator.pop(context, true);
             }
           }
-          fieldsValidationMessage = null;
-          setState(() {});
-          Navigator.pop(context, true);
         } else if (res['statusCode'] == "401") {
           fieldsValidationMessage = null;
           setState(() {});
@@ -304,6 +302,24 @@ class _NewDriverState extends State<NewDriver> {
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
+    }
+  }
+
+  _navigateToEditDriver(Driver driver) async {
+    _scaffoldKey.currentState.removeCurrentSnackBar();
+    var result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EditDriver(
+                storage: widget.storage,
+                driver: driver,
+                testApi: widget.testApi,
+                notSetIp: true),
+            fullscreenDialog: true));
+    if (result == true) {
+      Navigator.pop(context, true);
+    } else {
+      Navigator.pop(context);
     }
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
+import 'package:idom/pages/drivers/edit_driver.dart';
 import 'package:idom/pages/drivers/new_driver.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
@@ -80,8 +83,135 @@ void main() {
     verify(await mockApi.addDriver('name', 'clicker')).called(1);
   });
 
+  /// tests if adds bulb
+  testWidgets('adds bulb', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addDriver('name', 'bulb'))
+        .thenAnswer((_) async => Future.value({
+              "body": jsonEncode({
+                "id": 1,
+                "name": "driver1",
+                "category": "roller_blind",
+                "ipAddress": "111.111.11.11",
+                "data": true
+              }),
+              "statusCode": "201"
+            }));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewDriver page = NewDriver(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('categoriesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("żarówka").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('saveDriverButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.addDriver('name', 'bulb')).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+  });
+
+  /// tests if adds bulb, ip invalid error, goes to edit and saves
+  testWidgets('adds bulb, ip invalid error, goes to edit and saves',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addDriver('name', 'bulb'))
+        .thenAnswer((_) async => Future.value({
+              "body": jsonEncode({
+                "id": 1,
+                "name": "name",
+                "category": "bulb",
+                "ipAddress": "111.222.33.44",
+                "data": null
+              }),
+              "statusCode": "201"
+            }));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(400));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewDriver page = NewDriver(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('categoriesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("żarówka").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    expect(find.text("Adres IP"), findsOneWidget);
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('saveDriverButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.addDriver('name', 'bulb')).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+
+    expect(find.byType(EditDriver), findsOneWidget);
+    expect(
+        find.text(
+            "Podczas dodawania żarówki nie udało się zapisać adresu IP. Spróbuj ponownie."),
+        findsOneWidget);
+
+    expect(find.text("Adres IP"), findsOneWidget);
+
+    ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '222.333.44.55');
+    when(mockApi.addIpAddress(1, '222.333.44.55'))
+        .thenAnswer((_) async => Future.value(200));
+
+    await tester.tap(find.byKey(Key('editDriverButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+
+    verifyNever(await mockApi.addDriver('name', 'bulb'));
+    verify(await mockApi.addIpAddress(1, '222.333.44.55')).called(1);
+  });
+
   /// tests if does not adds driver when empty body
-  testWidgets('does not adds driver when empty body', (WidgetTester tester) async {
+  testWidgets('does not adds driver when empty body',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addDriver(null, null)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -110,7 +240,8 @@ void main() {
   });
 
   /// tests if does not adds driver when api error
-  testWidgets('does not adds driver when api error', (WidgetTester tester) async {
+  testWidgets('does not adds driver when api error',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addDriver('name', 'clicker')).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "404"}));
@@ -150,16 +281,22 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    expect(find.text("Dodawanie sterownika nie powiodło się. Spróbuj ponownie."), findsOneWidget);
+    expect(
+        find.text("Dodawanie sterownika nie powiodło się. Spróbuj ponownie."),
+        findsOneWidget);
 
     verify(await mockApi.addDriver('name', 'clicker')).called(1);
   });
 
   /// tests if does not adds driver when already exists
-  testWidgets('does not adds driver when already exists', (WidgetTester tester) async {
+  testWidgets('does not adds driver when already exists',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.addDriver('name', 'clicker')).thenAnswer(
-        (_) async => Future.value({"body": "Driver with provided name already exists", "statusCode": "404"}));
+    when(mockApi.addDriver('name', 'clicker')).thenAnswer((_) async =>
+        Future.value({
+          "body": "Driver with provided name already exists",
+          "statusCode": "404"
+        }));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
@@ -197,7 +334,8 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    expect(find.text("Sterownik o podanej nazwie już istnieje."), findsOneWidget);
+    expect(
+        find.text("Sterownik o podanej nazwie już istnieje."), findsOneWidget);
 
     verify(await mockApi.addDriver('name', 'clicker')).called(1);
   });
@@ -247,7 +385,8 @@ void main() {
   });
 
   /// tests if does not adds driver when empty body, english
-  testWidgets('english does not adds driver when empty body', (WidgetTester tester) async {
+  testWidgets('english does not adds driver when empty body',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addDriver(null, null)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -276,7 +415,8 @@ void main() {
   });
 
   /// tests if does not adds driver when api error, english
-  testWidgets('english does not adds driver when api error', (WidgetTester tester) async {
+  testWidgets('english does not adds driver when api error',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addDriver('name', 'clicker')).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "404"}));
@@ -323,10 +463,14 @@ void main() {
   });
 
   /// tests if does not adds driver when already exists, english
-  testWidgets('english does not adds driver when already exists', (WidgetTester tester) async {
+  testWidgets('english does not adds driver when already exists',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.addDriver('name', 'clicker')).thenAnswer(
-        (_) async => Future.value({"body": "Driver with provided name already exists", "statusCode": "404"}));
+    when(mockApi.addDriver('name', 'clicker')).thenAnswer((_) async =>
+        Future.value({
+          "body": "Driver with provided name already exists",
+          "statusCode": "404"
+        }));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
@@ -354,8 +498,85 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    expect(find.text("A driver with the given name already exists."), findsOneWidget);
+    expect(find.text("A driver with the given name already exists."),
+        findsOneWidget);
 
     verify(await mockApi.addDriver('name', 'clicker')).called(1);
+  });
+
+  /// tests if adds bulb, ip invalid error, goes to edit and saves, english
+  testWidgets('english adds bulb, ip invalid error, goes to edit and saves',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addDriver('name', 'bulb'))
+        .thenAnswer((_) async => Future.value({
+              "body": jsonEncode({
+                "id": 1,
+                "name": "name",
+                "category": "bulb",
+                "ipAddress": "111.222.33.44",
+                "data": null
+              }),
+              "statusCode": "201"
+            }));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(400));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewDriver page = NewDriver(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('categoriesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("bulb").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    expect(find.text("IP address"), findsOneWidget);
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('saveDriverButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.addDriver('name', 'bulb')).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+
+    expect(find.byType(EditDriver), findsOneWidget);
+    expect(
+        find.text(
+            "IP address could not be saved while adding bulb. Try again."),
+        findsOneWidget);
+
+    expect(find.text("IP address"), findsOneWidget);
+
+    ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '222.333.44.55');
+    when(mockApi.addIpAddress(1, '222.333.44.55'))
+        .thenAnswer((_) async => Future.value(200));
+
+    await tester.tap(find.byKey(Key('editDriverButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+
+    verifyNever(await mockApi.addDriver('name', 'bulb'));
+    verify(await mockApi.addIpAddress(1, '222.333.44.55')).called(1);
   });
 }

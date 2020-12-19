@@ -378,6 +378,8 @@ class _SensorsState extends State<Sensors> {
         imageUrl = "assets/icons/breathalyser.svg";
         break;
       case "gas":
+        imageUrl = "assets/icons/gas-bottle.svg";
+        break;
       case "smoke":
         imageUrl = "assets/icons/smoke.svg";
         break;
