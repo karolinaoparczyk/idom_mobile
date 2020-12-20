@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
+import 'package:idom/enums/languages.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/edit_account.dart';
 import 'package:idom/utils/idom_colors.dart';
@@ -57,6 +58,7 @@ class _AccountDetailState extends State<AccountDetail> {
           id: int.parse(currentUserData['id']),
           username: currentUserData['username'],
           email: currentUserData['email'],
+          language: currentUserData['language'],
           telephone: currentUserData['telephone'] != null
               ? currentUserData['telephone']
               : "",
@@ -269,6 +271,33 @@ class _AccountDetailState extends State<AccountDetail> {
                                         ),
                                       ],
                                     ))),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 52.5,
+                              top: 10,
+                              right: 30.0,
+                              bottom: 0.0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Język powiadomień".i18n,
+                                  style: TextStyle(
+                                      color: IdomColors.additionalColor,
+                                      fontSize: 16.5,
+                                      fontWeight: FontWeight.bold)))),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 52.5,
+                              top: 0,
+                              right: 30.0,
+                              bottom: 0.0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(Languages.values
+                                  .firstWhere((element) => element['value'] == account.language)['text'].i18n,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontSize: 21.0)))),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 52.5,

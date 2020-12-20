@@ -1,24 +1,22 @@
-import 'package:idom/localization/enums/categories.i18n.dart';
-
 class SensorCategories {
   static final values = [
     {"text": "alkomat", "value": "breathalyser"},
-    {"text": "ciśnienie atmosferyczne".i18n, "value": "atmo_pressure"},
-    {"text": "opady atmosferyczne".i18n, "value": "rain_sensor"},
-    {"text": "temperatura powietrza".i18n, "value": "temperature"},
-    {"text": "temperatura wody".i18n, "value": "water_temp"},
-    {"text": "dym".i18n, "value": "smoke"},
-    {"text": "gaz".i18n, "value": "gas"},
-    {"text": "wilgotność gleby".i18n, "value": "humidity"},
-    {"text": "wilgotność powietrza".i18n, "value": "air_humidity"},
+    {"text": "ciśnienie atmosferyczne", "value": "atmo_pressure"},
+    {"text": "opady atmosferyczne", "value": "rain_sensor"},
+    {"text": "temperatura powietrza", "value": "temperature"},
+    {"text": "temperatura wody", "value": "water_temp"},
+    {"text": "dym", "value": "smoke"},
+    {"text": "gaz", "value": "gas"},
+    {"text": "wilgotność gleby", "value": "humidity"},
+    {"text": "wilgotność powietrza", "value": "air_humidity"},
   ];
 }
 
 class DriverCategories {
   static final values = [
-    {"text": "naduszacz".i18n, "value": "clicker"},
-    {"text": "pilot".i18n, "value": "remote_control"},
-    {"text": "żarówka".i18n, "value": "bulb"},
-    {"text": "rolety".i18n, "value": "roller_blind"},
+    {"text": "naduszacz", "value": "clicker"},
+    {"text": "pilot", "value": "remote_control"},
+    {"text": "żarówka", "value": "bulb"},
+    {"text": "rolety", "value": "roller_blind"},
   ];
 }

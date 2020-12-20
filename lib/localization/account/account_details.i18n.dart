@@ -18,6 +18,10 @@ extension Localization on String {
       {
         "pl_pl": "Adres e-mail",
         "en_uk": "E-mail address",
+      } +
+      {
+        "pl_pl": "Język powiadomień",
+        "en_uk": "Notification language",
       }+
       {
         "pl_pl": "Nr telefonu komórkowego",
@@ -54,6 +58,14 @@ extension Localization on String {
       {
         "pl_pl": "Błąd pobierania danych użytkownika. Adres serwera nieprawidłowy.",
         "en_uk": "User data retrieval error. The server address is invalid.",
+      } +
+      {
+        "pl_pl": "polski",
+        "en_uk": "polish",
+      } +
+      {
+        "pl_pl": "angielski",
+        "en_uk": "english",
       };
 
   String get i18n => localize(this, _t);
