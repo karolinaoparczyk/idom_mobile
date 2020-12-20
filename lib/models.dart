@@ -5,6 +5,7 @@ class Account extends Equatable {
   final int id;
   String username;
   String email;
+  String language;
   String telephone;
   bool smsNotifications;
   bool appNotifications;
@@ -15,6 +16,7 @@ class Account extends Equatable {
     @required this.id,
     @required this.username,
     @required this.email,
+    @required this.language,
     @required this.telephone,
     @required this.smsNotifications,
     @required this.appNotifications,
@@ -30,6 +32,7 @@ class Account extends Equatable {
         id: json['id'] as int,
         username: json['username'] as String,
         email: json['email'] as String,
+        language: json['language'] as String,
         telephone: json['telephone'] as String,
         smsNotifications: json['sms_notifications'] as bool,
         appNotifications: json['app_notifications'] as bool,
@@ -43,6 +46,7 @@ class Account extends Equatable {
         id: this.id,
         username: this.username,
         email: this.email,
+        language: this.language,
         telephone: this.telephone,
         smsNotifications: this.smsNotifications,
         appNotifications: this.appNotifications,

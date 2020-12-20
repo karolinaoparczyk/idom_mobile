@@ -136,6 +136,7 @@ class _SignInState extends State<SignIn> {
                 account.username,
                 _passwordController.text,
                 account.email,
+                account.language,
                 account.telephone,
                 account.id.toString(),
                 account.smsNotifications.toString(),
@@ -152,7 +153,7 @@ class _SignInState extends State<SignIn> {
               Navigator.of(context).popUntil((route) => route.isFirst);
             }
           }
-          if (userResult[1] == 401) {
+          else if (userResult[1] == 401) {
             setState(() {
               _load = false;
             });
@@ -175,7 +176,7 @@ class _SignInState extends State<SignIn> {
           });
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

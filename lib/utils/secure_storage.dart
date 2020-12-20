@@ -5,6 +5,7 @@ class SecureStorage {
   static const String _username = "username";
   static const String _password = "password";
   static const String _email = "email";
+  static const String _language = "language";
   static const String _telephone = "telephone";
   static const String _userId = "userId";
   static const String _smsNotifications = "smsNotifications";
@@ -46,6 +47,7 @@ class SecureStorage {
       String username,
       String password,
       String email,
+      String language,
       String telephone,
       String userId,
       String smsNotifications,
@@ -56,6 +58,7 @@ class SecureStorage {
     storage.write(key: _username, value: username);
     storage.write(key: _password, value: password);
     storage.write(key: _email, value: email);
+    storage.write(key: _language, value: language);
     storage.write(key: _telephone, value: telephone);
     storage.write(key: _userId, value: userId);
     storage.write(key: _smsNotifications, value: smsNotifications);
@@ -69,6 +72,7 @@ class SecureStorage {
   Future<Map<String, dynamic>> getCurrentUserData() async {
     var username = await storage.read(key: _username);
     var email = await storage.read(key: _email);
+    var language = await storage.read(key: _language);
     var telephone = await storage.read(key: _telephone);
     var id = await storage.read(key: _userId);
     var smsNotifications = await storage.read(key: _smsNotifications);
@@ -79,6 +83,7 @@ class SecureStorage {
     return {
       "username": username,
       "email": email,
+      "language": language,
       "telephone": telephone,
       "id": id,
       "smsNotifications": smsNotifications,
@@ -93,6 +98,7 @@ class SecureStorage {
     storage.delete(key: _username);
     storage.delete(key: _password);
     storage.delete(key: _email);
+    storage.delete(key: _language);
     storage.delete(key: _telephone);
     storage.delete(key: _userId);
     storage.delete(key: _smsNotifications);
@@ -101,6 +107,7 @@ class SecureStorage {
     storage.write(key: _isLoggedIn, value: "false");
     storage.delete(key: _isUserStaff);
     storage.delete(key: _token);
+    storage.delete(key: _themeMode);
   }
 
   void setUsername(String username) {
@@ -124,6 +131,14 @@ class SecureStorage {
   }
 
   Future<String> getEmail() {
+    return storage.read(key: _email);
+  }
+
+  void setLanguage(String language) {
+    storage.write(key: _language, value: language);
+  }
+
+  Future<String> getLanguage() {
     return storage.read(key: _email);
   }
 

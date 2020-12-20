@@ -46,13 +46,14 @@ class Api {
 
   /// registers user
   Future<Map<String, String>> signUp(
-      username, password1, password2, email, telephone) async {
+      username, password1, password2, email, language, telephone) async {
     await getApiAddress();
     var res = await httpClient.post('$url/users/add', body: {
       "username": username,
       "password1": password1,
       "password2": password2,
       "email": email,
+      "language": language,
       "telephone": telephone,
     }).timeout(Duration(seconds: 10));
     var resDict = {
@@ -134,17 +135,12 @@ class Api {
 
   /// edits users data
   Future<Map<String, String>> editAccount(
-      int id, String email, String telephone) async {
+      int id, String email, String language, String telephone) async {
     await getApiAddress();
     await getToken();
-    var body;
-    if (email != null && telephone != null) {
-      body = {"email": email, "telephone": telephone};
-    } else if (email != null) {
-      body = {"email": email};
-    } else if (telephone != null) {
-      body = {"telephone": telephone};
-    }
+    var body = {"email": email, "telephone": telephone, "language": language};
+    body.removeWhere((key, value) => value == null);
+
     var res = await httpClient
         .put('$url/users/update/$id',
             headers: {HttpHeaders.authorizationHeader: "Token $token"},
