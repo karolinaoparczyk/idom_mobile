@@ -423,23 +423,25 @@ class _SettingsState extends State<Settings> {
                                                   ))),
                                         if (_isUserLoggedIn == "true")
                                           Container(
-                                          alignment: Alignment.centerLeft,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
+                                            alignment: Alignment.centerLeft,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            child: RaisedButton(
+                                                color: Theme.of(context)
+                                                    .cardTheme
+                                                    .color,
+                                                child: Text(
+                                                    "Jak mogę usunąć dane?"
+                                                        .i18n,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headline5),
+                                                onPressed: () {
+                                                  _navigateToProjectWebPage();
+                                                }),
                                           ),
-                                          child: RaisedButton(
-                                              color:
-                                                  Theme.of(context).cardTheme.color,
-                                              child: Text(
-                                                  "Jak mogę usunąć dane?".i18n,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headline5),
-                                              onPressed: () {
-                                                _navigateToProjectWebPage();
-                                              }),
-                                        ),
                                       ],
                                     ),
                                   ),
@@ -533,10 +535,32 @@ class _SettingsState extends State<Settings> {
         widget.storage.setFirebaseParams(firebaseUrl, storageBucket,
             mobileAppId, apiKey, file.path.split("/").last);
         displayProgressDialog(
-            context: context, key: _keyLoader, text: "Zapisywanie sutawień...");
-        await _createSensorsNotificationsChannel();
-        await sendDeviceToken();
-        Navigator.pop(context);
+            context: context,
+            key: _keyLoader,
+            text: "Zapisywanie ustawień...".i18n);
+        var result = await _createSensorsNotificationsChannel();
+        if (result) {
+          var tokenSent = await sendDeviceToken();
+          Navigator.pop(context);
+          if (!tokenSent) {
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Nie udało się połączyć z serwisem firebase. Sprawdź czy plik google_services.json jest aktualny oraz połączenie z internetem."
+                        .i18n),
+                duration: Duration(seconds: 4));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
+            return;
+          }
+        } else {
+          Navigator.pop(context);
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Nie udało się wygenerować tokenu. Spróbuj ponownie."
+                      .i18n),
+              duration: Duration(seconds: 2));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+          return;
+        }
       }
       if (_isUserLoggedIn == "true") {
         final snackBar = new SnackBar(
@@ -549,7 +573,7 @@ class _SettingsState extends State<Settings> {
     }
   }
 
-  Future<void> _createSensorsNotificationsChannel() async {
+  Future<bool> _createSensorsNotificationsChannel() async {
     channelMap["firebaseUrl"] = firebaseUrl;
     channelMap["storageBucket"] = storageBucket;
     channelMap["mobileAppId"] = mobileAppId;
@@ -558,21 +582,28 @@ class _SettingsState extends State<Settings> {
       await _channel.invokeMethod('createNotificationChannel', channelMap);
     } on PlatformException catch (e) {
       print(e);
+      return false;
     }
+    return true;
   }
 
-  Future<void> sendDeviceToken() async {
+  Future<bool> sendDeviceToken() async {
     final pushNotificationsManager = PushNotificationsManager();
     await pushNotificationsManager.init();
+    if (pushNotificationsManager.deviceToken == null){
+      return false;
+    }
     var deviceResponse =
         await api.checkIfDeviceTokenSent(pushNotificationsManager.deviceToken);
     if (deviceResponse != null && deviceResponse['statusCode'] != "200") {
       var tokenResponse =
           await api.sendDeviceToken(pushNotificationsManager.deviceToken);
-      if (tokenResponse != null && tokenResponse['statusCode'] == "201")
+      if (tokenResponse != null && tokenResponse['statusCode'] == "201") {
         print("Device token sent successfully");
-      else {
+        return true;
+      } else {
         print("Error while sending device token.");
+        return false;
       }
     }
   }
