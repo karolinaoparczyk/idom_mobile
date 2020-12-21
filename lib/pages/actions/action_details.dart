@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:i18n_extension/i18n_widget.dart';
+import 'package:intl/intl.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
@@ -191,7 +193,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                                "${widget.action.operator} ${widget.action.trigger}",
+                                "${widget.action.operator} ${_getTriggerValue()}",
                                 style: TextStyle(fontSize: 21.0)))),
                   Padding(
                       padding: EdgeInsets.only(
@@ -263,6 +265,11 @@ class _ActionDetailsState extends State<ActionDetails> {
             ))));
   }
 
+  String _getTriggerValue(){
+    var doubleTrigger = double.parse(widget.action.trigger);
+    return doubleTrigger.toStringAsFixed(2);
+  }
+
   String _getDays() {
     var daysList = widget.action.days.split(",");
     var daysString = "";
@@ -299,10 +306,15 @@ class _ActionDetailsState extends State<ActionDetails> {
   }
 
   _getHours() {
+    var start = DateTime.parse("2020-12-21 " + widget.action.startTime);
+    var lang = I18n.locale.languageCode;
+
     if (widget.action.endTime != null) {
-      return "${widget.action.startTime} - ${widget.action.endTime}";
+      var end = DateTime.parse("2020-12-21 " + widget.action.endTime);
+      var string = "${DateFormat.jm(lang).format(start)} - ${DateFormat.jm(lang).format(end)}";
+      return string;
     } else {
-      return "${widget.action.startTime}";
+      return "${DateFormat.jm(lang).format(start)}";
     }
   }
 
@@ -343,7 +355,8 @@ class _ActionDetailsState extends State<ActionDetails> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final snackBar = new SnackBar(
-            content: new Text("Odświeżenie danych akcji nie powiodło się.".i18n));
+            content:
+                new Text("Odświeżenie danych akcji nie powiodło się.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -354,13 +367,15 @@ class _ActionDetailsState extends State<ActionDetails> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych akcji. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania danych akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych akcji. Adres serwera nieprawidłowy.".i18n));
+                "Błąd pobierania danych akcji. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

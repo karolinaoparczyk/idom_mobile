@@ -18,8 +18,19 @@ class MockSecureStorage extends Mock implements SecureStorage {}
 void main() {
   Widget makePolishTestableWidget({Widget child}) {
     return MaterialApp(
-      home: child,
-    );
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('en', "UK"),
+          Locale('pl', "PL"),
+        ],
+        localeListResolutionCallback: (locales, supportedLocales) {
+          return Locale('pl', "PL");
+        },
+        home: I18n(child: child));
   }
 
   Widget makeEnglishTestableWidget({Widget child}) {

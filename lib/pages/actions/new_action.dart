@@ -44,8 +44,8 @@ class _NewActionState extends State<NewAction> {
   TimeOfDay endTime;
   Api api = Api();
   bool _load;
-  List<Sensor> sensors;
-  List<Driver> drivers;
+  List<Sensor> sensors = List<Sensor>();
+  List<Driver> drivers = List<Driver>();
   String fieldsValidationMessage;
   String selectedOperator;
   List<bool> daysOfWeekSelected = [true, true, true, true, true, true, true];
@@ -336,9 +336,11 @@ class _NewActionState extends State<NewAction> {
               builder: (context) {
                 return Dialog(
                   child: ChooseDriverDialog(
-                      drivers: drivers.where((element) =>
-                      element.category !=
-                          "remote_control").toList(), currentDriver: selectedDriver),
+                      drivers: drivers
+                          .where(
+                              (element) => element.category != "remote_control")
+                          .toList(),
+                      currentDriver: selectedDriver),
                 );
               });
           if (driver != null) {
@@ -389,6 +391,8 @@ class _NewActionState extends State<NewAction> {
                 startTime ?? TimeOfDay(hour: now.hour, minute: now.minute),
           );
           if (time != null) {
+            var period = time.period;
+            print(period);
             startTime = time;
             _startTimeController.text = "${startTime.format(context)}";
             setState(() {});
@@ -708,10 +712,12 @@ class _NewActionState extends State<NewAction> {
   _validateTime() {
     bool isCorrect = true;
     if (startTime != null && endTime != null) {
+      var startHour = startTime.hour;
+      var endHour = endTime.hour;
       double _doubleStartTime =
-          startTime.hour.toDouble() + (startTime.minute.toDouble() / 60);
+          startHour.toDouble() + (startTime.minute.toDouble() / 60);
       double _doubleEndTime =
-          endTime.hour.toDouble() + (endTime.minute.toDouble() / 60);
+          endHour.toDouble() + (endTime.minute.toDouble() / 60);
       isCorrect = _doubleStartTime < _doubleEndTime;
       if (!isCorrect) {
         setState(() {
@@ -738,13 +744,22 @@ class _NewActionState extends State<NewAction> {
     var daysString = daysList.join(", ");
     if (daysList.isEmpty) {
       setState(() {
-        fieldsValidationMessage =
-            "Należy wybrać przynajmniej jeden dzień działania akcji.".i18n;
+        if (fieldsValidationMessage != null) {
+          fieldsValidationMessage +=
+              "Należy wybrać przynajmniej jeden dzień działania akcji.".i18n;
+        } else {
+          fieldsValidationMessage =
+              "Należy wybrać przynajmniej jeden dzień działania akcji.".i18n;
+        }
       });
       return null;
     } else {
       setState(() {
-        fieldsValidationMessage = null;
+        if (fieldsValidationMessage != null &&
+            !(fieldsValidationMessage.contains("rozpoczęcia") ||
+                fieldsValidationMessage.contains("start"))) {
+          fieldsValidationMessage = null;
+        }
       });
     }
     return daysString;
@@ -777,8 +792,18 @@ class _NewActionState extends State<NewAction> {
       try {
         var endTimeString;
         if (endTime != null) {
-          endTimeString = "${endTime.hour}:${endTime.minute}";
+          var endHour = endTime.hour;
+          var endMinute = endTime.minute.toString().length == 1
+              ? "0" + endTime.minute.toString()
+              : endTime.minute.toString();
+          endTimeString = "$endHour:$endMinute";
         }
+        var startTimeString;
+        var startHour = startTime.hour;
+        var startMinute = startTime.minute.toString().length == 1
+            ? "0" + startTime.minute.toString()
+            : startTime.minute.toString();
+        startTimeString = "$startHour:$startMinute";
         var sensor;
         var operator;
         var trigger;
@@ -805,7 +830,7 @@ class _NewActionState extends State<NewAction> {
             operator,
             selectedDriver.name,
             daysString,
-            "${startTime.hour}:${startTime.minute}",
+            startTimeString,
             endTimeString,
             "action",
             _getFlag());

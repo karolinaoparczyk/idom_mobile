@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
+import 'package:i18n_extension/i18n_widget.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/choose_driver_dialog.dart';
 import 'package:idom/dialogs/choose_sensor_dialog.dart';
@@ -84,15 +86,20 @@ class _EditActionState extends State<EditAction> {
       _sensorTriggerOperatorController = TextEditingController(
           text: selectedOperator.i18n);
     }
+    var lang = I18n.locale.languageCode;
+    var start = DateTime.parse("2020-12-21 " + widget.action.startTime);
+    var formattedStart = DateFormat.jm(lang).format(start);
+    _startTimeController = TextEditingController(text: formattedStart);
     startTime = TimeOfDay(
         hour: int.parse(widget.action.startTime.split(":")[0]),
         minute: int.parse(widget.action.startTime.split(":")[1]));
-    _startTimeController = TextEditingController(text: widget.action.startTime);
     if (widget.action.endTime != null) {
+      var end = DateTime.parse("2020-12-21 " + widget.action.endTime);
+      var formattedEnd = DateFormat.jm(lang).format(end);
+      _endTimeController = TextEditingController(text: formattedEnd);
       endTime = TimeOfDay(
           hour: int.parse(widget.action.endTime.split(":")[0]),
           minute: int.parse(widget.action.endTime.split(":")[1]));
-      _endTimeController = TextEditingController(text: widget.action.endTime);
     }
     for (int i = 0; i < 7; i++) {
       if (widget.action.days.contains(i.toString())) {
@@ -102,16 +109,23 @@ class _EditActionState extends State<EditAction> {
       }
     }
     if (widget.testStartTime != null) {
+      start = DateTime.parse("2020-12-21 " + widget.testStartTime);
+      formattedStart = DateFormat.jm(lang).format(start);
+      _startTimeController =
+          TextEditingController(text: formattedStart);
       startTime = TimeOfDay(
           hour: int.parse(widget.testStartTime.split(":")[0]),
           minute: int.parse(widget.testStartTime.split(":")[1]));
       _startTimeController =
           TextEditingController(text: widget.testStartTime);
-      if (widget.testEndTime != null){
-      endTime = TimeOfDay(
-          hour: int.parse(widget.testEndTime.split(":")[0]),
+      if (widget.testEndTime != null) {
+        var end = DateTime.parse("2020-12-21 " + widget.testEndTime);
+        var formattedEnd = DateFormat.jm(lang).format(end);
+        _endTimeController = TextEditingController(text: formattedEnd);
+        endTime = TimeOfDay(
+            hour: int.parse(widget.testEndTime.split(":")[0]),
             minute: int.parse(widget.testEndTime.split(":")[1]));
-        _endTimeController = TextEditingController(text: widget.testEndTime);}
+      }
       else{
         endTime = null;
         _endTimeController = TextEditingController(text: "");
@@ -989,17 +1003,25 @@ class _EditActionState extends State<EditAction> {
     var operator;
     if (selectedSensor != null) {
       sensor = selectedSensor.name;
-      trigger = int.tryParse(_sensorTriggerController.text);
+      trigger = _sensorTriggerController.text;
       operator = selectedOperator.substring(0, 1);
     }
     var driver = selectedDriver.name;
     var days = _getDaysSelectedString();
     var action = "action";
     var flag = _getFlag();
-    var start = "${startTime.hour}:${startTime.minute}";
+    var startHour = startTime.hour;
+    var startMinute = startTime.minute.toString().length == 1
+        ? "0" + startTime.minute.toString()
+        : startTime.minute.toString();
+    var start = "$startHour:$startMinute";
     var end = "";
     if (endTime != null) {
-      end = "${endTime.hour}:${endTime.minute}";
+      var endHour = endTime.hour;
+      var endMinute = endTime.minute.toString().length == 1
+          ? "0" + endTime.minute.toString()
+          : endTime.minute.toString();
+      end = "$endHour:$endMinute";
     }
 
     var changedName = false;
