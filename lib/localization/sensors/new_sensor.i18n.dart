@@ -116,7 +116,7 @@ extension Localization on String {
       } +
       {
         "pl_pl": "stan powietrza",
-        "en_uk": "air condition",
+        "en_uk": "smoke",
       } +
       {
         "pl_pl": "gaz",

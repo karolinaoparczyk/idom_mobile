@@ -540,7 +540,7 @@ void main() {
     expect(find.text("opady atmosferyczne"), findsOneWidget);
     expect(find.text("temperatura powietrza"), findsNWidgets(2));
     expect(find.text("temperatura wody"), findsOneWidget);
-    expect(find.text("stan powietrza"), findsOneWidget);
+    expect(find.text("dym"), findsOneWidget);
     /// scroll categories list
     await tester.drag(
         find.byKey(Key('categories_list')), const Offset(0.0, -300));
@@ -900,7 +900,7 @@ void main() {
     expect(find.text("precipitation"), findsOneWidget);
     expect(find.text("air temperature"), findsNWidgets(2));
     expect(find.text("water temperature"), findsOneWidget);
-    expect(find.text("air condition"), findsOneWidget);
+    expect(find.text("smoke"), findsOneWidget);
     /// scroll categories list
     await tester.drag(
         find.byKey(Key('categories_list')), const Offset(0.0, -300));
