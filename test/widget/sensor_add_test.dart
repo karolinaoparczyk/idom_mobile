@@ -143,7 +143,7 @@ void main() {
     await tester.drag(
         find.byKey(Key('categories_list')), const Offset(0.0, -300));
     await tester.pump();
-    await tester.tap(find.text("stan powietrza").last);
+    await tester.tap(find.text("dym").last);
 
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -683,7 +683,7 @@ void main() {
     await tester.drag(
         find.byKey(Key('categories_list')), const Offset(0.0, -300));
     await tester.pump();
-    await tester.tap(find.text("stan powietrza").last);
+    await tester.tap(find.text("dym").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
 
@@ -770,7 +770,7 @@ void main() {
     expect(find.text("precipitation"), findsOneWidget);
     expect(find.text("air temperature"), findsOneWidget);
     expect(find.text("water temperature"), findsOneWidget);
-    expect(find.text("air condition"), findsOneWidget);
+    expect(find.text("smoke"), findsOneWidget);
 
     /// scroll categories list
     await tester.drag(
@@ -820,7 +820,7 @@ void main() {
         await tester.drag(
             find.byKey(Key('categories_list')), const Offset(0.0, -300));
         await tester.pump();
-        await tester.tap(find.text("air condition").last);
+        await tester.tap(find.text("smoke").last);
 
         await tester.tap(find.byKey(Key('yesButton')));
         await tester.pump();
@@ -1360,7 +1360,7 @@ void main() {
         await tester.drag(
             find.byKey(Key('categories_list')), const Offset(0.0, -300));
         await tester.pump();
-        await tester.tap(find.text("air condition").last);
+        await tester.tap(find.text("smoke").last);
         await tester.tap(find.byKey(Key('yesButton')));
         await tester.pumpAndSettle();
 
