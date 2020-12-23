@@ -137,7 +137,6 @@ class CategoryFieldValidator {
   }
 }
 
-
 /// validates driver field
 class DriverFieldValidator {
   static String validate(String value) {
@@ -165,7 +164,7 @@ class LastDaysAmountFieldValidator {
       return 'Pole wymagane'.i18n;
     }
     var intValue = int.tryParse(value);
-    if (intValue == null || intValue < 1 || intValue > 30){
+    if (intValue == null || intValue < 1 || intValue > 30) {
       return "Podaj liczbę całkowitą z przedziału 1 - 30".i18n;
     }
     return null;
@@ -174,6 +173,16 @@ class LastDaysAmountFieldValidator {
 
 /// validates frequency units field
 class FrequencyUnitsFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane'.i18n;
+    }
+    return null;
+  }
+}
+
+/// validates language field
+class LanguageFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;

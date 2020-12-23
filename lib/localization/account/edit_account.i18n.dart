@@ -8,6 +8,10 @@ extension Localization on String {
         "en_uk": "E-mail address*",
       }  +
       {
+        "pl_pl": "Język powiadomień",
+        "en_uk": "Notification language",
+      } +
+      {
         "pl_pl": "Nr telefonu komórkowego",
         "en_uk": "Cell phone number",
       } +
@@ -62,6 +66,14 @@ extension Localization on String {
       {
         "pl_pl": "Nie wprowadzono żadnych zmian.",
         "en_uk": "No changes have been made.",
+      } +
+      {
+        "pl_pl": "polski",
+        "en_uk": "polish",
+      } +
+      {
+        "pl_pl": "angielski",
+        "en_uk": "english",
       };
 
   String get i18n => localize(this, _t);

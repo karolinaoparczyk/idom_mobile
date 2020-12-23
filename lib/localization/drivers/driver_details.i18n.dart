@@ -114,6 +114,10 @@ extension Localization on String {
       {
         "pl_pl": "Pilot nie posiada adresu IP.",
         "en_uk": "The remote control does not have an IP address.",
+      }+
+      {
+        "pl_pl": "Żarówka nie posiada adresu IP.",
+        "en_uk": "The bulb does not have an IP address.",
       } +
       {
         "pl_pl": "Komenda wysłana do pilota.",
@@ -146,6 +150,10 @@ extension Localization on String {
       {
         "pl_pl": "Wysyłanie komendy...",
         "en_uk": "Sending a command...",
+      }+
+      {
+        "pl_pl": "Adres IP",
+        "en_uk": "IP address",
       };
 
   String get i18n => localize(this, _t);

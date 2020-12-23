@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
+import 'package:idom/dialogs/language_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
+import 'package:idom/enums/languages.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
@@ -30,9 +32,11 @@ class _EditAccountState extends State<EditAccount> {
   bool _load;
   String fieldsValidationMessage;
   String currentUsername;
+  String selectedLanguage;
 
   TextEditingController _emailController;
   TextEditingController _telephoneController;
+  TextEditingController _languageController;
 
   /// builds email form field
   Widget _buildEmail() {
@@ -75,6 +79,41 @@ class _EditAccountState extends State<EditAccount> {
         validator: TelephoneFieldValidator.validate);
   }
 
+  /// builds language field
+  Widget _buildLanguageField() {
+    return TextFormField(
+      key: Key("language"),
+      controller: _languageController,
+      decoration: InputDecoration(
+        labelText: "Język powiadomień".i18n,
+        labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon: Icon(Icons.arrow_drop_down),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+      onTap: () async {
+        final Map<String, String> language = await showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                child:
+                LanguageDialog(currentLanguage: selectedLanguage),
+              );
+            });
+        if (language != null) {
+          _languageController.text = language['text'].i18n;
+          selectedLanguage = language['value'];
+          setState(() {});
+        }
+      },
+      validator: LanguageFieldValidator.validate,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      readOnly: true,
+      style: TextStyle(fontSize: 21.0),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -86,6 +125,11 @@ class _EditAccountState extends State<EditAccount> {
     _emailController = TextEditingController(text: widget.account.email);
     _telephoneController =
         TextEditingController(text: widget.account.telephone);
+    Map<String, String> currentLanguage = Languages.values
+        .firstWhere((element) => element['value'] == widget.account.language);
+    _languageController =
+        TextEditingController(text: currentLanguage['text'].i18n);
+    selectedLanguage = currentLanguage['value'];
   }
 
   _getCurrentUser() async {
@@ -183,6 +227,15 @@ class _EditAccountState extends State<EditAccount> {
                                 bottom: 0.0),
                             child: Align(
                                 alignment: Alignment.centerLeft,
+                                child: _buildLanguageField())),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.0,
+                                top: 10.0,
+                                right: 30.0,
+                                bottom: 0.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
                                 child: _buildTelephone())),
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -208,14 +261,15 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   /// saves changes or displays error dialogs
-  _saveChanges(bool changedEmail, bool changedTelephone) async {
+  _saveChanges(bool changedEmail, bool changedTelephone, bool changedLanguage) async {
     var email = changedEmail ? _emailController.text : null;
     var telephone = changedTelephone ? _telephoneController.text : null;
+    var language = changedLanguage ? selectedLanguage : null;
     setState(() {
       _load = true;
     });
     try {
-      var res = await api.editAccount(widget.account.id, email, telephone);
+      var res = await api.editAccount(widget.account.id, email, language, telephone);
       var emailExists = false;
       var emailInvalid = false;
       var telephoneExists = false;
@@ -229,6 +283,7 @@ class _EditAccountState extends State<EditAccount> {
         if (widget.account.username == currentUsername) {
           widget.storage.setEmail(_emailController.text);
           widget.storage.setTelephone(_telephoneController.text);
+          widget.storage.setLanguage(selectedLanguage);
         }
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
@@ -295,11 +350,11 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   /// confirms saving account changes
-  _confirmSavingChanges(bool changedEmail, bool changedTelephone) async {
+  _confirmSavingChanges(bool changedEmail, bool changedTelephone, bool changedLanguage) async {
     var decision = await confirmActionDialog(
         context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
-      await _saveChanges(changedEmail, changedTelephone);
+      await _saveChanges(changedEmail, changedTelephone, changedLanguage);
     }
   }
 
@@ -307,8 +362,10 @@ class _EditAccountState extends State<EditAccount> {
   _verifyChanges() async {
     var email = _emailController.text;
     var telephone = _telephoneController.text;
+    var language = selectedLanguage;
     var changedEmail = false;
     var changedTelephone = false;
+    var changedLanguage = false;
 
     final formState = _formKey.currentState;
     if (formState.validate()) {
@@ -319,8 +376,11 @@ class _EditAccountState extends State<EditAccount> {
       if (telephone != widget.account.telephone) {
         changedTelephone = true;
       }
-      if (changedEmail || changedTelephone) {
-        await _confirmSavingChanges(changedEmail, changedTelephone);
+      if (language != widget.account.language) {
+        changedLanguage = true;
+      }
+      if (changedEmail || changedTelephone || changedLanguage) {
+        await _confirmSavingChanges(changedEmail, changedTelephone, changedLanguage);
       } else {
         final snackBar =
             new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
