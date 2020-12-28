@@ -114,9 +114,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                           alignment: Alignment.centerLeft,
                           child: Row(
                             children: [
-                              Icon(Icons.info_outline_rounded, size: 17.5),
+                              Icon(Icons.info_outline_rounded, size: 21),
                               Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
+                                padding: const EdgeInsets.only(left: 10.0),
                                 child: Text("Ogólne".i18n,
                                     style:
                                         Theme.of(context).textTheme.bodyText1),
@@ -125,55 +125,47 @@ class _DriverDetailsState extends State<DriverDetails> {
                           ))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Nazwa".i18n,
-                              style: TextStyle(
-                                  color: IdomColors.additionalColor,
-                                  fontSize: 16.5,
-                                  fontWeight: FontWeight.bold)))),
+                              style: Theme.of(context).textTheme.headline5))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(widget.driver.name,
-                              style:  Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(fontSize: 21.0)))),
+                              style: Theme.of(context).textTheme.bodyText2))),
                   if (widget.driver.category == "bulb")
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 62, top: 10.0, right: 30.0, bottom: 0.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Adres IP".i18n,
+                                style: Theme.of(context).textTheme.headline5))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 0, right: 30.0, bottom: 10.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Adres IP".i18n,
-                              style: TextStyle(
-                                  color: IdomColors.additionalColor,
-                                  fontSize: 16.5,
-                                  fontWeight: FontWeight.bold)))),
+                          child: Text(
+                              widget.driver.ipAddress != null
+                                  ? widget.driver.ipAddress
+                                  : "-",
+                              style: Theme.of(context).textTheme.bodyText2))),
+                  Divider(),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(widget.driver.ipAddress != null ? widget.driver.ipAddress : "-",
-                              style:  Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(fontSize: 21.0)))),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
+                          left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Row(
                             children: [
-                              Icon(Icons.touch_app_outlined, size: 17.5),
+                              Icon(Icons.touch_app_outlined, size: 21),
                               Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
+                                padding: const EdgeInsets.only(left: 10.0),
                                 child: Text("Obsługa sterownika".i18n,
                                     style:
                                         Theme.of(context).textTheme.bodyText1),
@@ -185,31 +177,25 @@ class _DriverDetailsState extends State<DriverDetails> {
                       widget.driver.data != null)
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text("Aktualny stan".i18n,
-                                style: TextStyle(
-                                    color: IdomColors.additionalColor,
-                                    fontSize: 16.5,
-                                    fontWeight: FontWeight.bold)))),
+                                style: Theme.of(context).textTheme.headline5))),
                   if ((widget.driver.category == "bulb" ||
                           widget.driver.category == "roller_blind") &&
                       widget.driver.data != null)
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                            left: 62, top: 0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(_getDataValue(),
-                                style:  Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontSize: 21.0)))),
+                                style: Theme.of(context).textTheme.bodyText2))),
                   if (widget.driver.category == "clicker")
                     Padding(
                       padding: const EdgeInsets.only(
-                          left: 52.5, top: 30, right: 52.5, bottom: 0.0),
+                          left: 62, top: 30, right: 62, bottom: 0.0),
                       child: Column(
                         children: [
                           SizedBox.fromSize(
@@ -226,7 +212,6 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     children: <Widget>[
                                       SvgPicture.asset("assets/icons/play.svg",
                                           matchTextDirection: false,
-                                          alignment: Alignment.centerRight,
                                           width: 25,
                                           height: 25,
                                           color: IdomColors.green,
@@ -238,1012 +223,1133 @@ class _DriverDetailsState extends State<DriverDetails> {
                             ),
                           ),
                           Text("Wciśnij przycisk".i18n,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(fontSize: 21.0)),
+                              style: Theme.of(context).textTheme.bodyText2),
                         ],
                       ),
                     ),
                   if (widget.driver.category == "remote_control")
                     Padding(
                         padding: const EdgeInsets.only(
-                            left: 52.5, top: 30, right: 52.5, bottom: 0.0),
-                        child: AnimatedCrossFade(
-                            crossFadeState: digitsVisible
-                                ? CrossFadeState.showFirst
-                                : CrossFadeState.showSecond,
-                            duration: Duration(milliseconds: 300),
-                            firstChild: digitsVisible
-                                ? Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 30.0),
-                                        child: TextFormField(
-                                          key: Key('channelNumber'),
-                                          readOnly: true,
-                                          keyboardType: TextInputType.number,
-                                          controller: _channelNumberController,
-                                          style:  Theme.of(context)
-                                              .textTheme
-                                              .bodyText1
-                                              .copyWith(fontSize: 21.0),
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
+                            left: 62, top: 30, right: 62, bottom: 0.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2
+                                      .color),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: AnimatedCrossFade(
+                                crossFadeState: digitsVisible
+                                    ? CrossFadeState.showFirst
+                                    : CrossFadeState.showSecond,
+                                duration: Duration(milliseconds: 300),
+                                firstChild: digitsVisible
+                                    ? Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 30.0),
+                                            child: TextFormField(
+                                              key: Key('channelNumber'),
+                                              readOnly: true,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              controller:
+                                                  _channelNumberController,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(fontSize: 21.0),
+                                              decoration: InputDecoration(
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2
+                                                          .color),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
+                                                ),
+                                                border: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2
+                                                          .color),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
+                                                ),
+                                              ),
                                             ),
+                                          ),
+                                          SizedBox(height: 20),
+                                          Table(
+                                            children: [
+                                              TableRow(children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 18.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      if (_channelNumberController
+                                                              .text.length <
+                                                          3) {
+                                                        setState(() {
+                                                          _channelNumberController
+                                                              .text += "1";
+                                                        });
+                                                      }
+                                                    },
+                                                    splashColor:
+                                                        IdomColors.lighten(
+                                                            IdomColors
+                                                                .additionalColor,
+                                                            0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50.0),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              18.0),
+                                                      child: Center(
+                                                        child: Text("1",
+                                                            style: TextStyle(
+                                                                color: IdomColors
+                                                                    .additionalColor,
+                                                                fontSize: 21,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            key: Key("1")),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    if (_channelNumberController
+                                                            .text.length <
+                                                        3) {
+                                                      setState(() {
+                                                        _channelNumberController
+                                                            .text += "2";
+                                                      });
+                                                    }
+                                                  },
+                                                  splashColor:
+                                                      IdomColors.lighten(
+                                                          IdomColors
+                                                              .additionalColor,
+                                                          0.3),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50.0),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            18.0),
+                                                    child: Center(
+                                                      child: Text("2",
+                                                          style: TextStyle(
+                                                              color: IdomColors
+                                                                  .additionalColor,
+                                                              fontSize: 21,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                          key: Key("2")),
+                                                    ),
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    if (_channelNumberController
+                                                            .text.length <
+                                                        3) {
+                                                      setState(() {
+                                                        _channelNumberController
+                                                            .text += "3";
+                                                      });
+                                                    }
+                                                  },
+                                                  splashColor:
+                                                      IdomColors.lighten(
+                                                          IdomColors
+                                                              .additionalColor,
+                                                          0.3),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50.0),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            18.0),
+                                                    child: Center(
+                                                      child: Text("3",
+                                                          style: TextStyle(
+                                                              color: IdomColors
+                                                                  .additionalColor,
+                                                              fontSize: 21,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                          key: Key("3")),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]),
+                                              TableRow(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 18.0),
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        if (_channelNumberController
+                                                                .text.length <
+                                                            3) {
+                                                          setState(() {
+                                                            _channelNumberController
+                                                                .text += "4";
+                                                          });
+                                                        }
+                                                      },
+                                                      splashColor:
+                                                          IdomColors.lighten(
+                                                              IdomColors
+                                                                  .additionalColor,
+                                                              0.3),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50.0),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(18.0),
+                                                        child: Center(
+                                                          child: Text("4",
+                                                              style: TextStyle(
+                                                                  color: IdomColors
+                                                                      .additionalColor,
+                                                                  fontSize: 21,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              key: Key("4")),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (_channelNumberController
+                                                              .text.length <
+                                                          3) {
+                                                        setState(() {
+                                                          _channelNumberController
+                                                              .text += "5";
+                                                        });
+                                                      }
+                                                    },
+                                                    splashColor:
+                                                        IdomColors.lighten(
+                                                            IdomColors
+                                                                .additionalColor,
+                                                            0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50.0),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              18.0),
+                                                      child: Center(
+                                                        child: Text("5",
+                                                            style: TextStyle(
+                                                                color: IdomColors
+                                                                    .additionalColor,
+                                                                fontSize: 21,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            key: Key("5")),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (_channelNumberController
+                                                              .text.length <
+                                                          3) {
+                                                        setState(() {
+                                                          _channelNumberController
+                                                              .text += "6";
+                                                        });
+                                                      }
+                                                    },
+                                                    splashColor:
+                                                        IdomColors.lighten(
+                                                            IdomColors
+                                                                .additionalColor,
+                                                            0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50.0),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              18.0),
+                                                      child: Center(
+                                                        child: Text("6",
+                                                            style: TextStyle(
+                                                                color: IdomColors
+                                                                    .additionalColor,
+                                                                fontSize: 21,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            key: Key("6")),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              TableRow(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 18.0),
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        if (_channelNumberController
+                                                                .text.length <
+                                                            3) {
+                                                          setState(() {
+                                                            _channelNumberController
+                                                                .text += "7";
+                                                          });
+                                                        }
+                                                      },
+                                                      splashColor:
+                                                          IdomColors.lighten(
+                                                              IdomColors
+                                                                  .additionalColor,
+                                                              0.3),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50.0),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(18.0),
+                                                        child: Center(
+                                                          child: Text("7",
+                                                              style: TextStyle(
+                                                                  color: IdomColors
+                                                                      .additionalColor,
+                                                                  fontSize: 21,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              key: Key("7")),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (_channelNumberController
+                                                              .text.length <
+                                                          3) {
+                                                        setState(() {
+                                                          _channelNumberController
+                                                              .text += "8";
+                                                        });
+                                                      }
+                                                    },
+                                                    splashColor:
+                                                        IdomColors.lighten(
+                                                            IdomColors
+                                                                .additionalColor,
+                                                            0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50.0),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              18.0),
+                                                      child: Center(
+                                                        child: Text("8",
+                                                            style: TextStyle(
+                                                                color: IdomColors
+                                                                    .additionalColor,
+                                                                fontSize: 21,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            key: Key("8")),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (_channelNumberController
+                                                              .text.length <
+                                                          3) {
+                                                        setState(() {
+                                                          _channelNumberController
+                                                              .text += "9";
+                                                        });
+                                                      }
+                                                    },
+                                                    splashColor:
+                                                        IdomColors.lighten(
+                                                            IdomColors
+                                                                .additionalColor,
+                                                            0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50.0),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              18.0),
+                                                      child: Center(
+                                                        child: Text("9",
+                                                            style: TextStyle(
+                                                                color: IdomColors
+                                                                    .additionalColor,
+                                                                fontSize: 21,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            key: Key("9")),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              TableRow(children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 18.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        if (_channelNumberController
+                                                            .text.isNotEmpty)
+                                                          _channelNumberController
+                                                                  .text =
+                                                              _channelNumberController
+                                                                  .text
+                                                                  .substring(
+                                                                      0,
+                                                                      _channelNumberController
+                                                                              .text
+                                                                              .length -
+                                                                          1);
+                                                      });
+                                                    },
+                                                    splashColor:
+                                                        IdomColors.lighten(
+                                                            IdomColors
+                                                                .additionalColor,
+                                                            0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50.0),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 16.0,
+                                                              bottom: 16.0),
+                                                      child: SvgPicture.asset(
+                                                          "assets/icons/left-arrow-long.svg",
+                                                          matchTextDirection:
+                                                              false,
+                                                          alignment: Alignment
+                                                              .bottomCenter,
+                                                          width: 35,
+                                                          height: 35,
+                                                          color: IdomColors
+                                                              .additionalColor,
+                                                          key: Key(
+                                                              "assets/icons/left-arrow-long.svg")),
+                                                    ),
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    if (_channelNumberController
+                                                            .text.length <
+                                                        3) {
+                                                      setState(() {
+                                                        _channelNumberController
+                                                            .text += "0";
+                                                      });
+                                                    }
+                                                  },
+                                                  splashColor:
+                                                      IdomColors.lighten(
+                                                          IdomColors
+                                                              .additionalColor,
+                                                          0.3),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50.0),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            18.0),
+                                                    child: Center(
+                                                      child: Text("0",
+                                                          style: TextStyle(
+                                                              color: IdomColors
+                                                                  .additionalColor,
+                                                              fontSize: 21,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                          key: Key("0")),
+                                                    ),
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    _sendCommandToRemoteControl(
+                                                        "Channel",
+                                                        channel: int.tryParse(
+                                                            _channelNumberController
+                                                                .text));
+                                                  },
+                                                  highlightColor: digitsVisible
+                                                      ? IdomColors.grey
+                                                      : Colors.transparent,
+                                                  splashColor: digitsVisible
+                                                      ? IdomColors.lighten(
+                                                          IdomColors
+                                                              .additionalColor,
+                                                          0.3)
+                                                      : Colors.transparent,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50.0),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      top: 16.0,
+                                                      bottom: 16.0,
+                                                    ),
+                                                    child: SvgPicture.asset(
+                                                        "assets/icons/enter.svg",
+                                                        matchTextDirection:
+                                                            false,
+                                                        alignment: Alignment
+                                                            .bottomCenter,
+                                                        width: 30,
+                                                        height: 30,
+                                                        color: IdomColors
+                                                            .additionalColor,
+                                                        key: Key(
+                                                            "assets/icons/enter.svg")),
+                                                  ),
+                                                ),
+                                              ]),
+                                              TableRow(children: [
+                                                SizedBox(),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 18.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        digitsVisible = false;
+                                                        _channelNumberController
+                                                            .text = "";
+                                                      });
+                                                    },
+                                                    splashColor:
+                                                        IdomColors.lighten(
+                                                            IdomColors
+                                                                .additionalColor,
+                                                            0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50.0),
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Text("WRÓĆ".i18n,
+                                                            style: TextStyle(
+                                                                color: IdomColors
+                                                                    .additionalColor,
+                                                                fontSize: 25),
+                                                            key: Key("goBack")),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox()
+                                              ])
+                                            ],
+                                          )
+                                        ],
+                                      )
+                                    : SizedBox(),
+                                secondChild: Table(columnWidths: {
+                                  0: FlexColumnWidth(1),
+                                  1: FlexColumnWidth(1),
+                                  2: FlexColumnWidth(2),
+                                  3: FlexColumnWidth(1),
+                                  4: FlexColumnWidth(1),
+                                }, children: [
+                                  TableRow(
+                                    children: [
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl("Menu");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.additionalColor,
+                                                  0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/menu.svg",
+                                                matchTextDirection: false,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 35,
+                                                height: 35,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                                key: Key(
+                                                    "assets/icons/menu.svg")),
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 20),
-                                      Table(
-                                        children: [
-                                          TableRow(children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 18.0),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  if (_channelNumberController
-                                                          .text.length <
-                                                      3) {
-                                                    setState(() {
-                                                      _channelNumberController
-                                                          .text += "1";
-                                                    });
-                                                  }
-                                                },
-                                                splashColor: IdomColors.lighten(
-                                                    IdomColors.additionalColor,
-                                                    0.3),
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      18.0),
-                                                  child: Center(
-                                                    child: Text("1",
-                                                        style: TextStyle(
-                                                            color: IdomColors
-                                                                .additionalColor,
-                                                            fontSize: 21,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        key: Key("1")),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                if (_channelNumberController
-                                                        .text.length <
-                                                    3) {
-                                                  setState(() {
-                                                    _channelNumberController
-                                                        .text += "2";
-                                                  });
-                                                }
-                                              },
-                                              splashColor: IdomColors.lighten(
-                                                  IdomColors.additionalColor,
-                                                  0.3),
-                                              borderRadius:
-                                                  BorderRadius.circular(50.0),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(18.0),
-                                                child: Center(
-                                                  child: Text("2",
-                                                      style: TextStyle(
-                                                          color: IdomColors
-                                                              .additionalColor,
-                                                          fontSize: 21,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                      key: Key("2")),
-                                                ),
-                                              ),
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                if (_channelNumberController
-                                                        .text.length <
-                                                    3) {
-                                                  setState(() {
-                                                    _channelNumberController
-                                                        .text += "3";
-                                                  });
-                                                }
-                                              },
-                                              splashColor: IdomColors.lighten(
-                                                  IdomColors.additionalColor,
-                                                  0.3),
-                                              borderRadius:
-                                                  BorderRadius.circular(50.0),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(18.0),
-                                                child: Center(
-                                                  child: Text("3",
-                                                      style: TextStyle(
-                                                          color: IdomColors
-                                                              .additionalColor,
-                                                          fontSize: 21,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                      key: Key("3")),
-                                                ),
-                                              ),
-                                            ),
-                                          ]),
-                                          TableRow(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 18.0),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    if (_channelNumberController
-                                                            .text.length <
-                                                        3) {
-                                                      setState(() {
-                                                        _channelNumberController
-                                                            .text += "4";
-                                                      });
-                                                    }
-                                                  },
-                                                  splashColor:
-                                                      IdomColors.lighten(
-                                                          IdomColors
-                                                              .additionalColor,
-                                                          0.3),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          50.0),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            18.0),
-                                                    child: Center(
-                                                      child: Text("4",
-                                                          style: TextStyle(
-                                                              color: IdomColors
-                                                                  .additionalColor,
-                                                              fontSize: 21,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                          key: Key("4")),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  if (_channelNumberController
-                                                          .text.length <
-                                                      3) {
-                                                    setState(() {
-                                                      _channelNumberController
-                                                          .text += "5";
-                                                    });
-                                                  }
-                                                },
-                                                splashColor: IdomColors.lighten(
-                                                    IdomColors.additionalColor,
-                                                    0.3),
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      18.0),
-                                                  child: Center(
-                                                    child: Text("5",
-                                                        style: TextStyle(
-                                                            color: IdomColors
-                                                                .additionalColor,
-                                                            fontSize: 21,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        key: Key("5")),
-                                                  ),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  if (_channelNumberController
-                                                          .text.length <
-                                                      3) {
-                                                    setState(() {
-                                                      _channelNumberController
-                                                          .text += "6";
-                                                    });
-                                                  }
-                                                },
-                                                splashColor: IdomColors.lighten(
-                                                    IdomColors.additionalColor,
-                                                    0.3),
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      18.0),
-                                                  child: Center(
-                                                    child: Text("6",
-                                                        style: TextStyle(
-                                                            color: IdomColors
-                                                                .additionalColor,
-                                                            fontSize: 21,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        key: Key("6")),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                      SizedBox(),
+                                      SizedBox(),
+                                      SizedBox(),
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl(
+                                                "Power");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.error, 0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/turn-off.svg",
+                                                matchTextDirection: false,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 35,
+                                                height: 35,
+                                                color: IdomColors.error,
+                                                key: Key(
+                                                    "assets/icons/turn-off.svg")),
                                           ),
-                                          TableRow(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 18.0),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    if (_channelNumberController
-                                                            .text.length <
-                                                        3) {
-                                                      setState(() {
-                                                        _channelNumberController
-                                                            .text += "7";
-                                                      });
-                                                    }
-                                                  },
-                                                  splashColor:
-                                                      IdomColors.lighten(
-                                                          IdomColors
-                                                              .additionalColor,
-                                                          0.3),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          50.0),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            18.0),
-                                                    child: Center(
-                                                      child: Text("7",
-                                                          style: TextStyle(
-                                                              color: IdomColors
-                                                                  .additionalColor,
-                                                              fontSize: 21,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                          key: Key("7")),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  if (_channelNumberController
-                                                          .text.length <
-                                                      3) {
-                                                    setState(() {
-                                                      _channelNumberController
-                                                          .text += "8";
-                                                    });
-                                                  }
-                                                },
-                                                splashColor: IdomColors.lighten(
-                                                    IdomColors.additionalColor,
-                                                    0.3),
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      18.0),
-                                                  child: Center(
-                                                    child: Text("8",
-                                                        style: TextStyle(
-                                                            color: IdomColors
-                                                                .additionalColor,
-                                                            fontSize: 21,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        key: Key("8")),
-                                                  ),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  if (_channelNumberController
-                                                          .text.length <
-                                                      3) {
-                                                    setState(() {
-                                                      _channelNumberController
-                                                          .text += "9";
-                                                    });
-                                                  }
-                                                },
-                                                splashColor: IdomColors.lighten(
-                                                    IdomColors.additionalColor,
-                                                    0.3),
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      18.0),
-                                                  child: Center(
-                                                    child: Text("9",
-                                                        style: TextStyle(
-                                                            color: IdomColors
-                                                                .additionalColor,
-                                                            fontSize: 21,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        key: Key("9")),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          TableRow(children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 18.0),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    if (_channelNumberController
-                                                        .text.isNotEmpty)
-                                                      _channelNumberController
-                                                              .text =
-                                                          _channelNumberController
-                                                              .text
-                                                              .substring(
-                                                                  0,
-                                                                  _channelNumberController
-                                                                          .text
-                                                                          .length -
-                                                                      1);
-                                                  });
-                                                },
-                                                splashColor: IdomColors.lighten(
-                                                    IdomColors.additionalColor,
-                                                    0.3),
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 16.0,
-                                                          bottom: 16.0),
-                                                  child: SvgPicture.asset(
-                                                      "assets/icons/left-arrow-long.svg",
-                                                      matchTextDirection: false,
-                                                      alignment: Alignment
-                                                          .bottomCenter,
-                                                      width: 35,
-                                                      height: 35,
-                                                      color: IdomColors
-                                                          .additionalColor,
-                                                      key: Key(
-                                                          "assets/icons/left-arrow-long.svg")),
-                                                ),
-                                              ),
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                if (_channelNumberController
-                                                        .text.length <
-                                                    3) {
-                                                  setState(() {
-                                                    _channelNumberController
-                                                        .text += "0";
-                                                  });
-                                                }
-                                              },
-                                              splashColor: IdomColors.lighten(
-                                                  IdomColors.additionalColor,
-                                                  0.3),
-                                              borderRadius:
-                                                  BorderRadius.circular(50.0),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(18.0),
-                                                child: Center(
-                                                  child: Text("0",
-                                                      style: TextStyle(
-                                                          color: IdomColors
-                                                              .additionalColor,
-                                                          fontSize: 21,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                      key: Key("0")),
-                                                ),
-                                              ),
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                _sendCommandToRemoteControl(
-                                                    "Channel",
-                                                    channel: int.tryParse(
-                                                        _channelNumberController
-                                                            .text));
-                                              },
-                                              highlightColor: digitsVisible
-                                                  ? IdomColors.grey
-                                                  : Colors.transparent,
-                                              splashColor: digitsVisible
-                                                  ? IdomColors.lighten(
-                                                      IdomColors
-                                                          .additionalColor,
-                                                      0.3)
-                                                  : Colors.transparent,
-                                              borderRadius:
-                                                  BorderRadius.circular(50.0),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 16.0,
-                                                  bottom: 16.0,
-                                                ),
-                                                child: SvgPicture.asset(
-                                                    "assets/icons/enter.svg",
-                                                    matchTextDirection: false,
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    width: 30,
-                                                    height: 30,
-                                                    color: IdomColors
-                                                        .additionalColor,
-                                                    key: Key(
-                                                        "assets/icons/enter.svg")),
-                                              ),
-                                            ),
-                                          ]),
-                                          TableRow(children: [
-                                            SizedBox(),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 18.0),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    digitsVisible = false;
-                                                    _channelNumberController
-                                                        .text = "";
-                                                  });
-                                                },
-                                                splashColor: IdomColors.lighten(
-                                                    IdomColors.additionalColor,
-                                                    0.3),
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Text("WRÓĆ".i18n,
-                                                        style: TextStyle(
-                                                            color: IdomColors
-                                                                .additionalColor,
-                                                            fontSize: 25),
-                                                        key: Key("goBack")),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox()
-                                          ])
-                                        ],
-                                      )
+                                        ),
+                                      ),
                                     ],
-                                  )
-                                : SizedBox(),
-                            secondChild: Table(columnWidths: {
-                              0: FlexColumnWidth(1),
-                              1: FlexColumnWidth(1),
-                              2: FlexColumnWidth(2),
-                              3: FlexColumnWidth(1),
-                              4: FlexColumnWidth(1),
-                            }, children: [
-                              TableRow(
-                                children: [
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("Menu");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.additionalColor, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/menu.svg",
-                                            matchTextDirection: false,
-                                            alignment: Alignment.centerRight,
-                                            width: 35,
-                                            height: 35,
-                                            color: IdomColors.additionalColor,
-                                            key: Key("assets/icons/menu.svg")),
+                                  ),
+                                  TableRow(
+                                    children: [
+                                      SizedBox(),
+                                      SizedBox(),
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl("Up");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.additionalColor,
+                                                  0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/up-arrow.svg",
+                                                matchTextDirection: false,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 45,
+                                                height: 45,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                                key: Key(
+                                                    "assets/icons/up-arrow.svg")),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(),
+                                      SizedBox(),
+                                    ],
+                                  ),
+                                  TableRow(
+                                    children: [
+                                      SizedBox(),
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl("Left");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.additionalColor,
+                                                  0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/left-arrow.svg",
+                                                matchTextDirection: false,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 45,
+                                                height: 45,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                                key: Key(
+                                                    "assets/icons/left-arrow.svg")),
+                                          ),
+                                        ),
+                                      ),
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl("OK");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.additionalColor,
+                                                  0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Text("OK",
+                                                style: TextStyle(
+                                                    fontSize: 35,
+                                                    color: IdomColors
+                                                        .additionalColor),
+                                                key: Key("OK")),
+                                          ),
+                                        ),
+                                      ),
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl(
+                                                "Right");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.additionalColor,
+                                                  0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/right-arrow.svg",
+                                                matchTextDirection: false,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 45,
+                                                height: 45,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                                key: Key(
+                                                    "assets/icons/right-arrow.svg")),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(),
+                                    ],
+                                  ),
+                                  TableRow(
+                                    children: [
+                                      SizedBox(),
+                                      SizedBox(),
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl("Down");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.additionalColor,
+                                                  0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/down-arrow.svg",
+                                                matchTextDirection: false,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 45,
+                                                height: 45,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                                key: Key(
+                                                    "assets/icons/down-arrow.svg")),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(),
+                                      SizedBox(),
+                                    ],
+                                  ),
+                                  TableRow(
+                                    children: [
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl("Mute");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.additionalColor,
+                                                  0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0, bottom: 16.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/no-sound.svg",
+                                                matchTextDirection: false,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 35,
+                                                height: 35,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                                key: Key(
+                                                    "assets/icons/no-sound.svg")),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(),
+                                      SizedBox(),
+                                      SizedBox(),
+                                      Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            _sendCommandToRemoteControl("Back");
+                                          },
+                                          highlightColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.grey,
+                                          splashColor: digitsVisible
+                                              ? Colors.transparent
+                                              : IdomColors.lighten(
+                                                  IdomColors.additionalColor,
+                                                  0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0, bottom: 16.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/return.svg",
+                                                matchTextDirection: false,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 35,
+                                                height: 35,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                                key: Key(
+                                                    "assets/icons/return.svg")),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  TableRow(children: [
+                                    Center(
+                                      child: InkWell(
+                                        onTap: () {
+                                          _sendCommandToRemoteControl("Vol+");
+                                        },
+                                        highlightColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.grey,
+                                        splashColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.lighten(
+                                                IdomColors.additionalColor,
+                                                0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: SvgPicture.asset(
+                                              "assets/icons/volume-up.svg",
+                                              matchTextDirection: false,
+                                              alignment: Alignment.centerRight,
+                                              width: 35,
+                                              height: 35,
+                                              color: IdomColors.additionalColor,
+                                              key: Key(
+                                                  "assets/icons/volume-up.svg")),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(),
-                                  SizedBox(),
-                                  SizedBox(),
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("Power");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.error, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
+                                    SizedBox(),
+                                    Center(
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            digitsVisible = true;
+                                          });
+                                        },
+                                        highlightColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.grey,
+                                        splashColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.lighten(
+                                                IdomColors.additionalColor,
+                                                0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        child: SvgPicture.asset(
+                                            "assets/icons/cubes.svg",
+                                            matchTextDirection: false,
+                                            alignment: Alignment.centerRight,
+                                            width: 55,
+                                            height: 55,
+                                            color: IdomColors.additionalColor,
+                                            key: Key("assets/icons/cubes.svg")),
+                                      ),
+                                    ),
+                                    SizedBox(),
+                                    Center(
+                                      child: InkWell(
+                                        onTap: () {
+                                          _sendCommandToRemoteControl("CH+");
+                                        },
+                                        highlightColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.grey,
+                                        splashColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.lighten(
+                                                IdomColors.additionalColor,
+                                                0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: SvgPicture.asset(
+                                              "assets/icons/next_channel.svg",
+                                              matchTextDirection: false,
+                                              alignment: Alignment.centerRight,
+                                              width: 35,
+                                              height: 35,
+                                              color: IdomColors.additionalColor,
+                                              key: Key(
+                                                  "assets/icons/next_channel.svg")),
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                                  TableRow(children: [
+                                    Center(
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 8.0),
+                                        child: Text("VOL",
+                                            style: TextStyle(fontSize: 21.0)),
+                                      ),
+                                    ),
+                                    SizedBox(),
+                                    SizedBox(),
+                                    SizedBox(),
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
+                                        child: Text("CH",
+                                            style: TextStyle(fontSize: 21.0)),
+                                      ),
+                                    ),
+                                  ]),
+                                  TableRow(children: [
+                                    Center(
+                                      child: InkWell(
+                                        onTap: () {
+                                          _sendCommandToRemoteControl("Vol-");
+                                        },
+                                        highlightColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.grey,
+                                        splashColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.lighten(
+                                                IdomColors.additionalColor,
+                                                0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: SvgPicture.asset(
+                                              "assets/icons/volume-down.svg",
+                                              matchTextDirection: false,
+                                              alignment: Alignment.centerRight,
+                                              width: 35,
+                                              height: 35,
+                                              color: IdomColors.additionalColor,
+                                              key: Key(
+                                                  "assets/icons/volume-down.svg")),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(),
+                                    SizedBox(),
+                                    SizedBox(),
+                                    Center(
+                                      child: InkWell(
+                                        onTap: () {
+                                          _sendCommandToRemoteControl("CH-");
+                                        },
+                                        highlightColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.grey,
+                                        splashColor: digitsVisible
+                                            ? Colors.transparent
+                                            : IdomColors.lighten(
+                                                IdomColors.additionalColor,
+                                                0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: SvgPicture.asset(
+                                              "assets/icons/previous_channel.svg",
+                                              matchTextDirection: false,
+                                              alignment: Alignment.centerRight,
+                                              width: 35,
+                                              height: 35,
+                                              color: IdomColors.additionalColor,
+                                              key: Key(
+                                                  "assets/icons/previous_channel.svg")),
+                                        ),
+                                      ),
+                                    ),
+                                  ])
+                                ])),
+                          ),
+                        )),
+                  if (widget.driver.category == "remote_control")
+                    SizedBox(height: 20),
+                  if (widget.driver.category == "bulb")
+                    Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: SizedBox.fromSize(
+                        size: Size(56, 56),
+                        child: ClipOval(
+                            child: Material(
+                                color:
+                                    IdomColors.lighten(IdomColors.error, 0.55),
+                                child: InkWell(
+                                    onTap: () {
+                                      _changeBulbColor();
+                                    },
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    splashColor: IdomColors.lighten(
+                                        IdomColors.error, 0.2),
+                                    child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 13.0,
+                                            right: 13.0,
+                                            top: 15.0,
+                                            bottom: 13.0),
                                         child: SvgPicture.asset(
                                             "assets/icons/turn-off.svg",
                                             matchTextDirection: false,
-                                            alignment: Alignment.centerRight,
                                             width: 35,
                                             height: 35,
                                             color: IdomColors.error,
                                             key: Key(
-                                                "assets/icons/turn-off.svg")),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  SizedBox(),
-                                  SizedBox(),
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("Up");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.additionalColor, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/up-arrow.svg",
-                                            matchTextDirection: false,
-                                            alignment: Alignment.centerRight,
-                                            width: 45,
-                                            height: 45,
-                                            color: IdomColors.additionalColor,
-                                            key: Key(
-                                                "assets/icons/up-arrow.svg")),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(),
-                                  SizedBox(),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  SizedBox(),
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("Left");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.additionalColor, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/left-arrow.svg",
-                                            matchTextDirection: false,
-                                            alignment: Alignment.centerRight,
-                                            width: 45,
-                                            height: 45,
-                                            color: IdomColors.additionalColor,
-                                            key: Key(
-                                                "assets/icons/left-arrow.svg")),
-                                      ),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("OK");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.additionalColor, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: Text("OK",
-                                            style: TextStyle(
-                                                fontSize: 35,
-                                                color:
-                                                    IdomColors.additionalColor),
-                                            key: Key("OK")),
-                                      ),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("Right");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.additionalColor, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/right-arrow.svg",
-                                            matchTextDirection: false,
-                                            alignment: Alignment.centerRight,
-                                            width: 45,
-                                            height: 45,
-                                            color: IdomColors.additionalColor,
-                                            key: Key(
-                                                "assets/icons/right-arrow.svg")),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  SizedBox(),
-                                  SizedBox(),
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("Down");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.additionalColor, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/down-arrow.svg",
-                                            matchTextDirection: false,
-                                            alignment: Alignment.centerRight,
-                                            width: 45,
-                                            height: 45,
-                                            color: IdomColors.additionalColor,
-                                            key: Key(
-                                                "assets/icons/down-arrow.svg")),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(),
-                                  SizedBox(),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("Mute");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.additionalColor, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 8.0, bottom: 16.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/no-sound.svg",
-                                            matchTextDirection: false,
-                                            alignment: Alignment.centerRight,
-                                            width: 35,
-                                            height: 35,
-                                            color: IdomColors.additionalColor,
-                                            key: Key(
-                                                "assets/icons/no-sound.svg")),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(),
-                                  SizedBox(),
-                                  SizedBox(),
-                                  Center(
-                                    child: InkWell(
-                                      onTap: () {
-                                        _sendCommandToRemoteControl("Back");
-                                      },
-                                      highlightColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.grey,
-                                      splashColor: digitsVisible
-                                          ? Colors.transparent
-                                          : IdomColors.lighten(
-                                              IdomColors.additionalColor, 0.3),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 8.0, bottom: 16.0),
-                                        child: SvgPicture.asset(
-                                            "assets/icons/return.svg",
-                                            matchTextDirection: false,
-                                            alignment: Alignment.centerRight,
-                                            width: 35,
-                                            height: 35,
-                                            color: IdomColors.additionalColor,
-                                            key:
-                                                Key("assets/icons/return.svg")),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              TableRow(children: [
-                                Center(
-                                  child: InkWell(
-                                    onTap: () {
-                                      _sendCommandToRemoteControl("Vol+");
-                                    },
-                                    highlightColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.grey,
-                                    splashColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.lighten(
-                                            IdomColors.additionalColor, 0.3),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: SvgPicture.asset(
-                                          "assets/icons/volume-up.svg",
-                                          matchTextDirection: false,
-                                          alignment: Alignment.centerRight,
-                                          width: 35,
-                                          height: 35,
-                                          color: IdomColors.additionalColor,
-                                          key: Key(
-                                              "assets/icons/volume-up.svg")),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(),
-                                Center(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        digitsVisible = true;
-                                      });
-                                    },
-                                    highlightColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.grey,
-                                    splashColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.lighten(
-                                            IdomColors.additionalColor, 0.3),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    child: SvgPicture.asset(
-                                        "assets/icons/cubes.svg",
-                                        matchTextDirection: false,
-                                        alignment: Alignment.centerRight,
-                                        width: 55,
-                                        height: 55,
-                                        color: IdomColors.additionalColor,
-                                        key: Key("assets/icons/cubes.svg")),
-                                  ),
-                                ),
-                                SizedBox(),
-                                Center(
-                                  child: InkWell(
-                                    onTap: () {
-                                      _sendCommandToRemoteControl("CH+");
-                                    },
-                                    highlightColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.grey,
-                                    splashColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.lighten(
-                                            IdomColors.additionalColor, 0.3),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: SvgPicture.asset(
-                                          "assets/icons/next_channel.svg",
-                                          matchTextDirection: false,
-                                          alignment: Alignment.centerRight,
-                                          width: 35,
-                                          height: 35,
-                                          color: IdomColors.additionalColor,
-                                          key: Key(
-                                              "assets/icons/next_channel.svg")),
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                              TableRow(children: [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Text("VOL",
-                                        style: TextStyle(fontSize: 21.0)),
-                                  ),
-                                ),
-                                SizedBox(),
-                                SizedBox(),
-                                SizedBox(),
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Text("CH",
-                                        style: TextStyle(fontSize: 21.0)),
-                                  ),
-                                ),
-                              ]),
-                              TableRow(children: [
-                                Center(
-                                  child: InkWell(
-                                    onTap: () {
-                                      _sendCommandToRemoteControl("Vol-");
-                                    },
-                                    highlightColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.grey,
-                                    splashColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.lighten(
-                                            IdomColors.additionalColor, 0.3),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: SvgPicture.asset(
-                                          "assets/icons/volume-down.svg",
-                                          matchTextDirection: false,
-                                          alignment: Alignment.centerRight,
-                                          width: 35,
-                                          height: 35,
-                                          color: IdomColors.additionalColor,
-                                          key: Key(
-                                              "assets/icons/volume-down.svg")),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(),
-                                SizedBox(),
-                                SizedBox(),
-                                Center(
-                                  child: InkWell(
-                                    onTap: () {
-                                      _sendCommandToRemoteControl("CH-");
-                                    },
-                                    highlightColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.grey,
-                                    splashColor: digitsVisible
-                                        ? Colors.transparent
-                                        : IdomColors.lighten(
-                                            IdomColors.additionalColor, 0.3),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: SvgPicture.asset(
-                                          "assets/icons/previous_channel.svg",
-                                          matchTextDirection: false,
-                                          alignment: Alignment.centerRight,
-                                          width: 35,
-                                          height: 35,
-                                          color: IdomColors.additionalColor,
-                                          key: Key(
-                                              "assets/icons/previous_channel.svg")),
-                                    ),
-                                  ),
-                                ),
-                              ])
-                            ]))),
-                  if (widget.driver.category == "bulb")
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Table(children: [
-                        TableRow(children: [
-                          SizedBox(),
-                          Center(
-                            child: InkWell(
-                              onTap: () {
-                                _switchBulb();
-                              },
-                              highlightColor: digitsVisible
-                                  ? Colors.transparent
-                                  : IdomColors.grey,
-                              splashColor: digitsVisible
-                                  ? Colors.transparent
-                                  : IdomColors.lighten(IdomColors.error, 0.3),
-                              borderRadius: BorderRadius.circular(50.0),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: SvgPicture.asset(
-                                    "assets/icons/turn-off.svg",
-                                    matchTextDirection: false,
-                                    alignment: Alignment.centerRight,
-                                    width: 35,
-                                    height: 35,
-                                    color: IdomColors.error,
-                                    key: Key("assets/icons/turn-off.svg")),
-                              ),
-                            ),
-                          ),
-                          SizedBox(),
-                        ])
-                      ]),
+                                                "assets/icons/turn-off.svg")))))),
+                      ),
                     ),
                   if (widget.driver.category == "bulb")
                     GestureDetector(
@@ -1274,32 +1380,42 @@ class _DriverDetailsState extends State<DriverDetails> {
                       ),
                     ),
                   if (widget.driver.category == "bulb")
-                    InkWell(
-                      onTap: () {
-                        _changeBulbColor();
-                      },
-                      splashColor: IdomColors.additionalColor,
-                      child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(18.0),
-                              child: Text("Ustaw kolor".i18n,
-                                  style:  Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(fontSize: 21.0)),
-                            ),
-                            SvgPicture.asset("assets/icons/enter.svg",
-                                matchTextDirection: false,
-                                alignment: Alignment.centerRight,
-                                width: 25,
-                                height: 25,
-                                color: IdomColors.additionalColor,
-                                key: Key("assets/icons/enter.svg")),
-                          ]),
-                    ),
+                    Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox.fromSize(
+                              size: Size(56, 56),
+                              child: ClipOval(
+                                  child: Material(
+                                      color: IdomColors.lighten(
+                                          IdomColors.additionalColor, 0.4),
+                                      child: InkWell(
+                                          onTap: () {
+                                            _changeBulbColor();
+                                          },
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          splashColor: IdomColors.lighten(
+                                              IdomColors.additionalColor, 0.2),
+                                          child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15.0,
+                                                  right: 15.0,
+                                                  top: 15.0,
+                                                  bottom: 15.0),
+                                              child: SvgPicture.asset(
+                                                  "assets/icons/enter.svg",
+                                                  matchTextDirection: false,
+                                                  width: 15,
+                                                  height: 15,
+                                                  color: IdomColors
+                                                      .additionalColor,
+                                                  key: Key(
+                                                      "assets/icons/enter.svg"))))))),
+                          Text("Ustaw kolor".i18n,
+                              style: Theme.of(context).textTheme.bodyText2),
+                        ]),
                   if (widget.driver.category == "bulb")
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
@@ -1333,32 +1449,42 @@ class _DriverDetailsState extends State<DriverDetails> {
                       ),
                     ),
                   if (widget.driver.category == "bulb")
-                    InkWell(
-                      onTap: () {
-                        _changeBulbBrightness();
-                      },
-                      splashColor: IdomColors.additionalColor,
-                      child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(18.0),
-                              child: Text("Ustaw jasność".i18n,
-                                  style:  Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(fontSize: 21.0)),
-                            ),
-                            SvgPicture.asset("assets/icons/enter.svg",
-                                matchTextDirection: false,
-                                alignment: Alignment.centerRight,
-                                width: 25,
-                                height: 25,
-                                color: IdomColors.additionalColor,
-                                key: Key("assets/icons/enter.svg")),
-                          ]),
-                    ),
+                    Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox.fromSize(
+                              size: Size(56, 56),
+                              child: ClipOval(
+                                  child: Material(
+                                      color: IdomColors.lighten(
+                                          IdomColors.additionalColor, 0.4),
+                                      child: InkWell(
+                                          onTap: () {
+                                            _changeBulbBrightness();
+                                          },
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          splashColor: IdomColors.lighten(
+                                              IdomColors.additionalColor, 0.2),
+                                          child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15.0,
+                                                  right: 15.0,
+                                                  top: 15.0,
+                                                  bottom: 15.0),
+                                              child: SvgPicture.asset(
+                                                  "assets/icons/enter.svg",
+                                                  matchTextDirection: false,
+                                                  width: 25,
+                                                  height: 25,
+                                                  color: IdomColors
+                                                      .additionalColor,
+                                                  key: Key(
+                                                      "assets/icons/enter.svg"))))))),
+                          Text("Ustaw jasność".i18n,
+                              style: Theme.of(context).textTheme.bodyText2),
+                        ]),
                   if (widget.driver.category == "bulb")
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
@@ -1378,64 +1504,73 @@ class _DriverDetailsState extends State<DriverDetails> {
                         ),
                       ),
                     ),
+                  if (widget.driver.category == "bulb") SizedBox(height: 20),
                   if (widget.driver.category == "roller_blind")
-                    Table(columnWidths: {
-                      0: FlexColumnWidth(1),
-                      1: FlexColumnWidth(1),
-                    }, children: [
-                      TableRow(children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 62, top: 30, right: 62, bottom: 0.0),
+                      child: Column(children: [
+                        SizedBox.fromSize(
+                            size: Size(56, 56),
+                            child: ClipOval(
+                                child: Material(
+                                    color: IdomColors.lighten(
+                                        IdomColors.additionalColor, 0.4),
+                                    child: InkWell(
+                                        onTap: () {},
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        splashColor: IdomColors.lighten(
+                                            IdomColors.additionalColor, 0.2),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(13.0),
+                                          child: SvgPicture.asset(
+                                              "assets/icons/up-arrow.svg",
+                                              matchTextDirection: false,
+                                              width: 10,
+                                              height: 10,
+                                              color: IdomColors.additionalColor,
+                                              key: Key(
+                                                  "assets/icons/up-arrow.svg")),
+                                        ))))),
                         Container(
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.all(18.0),
                           child: Text("Podnieś rolety".i18n,
-                              style:  Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(fontSize: 21.0)),
+                              style: Theme.of(context).textTheme.bodyText2),
                         ),
+                        SizedBox(height: 30),
+                        SizedBox.fromSize(
+                            size: Size(56, 56),
+                            child: ClipOval(
+                                child: Material(
+                                    color: IdomColors.lighten(
+                                        IdomColors.additionalColor, 0.4),
+                                    child: InkWell(
+                                        onTap: () {},
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        splashColor: IdomColors.lighten(
+                                            IdomColors.additionalColor, 0.2),
+                                        child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 13.0,
+                                                right: 13.0,
+                                                top: 15.0,
+                                                bottom: 13.0),
+                                            child: SvgPicture.asset(
+                                                "assets/icons/down-arrow.svg",
+                                                matchTextDirection: false,
+                                                width: 10,
+                                                height: 10,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                                key: Key(
+                                                    "assets/icons/down-arrow.svg"))))))),
                         Container(
-                            padding: const EdgeInsets.all(18.0),
-                            alignment: Alignment.centerLeft,
-                            child: InkWell(
-                                onTap: () {},
-                                borderRadius: BorderRadius.circular(50.0),
-                                splashColor: IdomColors.additionalColor,
-                                child: SvgPicture.asset(
-                                    "assets/icons/up-arrow.svg",
-                                    matchTextDirection: false,
-                                    alignment: Alignment.centerRight,
-                                    width: 25,
-                                    height: 25,
-                                    color: IdomColors.additionalColor,
-                                    key: Key("assets/icons/up-arrow.svg")))),
-                      ]),
-                      TableRow(children: [
-                        Container(
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.all(18.0),
                           child: Text("Opuść rolety".i18n,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(fontSize: 21.0)),
+                              style: Theme.of(context).textTheme.bodyText2),
                         ),
-                        Container(
-                            padding: const EdgeInsets.all(18.0),
-                            alignment: Alignment.centerLeft,
-                            child: InkWell(
-                                onTap: () {},
-                                borderRadius: BorderRadius.circular(50.0),
-                                splashColor: IdomColors.additionalColor,
-                                child: SvgPicture.asset(
-                                    "assets/icons/down-arrow.svg",
-                                    matchTextDirection: false,
-                                    alignment: Alignment.centerRight,
-                                    width: 25,
-                                    height: 25,
-                                    color: IdomColors.additionalColor,
-                                    key: Key("assets/icons/down-arrow.svg")))),
                       ]),
-                    ])
+                    )
                 ]),
               ),
             ))));
@@ -1537,8 +1672,8 @@ class _DriverDetailsState extends State<DriverDetails> {
   _changeBulbColor() async {
     if (widget.driver.ipAddress == null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
-      final snackBar =
-      new SnackBar(content: new Text("Żarówka nie posiada adresu IP.".i18n));
+      final snackBar = new SnackBar(
+          content: new Text("Żarówka nie posiada adresu IP.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }
@@ -1572,8 +1707,8 @@ class _DriverDetailsState extends State<DriverDetails> {
   _changeBulbBrightness() async {
     if (widget.driver.ipAddress == null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
-      final snackBar =
-      new SnackBar(content: new Text("Żarówka nie posiada adresu IP.".i18n));
+      final snackBar = new SnackBar(
+          content: new Text("Żarówka nie posiada adresu IP.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }
@@ -1608,8 +1743,8 @@ class _DriverDetailsState extends State<DriverDetails> {
   _switchBulb() async {
     if (widget.driver.ipAddress == null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
-      final snackBar =
-      new SnackBar(content: new Text("Żarówka nie posiada adresu IP.".i18n));
+      final snackBar = new SnackBar(
+          content: new Text("Żarówka nie posiada adresu IP.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }

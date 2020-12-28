@@ -613,33 +613,26 @@ class _EditActionState extends State<EditAction> {
                               selectedColor: IdomColors.blackTextLight,
                               children: [
                                 Text("pn",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                                 Text("wt",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                                 Text("śr",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                                 Text("czw",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                                 Text("pt",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                                 Text("sb",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                                 Text("nd",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                               ],
                               isSelected: daysOfWeekSelected,
                               onPressed: (int index) {
@@ -671,9 +664,7 @@ class _EditActionState extends State<EditAction> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1)
+                                style: Theme.of(context).textTheme.bodyText1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),
@@ -722,7 +713,7 @@ class _EditActionState extends State<EditAction> {
     var trigger;
     var operator;
     trigger =
-    changedTrigger ? int.tryParse(_sensorTriggerController.text) : null;
+        changedTrigger ? int.tryParse(_sensorTriggerController.text) : null;
     operator = changedOperator ? selectedOperator.substring(0, 1) : null;
 
     if (changedSensor && selectedSensor != null) {
@@ -848,13 +839,11 @@ class _EditActionState extends State<EditAction> {
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-      else{
+      } else {
         final snackBar = new SnackBar(
             content: new Text(
                 "Edytowanie akcji nie powiodło się. Spróbuj ponownie."));
         _scaffoldKey.currentState.showSnackBar((snackBar));
-
       }
     } catch (e) {
       print(e.toString());

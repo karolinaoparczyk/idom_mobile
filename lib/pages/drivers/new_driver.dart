@@ -69,13 +69,22 @@ class _NewDriverState extends State<NewDriver> {
         decoration: InputDecoration(
             labelText: "Nazwa".i18n,
             labelStyle: Theme.of(context).textTheme.headline5,
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
             counterStyle:
-                Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 12.5)),
+                Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -88,10 +97,19 @@ class _NewDriverState extends State<NewDriver> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).textTheme.bodyText1.color),
+              color: Theme.of(context).textTheme.bodyText2.color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -113,7 +131,7 @@ class _NewDriverState extends State<NewDriver> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: CategoryFieldValidator.validate);
   }
 
@@ -123,13 +141,22 @@ class _NewDriverState extends State<NewDriver> {
         key: Key("ipAddress"),
         controller: _ipAddressController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Adres IP".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: UrlFieldValidator.validate);
   }
 
@@ -166,9 +193,9 @@ class _NewDriverState extends State<NewDriver> {
                             alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
-                                Icon(Icons.info_outline_rounded, size: 17.5),
+                                Icon(Icons.info_outline_rounded, size: 21),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
+                                  padding: const EdgeInsets.only(left: 10.0),
                                   child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
@@ -180,24 +207,24 @@ class _NewDriverState extends State<NewDriver> {
                             ))),
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62.0, top: 10.0, right: 62.0, bottom: 0.0),
                         child: _buildName()),
                     Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                            vertical: 10.0, horizontal: 62.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildCategoryField())),
                     if (categoryValue != null && categoryValue == "bulb")
                       Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 30.0),
+                              vertical: 10.0, horizontal: 62.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: _buildIpAddress())),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                          vertical: 10.0, horizontal: 62.0),
                       child: AnimatedCrossFade(
                         crossFadeState: fieldsValidationMessage != null
                             ? CrossFadeState.showFirst
@@ -205,10 +232,7 @@ class _NewDriverState extends State<NewDriver> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context).textTheme.subtitle1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),

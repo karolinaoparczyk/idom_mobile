@@ -1,7 +1,6 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
       {
         "pl_pl": "Nazwa",
@@ -32,8 +31,10 @@ extension Localization on String {
         "en_uk": "Creating driver failed. Try again.",
       } +
       {
-        "pl_pl": "Błąd dodawania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Driver creating error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd dodawania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Driver creating error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd dodawania sterownika. Adres serwera nieprawidłowy.",
@@ -50,11 +51,11 @@ extension Localization on String {
       {
         "pl_pl": "żarówka",
         "en_uk": "bulb",
-      }+
+      } +
       {
         "pl_pl": "rolety",
         "en_uk": "blinds",
-      }+
+      } +
       {
         "pl_pl": "Adres IP",
         "en_uk": "IP address",

@@ -1,7 +1,6 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
       {
         "pl_pl": "TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU",
@@ -34,11 +33,11 @@ extension Localization on String {
       {
         "pl_pl": "Pobierz dane",
         "en_uk": "Download data",
-      }+
+      } +
       {
         "pl_pl": "Wyloguj",
         "en_uk": "Log out",
-      }+
+      } +
       {
         "pl_pl": "O projekcie",
         "en_uk": "About project",

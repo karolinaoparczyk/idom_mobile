@@ -86,15 +86,24 @@ class _EditDriverState extends State<EditDriver> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             labelText: "Nazwa".i18n,
             labelStyle: Theme.of(context).textTheme.headline5,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
             counterStyle:
-                Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 12.5)),
+                Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -107,10 +116,19 @@ class _EditDriverState extends State<EditDriver> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).textTheme.bodyText1.color),
+              color: Theme.of(context).textTheme.bodyText2.color),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -132,7 +150,7 @@ class _EditDriverState extends State<EditDriver> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: CategoryFieldValidator.validate);
   }
 
@@ -142,24 +160,30 @@ class _EditDriverState extends State<EditDriver> {
         key: Key("ipAddress"),
         controller: _ipAddressController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Adres IP".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: UrlFieldValidator.validate);
   }
 
   _displayNotSetIpAddressMessage() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 18.0),
-      child: Text(
-          "Podczas dodawania żarówki nie udało się zapisać adresu IP. Spróbuj ponownie."
-              .i18n,
-          style: Theme.of(context).textTheme.bodyText1),
-    );
+    return Text(
+        "Podczas dodawania żarówki nie udało się zapisać adresu IP. Spróbuj ponownie."
+            .i18n,
+        style: Theme.of(context).textTheme.subtitle1);
   }
 
   @override
@@ -184,15 +208,15 @@ class _EditDriverState extends State<EditDriver> {
               child: Form(
                   key: _formKey,
                   child: Column(children: <Widget>[
-                    if (widget.notSetIp != null && widget.notSetIp)
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
-                          child: _displayNotSetIpAddressMessage()),
                     Align(
                       child: loadingIndicator(_load),
                       alignment: FractionalOffset.center,
                     ),
+                    if (widget.notSetIp != null && widget.notSetIp)
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 62.0, top: 20.0, right: 62.0, bottom: 0.0),
+                          child: _displayNotSetIpAddressMessage()),
                     Padding(
                         padding: EdgeInsets.only(
                             left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
@@ -200,9 +224,9 @@ class _EditDriverState extends State<EditDriver> {
                             alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
-                                Icon(Icons.info_outline_rounded, size: 17.5),
+                                Icon(Icons.info_outline_rounded, size: 21),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
+                                  padding: const EdgeInsets.only(left: 10.0),
                                   child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
@@ -214,24 +238,24 @@ class _EditDriverState extends State<EditDriver> {
                             ))),
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62.0, top: 10.0, right: 62.0, bottom: 0.0),
                         child: _buildName()),
                     Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                            vertical: 10.0, horizontal: 62.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildCategoryField())),
                     if (categoryValue != null && categoryValue == "bulb")
                       Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 30.0),
+                              vertical: 10.0, horizontal: 62.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: _buildIpAddress())),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                          vertical: 10.0, horizontal: 62.0),
                       child: AnimatedCrossFade(
                         crossFadeState: fieldsValidationMessage != null
                             ? CrossFadeState.showFirst
@@ -239,10 +263,7 @@ class _EditDriverState extends State<EditDriver> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context).textTheme.subtitle1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),
@@ -272,8 +293,8 @@ class _EditDriverState extends State<EditDriver> {
           if (changedCategory) {
             _categoryController = TextEditingController(
                 text: DriverCategories.values
-                    .firstWhere(
-                        (element) => element["value"] == driver.category)['text']
+                    .firstWhere((element) =>
+                        element["value"] == driver.category)['text']
                     .i18n);
             categoryValue = driver.category;
           }
@@ -341,8 +362,7 @@ class _EditDriverState extends State<EditDriver> {
       setState(() {
         _load = false;
       });
-      if ((res != null &&
-          res['statusCode'] == "200" || res == null) &&
+      if ((res != null && res['statusCode'] == "200" || res == null) &&
           (resIP == 200 || resIP == 503 || resIP == null)) {
         fieldsValidationMessage = null;
         setState(() {});

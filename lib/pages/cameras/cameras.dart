@@ -62,8 +62,7 @@ class _CamerasState extends State<Cameras> {
             key: _keyLoader,
             text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-            .pop();
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
       }
@@ -77,7 +76,8 @@ class _CamerasState extends State<Cameras> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania kamer. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania kamer. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
@@ -113,15 +113,14 @@ class _CamerasState extends State<Cameras> {
               key: _keyLoader,
               text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoader.currentContext,
-              rootNavigator: true)
-              .pop();
+          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
           await widget.storage.resetUserData();
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
@@ -135,7 +134,8 @@ class _CamerasState extends State<Cameras> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
@@ -194,16 +194,13 @@ class _CamerasState extends State<Cameras> {
               physics: AlwaysScrollableScrollPhysics(),
               child: Container(
                   height: MediaQuery.of(context).size.height,
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text(
-                  "Brak kamer w systemie".i18n,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1,
-                  textAlign: TextAlign.center)))));
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("Brak kamer w systemie".i18n,
+                          style: Theme.of(context).textTheme.subtitle1,
+                          textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
@@ -215,15 +212,13 @@ class _CamerasState extends State<Cameras> {
               physics: AlwaysScrollableScrollPhysics(),
               child: Container(
                   height: MediaQuery.of(context).size.height,
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.".i18n,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1,
-                  textAlign: TextAlign.center)))));
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("Błąd połączenia z serwerem.".i18n,
+                          style: Theme.of(context).textTheme.subtitle1,
+                          textAlign: TextAlign.center)))));
     } else if (_cameraList != null && _cameraList.length > 0) {
       return Column(
         children: [
@@ -242,29 +237,32 @@ class _CamerasState extends State<Cameras> {
                                   height: 80,
                                   child: Card(
                                     child: ListTile(
-                                      key: Key(_cameraList[index].name),
-                                      title: Text(_cameraList[index].name,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1
-                                              .copyWith(fontSize: 21.0)),
-                                      onTap: () {
-                                        navigateToCameraStream(_cameraList[index]);
-                                      },
-                                      leading: SizedBox(
-                                          width: 35,
-                                          child: Container(
-                                              alignment: Alignment.centerRight,
-                                              child: SvgPicture.asset(
-                                                "assets/icons/video-camera.svg",
-                                                matchTextDirection: false,
-                                                width: 32,
-                                                height: 32,
-                                                color: IdomColors.additionalColor,
-                                                key: Key("assets/icons/video-camera.svg")
-                                              ))),
-                                        trailing: getTrailing(_cameraList[index])
-                                    ),
+                                        key: Key(_cameraList[index].name),
+                                        title: Text(_cameraList[index].name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1
+                                                .copyWith(fontSize: 21.0)),
+                                        onTap: () {
+                                          navigateToCameraStream(
+                                              _cameraList[index]);
+                                        },
+                                        leading: SizedBox(
+                                            width: 35,
+                                            child: Container(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: SvgPicture.asset(
+                                                    "assets/icons/video-camera.svg",
+                                                    matchTextDirection: false,
+                                                    width: 32,
+                                                    height: 32,
+                                                    color: IdomColors
+                                                        .additionalColor,
+                                                    key: Key(
+                                                        "assets/icons/video-camera.svg")))),
+                                        trailing:
+                                            getTrailing(_cameraList[index])),
                                   ))))))),
         ],
       );
@@ -294,31 +292,30 @@ class _CamerasState extends State<Cameras> {
   }
 
   getTrailing(Camera camera) {
-    return
-        SizedBox(
-            width: 35,
-            child: Container(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  key: Key("deleteButton"),
-                  child: SizedBox(
-                      width: 35,
-                      child: Container(
-                          padding: EdgeInsets.only(top: 5),
-                          alignment: Alignment.topRight,
-                          child: SvgPicture.asset(
-                            "assets/icons/dustbin.svg",
-                            matchTextDirection: false,
-                            width: 32,
-                            height: 32,
-                            color: Theme.of(context).textTheme.bodyText1.color,
-                          ))),
-                  onPressed: () {
-                    setState(() {
-                      _deleteCamera(camera);
-                    });
-                  },
-                )));
+    return SizedBox(
+        width: 35,
+        child: Container(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              key: Key("deleteButton"),
+              child: SizedBox(
+                  width: 35,
+                  child: Container(
+                      padding: EdgeInsets.only(top: 5),
+                      alignment: Alignment.topRight,
+                      child: SvgPicture.asset(
+                        "assets/icons/dustbin.svg",
+                        matchTextDirection: false,
+                        width: 32,
+                        height: 32,
+                        color: Theme.of(context).textTheme.bodyText1.color,
+                      ))),
+              onPressed: () {
+                setState(() {
+                  _deleteCamera(camera);
+                });
+              },
+            )));
   }
 
   /// navigates to adding camera page

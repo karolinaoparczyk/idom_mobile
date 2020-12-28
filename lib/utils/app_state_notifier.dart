@@ -7,7 +7,7 @@ class AppStateNotifier extends ChangeNotifier {
   }
 }
 
-class DarkMode{
+class DarkMode {
   static bool isDarkMode;
 
   static Future<void> init() async {
@@ -23,13 +23,14 @@ class DarkMode{
       return false;
     }
   }
+
   static Future<void> setStorageThemeMode(String themeMode) async {
     isDarkMode = themeMode == "dark" ? true : false;
     SecureStorage storage = SecureStorage();
     storage.setThemeMode(themeMode);
   }
 
-  static bool getTheme(){
+  static bool getTheme() {
     return isDarkMode;
   }
 }
