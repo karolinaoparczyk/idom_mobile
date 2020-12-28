@@ -49,7 +49,7 @@ extension Localization on String {
         "en_uk": "No changes have been made.",
       } +
       {
-        "pl_pl": "naduszacz",
+        "pl_pl": "przycisk",
         "en_uk": "clicker",
       } +
       {

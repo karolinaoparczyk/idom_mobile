@@ -1329,8 +1329,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 color:
                                     IdomColors.lighten(IdomColors.error, 0.55),
                                 child: InkWell(
+                                    key: Key("assets/icons/turn-off.svg"),
                                     onTap: () {
-                                      _changeBulbColor();
+                                      _switchBulb();
                                     },
                                     borderRadius: BorderRadius.circular(50.0),
                                     splashColor: IdomColors.lighten(
@@ -1346,9 +1347,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                             matchTextDirection: false,
                                             width: 35,
                                             height: 35,
-                                            color: IdomColors.error,
-                                            key: Key(
-                                                "assets/icons/turn-off.svg")))))),
+                                            color: IdomColors.error))))),
                       ),
                     ),
                   if (widget.driver.category == "bulb")
@@ -1391,6 +1390,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                       color: IdomColors.lighten(
                                           IdomColors.additionalColor, 0.4),
                                       child: InkWell(
+                                          key: Key("assets/icons/enter.svg"),
                                           onTap: () {
                                             _changeBulbColor();
                                           },
@@ -1405,14 +1405,13 @@ class _DriverDetailsState extends State<DriverDetails> {
                                                   top: 15.0,
                                                   bottom: 15.0),
                                               child: SvgPicture.asset(
-                                                  "assets/icons/enter.svg",
-                                                  matchTextDirection: false,
-                                                  width: 15,
-                                                  height: 15,
-                                                  color: IdomColors
-                                                      .additionalColor,
-                                                  key: Key(
-                                                      "assets/icons/enter.svg"))))))),
+                                                "assets/icons/enter.svg",
+                                                matchTextDirection: false,
+                                                width: 15,
+                                                height: 15,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                              )))))),
                           Text("Ustaw kolor".i18n,
                               style: Theme.of(context).textTheme.bodyText2),
                         ]),
@@ -1460,6 +1459,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                       color: IdomColors.lighten(
                                           IdomColors.additionalColor, 0.4),
                                       child: InkWell(
+                                          key: Key("assets/icons/enter.svg"),
                                           onTap: () {
                                             _changeBulbBrightness();
                                           },
@@ -1474,14 +1474,13 @@ class _DriverDetailsState extends State<DriverDetails> {
                                                   top: 15.0,
                                                   bottom: 15.0),
                                               child: SvgPicture.asset(
-                                                  "assets/icons/enter.svg",
-                                                  matchTextDirection: false,
-                                                  width: 25,
-                                                  height: 25,
-                                                  color: IdomColors
-                                                      .additionalColor,
-                                                  key: Key(
-                                                      "assets/icons/enter.svg"))))))),
+                                                "assets/icons/enter.svg",
+                                                matchTextDirection: false,
+                                                width: 25,
+                                                height: 25,
+                                                color:
+                                                    IdomColors.additionalColor,
+                                              )))))),
                           Text("Ustaw jasność".i18n,
                               style: Theme.of(context).textTheme.bodyText2),
                         ]),

@@ -41,7 +41,7 @@ extension Localization on String {
         "en_uk": "Driver creating error. The server address is invalid.",
       } +
       {
-        "pl_pl": "naduszacz",
+        "pl_pl": "przycisk",
         "en_uk": "clicker",
       } +
       {

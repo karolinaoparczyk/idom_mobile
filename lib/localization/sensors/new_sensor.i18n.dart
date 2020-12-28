@@ -119,7 +119,7 @@ extension Localization on String {
         "en_uk": "water temperature",
       } +
       {
-        "pl_pl": "stan powietrza",
+        "pl_pl": "dym",
         "en_uk": "smoke",
       } +
       {

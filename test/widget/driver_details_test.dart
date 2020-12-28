@@ -339,7 +339,8 @@ void main() {
       "id": 1,
       "name": "driver1",
       "category": "bulb",
-      "data": true
+      "data": true,
+      "ipAddress": "111.222.33.44"
     };
     when(mockApi.switchBulb(1, "on"))
         .thenAnswer((_) async => Future.value(200));
