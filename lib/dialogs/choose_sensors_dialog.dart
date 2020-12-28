@@ -8,10 +8,12 @@ class ChooseMultipleSensorsDialog extends StatefulWidget {
   final List<Sensor> selectedSensors;
 
   @override
-  _ChooseMultipleSensorsDialogState createState() => _ChooseMultipleSensorsDialogState();
+  _ChooseMultipleSensorsDialogState createState() =>
+      _ChooseMultipleSensorsDialogState();
 }
 
-class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialog> {
+class _ChooseMultipleSensorsDialogState
+    extends State<ChooseMultipleSensorsDialog> {
   bool searchBarVisible;
   TextEditingController _searchBarController = TextEditingController();
   List<Sensor> tempSelectedSensors = List<Sensor>();
@@ -51,9 +53,11 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
                 firstChild: TextField(
+                  style: Theme.of(context).textTheme.bodyText2,
                   controller: _searchBarController,
                   decoration: InputDecoration(
                     hintText: "Wyszukaj...",
+                    hintStyle: Theme.of(context).textTheme.bodyText2,
                     prefixIcon: IconButton(
                       onPressed: () {
                         setState(() {
@@ -61,13 +65,18 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                           _searchBarController.clear();
                         });
                       },
-                      icon: const Icon(Icons.arrow_back),
+                      icon: Icon(Icons.arrow_back,
+                          color: Theme.of(context).textTheme.bodyText2.color),
                     ),
                     suffixIcon: _searchBarController.text.isNotEmpty
                         ? IconButton(
-                      onPressed: () => _searchBarController.clear(),
-                      icon: const Icon(Icons.clear),
-                    )
+                            onPressed: () => _searchBarController.clear(),
+                            icon: Icon(Icons.clear,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    .color),
+                          )
                         : null,
                   ),
                 ),
@@ -96,32 +105,30 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
             Divider(),
             Expanded(
                 child: ListView(
-                  children: (searchBarVisible
+              children: (searchBarVisible
                       ? widget.sensors.where((sensor) => sensor.name
-                      .toLowerCase()
-                      .contains(_searchBarController.text.toLowerCase()))
+                          .toLowerCase()
+                          .contains(_searchBarController.text.toLowerCase()))
                       : widget.sensors)
-                      .map((sensor) => GestureDetector(
+                  .map((sensor) => GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {},
                       child: CheckboxListTile(
                         onChanged: (checked) {
                           setState(() {
                             checked
-                                ?tempSelectedSensors.add(sensor)
-                                :  tempSelectedSensors.remove(sensor);
+                                ? tempSelectedSensors.add(sensor)
+                                : tempSelectedSensors.remove(sensor);
                           });
                         },
-                        value:  tempSelectedSensors.contains(sensor),
+                        value: tempSelectedSensors.contains(sensor),
                         dense: true,
                         controlAffinity: ListTileControlAffinity.leading,
                         title: Text(sensor.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1),
+                            style: Theme.of(context).textTheme.bodyText2),
                       )))
-                      .toList(),
-                )),
+                  .toList(),
+            )),
             Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -137,7 +144,7 @@ class _ChooseMultipleSensorsDialogState extends State<ChooseMultipleSensorsDialo
                     child: Text("OK",
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {
-                      Navigator.pop(context,  tempSelectedSensors);
+                      Navigator.pop(context, tempSelectedSensors);
                     }),
               ],
             ),

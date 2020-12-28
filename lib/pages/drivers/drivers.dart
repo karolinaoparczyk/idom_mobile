@@ -224,7 +224,7 @@ class _DriversState extends State<Drivers> {
       },
       child: Container(
           child: Icon(Icons.more_vert_outlined,
-              size: 30, color: Theme.of(context).textTheme.bodyText1.color)),
+              size: 30, color: Theme.of(context).textTheme.bodyText2.color)),
     );
   }
 

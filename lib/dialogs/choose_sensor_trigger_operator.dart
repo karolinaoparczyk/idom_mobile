@@ -7,15 +7,16 @@ class SensorTriggerOperatorDialog extends StatefulWidget {
   SensorTriggerOperatorDialog({this.currentOperator});
 
   @override
-  _SensorTriggerOperatorDialogState createState() => _SensorTriggerOperatorDialogState();
+  _SensorTriggerOperatorDialogState createState() =>
+      _SensorTriggerOperatorDialogState();
 }
 
-class _SensorTriggerOperatorDialogState extends State<SensorTriggerOperatorDialog> {
+class _SensorTriggerOperatorDialogState
+    extends State<SensorTriggerOperatorDialog> {
   String _selectedOperator;
 
   @override
   void initState() {
-
     if (widget.currentOperator != "") {
       _selectedOperator = Operators.values
           .firstWhere((element) => element == widget.currentOperator);

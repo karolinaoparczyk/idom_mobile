@@ -567,61 +567,54 @@ class _NewActionState extends State<NewAction> {
                                 ),
                               ],
                             ))),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 30.5, top: 10, right: 20.0, bottom: 10),
-                        child: Container(
-                          width: 300.0, // hardcoded for testing purpose
-                          child: LayoutBuilder(builder: (context, constraints) {
-                            return ToggleButtons(
-                                constraints: BoxConstraints.expand(
-                                    width: 40, height: 30),
-                                borderRadius: BorderRadius.circular(30),
-                                borderColor: IdomColors.additionalColor,
-                                splashColor: Colors.transparent,
-                                fillColor: IdomColors.lighten(
-                                    IdomColors.additionalColor, 0.2),
-                                selectedColor: IdomColors.blackTextLight,
-                                children: [
-                                  Text("pn",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1),
-                                  Text("wt",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1),
-                                  Text("śr",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1),
-                                  Text("czw",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1),
-                                  Text("pt",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1),
-                                  Text("sb",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1),
-                                  Text("nd",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1),
-                                ],
-                                isSelected: daysOfWeekSelected,
-                                onPressed: (int index) {
-                                  setState(() {
-                                    daysOfWeekSelected[index] =
-                                        !daysOfWeekSelected[index];
-                                  });
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 30.5, top: 10, right: 20.0, bottom: 10),
+                      child: Container(
+                        width: 300.0, // hardcoded for testing purpose
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return ToggleButtons(
+                              constraints:
+                                  BoxConstraints.expand(width: 40, height: 30),
+                              borderRadius: BorderRadius.circular(30),
+                              borderColor: IdomColors.additionalColor,
+                              splashColor: Colors.transparent,
+                              fillColor: IdomColors.lighten(
+                                  IdomColors.additionalColor, 0.2),
+                              selectedColor: IdomColors.blackTextLight,
+                              children: [
+                                Text("pn",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
+                                Text("wt",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
+                                Text("śr",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
+                                Text("czw",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
+                                Text("pt",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
+                                Text("sb",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
+                                Text("nd",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
+                              ],
+                              isSelected: daysOfWeekSelected,
+                              onPressed: (int index) {
+                                setState(() {
+                                  daysOfWeekSelected[index] =
+                                      !daysOfWeekSelected[index];
                                 });
-                          }),
-                        ),
+                              });
+                        }),
                       ),
+                    ),
                     Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 30.0),
@@ -642,9 +635,7 @@ class _NewActionState extends State<NewAction> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1)
+                                style: Theme.of(context).textTheme.bodyText1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),
@@ -717,15 +708,14 @@ class _NewActionState extends State<NewAction> {
         var sensor;
         var operator;
         var trigger;
-        if (selectedSensor == null){
+        if (selectedSensor == null) {
           sensor = null;
           operator = null;
           trigger = null;
-        }
-        else{
+        } else {
           sensor = selectedSensor.name;
           operator = selectedOperator;
-          trigger =  int.tryParse(_sensorTriggerController.text);
+          trigger = int.tryParse(_sensorTriggerController.text);
         }
         var res = await api.addAction(
             _nameController.text,

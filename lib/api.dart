@@ -495,10 +495,7 @@ class Api {
     await getToken();
     var body;
     if (data == null) {
-      body = {
-        "name": name,
-        "category": category
-      };
+      body = {"name": name, "category": category};
     } else {
       body = {
         "name": name,
@@ -605,11 +602,14 @@ class Api {
     await getApiAddress();
     await getToken();
     try {
-      var res = await httpClient.put('$url/bulbs/ip/$id',
-          headers: {HttpHeaders.authorizationHeader: "Token $token",
-            HttpHeaders.contentTypeHeader: 'application/json'
-          },
-          body: jsonEncode({"ip_address": ipAddress})).timeout(Duration(seconds: 10));
+      var res = await httpClient
+          .put('$url/bulbs/ip/$id',
+              headers: {
+                HttpHeaders.authorizationHeader: "Token $token",
+                HttpHeaders.contentTypeHeader: 'application/json'
+              },
+              body: jsonEncode({"ip_address": ipAddress}))
+          .timeout(Duration(seconds: 10));
       return res.statusCode;
     } catch (e) {
       print(e);

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:idom/localization/dialogs/category.i18n.dart';
 
-
 class CategoryDialog extends StatefulWidget {
   final String currentCategory;
   final String type;
@@ -19,10 +18,9 @@ class _CategoryDialogState extends State<CategoryDialog> {
 
   @override
   void initState() {
-    if (widget.type == "sensors"){
+    if (widget.type == "sensors") {
       categories = SensorCategories.values;
-    }
-    else if (widget.type == "drivers"){
+    } else if (widget.type == "drivers") {
       categories = DriverCategories.values;
     }
 
@@ -62,8 +60,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
                       title: Text(categories[index]['text'].i18n,
-                          style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontSize: 21.0)),
+                          style: Theme.of(context).textTheme.bodyText2),
                       value: categories[index],
                       groupValue: _selectedCategory,
                       onChanged: (value) {
@@ -82,6 +79,9 @@ class _CategoryDialogState extends State<CategoryDialog> {
                   TextButton(
                       child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
+                      style: ButtonStyle(
+                          overlayColor: MaterialStateColor.resolveWith(
+                              (states) => Theme.of(context).splashColor)),
                       onPressed: () {
                         Navigator.pop(context);
                       }),
@@ -89,6 +89,9 @@ class _CategoryDialogState extends State<CategoryDialog> {
                       key: Key('yesButton'),
                       child: Text("OK",
                           style: Theme.of(context).textTheme.headline5),
+                      style: ButtonStyle(
+                          overlayColor: MaterialStateColor.resolveWith(
+                              (states) => Theme.of(context).splashColor)),
                       onPressed: () {
                         Navigator.pop(context, _selectedCategory);
                       }),

@@ -69,10 +69,10 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsOneWidget);
+    expect(find.text("przycisk"), findsOneWidget);
     expect(find.text("pilot"), findsOneWidget);
     expect(find.text("żarówka"), findsOneWidget);
-    await tester.tap(find.text("naduszacz").last);
+    await tester.tap(find.text("przycisk").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
@@ -270,10 +270,10 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsOneWidget);
+    expect(find.text("przycisk"), findsOneWidget);
     expect(find.text("pilot"), findsOneWidget);
     expect(find.text("żarówka"), findsOneWidget);
-    await tester.tap(find.text("naduszacz").last);
+    await tester.tap(find.text("przycisk").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
@@ -322,11 +322,11 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsOneWidget);
+    expect(find.text("przycisk"), findsOneWidget);
     expect(find.text("pilot"), findsOneWidget);
     expect(find.text("żarówka"), findsOneWidget);
     expect(find.text("rolety"), findsOneWidget);
-    await tester.tap(find.text("naduszacz").last);
+    await tester.tap(find.text("przycisk").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 

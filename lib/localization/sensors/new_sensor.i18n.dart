@@ -1,7 +1,6 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
       {
         "pl_pl": "sekundy",
@@ -64,8 +63,10 @@ extension Localization on String {
         "en_uk": "Creating sensor failed. Try again.",
       } +
       {
-        "pl_pl": "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Sensor creating error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Sensor creating error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd dodawania czujnika. Adres serwera nieprawidłowy.",
@@ -76,8 +77,10 @@ extension Localization on String {
         "en_uk": "Confirm",
       } +
       {
-        "pl_pl": "Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.",
-        "en_uk": "The data gathering frequency value must be a non-negative integer.",
+        "pl_pl":
+            "Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.",
+        "en_uk":
+            "The data gathering frequency value must be a non-negative integer.",
       } +
       {
         "pl_pl": "Poprawne wartości dla jednostki ",
@@ -86,10 +89,11 @@ extension Localization on String {
       {
         "pl_pl": " to ",
         "en_uk": " are ",
-      } + {
-    "pl_pl": "Wybierz kategorię",
-    "en_uk": "Select a category",
-  } +
+      } +
+      {
+        "pl_pl": "Wybierz kategorię",
+        "en_uk": "Select a category",
+      } +
       {
         "pl_pl": "Anuluj",
         "en_uk": "Cancel",
@@ -115,7 +119,7 @@ extension Localization on String {
         "en_uk": "water temperature",
       } +
       {
-        "pl_pl": "stan powietrza",
+        "pl_pl": "dym",
         "en_uk": "smoke",
       } +
       {
@@ -129,7 +133,7 @@ extension Localization on String {
       {
         "pl_pl": "wilgotność powietrza",
         "en_uk": "air humidity",
-      }+
+      } +
       {
         "pl_pl": "sekundy",
         "en_uk": "seconds",

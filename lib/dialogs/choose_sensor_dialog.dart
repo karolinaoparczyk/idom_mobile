@@ -65,9 +65,9 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
                     ),
                     suffixIcon: _searchBarController.text.isNotEmpty
                         ? IconButton(
-                      onPressed: () => _searchBarController.clear(),
-                      icon: const Icon(Icons.clear),
-                    )
+                            onPressed: () => _searchBarController.clear(),
+                            icon: const Icon(Icons.clear),
+                          )
                         : null,
                   ),
                 ),
@@ -96,16 +96,18 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
             Divider(),
             Expanded(
                 child: ListView(
-                  children: (searchBarVisible
+              children: (searchBarVisible
                       ? widget.sensors.where((sensor) => sensor.name
-                      .toLowerCase()
-                      .contains(_searchBarController.text.toLowerCase()))
+                          .toLowerCase()
+                          .contains(_searchBarController.text.toLowerCase()))
                       : widget.sensors)
-                      .map(
-                        (sensor) => RadioListTile(
+                  .map(
+                    (sensor) => RadioListTile(
                       title: Text(sensor.name,
-                          style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontSize: 21.0)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              .copyWith(fontSize: 21.0)),
                       value: sensor,
                       groupValue: selectedSensor,
                       onChanged: (value) {
@@ -115,8 +117,8 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
                       },
                     ),
                   )
-                      .toList(),
-                )),
+                  .toList(),
+            )),
             Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

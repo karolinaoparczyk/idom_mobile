@@ -52,102 +52,68 @@ class _FrontState extends State<Front> {
             Icon(Icons.warning_amber_outlined,
                 size: 16, color: IdomColors.error),
             Text(' Adres serwera nie został ustawiony'.i18n,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: IdomColors.error,
-                    fontWeight: FontWeight.normal))
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1
+                    .copyWith(color: IdomColors.error))
           ]);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData;
-    queryData = MediaQuery.of(context);
-
     return Scaffold(
         key: _scaffoldKey,
-        body: SingleChildScrollView(
-            child: Container(
-                alignment: Alignment.center,
-                child: Center(
-                    child: Column(
-                  mainAxisSize: MainAxisSize.min,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    SizedBox(
-                        height: queryData.size.height / 15 * 7,
-                        child: AnimatedContainer(
-                            curve: Curves.easeInToLinear,
-                            duration: Duration(
-                              milliseconds: 10,
-                            ),
-                            alignment: Alignment.topCenter,
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.asset('assets/home.png',
-                                            height: 70.0, width: 70.0),
-                                        Text(
-                                          'IDOM',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1
-                                              .copyWith(fontSize: 100.0),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Icon(Icons.roofing_rounded,
-                                            size: 70.0,
-                                            color: Colors.transparent),
-                                      ]),
-                                  Text(
-                                    'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU'
-                                        .i18n,
-                                    style: TextStyle(
-                                        fontSize: 21,
-                                        color: IdomColors.additionalColor,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ]))),
-                    SizedBox(
-                        height: queryData.size.height / 15 * 7,
-                        child: AnimatedContainer(
-                            curve: Curves.easeInToLinear,
-                            duration: Duration(
-                              milliseconds: 10,
-                            ),
-                            alignment: Alignment.topCenter,
-                            child: Column(children: [
-                              setApiAddressEmptyMessage(),
-                              TextButton(
-                                key: Key('editApiServer'),
-                                child: Text('Edytuj adres serwera'.i18n,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                onPressed: navigateToEditApiAddress,
-                              ),
-                              buttonWidget(context, "Zaloguj".i18n,
-                                  Icons.arrow_right_outlined, navigateToSignIn),
-                              SizedBox(height: 10),
-                              buttonWidget(context, "Zarejestruj".i18n,
-                                  Icons.arrow_right_outlined, navigateToSignUp),
-                              TextButton(
-                                key: Key('passwordReset'),
-                                child: Text('Zapomniałeś/aś hasła?'.i18n,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                onPressed: navigateToEnterEmail,
-                              ),
-                            ]))),
-                  ],
-                )))));
+                  children: [
+                    Image.asset('assets/home.png', height: 70.0, width: 70.0),
+                    Text(
+                      'IDOM',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontSize: 100.0),
+                      textAlign: TextAlign.center,
+                    ),
+                    Icon(Icons.roofing_rounded,
+                        size: 70.0, color: Colors.transparent),
+                  ]),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 18.0),
+                child: Text(
+                  'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU'.i18n,
+                  style: TextStyle(
+                      fontSize: 21,
+                      color: IdomColors.additionalColor,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              setApiAddressEmptyMessage(),
+              TextButton(
+                key: Key('editApiServer'),
+                child: Text('Edytuj adres serwera'.i18n,
+                    style: Theme.of(context).textTheme.bodyText2),
+                onPressed: navigateToEditApiAddress,
+              ),
+              buttonWidget(context, "Zaloguj".i18n, navigateToSignIn),
+              SizedBox(height: 10),
+              buttonWidget(context, "Zarejestruj".i18n, navigateToSignUp),
+              TextButton(
+                key: Key('passwordReset'),
+                child: Text('Zapomniałeś/aś hasła?'.i18n,
+                    style: Theme.of(context).textTheme.bodyText2),
+                onPressed: navigateToEnterEmail,
+              ),
+            ],
+          ),
+        ));
   }
 
   /// navigates to editing api server address

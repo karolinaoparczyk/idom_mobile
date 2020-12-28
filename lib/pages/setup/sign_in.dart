@@ -37,7 +37,7 @@ class _SignInState extends State<SignIn> {
 
   void initState() {
     super.initState();
-    if (widget.testApi != null){
+    if (widget.testApi != null) {
       api = widget.testApi;
     }
     _load = false;
@@ -47,9 +47,7 @@ class _SignInState extends State<SignIn> {
     return Padding(
       padding: const EdgeInsets.only(top: 18.0),
       child: Text("Konto zostało utworzone. Możesz się zalogować.".i18n,
-          style: Theme.of(context)
-              .textTheme
-              .bodyText1),
+          style: Theme.of(context).textTheme.bodyText1),
     );
   }
 
@@ -59,6 +57,15 @@ class _SignInState extends State<SignIn> {
       key: Key('username'),
       autofocus: true,
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Nazwa użytkownika".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
@@ -66,10 +73,7 @@ class _SignInState extends State<SignIn> {
         ),
       ),
       controller: _usernameController,
-      style: Theme.of(context)
-          .textTheme
-          .bodyText1
-          .copyWith(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -81,6 +85,15 @@ class _SignInState extends State<SignIn> {
     return TextFormField(
       key: Key('password'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Hasło".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: IconButton(
@@ -105,10 +118,7 @@ class _SignInState extends State<SignIn> {
       ),
       controller: _passwordController,
       validator: PasswordFieldValidator.validate,
-      style: Theme.of(context)
-          .textTheme
-          .bodyText1
-          .copyWith(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.done,
@@ -152,14 +162,14 @@ class _SignInState extends State<SignIn> {
               });
               Navigator.of(context).popUntil((route) => route.isFirst);
             }
-          }
-          else if (userResult[1] == 401) {
+          } else if (userResult[1] == 401) {
             setState(() {
               _load = false;
             });
             final snackBar = new SnackBar(
                 content: new Text(
-                    "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie.".i18n));
+                    "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie."
+                        .i18n));
             _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         } else if (result[1] == 400) {
@@ -168,15 +178,17 @@ class _SignInState extends State<SignIn> {
           });
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje.".i18n));
+                  "Błąd logowania. Błędne hasło lub konto z podaną nazwą użytkownika nie istnieje."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
-        } else  {
+        } else {
           setState(() {
             _load = false;
           });
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -188,14 +200,16 @@ class _SignInState extends State<SignIn> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
-            content: new Text("Błąd logowania. Adres serwera nieprawidłowy.".i18n));
+            content:
+                new Text("Błąd logowania. Adres serwera nieprawidłowy.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
-      }else  {
+      } else {
         final snackBar = new SnackBar(
             content: new Text(
                 "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
@@ -261,14 +275,11 @@ class _SignInState extends State<SignIn> {
                     ),
                     alignment: Alignment.bottomCenter,
                     child: Column(children: <Widget>[
-                      buttonWidget(context, "Zaloguj".i18n,
-                          Icons.arrow_right_outlined, signIn),
+                      buttonWidget(context, "Zaloguj".i18n, signIn),
                       TextButton(
                         key: Key("passwordReset"),
                         child: Text('Zapomniałeś/aś hasła?'.i18n,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1),
+                            style: Theme.of(context).textTheme.bodyText2),
                         onPressed: navigateToEnterEmail,
                       ),
                     ]))
@@ -283,7 +294,8 @@ class _SignInState extends State<SignIn> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => EnterEmail(testApi: widget.testApi), fullscreenDialog: true));
+            builder: (context) => EnterEmail(testApi: widget.testApi),
+            fullscreenDialog: true));
 
     /// displays success message when the email is successfully sent
     if (result == true) {

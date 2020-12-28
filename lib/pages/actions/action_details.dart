@@ -174,15 +174,15 @@ class _ActionDetailsState extends State<ActionDetails> {
                             ))),
                   if (widget.action.sensor != null)
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Wartość z czujnika",
-                              style: TextStyle(
-                                  color: IdomColors.additionalColor,
-                                  fontSize: 16.5,
-                                  fontWeight: FontWeight.bold)))),
+                        padding: EdgeInsets.only(
+                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Wartość z czujnika",
+                                style: TextStyle(
+                                    color: IdomColors.additionalColor,
+                                    fontSize: 16.5,
+                                    fontWeight: FontWeight.bold)))),
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -290,7 +290,7 @@ class _ActionDetailsState extends State<ActionDetails> {
           daysString += "nd";
           break;
       }
-      if (i < daysList.length - 1){
+      if (i < daysList.length - 1) {
         daysString += ", ";
       }
     }

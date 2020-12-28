@@ -15,10 +15,7 @@ void displayProgressDialog({BuildContext context, GlobalKey key, String text}) {
                   ),
                   Text(text,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(fontSize: 21.0))
+                      style: Theme.of(context).textTheme.bodyText2)
                 ]),
               )
             ]));

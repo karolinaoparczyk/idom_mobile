@@ -7,7 +7,6 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/enums/languages.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/edit_account.dart';
-import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -155,10 +154,10 @@ class _AccountDetailState extends State<AccountDetail> {
                                     child: Row(
                                       children: [
                                         Icon(Icons.info_outline_rounded,
-                                            size: 17.5),
+                                            size: 21),
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(left: 5.0),
+                                              const EdgeInsets.only(left: 10.0),
                                           child: Text("Ogólne".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
@@ -168,20 +167,19 @@ class _AccountDetailState extends State<AccountDetail> {
                                     ))),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    left: 52.5,
+                                    left: 62,
                                     top: 10.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text("Nazwa użytkownika".i18n,
-                                        style: TextStyle(
-                                            color: IdomColors.additionalColor,
-                                            fontSize: 16.5,
-                                            fontWeight: FontWeight.bold)))),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5))),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    left: 52.5,
+                                    left: 62,
                                     top: 0.0,
                                     right: 30.0,
                                     bottom: 0.0),
@@ -190,53 +188,46 @@ class _AccountDetailState extends State<AccountDetail> {
                                     child: Text(account.username,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(fontSize: 21.0)))),
+                                            .bodyText2))),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    left: 52.5,
+                                    left: 62,
                                     top: 10,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text("Adres e-mail".i18n,
-                                        style: TextStyle(
-                                            color: IdomColors.additionalColor,
-                                            fontSize: 16.5,
-                                            fontWeight: FontWeight.bold)))),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5))),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    left: 52.5,
-                                    top: 0,
-                                    right: 30.0,
-                                    bottom: 0.0),
+                                    left: 62, top: 0, right: 30.0, bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(account.email,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(fontSize: 21.0)))),
+                                            .bodyText2))),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    left: 52.5,
+                                    left: 62,
                                     top: 10,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text("Nr telefonu komórkowego".i18n,
-                                        style: TextStyle(
-                                            color: IdomColors.additionalColor,
-                                            fontSize: 16.5,
-                                            fontWeight: FontWeight.bold)))),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5))),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    left: 52.5,
+                                    left: 62,
                                     top: 0.0,
                                     right: 30.0,
-                                    bottom: 0),
+                                    bottom: 10),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
@@ -246,12 +237,12 @@ class _AccountDetailState extends State<AccountDetail> {
                                             : "-",
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(fontSize: 21.0)))),
+                                            .bodyText2))),
+                            Divider(),
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
-                                    top: 20.0,
+                                    top: 10.0,
                                     right: 30.0,
                                     bottom: 0.0),
                                 child: Align(
@@ -260,10 +251,10 @@ class _AccountDetailState extends State<AccountDetail> {
                                       children: [
                                         Icon(
                                             Icons.notifications_active_outlined,
-                                            size: 17.5),
+                                            size: 21),
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(left: 5.0),
+                                              const EdgeInsets.only(left: 10.0),
                                           child: Text("Powiadomienia".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
@@ -271,36 +262,35 @@ class _AccountDetailState extends State<AccountDetail> {
                                         ),
                                       ],
                                     ))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 52.5,
-                              top: 10,
-                              right: 30.0,
-                              bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Język powiadomień".i18n,
-                                  style: TextStyle(
-                                      color: IdomColors.additionalColor,
-                                      fontSize: 16.5,
-                                      fontWeight: FontWeight.bold)))),
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: 52.5,
-                              top: 0,
-                              right: 30.0,
-                              bottom: 0.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(Languages.values
-                                  .firstWhere((element) => element['value'] == account.language)['text'].i18n,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(fontSize: 21.0)))),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    left: 52.5,
+                                    left: 62,
+                                    top: 10,
+                                    right: 30.0,
+                                    bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text("Język powiadomień".i18n,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 62, top: 0, right: 30.0, bottom: 0.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                        Languages.values
+                                            .firstWhere((element) =>
+                                                element['value'] ==
+                                                account.language)['text']
+                                            .i18n,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2))),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    left: 62,
                                     top: 0.0,
                                     right: 0.0,
                                     bottom: 0.0),
@@ -315,7 +305,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                             Text("Aplikacja".i18n,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .bodyText1),
+                                                    .bodyText2),
                                             Switch(
                                               key: Key("appNotifications"),
                                               value: appNotificationsOn,
@@ -334,7 +324,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                             Text("Sms",
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .bodyText1),
+                                                    .bodyText2),
                                             Switch(
                                               key: Key("smsNotifications"),
                                               value: smsNotificationsOn,

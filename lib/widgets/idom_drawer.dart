@@ -76,11 +76,11 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 padding: const EdgeInsets.only(
                     left: 18.0, right: 8, top: 12, bottom: 12),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
                             width: 25,
@@ -95,13 +95,9 @@ class _IdomDrawerState extends State<IdomDrawer> {
                                   color: IdomColors.additionalColor,
                                 ))),
                         Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
+                          padding: const EdgeInsets.only(left: 25.0),
                           child: Text(title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(
-                                      fontSize: 21.0)),
+                              style: Theme.of(context).textTheme.bodyText2),
                         ),
                       ],
                     ),
@@ -123,10 +119,10 @@ class _IdomDrawerState extends State<IdomDrawer> {
             Icon(Icons.perm_identity_rounded,
                 color: IdomColors.mainFill, size: 25.0),
             Text(currentUsername,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    .copyWith(fontSize: 25.0, color: IdomColors.whiteTextDark, fontWeight: FontWeight.bold))
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                    fontSize: 25.0,
+                    color: IdomColors.whiteTextDark,
+                    fontWeight: FontWeight.bold))
           ]);
     return SizedBox();
   }
@@ -148,12 +144,13 @@ class _IdomDrawerState extends State<IdomDrawer> {
                         Column(
                           children: [
                             Row(mainAxisSize: MainAxisSize.min, children: [
-                              Icon(Icons.roofing_rounded,
-                                  size: 50.0, color: IdomColors.mainFill),
+                              Image.asset('assets/home.png',
+                                  height: 50.0, width: 50.0),
                               Text(
                                 'IDOM',
                                 style: TextStyle(
-                                    fontSize: 70.0, color: IdomColors.blackTextLight),
+                                    fontSize: 70.0,
+                                    color: IdomColors.blackTextLight),
                                 textAlign: TextAlign.center,
                               ),
                               Icon(Icons.roofing_rounded,
@@ -162,7 +159,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                             Text(
                               'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU'.i18n,
                               style: TextStyle(
-                                  fontSize: 13.0,
+                                  fontSize: 14.0,
                                   color: IdomColors.blackTextLight,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
@@ -193,8 +190,8 @@ class _IdomDrawerState extends State<IdomDrawer> {
               }
             }),
             isUserStaff == "true"
-                ? customMenuTile("assets/icons/team.svg", "Wszystkie konta".i18n,
-                    () async {
+                ? customMenuTile(
+                    "assets/icons/team.svg", "Wszystkie konta".i18n, () async {
                     Navigator.pop(context);
                     if (widget.parentWidgetType != "Accounts") {
                       Navigator.of(context).popUntil((route) => route.isFirst);
@@ -216,7 +213,8 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n, () async {
+            customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n,
+                () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Cameras") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -252,7 +250,8 @@ class _IdomDrawerState extends State<IdomDrawer> {
             //     if (widget.onGoBackAction != null) widget.onGoBackAction();
             //   }
             // }),
-            customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n, () async {
+            customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n,
+                () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "EditApiAddress") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -281,7 +280,8 @@ class _IdomDrawerState extends State<IdomDrawer> {
               Navigator.pop(context);
               await _logOut();
             }),
-            customMenuTile("assets/icons/info.svg", "O projekcie".i18n, () async {
+            customMenuTile("assets/icons/info.svg", "O projekcie".i18n,
+                () async {
               Navigator.pop(context);
               _navigateToProjectWebPage();
             }),

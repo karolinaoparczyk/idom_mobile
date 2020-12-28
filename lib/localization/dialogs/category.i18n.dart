@@ -45,17 +45,17 @@ extension Localization on String {
       {
         "pl_pl": "wilgotność powietrza",
         "en_uk": "air humidity",
-      }+
+      } +
       {
         "pl_pl": "Wybierz kategorie",
         "en_uk": "Choose categories",
-      }+
+      } +
       {
         "pl_pl": "Wyszukaj...",
         "en_uk": "Search...",
       } +
       {
-        "pl_pl": "naduszacz",
+        "pl_pl": "przycisk",
         "en_uk": "clicker",
       } +
       {
@@ -65,7 +65,7 @@ extension Localization on String {
       {
         "pl_pl": "żarówka",
         "en_uk": "bulb",
-      }+
+      } +
       {
         "pl_pl": "rolety",
         "en_uk": "blinds",

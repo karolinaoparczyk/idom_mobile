@@ -16,8 +16,7 @@ class LogotypeWidget extends StatelessWidget {
                   Image.asset('assets/home.png', height: 70.0, width: 70.0),
                   Text(
                     'IDOM',
-                    style:
-                    Theme.of(context)
+                    style: Theme.of(context)
                         .textTheme
                         .bodyText1
                         .copyWith(fontSize: 100.0),
@@ -37,8 +36,7 @@ class LogotypeWidget extends StatelessWidget {
                 Padding(
                     padding: EdgeInsets.only(top: 20.0),
                     child: Text("Trwa ładowanie...".i18n,
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(
-                            fontSize: 21.0)))
+                        style: Theme.of(context).textTheme.bodyText2))
               ])),
     );
   }

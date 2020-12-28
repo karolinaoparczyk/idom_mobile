@@ -99,7 +99,7 @@ extension Localization on String {
       {
         "pl_pl": "Błąd rejestracji. Adres serwera nieprawidłowy.",
         "en_uk": "Registration failed. The server address is invalid.",
-      }+
+      } +
       {
         "pl_pl": "Rejestracja nie powiodła się. Spróbuj ponownie.",
         "en_uk": "Registration failed. Try again.",

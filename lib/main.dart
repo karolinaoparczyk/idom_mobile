@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: IdomColors.additionalColor),
           dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
           indicatorColor: IdomColors.mainBackgroundLight,
+          splashColor: IdomColors.buttonSplashColorLight,
           dialogTheme: DialogTheme(
               elevation: 20,
               backgroundColor: IdomColors.mainBackgroundLight,
@@ -57,16 +58,20 @@ class MyApp extends StatelessWidget {
           textTheme: TextTheme(
               headline5: TextStyle(
                   color: IdomColors.additionalColor,
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.bold),
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.normal),
               bodyText1: TextStyle(
                   color: IdomColors.blackTextLight,
-                  fontSize: 16.5,
+                  fontSize: 21,
                   fontWeight: FontWeight.normal),
               bodyText2: TextStyle(
                   color: IdomColors.brighterBlackTextLight,
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.bold)),
+                  fontSize: 18.5,
+                  fontWeight: FontWeight.normal),
+              subtitle1: TextStyle(
+                  color: IdomColors.brighterBlackTextLight,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal)),
           textSelectionTheme: TextSelectionThemeData(
               cursorColor: IdomColors.additionalColor,
               selectionHandleColor: IdomColors.additionalColor,
@@ -96,6 +101,7 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: IdomColors.additionalColor),
           dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
           indicatorColor: IdomColors.mainBackgroundDark,
+          splashColor: IdomColors.buttonSplashColorDark,
           dialogTheme: DialogTheme(
               elevation: 20,
               backgroundColor: IdomColors.mainBackgroundDark,
@@ -106,16 +112,20 @@ class MyApp extends StatelessWidget {
           textTheme: TextTheme(
               headline5: TextStyle(
                   color: IdomColors.additionalColor,
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.bold),
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.normal),
               bodyText1: TextStyle(
                   color: IdomColors.blackTextDark,
-                  fontSize: 16.5,
+                  fontSize: 21,
                   fontWeight: FontWeight.normal),
               bodyText2: TextStyle(
                   color: IdomColors.brighterBlackTextDark,
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.bold)),
+                  fontSize: 18.5,
+                  fontWeight: FontWeight.normal),
+              subtitle1: TextStyle(
+                  color: IdomColors.brighterBlackTextDark,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal)),
           textSelectionTheme: TextSelectionThemeData(
               cursorColor: IdomColors.additionalColor,
               selectionHandleColor: IdomColors.additionalColor,

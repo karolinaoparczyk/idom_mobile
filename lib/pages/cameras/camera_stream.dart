@@ -53,9 +53,7 @@ class _CameraStreamState extends State<CameraStream> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(
-            context)
-            .backgroundColor,
+        backgroundColor: Theme.of(context).backgroundColor,
         key: _scaffoldKey,
         appBar: AppBar(title: Text(widget.camera.name), actions: [
           IconButton(
@@ -149,7 +147,7 @@ class _CameraStreamState extends State<CameraStream> {
                 ),
             fullscreenDialog: true));
     if (result == true) {
-      final snackBar = new SnackBar(content: new Text("Zapisano kamere.".i18n));
+      final snackBar = new SnackBar(content: new Text("Zapisano kamerę.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await _refreshSensorDetails();
     }
@@ -181,7 +179,8 @@ class _CameraStreamState extends State<CameraStream> {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final snackBar = new SnackBar(
-            content: new Text("Odświeżenie danych kamery nie powiodło się.".i18n));
+            content:
+                new Text("Odświeżenie danych kamery nie powiodło się.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     } catch (e) {
@@ -192,13 +191,15 @@ class _CameraStreamState extends State<CameraStream> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania danych kamery. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania danych kamery. Adres serwera nieprawidłowy.".i18n));
+                "Błąd pobierania danych kamery. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

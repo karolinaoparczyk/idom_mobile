@@ -123,7 +123,7 @@ void main() {
 
     expect(
         find.text(
-            "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje."),
+            "Błąd logowania. Błędne hasło lub konto z podaną nazwą użytkownika nie istnieje."),
         findsOneWidget);
     verify(mockApi.signIn('email@mail.com', 'password')).called(1);
   });

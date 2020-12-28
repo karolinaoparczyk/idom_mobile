@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:idom/localization/dialogs/confirm_action.i18n.dart';
 
-Future<bool> confirmActionDialog(BuildContext context, String titleText,
-    String content) async {
+Future<bool> confirmActionDialog(
+    BuildContext context, String titleText, String content) async {
   return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -20,13 +20,16 @@ Future<bool> confirmActionDialog(BuildContext context, String titleText,
           actions: <Widget>[
             TextButton(
               key: Key("yesButton"),
-              child: Text("Tak".i18n, style: Theme.of(context).textTheme.headline5),
+              child: Text("Tak".i18n,
+                  style: Theme.of(context).textTheme.headline5),
               onPressed: () async {
                 Navigator.of(context).pop(true);
-              },),
+              },
+            ),
             TextButton(
               key: Key("noButton"),
-              child: Text("Nie".i18n, style: Theme.of(context).textTheme.headline5),
+              child: Text("Nie".i18n,
+                  style: Theme.of(context).textTheme.headline5),
               onPressed: () async {
                 Navigator.of(context).pop(false);
               },
