@@ -1,0 +1,3 @@
+- Tryb ciemnych kolorów
+- Obsługa języka angielskiego
+- Dodanie IP żarówki
