@@ -108,7 +108,8 @@ class _EditAccountState extends State<EditAccount> {
         ),
         labelText: "Język powiadomień".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down),
+        suffixIcon: Icon(Icons.arrow_drop_down,
+            color: Theme.of(context).textTheme.bodyText1.color),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
