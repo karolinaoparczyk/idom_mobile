@@ -143,7 +143,7 @@ class _EditSensorState extends State<EditSensor> {
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).textTheme.bodyText2.color),
+              color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -238,7 +238,7 @@ class _EditSensorState extends State<EditSensor> {
                   ? IdomColors.additionalColor
                   : Theme.of(context).textTheme.bodyText1.color),
           suffixIcon: Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).textTheme.bodyText2.color),
+              color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

@@ -6,6 +6,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/edit_driver.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -109,7 +110,7 @@ class _NewDriverState extends State<NewDriver> {
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).textTheme.bodyText2.color),
+              color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

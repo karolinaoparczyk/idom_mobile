@@ -315,7 +315,8 @@ class _EditActionState extends State<EditAction> {
       decoration: InputDecoration(
         labelText: "Operator",
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down),
+        suffixIcon: Icon(Icons.arrow_drop_down,
+        color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -349,7 +350,8 @@ class _EditActionState extends State<EditAction> {
         decoration: InputDecoration(
           labelText: "Sterownik",
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
+          suffixIcon: Icon(Icons.arrow_drop_down,
+              color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
