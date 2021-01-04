@@ -216,7 +216,7 @@ class _SettingsState extends State<Settings> {
                                       left: 62.0,
                                       top: 0.0,
                                       right: 62.0,
-                                      bottom: 0.0),
+                                      bottom: 10.0),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
