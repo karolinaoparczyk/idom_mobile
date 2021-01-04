@@ -7,6 +7,10 @@ extension Localization on String {
         "en_uk": "Server address",
       } +
       {
+        "pl_pl": "Zapisywanie ustawień...",
+        "en_uk": "Saving settings...",
+      } +
+      {
         "pl_pl": "Ustawienia",
         "en_uk": "Settings",
       } +
@@ -19,6 +23,12 @@ extension Localization on String {
             "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie.",
         "en_uk":
             "The file is invalid. Please download it from Firebase and try again.",
+      } +
+      {
+        "pl_pl":
+            "Nie udało się połączyć z serwisem firebase. Sprawdź czy plik google_services.json jest aktualny oraz połączenie z internetem.",
+        "en_uk":
+            "Failed to connect to firebase. Check if the google_services.json file is up-to-date and an internet connection.",
       } +
       {
         "pl_pl": "Należy dodać plik.",

@@ -7,6 +7,7 @@ import 'package:idom/dialogs/language_dialog.dart';
 import 'package:idom/localization/setup/sign_up.i18n.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/sign_in.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -251,7 +252,7 @@ class _SignUpState extends State<SignUp> {
         labelText: "Język powiadomień".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: Icon(Icons.arrow_drop_down,
-            color: Theme.of(context).textTheme.bodyText2.color),
+            color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

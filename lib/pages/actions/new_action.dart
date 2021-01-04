@@ -286,7 +286,8 @@ class _NewActionState extends State<NewAction> {
       decoration: InputDecoration(
         labelText: "Operator",
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down),
+        suffixIcon: Icon(Icons.arrow_drop_down,
+            color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
