@@ -98,6 +98,15 @@ class _DataDownloadState extends State<DataDownload> {
         controller: _rangeDateController,
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Ilość ostatnich dni".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
@@ -105,10 +114,7 @@ class _DataDownloadState extends State<DataDownload> {
           ),
         ),
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
         validator: LastDaysAmountFieldValidator.validate);
   }
 
@@ -142,7 +148,7 @@ class _DataDownloadState extends State<DataDownload> {
                   Text(
                       "Uzupełnij filtry, aby wygenerować plik .csv z danymi"
                           .i18n,
-                      style: Theme.of(context).textTheme.headline5),
+                      style: Theme.of(context).textTheme.subtitle1),
                   SizedBox(height: 20.0),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -152,7 +158,7 @@ class _DataDownloadState extends State<DataDownload> {
                         children: [
                           Text(
                             "Czujniki".i18n,
-                            style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodyText1,
                             textAlign: TextAlign.left,
                           ),
                           Spacer(),
@@ -174,7 +180,8 @@ class _DataDownloadState extends State<DataDownload> {
                                     height: 21,
                                     color: Theme.of(context)
                                         .textTheme
-                                        .bodyText1.color,
+                                        .bodyText1
+                                        .color,
                                     key: Key("deleteSensors")),
                               ),
                             )
@@ -184,7 +191,7 @@ class _DataDownloadState extends State<DataDownload> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                        left: 18.0, right: 18.0, top: 10.0),
+                        left: 38.0, right: 18.0, top: 10.0),
                     child: SizedBox(
                       child: Table(
                         columnWidths: const {
@@ -198,8 +205,7 @@ class _DataDownloadState extends State<DataDownload> {
                                           child: Text(sensor.name,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1
-                                                  .copyWith(fontSize: 21.0))),
+                                                  .bodyText2)),
                                       GestureDetector(
                                         onTap: () => setState(() {
                                           selectedSensors.remove(sensor);
@@ -243,7 +249,7 @@ class _DataDownloadState extends State<DataDownload> {
                                     Theme.of(context).dialogBackgroundColor,
                                 child: StatefulBuilder(
                                     builder: (BuildContext context,
-                                        StateSetter setState) =>
+                                            StateSetter setState) =>
                                         ChooseMultipleSensorsDialog(
                                             sensors: sensors,
                                             selectedSensors: selectedSensors)));
@@ -255,7 +261,7 @@ class _DataDownloadState extends State<DataDownload> {
                       setState(() {});
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                      padding: const EdgeInsets.only(left: 38.0, right: 18.0),
                       child: Row(
                         children: <Widget>[
                           SvgPicture.asset("assets/icons/add.svg",
@@ -272,9 +278,7 @@ class _DataDownloadState extends State<DataDownload> {
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
                               "Dodaj".i18n,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
                           )
                         ],
@@ -282,7 +286,7 @@ class _DataDownloadState extends State<DataDownload> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(18.0),
                     child: AnimatedCrossFade(
                       crossFadeState: sensorsMessage != null
                           ? CrossFadeState.showFirst
@@ -290,9 +294,7 @@ class _DataDownloadState extends State<DataDownload> {
                       duration: Duration(milliseconds: 300),
                       firstChild: sensorsMessage != null
                           ? Text(sensorsMessage,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1)
+                              style: Theme.of(context).textTheme.subtitle1)
                           : SizedBox(),
                       secondChild: SizedBox(),
                     ),
@@ -305,7 +307,7 @@ class _DataDownloadState extends State<DataDownload> {
                         children: [
                           Text(
                             "Kategorie".i18n,
-                            style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodyText1,
                             textAlign: TextAlign.left,
                           ),
                           Spacer(),
@@ -327,7 +329,8 @@ class _DataDownloadState extends State<DataDownload> {
                                     height: 21,
                                     color: Theme.of(context)
                                         .textTheme
-                                        .bodyText1.color,
+                                        .bodyText1
+                                        .color,
                                     key: Key("deleteCategories")),
                               ),
                             )
@@ -337,7 +340,7 @@ class _DataDownloadState extends State<DataDownload> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                        left: 18.0, right: 18.0, top: 10.0),
+                        left: 38.0, right: 18.0, top: 10.0),
                     child: SizedBox(
                       child: Table(
                         columnWidths: const {
@@ -351,8 +354,7 @@ class _DataDownloadState extends State<DataDownload> {
                                           child: Text(category['text'].i18n,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1
-                                                  .copyWith(fontSize: 21.0))),
+                                                  .bodyText2)),
                                       GestureDetector(
                                         onTap: () => setState(() {
                                           selectedCategories.remove(category);
@@ -409,7 +411,7 @@ class _DataDownloadState extends State<DataDownload> {
                       setState(() {});
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                      padding: const EdgeInsets.only(left: 38.0, right: 18.0),
                       child: Row(
                         children: <Widget>[
                           SvgPicture.asset("assets/icons/add.svg",
@@ -426,9 +428,7 @@ class _DataDownloadState extends State<DataDownload> {
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
                               "Dodaj".i18n,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
                           )
                         ],
@@ -436,7 +436,7 @@ class _DataDownloadState extends State<DataDownload> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(18.0),
                     child: AnimatedCrossFade(
                       crossFadeState: categoriesMessage != null
                           ? CrossFadeState.showFirst
@@ -444,9 +444,7 @@ class _DataDownloadState extends State<DataDownload> {
                       duration: Duration(milliseconds: 300),
                       firstChild: categoriesMessage != null
                           ? Text(categoriesMessage,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1)
+                              style: Theme.of(context).textTheme.subtitle1)
                           : SizedBox(),
                       secondChild: SizedBox(),
                     ),
@@ -457,8 +455,8 @@ class _DataDownloadState extends State<DataDownload> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: buttonWidget(context, "Generuj plik".i18n,
-                        Icons.arrow_right_outlined, _generateFile),
+                    child: buttonWidget(
+                        context, "Generuj plik".i18n, _generateFile),
                   )
                 ]),
               ),
@@ -521,8 +519,8 @@ class _DataDownloadState extends State<DataDownload> {
         }
       } else {
         final snackBar = new SnackBar(
-            content:
-                new Text("Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
+            content: new Text(
+                "Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

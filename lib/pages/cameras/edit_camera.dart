@@ -61,15 +61,24 @@ class _EditCameraState extends State<EditCamera> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             labelText: "Nazwa".i18n,
             labelStyle: Theme.of(context).textTheme.headline5,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
             counterStyle:
-                Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 12.5)),
+                Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -109,9 +118,9 @@ class _EditCameraState extends State<EditCamera> {
                             alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
-                                Icon(Icons.info_outline_rounded, size: 17.5),
+                                Icon(Icons.info_outline_rounded, size: 21),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
+                                  padding: const EdgeInsets.only(left: 10.0),
                                   child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
@@ -123,11 +132,11 @@ class _EditCameraState extends State<EditCamera> {
                             ))),
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62.0, top: 10.0, right: 62.0, bottom: 0.0),
                         child: _buildName()),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                          vertical: 10.0, horizontal: 62.0),
                       child: AnimatedCrossFade(
                         crossFadeState: fieldsValidationMessage != null
                             ? CrossFadeState.showFirst
@@ -135,10 +144,7 @@ class _EditCameraState extends State<EditCamera> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context).textTheme.subtitle1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),

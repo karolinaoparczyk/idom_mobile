@@ -274,7 +274,7 @@ class _SensorsState extends State<Sensors> {
                   child: Align(
                       alignment: Alignment.topCenter,
                       child: Text("Brak czujników w systemie.".i18n,
-                          style: Theme.of(context).textTheme.bodyText1,
+                          style: Theme.of(context).textTheme.bodyText2,
                           textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
@@ -291,7 +291,7 @@ class _SensorsState extends State<Sensors> {
                     left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
                 alignment: Alignment.topCenter,
                 child: Text("Błąd połączenia z serwerem.".i18n,
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyText2,
                     textAlign: TextAlign.center))),
       );
     } else if (!zeroFetchedItems &&
@@ -303,7 +303,7 @@ class _SensorsState extends State<Sensors> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.".i18n,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyText2,
                   textAlign: TextAlign.center)));
     } else if (_sensorList != null && _sensorList.length > 0) {
       return Column(children: [

@@ -8,13 +8,16 @@ class ChooseMultipleSensorCategoriesDialog extends StatefulWidget {
   final List<Map<String, String>> selectedCategories;
 
   @override
-  _ChooseMultipleSensorCategoriesDialogState createState() => _ChooseMultipleSensorCategoriesDialogState();
+  _ChooseMultipleSensorCategoriesDialogState createState() =>
+      _ChooseMultipleSensorCategoriesDialogState();
 }
 
-class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSensorCategoriesDialog> {
+class _ChooseMultipleSensorCategoriesDialogState
+    extends State<ChooseMultipleSensorCategoriesDialog> {
   bool searchBarVisible;
   TextEditingController _searchBarController = TextEditingController();
-  List<Map<String, String>> tempSelectedCategories = List<Map<String, String>>();
+  List<Map<String, String>> tempSelectedCategories =
+      List<Map<String, String>>();
   List<Map<String, String>> categories;
 
   @override
@@ -26,7 +29,6 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
     _searchBarController.addListener(() {
       setState(() {});
     });
-
   }
 
   @override
@@ -34,7 +36,6 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
     _searchBarController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +56,11 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
                 firstChild: TextField(
+                  style: Theme.of(context).textTheme.bodyText2,
                   controller: _searchBarController,
                   decoration: InputDecoration(
                     hintText: "Wyszukaj...".i18n,
+                    hintStyle: Theme.of(context).textTheme.bodyText2,
                     prefixIcon: IconButton(
                       onPressed: () {
                         setState(() {
@@ -65,13 +68,18 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                           _searchBarController.clear();
                         });
                       },
-                      icon: const Icon(Icons.arrow_back),
+                      icon: Icon(Icons.arrow_back,
+                          color: Theme.of(context).textTheme.bodyText2.color),
                     ),
                     suffixIcon: _searchBarController.text.isNotEmpty
                         ? IconButton(
-                      onPressed: () => _searchBarController.clear(),
-                      icon: const Icon(Icons.clear),
-                    )
+                            onPressed: () => _searchBarController.clear(),
+                            icon: Icon(Icons.clear,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    .color),
+                          )
                         : null,
                   ),
                 ),
@@ -100,12 +108,12 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
             Divider(),
             Expanded(
                 child: ListView(
-                  children: (searchBarVisible
+              children: (searchBarVisible
                       ? categories.where((category) => category['text']
-                      .toLowerCase()
-                      .contains(_searchBarController.text.toLowerCase()))
+                          .toLowerCase()
+                          .contains(_searchBarController.text.toLowerCase()))
                       : categories)
-                      .map((category) => GestureDetector(
+                  .map((category) => GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {},
                       child: CheckboxListTile(
@@ -113,19 +121,17 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                           setState(() {
                             checked
                                 ? tempSelectedCategories.add(category)
-                                :  tempSelectedCategories.remove(category);
+                                : tempSelectedCategories.remove(category);
                           });
                         },
-                        value:  tempSelectedCategories.contains(category),
+                        value: tempSelectedCategories.contains(category),
                         dense: true,
                         controlAffinity: ListTileControlAffinity.leading,
                         title: Text(category['text'].i18n,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1),
+                            style: Theme.of(context).textTheme.bodyText2),
                       )))
-                      .toList(),
-                )),
+                  .toList(),
+            )),
             Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -141,7 +147,7 @@ class _ChooseMultipleSensorCategoriesDialogState extends State<ChooseMultipleSen
                     child: Text("OK",
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {
-                      Navigator.pop(context,  tempSelectedCategories);
+                      Navigator.pop(context, tempSelectedCategories);
                     }),
               ],
             ),

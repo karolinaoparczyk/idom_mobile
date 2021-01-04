@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
@@ -94,26 +95,30 @@ class _SettingsState extends State<Settings> {
         controller: _apiAddressController,
         focusNode: _apiAddressFocusNode,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Adres serwera".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           prefixText: "https://",
-          prefixStyle:
-              Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+          prefixStyle: Theme.of(context).textTheme.bodyText2,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
           suffixIcon: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("/api",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1
-                      .copyWith(fontSize: 21.0)),
+              Text("/api", style: Theme.of(context).textTheme.bodyText2),
             ],
           ),
         ),
-        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: UrlFieldValidator.validate);
   }
 
@@ -132,324 +137,326 @@ class _SettingsState extends State<Settings> {
     return WillPopScope(
         onWillPop: _onBackButton,
         child: Scaffold(
-            key: _scaffoldKey,
-            appBar: AppBar(title: Text('Ustawienia'.i18n), actions: [
-              IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
-            ]),
-            drawer: _isUserLoggedIn == "true"
-                ? IdomDrawer(
-                    storage: widget.storage,
-                    parentWidgetType: "EditApiAddress",
-                    onLogOutFailure: onLogOutFailure)
-                : null,
-            body: Row(children: <Widget>[
-              Expanded(flex: 1, child: SizedBox(width: 1)),
-              Expanded(
-                  flex: 30,
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.only(left: 13.5, top: 20, right: 13.5),
-                    child: _load
-                        ? loadingIndicator(true)
-                        : Column(children: <Widget>[
-                            Expanded(
-                                flex: 3,
-                                child: SingleChildScrollView(
-                                  child: Form(
-                                    key: _formKey,
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 0.0,
-                                                top: 0.0,
-                                                right: 0.0,
-                                                bottom: 10.0),
-                                            child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Row(
-                                                  children: [
-                                                    Icon(Icons.settings,
-                                                        size: 17.5),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 5.0),
-                                                      child: Text(
-                                                          "Konfiguracja".i18n,
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodyText1),
-                                                    ),
-                                                  ],
-                                                ))),
-                                        _buildApiAddress(),
-                                        if (_isUserLoggedIn == "true")
-                                          SizedBox(height: 20.0),
-                                        if (_isUserLoggedIn == "true")
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Plik google_services.json"
-                                                    .i18n,
+          key: _scaffoldKey,
+          appBar: AppBar(title: Text('Ustawienia'.i18n), actions: [
+            IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+          ]),
+          drawer: _isUserLoggedIn == "true"
+              ? IdomDrawer(
+                  storage: widget.storage,
+                  parentWidgetType: "EditApiAddress",
+                  onLogOutFailure: onLogOutFailure)
+              : null,
+          body: _load
+              ? loadingIndicator(true)
+              : Column(children: <Widget>[
+                  Expanded(
+                      flex: 3,
+                      child: SingleChildScrollView(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 20.0,
+                                      right: 30.0,
+                                      bottom: 10.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.settings, size: 21),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10.0),
+                                            child: Text("Konfiguracja".i18n,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .headline5,
-                                              ),
-                                            ],
+                                                    .bodyText1),
                                           ),
-                                        if (_isUserLoggedIn == "true" &&
-                                                currentFirebaseParams != null &&
-                                                currentFirebaseParams[
-                                                        'fileName'] !=
-                                                    null ||
-                                            file != null)
-                                          Row(
-                                            children: [
-                                              Flexible(
-                                                child: Text(
-                                                    file == null
-                                                        ? currentFirebaseParams[
-                                                            'fileName']
-                                                        : file.path
-                                                            .split("/")
-                                                            .last,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1
-                                                        .copyWith(
-                                                            fontSize: 21.0)),
-                                              ),
-                                              SizedBox(width: 30),
-                                              IconButton(
-                                                icon: Icon(Icons
-                                                    .remove_circle_outline),
-                                                color: IdomColors.error,
-                                                onPressed: () {
-                                                  setState(() {
-                                                    file = null;
-                                                    fieldsValidationMessage =
-                                                        null;
-                                                    currentFirebaseParams =
-                                                        null;
-                                                  });
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                        if (_isUserLoggedIn == "true" &&
-                                            (currentFirebaseParams == null ||
-                                                currentFirebaseParams[
-                                                        'fileName'] ==
-                                                    null) &&
-                                            file == null)
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                icon: Icon(
+                                        ],
+                                      ))),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 62.0,
+                                    top: 0.0,
+                                    right: 62.0,
+                                    bottom: 0.0),
+                                child: _buildApiAddress(),
+                              ),
+                              if (_isUserLoggedIn == "true")
+                                SizedBox(height: 20.0),
+                              if (_isUserLoggedIn == "true")
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 62.0,
+                                      top: 0.0,
+                                      right: 62.0,
+                                      bottom: 0.0),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Plik google_services.json".i18n,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              if (_isUserLoggedIn == "true" &&
+                                      currentFirebaseParams != null &&
+                                      currentFirebaseParams['fileName'] !=
+                                          null ||
+                                  file != null)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 62.0,
+                                      top: 0.0,
+                                      right: 62.0,
+                                      bottom: 0.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                            file == null
+                                                ? currentFirebaseParams[
+                                                    'fileName']
+                                                : file.path.split("/").last,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText2),
+                                      ),
+                                      SizedBox.fromSize(
+                                          size: Size(21, 21),
+                                          child: ClipOval(
+                                              child: Material(
+                                                  color: Theme.of(context)
+                                                      .backgroundColor,
+                                                  child: InkWell(
+                                                    child: SvgPicture.asset(
+                                                        "assets/icons/minus.svg",
+                                                        matchTextDirection:
+                                                            false,
+                                                        width: 21,
+                                                        height: 21,
+                                                        color: IdomColors.error,
+                                                        key: Key(
+                                                            "deleteSensor")),
+                                                    onTap: () {
+                                                      setState(() {
+                                                        file = null;
+                                                        fieldsValidationMessage =
+                                                            null;
+                                                        currentFirebaseParams =
+                                                            null;
+                                                      });
+                                                    },
+                                                  ))))
+                                    ],
+                                  ),
+                                ),
+                              if (_isUserLoggedIn == "true" &&
+                                  (currentFirebaseParams == null ||
+                                      currentFirebaseParams['fileName'] ==
+                                          null) &&
+                                  file == null)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 62.0,
+                                      top: 0.0,
+                                      right: 62.0,
+                                      bottom: 0.0),
+                                  child: Row(
+                                    children: [
+                                      SizedBox.fromSize(
+                                          size: Size(36, 36),
+                                          child: ClipOval(
+                                            child: Material(
+                                              color: Theme.of(context)
+                                                  .backgroundColor,
+                                              child: InkWell(
+                                                child: Icon(
                                                     Icons
                                                         .add_circle_outline_rounded,
                                                     color: Theme.of(context)
                                                         .textTheme
-                                                        .bodyText1
+                                                        .bodyText2
                                                         .color),
-                                                onPressed: _pickFile,
+                                                onTap: _pickFile,
                                               ),
-                                            ],
-                                          ),
-                                        if (_isUserLoggedIn == "true")
-                                          SizedBox(width: 50),
-                                        if (_isUserLoggedIn == "true")
-                                          AnimatedCrossFade(
-                                            crossFadeState:
-                                                fieldsValidationMessage != null
-                                                    ? CrossFadeState.showFirst
-                                                    : CrossFadeState.showSecond,
-                                            duration:
-                                                Duration(milliseconds: 300),
-                                            firstChild:
-                                                fieldsValidationMessage != null
-                                                    ? Text(
-                                                        fieldsValidationMessage,
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyText1)
-                                                    : SizedBox(),
-                                            secondChild: SizedBox(),
-                                          ),
-                                        if (_isUserLoggedIn == "true")
-                                          Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 0.0,
-                                                  top: 10.0,
-                                                  right: 0.0,
-                                                  bottom: 10.0),
-                                              child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                          Icons
-                                                              .brightness_4_outlined,
-                                                          size: 17.5),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                left: 5.0),
-                                                        child: Text(
-                                                            "Preferencje".i18n,
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyText1),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        if (_isUserLoggedIn == "true")
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Motyw".i18n,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline5,
-                                              ),
-                                              SizedBox(width: 10),
-                                              ToggleButtons(
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                                borderColor:
-                                                    IdomColors.additionalColor,
-                                                splashColor: Colors.transparent,
-                                                fillColor: IdomColors.lighten(
-                                                    IdomColors.additionalColor,
-                                                    0.2),
-                                                selectedColor:
-                                                    IdomColors.blackTextLight,
-                                                children: [
-                                                  Container(
-                                                    width: 60,
-                                                    child: Text("jasny".i18n,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyText1
-                                                            .copyWith(
-                                                                color: selectedMode[
-                                                                        0]
-                                                                    ? IdomColors
-                                                                        .whiteTextDark
-                                                                    : Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .bodyText1
-                                                                        .color)),
-                                                  ),
-                                                  Container(
-                                                    width: 60,
-                                                    child: Text("ciemny".i18n,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyText1
-                                                            .copyWith(
-                                                                color: selectedMode[
-                                                                        1]
-                                                                    ? IdomColors
-                                                                        .whiteTextDark
-                                                                    : Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .bodyText1
-                                                                        .color)),
-                                                  )
-                                                ],
-                                                isSelected: selectedMode,
-                                                onPressed: (int index) async {
-                                                  if (selectedMode[index] ==
-                                                      false) {
-                                                    var theme = index == 0
-                                                        ? "light"
-                                                        : "dark";
-                                                    await DarkMode
-                                                        .setStorageThemeMode(
-                                                            theme);
-                                                    setState(() {
-                                                      Provider.of<AppStateNotifier>(
-                                                              context,
-                                                              listen: false)
-                                                          .updateTheme();
-                                                      selectedMode[0] =
-                                                          !selectedMode[0];
-                                                      selectedMode[1] =
-                                                          !selectedMode[1];
-                                                    });
-                                                  }
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        if (_isUserLoggedIn == "true")
-                                          Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 0.0,
-                                                  top: 20.0,
-                                                  right: 0.0,
-                                                  bottom: 10.0),
-                                              child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.data_usage,
-                                                          size: 17.5),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                left: 5.0),
-                                                        child: Text("Dane".i18n,
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyText1),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        if (_isUserLoggedIn == "true")
-                                          Container(
-                                            alignment: Alignment.centerLeft,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
                                             ),
-                                            child: RaisedButton(
-                                                color: Theme.of(context)
-                                                    .cardTheme
-                                                    .color,
-                                                child: Text(
-                                                    "Jak mogę usunąć dane?"
-                                                        .i18n,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline5),
-                                                onPressed: () {
-                                                  _navigateToProjectWebPage();
-                                                }),
-                                          ),
-                                      ],
-                                    ),
+                                          )),
+                                    ],
                                   ),
-                                )),
-                          ]),
-                  )),
-              Expanded(flex: 1, child: SizedBox(width: 1)),
-            ])));
+                                ),
+                              if (_isUserLoggedIn == "true")
+                                AnimatedCrossFade(
+                                  crossFadeState:
+                                      fieldsValidationMessage != null
+                                          ? CrossFadeState.showFirst
+                                          : CrossFadeState.showSecond,
+                                  duration: Duration(milliseconds: 300),
+                                  firstChild: fieldsValidationMessage != null
+                                      ? Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 62.0,
+                                              top: 10.0,
+                                              right: 62.0,
+                                              bottom: 10.0),
+                                          child: Text(fieldsValidationMessage,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle1),
+                                        )
+                                      : SizedBox(),
+                                  secondChild: SizedBox(),
+                                ),
+                              if (_isUserLoggedIn == "true") Divider(),
+                              if (_isUserLoggedIn == "true")
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 10.0,
+                                        right: 30.0,
+                                        bottom: 10.0),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.brightness_4_outlined,
+                                                size: 21),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0),
+                                              child: Text("Motyw".i18n,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1),
+                                            ),
+                                          ],
+                                        ))),
+                              if (_isUserLoggedIn == "true")
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 30.0,
+                                      top: 0.0,
+                                      right: 30.0,
+                                      bottom: 10.0),
+                                  child: ToggleButtons(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderColor: IdomColors.additionalColor,
+                                    splashColor: Colors.transparent,
+                                    fillColor: IdomColors.lighten(
+                                        IdomColors.additionalColor, 0.2),
+                                    selectedColor: IdomColors.blackTextLight,
+                                    children: [
+                                      Container(
+                                        width: 60,
+                                        child: Text("jasny".i18n,
+                                            textAlign: TextAlign.center,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .subtitle1
+                                                .copyWith(
+                                                    color: selectedMode[0]
+                                                        ? IdomColors
+                                                            .whiteTextDark
+                                                        : Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1
+                                                            .color)),
+                                      ),
+                                      Container(
+                                        width: 60,
+                                        child: Text("ciemny".i18n,
+                                            textAlign: TextAlign.center,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .subtitle1
+                                                .copyWith(
+                                                    color: selectedMode[1]
+                                                        ? IdomColors
+                                                            .whiteTextDark
+                                                        : Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1
+                                                            .color)),
+                                      )
+                                    ],
+                                    isSelected: selectedMode,
+                                    onPressed: (int index) async {
+                                      if (selectedMode[index] == false) {
+                                        var theme =
+                                            index == 0 ? "light" : "dark";
+                                        await DarkMode.setStorageThemeMode(
+                                            theme);
+                                        setState(() {
+                                          Provider.of<AppStateNotifier>(context,
+                                                  listen: false)
+                                              .updateTheme();
+                                          selectedMode[0] = !selectedMode[0];
+                                          selectedMode[1] = !selectedMode[1];
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              if (_isUserLoggedIn == "true") Divider(),
+                              if (_isUserLoggedIn == "true")
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 30.0,
+                                        top: 10.0,
+                                        right: 30.0,
+                                        bottom: 10.0),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.data_usage, size: 21),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0),
+                                              child: Text("Dane".i18n,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1),
+                                            ),
+                                          ],
+                                        ))),
+                              if (_isUserLoggedIn == "true")
+                                Container(
+                                    alignment: Alignment.center,
+                                    height: 30,
+                                    child: FlatButton(
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text("Jak mogę usunąć dane?".i18n,
+                                                  key: Key("deleteData"),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headline5),
+                                              Icon(Icons.arrow_right,
+                                                  color: IdomColors
+                                                      .additionalColor)
+                                            ]),
+                                        onPressed: () async {
+                                          _navigateToProjectWebPage();
+                                        })),
+                            ],
+                          ),
+                        ),
+                      )),
+                ]),
+        ));
   }
 
   _navigateToProjectWebPage() async {
@@ -555,8 +562,7 @@ class _SettingsState extends State<Settings> {
           Navigator.pop(context);
           final snackBar = new SnackBar(
               content: new Text(
-                  "Nie udało się wygenerować tokenu. Spróbuj ponownie."
-                      .i18n),
+                  "Nie udało się wygenerować tokenu. Spróbuj ponownie.".i18n),
               duration: Duration(seconds: 2));
           _scaffoldKey.currentState.showSnackBar((snackBar));
           return;
@@ -590,7 +596,7 @@ class _SettingsState extends State<Settings> {
   Future<bool> sendDeviceToken() async {
     final pushNotificationsManager = PushNotificationsManager();
     await pushNotificationsManager.init();
-    if (pushNotificationsManager.deviceToken == null){
+    if (pushNotificationsManager.deviceToken == null) {
       return false;
     }
     var deviceResponse =

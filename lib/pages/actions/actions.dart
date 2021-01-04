@@ -49,8 +49,9 @@ class _ActionsListState extends State<ActionsList> {
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);
         setState(() {
-          _actionList =
-              body.map((dynamic item) => SensorDriverAction.fromJson(item)).toList();
+          _actionList = body
+              .map((dynamic item) => SensorDriverAction.fromJson(item))
+              .toList();
         });
         if (_actionList.length == 0)
           zeroFetchedItems = true;
@@ -88,7 +89,6 @@ class _ActionsListState extends State<ActionsList> {
       }
     }
   }
-
 
   onLogOutFailure(String text) {
     final snackBar = new SnackBar(content: new Text(text));
@@ -131,7 +131,7 @@ class _ActionsListState extends State<ActionsList> {
     if (zeroFetchedItems) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text(
@@ -144,7 +144,7 @@ class _ActionsListState extends State<ActionsList> {
         _actionList == null) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Błąd połączenia z serwerem.",
@@ -169,7 +169,8 @@ class _ActionsListState extends State<ActionsList> {
                                     title: Text(_actionList[index].name,
                                         style: TextStyle(fontSize: 21.0)),
                                     onTap: () {
-                                      navigateToActionDetails(_actionList[index]);
+                                      navigateToActionDetails(
+                                          _actionList[index]);
                                     },
                                     leading: SizedBox(
                                         width: 35,
@@ -187,15 +188,14 @@ class _ActionsListState extends State<ActionsList> {
                                                 key: Key(
                                                     "assets/icons/hammer.svg")))),
                                     trailing: deleteButtonTrailing(
-                                        _actionList[index])
-                                ),
+                                        _actionList[index])),
                               )))))));
     }
 
     /// shows progress indicator while fetching data
     return Padding(
       padding:
-      const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+          const EdgeInsets.only(left: 10.0, top: 10, right: 10.0, bottom: 0.0),
       child: Center(child: CircularProgressIndicator()),
     );
   }

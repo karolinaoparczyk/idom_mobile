@@ -9,11 +9,11 @@ extension Localization on String {
       {
         "pl_pl": "angielski",
         "en_uk": "english",
-      }+
+      } +
       {
         "pl_pl": "Wybierz język powiadomień",
         "en_uk": "Select the language for the notifications",
-      }+
+      } +
       {
         "pl_pl": "Anuluj",
         "en_uk": "Cancel",

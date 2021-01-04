@@ -1,7 +1,6 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
       {
         "pl_pl": "Dodano nowy czujnik.",
@@ -44,16 +43,20 @@ extension Localization on String {
         "en_uk": "Are you sure you want to remove sensor ",
       } +
       {
-        "pl_pl": "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Sensors download error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Sensors download error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd pobierania czujników. Adres serwera nieprawidłowy.",
         "en_uk": "Sensors download error. The server address is invalid.",
       } +
       {
-        "pl_pl": "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Sensor removal error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Sensor removal error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.",

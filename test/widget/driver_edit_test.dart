@@ -73,7 +73,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsNWidgets(2));
+    expect(find.text("przycisk"), findsNWidgets(2));
     expect(find.text("pilot"), findsOneWidget);
     expect(find.text("rolety"), findsOneWidget);
     await tester.tap(find.text("żarówka").last);
@@ -275,7 +275,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsNWidgets(2));
+    expect(find.text("przycisk"), findsNWidgets(2));
     expect(find.text("pilot"), findsOneWidget);
     expect(find.text("żarówka"), findsOneWidget);
     await tester.tap(find.text("żarówka").last);
@@ -335,7 +335,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsNWidgets(2));
+    expect(find.text("przycisk"), findsNWidgets(2));
     expect(find.text("pilot"), findsOneWidget);
     expect(find.text("żarówka"), findsOneWidget);
     await tester.tap(find.text("żarówka").last);

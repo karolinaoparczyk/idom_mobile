@@ -16,7 +16,6 @@ class _LanguageDialogState extends State<LanguageDialog> {
 
   @override
   void initState() {
-
     if (widget.currentLanguage != null) {
       _selectedLanguage = Languages.values
           .firstWhere((element) => element['value'] == widget.currentLanguage);
@@ -50,9 +49,8 @@ class _LanguageDialogState extends State<LanguageDialog> {
                   itemCount: Languages.values.length,
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
-                     title: Text(Languages.values[index]['text'].i18n,
-                          style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontWeight: FontWeight.normal, fontSize: 21.0)),
+                      title: Text(Languages.values[index]['text'].i18n,
+                          style: Theme.of(context).textTheme.bodyText2),
                       value: Languages.values[index],
                       groupValue: _selectedLanguage,
                       onChanged: (value) {

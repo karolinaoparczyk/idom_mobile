@@ -7,6 +7,7 @@ class IdomColors {
   static const Color brighterBlackTextLight = Color(0xFF202022);
   static const Color whiteTextLight = Color(0xFFFFFFFF);
   static const Color cardLight = Color(0xFFFFFFFF);
+  static const Color buttonSplashColorLight = Color(0xFFE5E5E5);
 
   /// dark mode
   static const Color mainBackgroundDark = Color(0xFF202022);
@@ -14,6 +15,7 @@ class IdomColors {
   static const Color brighterBlackTextDark = Color(0xFFBDBDBD);
   static const Color whiteTextDark = Color(0xFF0E1111);
   static const Color cardDark = Colors.black87;
+  static const Color buttonSplashColorDark = Color(0xFF767676);
 
   static const Color mainFill = Color(0xFF0C0C0F);
   static const Color error = Color(0xFF9C1F03);
@@ -42,7 +44,8 @@ class IdomColors {
     assert(amount >= 0 && amount <= 1);
 
     final hsl = HSLColor.fromColor(color);
-    final hslLight = hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+    final hslLight =
+        hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
 
     return hslLight.toColor();
   }

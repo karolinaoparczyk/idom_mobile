@@ -57,6 +57,15 @@ class _SignUpState extends State<SignUp> {
       key: Key('username'),
       autofocus: true,
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Nazwa użytkownika*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
@@ -64,7 +73,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _usernameController,
-      style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -76,6 +85,15 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('password1'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Hasło*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: IconButton(
@@ -99,7 +117,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _passwordController,
-      style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: PasswordFieldValidator.validate,
       obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
@@ -112,6 +130,15 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('password2'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Powtórz hasło*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: IconButton(
@@ -135,7 +162,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _confirmPasswordController,
-      style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: (String value) {
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić'.i18n;
@@ -153,6 +180,15 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('email'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Adres e-mail*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
@@ -161,7 +197,7 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: EmailFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -173,6 +209,15 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('telephone'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Nr telefonu komórkowego".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
@@ -181,7 +226,7 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _telephoneController,
       keyboardType: TextInputType.phone,
-      style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: TelephoneFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -194,9 +239,19 @@ class _SignUpState extends State<SignUp> {
       key: Key("language"),
       controller: _languageController,
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Język powiadomień".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down),
+        suffixIcon: Icon(Icons.arrow_drop_down,
+            color: Theme.of(context).textTheme.bodyText2.color),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -206,8 +261,7 @@ class _SignUpState extends State<SignUp> {
             context: context,
             builder: (context) {
               return Dialog(
-                child:
-                    LanguageDialog(currentLanguage: selectedLanguage),
+                child: LanguageDialog(currentLanguage: selectedLanguage),
               );
             });
         if (language != null) {
@@ -219,7 +273,7 @@ class _SignUpState extends State<SignUp> {
       validator: LanguageFieldValidator.validate,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       readOnly: true,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
     );
   }
 
@@ -372,8 +426,8 @@ class _SignUpState extends State<SignUp> {
         setState(() {
           _load = true;
         });
-        var res =
-            await api.signUp(username, password1, password2, email, language, telephone);
+        var res = await api.signUp(
+            username, password1, password2, email, language, telephone);
         setState(() {
           _load = false;
         });
@@ -450,12 +504,10 @@ class _SignUpState extends State<SignUp> {
             fieldsValidationMessage = errorText;
           });
           _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-        }
-        else{
+        } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Rejestracja nie powiodła się. Spróbuj ponownie."
-                      .i18n));
+                  "Rejestracja nie powiodła się. Spróbuj ponownie.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
 

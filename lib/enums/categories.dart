@@ -14,7 +14,7 @@ class SensorCategories {
 
 class DriverCategories {
   static final values = [
-    {"text": "naduszacz", "value": "clicker"},
+    {"text": "przycisk", "value": "clicker"},
     {"text": "pilot", "value": "remote_control"},
     {"text": "żarówka", "value": "bulb"},
     {"text": "rolety", "value": "roller_blind"},

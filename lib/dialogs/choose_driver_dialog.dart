@@ -65,9 +65,9 @@ class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
                     ),
                     suffixIcon: _searchBarController.text.isNotEmpty
                         ? IconButton(
-                      onPressed: () => _searchBarController.clear(),
-                      icon: const Icon(Icons.clear),
-                    )
+                            onPressed: () => _searchBarController.clear(),
+                            icon: const Icon(Icons.clear),
+                          )
                         : null,
                   ),
                 ),
@@ -96,13 +96,13 @@ class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
             Divider(),
             Expanded(
                 child: ListView(
-                  children: (searchBarVisible
+              children: (searchBarVisible
                       ? widget.drivers.where((driver) => driver.name
-                      .toLowerCase()
-                      .contains(_searchBarController.text.toLowerCase()))
+                          .toLowerCase()
+                          .contains(_searchBarController.text.toLowerCase()))
                       : widget.drivers)
-                      .map(
-                        (driver) => RadioListTile(
+                  .map(
+                    (driver) => RadioListTile(
                       title: Text(driver.name,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
                               fontWeight: FontWeight.normal, fontSize: 21.0)),
@@ -115,8 +115,8 @@ class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
                       },
                     ),
                   )
-                      .toList(),
-                )),
+                  .toList(),
+            )),
             Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

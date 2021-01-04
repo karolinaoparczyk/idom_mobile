@@ -1,16 +1,15 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
-    {
+      {
         "pl_pl": "Nazwa",
         "en_uk": "Name",
-      }+
+      } +
       {
         "pl_pl": "Dodaj kamerę",
         "en_uk": "Create camera",
-      }  +
+      } +
       {
         "pl_pl": "Ogólne",
         "en_uk": "General",
@@ -28,8 +27,10 @@ extension Localization on String {
         "en_uk": "Creating camera failed. Try again.",
       } +
       {
-        "pl_pl": "Błąd dodawania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Camera creating error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd dodawania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Camera creating error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd dodawania kamery. Adres serwera nieprawidłowy.",

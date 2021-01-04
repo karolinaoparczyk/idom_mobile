@@ -53,8 +53,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                   itemBuilder: (BuildContext context, int index) {
                     return RadioListTile(
                       title: Text(frequencyUnitsList[index]['text'].i18n,
-                          style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontWeight: FontWeight.normal, fontSize: 21.0)),
+                          style: Theme.of(context).textTheme.bodyText2),
                       value: frequencyUnitsList[index],
                       groupValue: _selectedFrequencyUnits,
                       onChanged: (value) {
@@ -73,6 +72,9 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                   TextButton(
                       child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
+                      style: ButtonStyle(
+                          overlayColor: MaterialStateColor.resolveWith(
+                              (states) => Theme.of(context).splashColor)),
                       onPressed: () {
                         Navigator.pop(context);
                       }),
@@ -80,6 +82,9 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                       key: Key('yesButton'),
                       child: Text("OK",
                           style: Theme.of(context).textTheme.headline5),
+                      style: ButtonStyle(
+                          overlayColor: MaterialStateColor.resolveWith(
+                              (states) => Theme.of(context).splashColor)),
                       onPressed: () {
                         Navigator.pop(context, _selectedFrequencyUnits);
                       }),

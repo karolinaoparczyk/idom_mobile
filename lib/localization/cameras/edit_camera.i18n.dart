@@ -1,16 +1,15 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
-     {
+      {
         "pl_pl": "Nazwa",
         "en_uk": "Name",
       } +
       {
         "pl_pl": "Ogólne",
         "en_uk": "General",
-      }  +
+      } +
       {
         "pl_pl": "Sesja użytkownika wygasła. \nTrwa wylogowywanie...",
         "en_uk": "User session has expired. \n Logout in progress...",
@@ -24,8 +23,10 @@ extension Localization on String {
         "en_uk": "Editing camera failed. Try again.",
       } +
       {
-        "pl_pl": "Błąd edytowania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Camera editing error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd edytowania kamery. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Camera editing error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd edytowania kamery. Adres serwera nieprawidłowy.",

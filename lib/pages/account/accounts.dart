@@ -94,13 +94,15 @@ class _AccountsState extends State<Accounts> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania użytkowników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania użytkowników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("No address associated with hostname")) {
         final snackBar = new SnackBar(
-            content:
-                new Text("Błąd pobierania użytkowników. Adres serwera nieprawidłowy.".i18n));
+            content: new Text(
+                "Błąd pobierania użytkowników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -143,12 +145,14 @@ class _AccountsState extends State<Accounts> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -156,13 +160,15 @@ class _AccountsState extends State<Accounts> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania użytkownika. Adres serwera nieprawidłowy.".i18n));
+                  "Błąd usuwania użytkownika. Adres serwera nieprawidłowy."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -177,16 +183,12 @@ class _AccountsState extends State<Accounts> {
         filterSearchResults(value);
       },
       style: TextStyle(
-          color: IdomColors.whiteTextLight,
-          fontSize: 20,
-          letterSpacing: 2.0),
+          color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...".i18n,
         hintStyle: TextStyle(
-            color: IdomColors.whiteTextLight,
-            fontSize: 20,
-            letterSpacing: 2.0),
+            color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
@@ -223,8 +225,9 @@ class _AccountsState extends State<Accounts> {
                         _scaffoldKey.currentState.openDrawer();
                       },
                     ),
-              title:
-                  _isSearching ? _buildSearchField() : Text('Wszystkie konta'.i18n),
+              title: _isSearching
+                  ? _buildSearchField()
+                  : Text('Wszystkie konta'.i18n),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.search, size: 25.0),
@@ -241,9 +244,9 @@ class _AccountsState extends State<Accounts> {
                 storage: widget.storage,
                 parentWidgetType: "Accounts",
                 onLogOutFailure: onLogOutFailure),
+
             /// accounts' list builder
-            body:
-                Container(child: listAccounts())));
+            body: Container(child: listAccounts())));
   }
 
   onLogOutFailure(String text) {
@@ -260,16 +263,13 @@ class _AccountsState extends State<Accounts> {
               physics: AlwaysScrollableScrollPhysics(),
               child: Container(
                   height: MediaQuery.of(context).size.height,
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text(
-                  "Brak kont w systemie.".i18n,
-                  style:  Theme.of(context)
-                      .textTheme
-                      .bodyText1,
-                  textAlign: TextAlign.center)))));
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("Brak kont w systemie.".i18n,
+                          style: Theme.of(context).textTheme.subtitle1,
+                          textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
@@ -281,15 +281,13 @@ class _AccountsState extends State<Accounts> {
               physics: AlwaysScrollableScrollPhysics(),
               child: Container(
                   height: MediaQuery.of(context).size.height,
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.".i18n,
-                  style:  Theme.of(context)
-                      .textTheme
-                      .bodyText1,
-                  textAlign: TextAlign.center)))));
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("Błąd połączenia z serwerem.".i18n,
+                          style: Theme.of(context).textTheme.subtitle1,
+                          textAlign: TextAlign.center)))));
     } else if (!zeroFetchedItems &&
         _accountList != null &&
         _accountList.length == 0) {
@@ -299,9 +297,7 @@ class _AccountsState extends State<Accounts> {
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.".i18n,
-                  style:  Theme.of(context)
-                      .textTheme
-                      .bodyText1,
+                  style: Theme.of(context).textTheme.subtitle1,
                   textAlign: TextAlign.center)));
     } else if (_accountList != null && _accountList.length > 0) {
       return Column(
@@ -340,7 +336,8 @@ class _AccountsState extends State<Accounts> {
                                                 matchTextDirection: false,
                                                 width: 32,
                                                 height: 32,
-                                                color: IdomColors.additionalColor,
+                                                color:
+                                                    IdomColors.additionalColor,
                                               ))),
 
                                       /// delete sensor button
@@ -413,11 +410,7 @@ class _AccountsState extends State<Accounts> {
                   matchTextDirection: false,
                   width: 32,
                   height: 32,
-                  color: Theme.of(
-                      context)
-                      .textTheme
-                      .bodyText1
-                      .color,
+                  color: Theme.of(context).textTheme.bodyText1.color,
                 ),
                 onPressed: () {
                   setState(() {

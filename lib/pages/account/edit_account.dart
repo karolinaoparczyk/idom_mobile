@@ -45,6 +45,15 @@ class _EditAccountState extends State<EditAccount> {
         controller: _emailController,
         autofocus: true,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Adres e-mail*".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
@@ -52,10 +61,7 @@ class _EditAccountState extends State<EditAccount> {
           ),
         ),
         keyboardType: TextInputType.emailAddress,
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: EmailFieldValidator.validate);
   }
 
@@ -63,12 +69,18 @@ class _EditAccountState extends State<EditAccount> {
   Widget _buildTelephone() {
     return TextFormField(
         key: Key('telephone'),
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         controller: _telephoneController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Nr telefonu komórkowego".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
@@ -85,6 +97,15 @@ class _EditAccountState extends State<EditAccount> {
       key: Key("language"),
       controller: _languageController,
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Język powiadomień".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: Icon(Icons.arrow_drop_down),
@@ -97,8 +118,7 @@ class _EditAccountState extends State<EditAccount> {
             context: context,
             builder: (context) {
               return Dialog(
-                child:
-                LanguageDialog(currentLanguage: selectedLanguage),
+                child: LanguageDialog(currentLanguage: selectedLanguage),
               );
             });
         if (language != null) {
@@ -110,7 +130,7 @@ class _EditAccountState extends State<EditAccount> {
       validator: LanguageFieldValidator.validate,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       readOnly: true,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
     );
   }
 
@@ -196,10 +216,10 @@ class _EditAccountState extends State<EditAccount> {
                                 alignment: Alignment.centerLeft,
                                 child: Row(
                                   children: [
-                                    Icon(Icons.info_outline_rounded,
-                                        size: 17.5),
+                                    Icon(Icons.info_outline_rounded, size: 21),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 5.0),
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
                                       child: Text("Ogólne".i18n,
                                           style: Theme.of(context)
                                               .textTheme
@@ -212,34 +232,34 @@ class _EditAccountState extends State<EditAccount> {
                                 ))),
                         Padding(
                             padding: EdgeInsets.only(
-                                left: 30.0,
+                                left: 62.0,
                                 top: 13.5,
-                                right: 30.0,
+                                right: 62.0,
                                 bottom: 0.0),
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: _buildEmail())),
                         Padding(
                             padding: EdgeInsets.only(
-                                left: 30.0,
+                                left: 62.0,
                                 top: 10.0,
-                                right: 30.0,
+                                right: 62.0,
                                 bottom: 0.0),
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: _buildLanguageField())),
                         Padding(
                             padding: EdgeInsets.only(
-                                left: 30.0,
+                                left: 62.0,
                                 top: 10.0,
-                                right: 30.0,
+                                right: 62.0,
                                 bottom: 0.0),
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: _buildTelephone())),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 30.0),
+                              vertical: 10.0, horizontal: 62.0),
                           child: AnimatedCrossFade(
                             crossFadeState: fieldsValidationMessage != null
                                 ? CrossFadeState.showFirst
@@ -247,11 +267,8 @@ class _EditAccountState extends State<EditAccount> {
                             duration: Duration(milliseconds: 300),
                             firstChild: fieldsValidationMessage != null
                                 ? Text(fieldsValidationMessage,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal))
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1)
                                 : SizedBox(),
                             secondChild: SizedBox(),
                           ),
@@ -261,7 +278,8 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   /// saves changes or displays error dialogs
-  _saveChanges(bool changedEmail, bool changedTelephone, bool changedLanguage) async {
+  _saveChanges(
+      bool changedEmail, bool changedTelephone, bool changedLanguage) async {
     var email = changedEmail ? _emailController.text : null;
     var telephone = changedTelephone ? _telephoneController.text : null;
     var language = changedLanguage ? selectedLanguage : null;
@@ -269,7 +287,8 @@ class _EditAccountState extends State<EditAccount> {
       _load = true;
     });
     try {
-      var res = await api.editAccount(widget.account.id, email, language, telephone);
+      var res =
+          await api.editAccount(widget.account.id, email, language, telephone);
       var emailExists = false;
       var emailInvalid = false;
       var telephoneExists = false;
@@ -312,7 +331,8 @@ class _EditAccountState extends State<EditAccount> {
       String errorText = "";
       if (emailExists && telephoneExists)
         errorText =
-            "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.".i18n;
+            "Konto dla podanego adresu e-mail i numeru telefonu już istnieje."
+                .i18n;
       else if (emailExists)
         errorText = "Konto dla podanego adresu e-mail już istnieje.".i18n;
       else if (telephoneExists)
@@ -322,7 +342,8 @@ class _EditAccountState extends State<EditAccount> {
         errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
       else if (telephoneInvalid)
         errorText += "Numer telefonu jest nieprawidłowy.".i18n;
-      else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy.".i18n;
+      else if (emailInvalid)
+        errorText += "Adres e-mail jest nieprawidłowy.".i18n;
 
       if (errorText != "") fieldsValidationMessage = errorText;
 
@@ -337,7 +358,8 @@ class _EditAccountState extends State<EditAccount> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd edycji użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd edycji użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
@@ -350,7 +372,8 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   /// confirms saving account changes
-  _confirmSavingChanges(bool changedEmail, bool changedTelephone, bool changedLanguage) async {
+  _confirmSavingChanges(
+      bool changedEmail, bool changedTelephone, bool changedLanguage) async {
     var decision = await confirmActionDialog(
         context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
     if (decision) {
@@ -380,10 +403,11 @@ class _EditAccountState extends State<EditAccount> {
         changedLanguage = true;
       }
       if (changedEmail || changedTelephone || changedLanguage) {
-        await _confirmSavingChanges(changedEmail, changedTelephone, changedLanguage);
+        await _confirmSavingChanges(
+            changedEmail, changedTelephone, changedLanguage);
       } else {
-        final snackBar =
-            new SnackBar(content: new Text("Nie wprowadzono żadnych zmian.".i18n));
+        final snackBar = new SnackBar(
+            content: new Text("Nie wprowadzono żadnych zmian.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
