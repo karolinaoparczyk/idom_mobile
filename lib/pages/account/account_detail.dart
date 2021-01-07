@@ -345,7 +345,11 @@ class _AccountDetailState extends State<AccountDetail> {
   _updateNotifications() async {
     var result = await api.editNotifications(account.id,
         appNotificationsOn.toString(), smsNotificationsOn.toString());
-    if (result != null && result['statusCode'] == "200") {
+
+    /// on success set
+    if (result != null &&
+        result['statusCode'] == "200" &&
+        currentUserData['username'] == widget.username) {
       widget.storage.setAppNotifications(appNotificationsOn.toString());
       widget.storage.setSmsNotifications(smsNotificationsOn.toString());
     }
