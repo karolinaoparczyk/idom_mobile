@@ -28,10 +28,13 @@ class _DriversState extends State<Drivers> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = GlobalKey<State>();
+  final TextEditingController _searchController = TextEditingController();
   Api api = Api();
-  List<Driver> _driverList;
+  List<Driver> _driverList = List<Driver>();
+  List<Driver> _duplicateDriverList = List<Driver>();
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -40,6 +43,9 @@ class _DriversState extends State<Drivers> {
       api = widget.testApi;
     }
     getDrivers();
+    _searchController.addListener(() {
+      filterSearchResults(_searchController.text);
+    });
   }
 
   /// returns list of drivers
@@ -91,6 +97,54 @@ class _DriversState extends State<Drivers> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+    setState(() {
+      _duplicateDriverList.clear();
+      _duplicateDriverList.addAll(_driverList);
+    });
+  }
+
+  _buildSearchField() {
+    return TextField(
+      key: Key('searchField'),
+      controller: _searchController,
+      style: TextStyle(
+          color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Wyszukaj...".i18n,
+        hintStyle: TextStyle(
+            color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: IdomColors.additionalColor)),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: IdomColors.additionalColor),
+        ),
+      ),
+    );
+  }
+
+  void filterSearchResults(String query) {
+    query = query.toLowerCase();
+    List<Driver> dummySearchList = List<Driver>();
+    dummySearchList.addAll(_duplicateDriverList);
+    if (query.isNotEmpty) {
+      List<Driver> dummyListData = List<Driver>();
+      dummySearchList.forEach((item) {
+        if (item.name.toLowerCase().contains(query)) {
+          dummyListData.add(item);
+        }
+      });
+      setState(() {
+        _driverList.clear();
+        _driverList.addAll(dummyListData);
+      });
+      return;
+    } else {
+      setState(() {
+        _driverList.clear();
+        _driverList.addAll(_duplicateDriverList);
+      });
+    }
   }
 
   onLogOutFailure(String text) {
@@ -110,13 +164,52 @@ class _DriversState extends State<Drivers> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('Sterowniki'.i18n),
+          leading: _isSearching
+              ? IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = false;
+                      _searchController.text = "";
+                    });
+                  })
+              : IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                ),
+          title: _isSearching ? _buildSearchField() : Text('Sterowniki'.i18n),
           actions: [
-            IconButton(
-              icon: Icon(Icons.add, size: 30.0),
-              key: Key("addDriverButton"),
-              onPressed: navigateToNewDriver,
-            )
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.search, size: 25.0),
+                    key: Key("searchButton"),
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = true;
+                      });
+                    },
+                  ),
+            _isSearching
+                ? IconButton(
+                    icon: Icon(Icons.close, size: 25.0),
+                    key: Key("clearSearchingBox"),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.text = "";
+                      });
+                    },
+                  )
+                : SizedBox(),
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.add, size: 30.0),
+                    key: Key("addDriverButton"),
+                    onPressed: navigateToNewDriver,
+                  )
           ],
         ),
         drawer: IdomDrawer(
@@ -149,7 +242,7 @@ class _DriversState extends State<Drivers> {
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-        _driverList == null) {
+        _driverList.isEmpty) {
       return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
           onRefresh: _pullRefresh,
@@ -164,7 +257,18 @@ class _DriversState extends State<Drivers> {
                       child: Text("Błąd połączenia z serwerem.".i18n,
                           style: Theme.of(context).textTheme.bodyText1,
                           textAlign: TextAlign.center)))));
-    } else if (_driverList != null && _driverList.length > 0) {
+    } else if (!zeroFetchedItems &&
+        _duplicateDriverList.isNotEmpty &&
+        _driverList.isEmpty) {
+      return Padding(
+          padding:
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text("Brak wyników wyszukiwania.".i18n,
+                  style: Theme.of(context).textTheme.bodyText2,
+                  textAlign: TextAlign.center)));
+    } else if (_driverList.isNotEmpty && _driverList.length > 0) {
       return Column(
         children: [
           Expanded(

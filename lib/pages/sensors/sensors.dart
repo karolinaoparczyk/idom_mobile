@@ -31,7 +31,7 @@ class _SensorsState extends State<Sensors> {
   final TextEditingController _searchController = TextEditingController();
   Api api = Api();
   List<String> menuItems;
-  List<Sensor> _sensorList;
+  List<Sensor> _sensorList = List<Sensor>();
   List<Sensor> _duplicateSensorList = List<Sensor>();
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
@@ -83,13 +83,13 @@ class _SensorsState extends State<Sensors> {
             .pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-      if (res == null) {
+      } else {
         _connectionEstablished = false;
         setState(() {});
         return null;
       }
     } catch (e) {
+      setState(() {});
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
@@ -231,15 +231,28 @@ class _SensorsState extends State<Sensors> {
                 ),
           title: _isSearching ? _buildSearchField() : Text('Czujniki'.i18n),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search, size: 25.0),
-              key: Key("searchButton"),
-              onPressed: () {
-                setState(() {
-                  _isSearching = true;
-                });
-              },
-            ),
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.search, size: 25.0),
+                    key: Key("searchButton"),
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = true;
+                      });
+                    },
+                  ),
+            _isSearching
+                ? IconButton(
+                    icon: Icon(Icons.close, size: 25.0),
+                    key: Key("clearSearchingBox"),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.text = "";
+                      });
+                    },
+                  )
+                : SizedBox(),
             _isSearching
                 ? SizedBox()
                 : IconButton(
@@ -279,7 +292,7 @@ class _SensorsState extends State<Sensors> {
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-        _sensorList == null) {
+        _sensorList.isEmpty) {
       return RefreshIndicator(
         backgroundColor: IdomColors.mainBackgroundDark,
         onRefresh: _pullRefresh,
@@ -295,8 +308,8 @@ class _SensorsState extends State<Sensors> {
                     textAlign: TextAlign.center))),
       );
     } else if (!zeroFetchedItems &&
-        _sensorList != null &&
-        _sensorList.length == 0) {
+        _duplicateSensorList.isNotEmpty &&
+        _sensorList.isEmpty) {
       return Padding(
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
@@ -305,7 +318,7 @@ class _SensorsState extends State<Sensors> {
               child: Text("Brak wyników wyszukiwania.".i18n,
                   style: Theme.of(context).textTheme.bodyText2,
                   textAlign: TextAlign.center)));
-    } else if (_sensorList != null && _sensorList.length > 0) {
+    } else if (_sensorList.isNotEmpty && _sensorList.length > 0) {
       return Column(children: [
         Expanded(
             child: Scrollbar(
