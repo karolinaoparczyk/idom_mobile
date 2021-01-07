@@ -48,6 +48,9 @@ class MyApp extends StatelessWidget {
           dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
           indicatorColor: IdomColors.mainBackgroundLight,
           splashColor: IdomColors.buttonSplashColorLight,
+          cursorColor: IdomColors.additionalColor,
+          textSelectionColor: IdomColors.additionalColor,
+          textSelectionHandleColor: IdomColors.additionalColor,
           dialogTheme: DialogTheme(
               elevation: 20,
               backgroundColor: IdomColors.mainBackgroundLight,
@@ -102,6 +105,9 @@ class MyApp extends StatelessWidget {
           dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
           indicatorColor: IdomColors.mainBackgroundDark,
           splashColor: IdomColors.buttonSplashColorDark,
+          cursorColor: IdomColors.additionalColor,
+          textSelectionColor: IdomColors.additionalColor,
+          textSelectionHandleColor: IdomColors.additionalColor,
           dialogTheme: DialogTheme(
               elevation: 20,
               backgroundColor: IdomColors.mainBackgroundDark,

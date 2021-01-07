@@ -11,6 +11,14 @@ extension Localization on String {
         "en_uk": "Press the button",
       } +
       {
+        "pl_pl": "Wyszukaj...",
+        "en_uk": "Search...",
+      } +
+      {
+        "pl_pl": "Brak wyników wyszukiwania.",
+        "en_uk": "No search results.",
+      } +
+      {
         "pl_pl": "Błąd połączenia z serwerem.",
         "en_uk": "Server connection error.",
       } +

@@ -229,15 +229,28 @@ class _AccountsState extends State<Accounts> {
                   ? _buildSearchField()
                   : Text('Wszystkie konta'.i18n),
               actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.search, size: 25.0),
-                  key: Key("searchButton"),
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = true;
-                    });
-                  },
-                ),
+                _isSearching
+                    ? SizedBox()
+                    : IconButton(
+                        icon: Icon(Icons.search, size: 25.0),
+                        key: Key("searchButton"),
+                        onPressed: () {
+                          setState(() {
+                            _isSearching = true;
+                          });
+                        },
+                      ),
+                _isSearching
+                    ? IconButton(
+                        icon: Icon(Icons.close, size: 25.0),
+                        key: Key("clearSearchingBox"),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.text = "";
+                          });
+                        },
+                      )
+                    : SizedBox(),
               ],
             ),
             drawer: IdomDrawer(

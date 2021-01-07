@@ -19,6 +19,14 @@ extension Localization on String {
         "en_uk": "Cameras",
       } +
       {
+        "pl_pl": "Wyszukaj...",
+        "en_uk": "Search...",
+      } +
+      {
+        "pl_pl": "Brak wyników wyszukiwania.",
+        "en_uk": "No search results.",
+      } +
+      {
         "pl_pl": "Trwa usuwanie kamery...",
         "en_uk": "Camera removal in progress...",
       } +
