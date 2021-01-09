@@ -15,13 +15,20 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
+/// allows editing action
 class EditAction extends StatefulWidget {
   EditAction({@required this.storage, @required this.action, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected action
   final SensorDriverAction action;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _EditActionState createState() => _EditActionState();
 }
@@ -315,8 +322,8 @@ class _EditActionState extends State<EditAction> {
       decoration: InputDecoration(
         labelText: "Operator",
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down,
-        color: IdomColors.additionalColor),
+        suffixIcon:
+            Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -350,8 +357,8 @@ class _EditActionState extends State<EditAction> {
         decoration: InputDecoration(
           labelText: "Sterownik",
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down,
-              color: IdomColors.additionalColor),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

@@ -14,13 +14,20 @@ import 'package:idom/widgets/loading_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:idom/localization/cameras/camera_stream.i18n.dart';
 
+/// displays camera stream
 class CameraStream extends StatefulWidget {
   CameraStream({@required this.storage, @required this.camera, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected camera
   Camera camera;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _CameraStreamState createState() => _CameraStreamState();
 }

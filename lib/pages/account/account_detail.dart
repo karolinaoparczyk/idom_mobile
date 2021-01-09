@@ -17,14 +17,21 @@ class AccountDetail extends StatefulWidget {
   AccountDetail(
       {@required this.storage, @required this.username, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected user's username
   String username;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _AccountDetailState createState() => new _AccountDetailState();
 }
 
+/// handles state of widgets
 class _AccountDetailState extends State<AccountDetail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -39,9 +46,13 @@ class _AccountDetailState extends State<AccountDetail> {
   @override
   void initState() {
     super.initState();
+
+    /// use test api when in test mode
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    /// show loading indicator while fetching data
     _load = true;
     getCurrentUserData();
   }
@@ -52,6 +63,7 @@ class _AccountDetailState extends State<AccountDetail> {
   }
 
   Future<void> getUser() async {
+    /// if selected user is currently logged in user, use stored data
     if (widget.username == currentUserData['username']) {
       account = Account(
           id: int.parse(currentUserData['id']),
@@ -76,24 +88,40 @@ class _AccountDetailState extends State<AccountDetail> {
                   ? false
                   : null);
       setState(() {
+        /// stop loading and display data
         _load = false;
+
+        /// set values for notifications switches
         appNotificationsOn = account.appNotifications;
         smsNotificationsOn = account.smsNotifications;
       });
       return;
     }
+
+    /// if selected user not currently logged in, get user data
     var userResult = await api.getUser(widget.username);
+
+    /// on error while fetching user data
+    ///
+    /// set selected user data and display
     if (userResult[1] == 200) {
       dynamic body = jsonDecode(userResult[0]);
       account = Account.fromJson(body);
 
       setState(() {
+        /// stop loading and display data
         _load = false;
+
+        /// set values for notifications switches
         appNotificationsOn = account.appNotifications;
         smsNotificationsOn = account.smsNotifications;
       });
     }
-    if (userResult[1] == 401) {
+
+    /// on error while fetching user data
+    ///
+    /// stop loading and show error message
+    else {
       setState(() {
         _load = false;
       });
@@ -108,11 +136,13 @@ class _AccountDetailState extends State<AccountDetail> {
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
+  /// on back button clicked goes to previous page
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
   }
 
+  /// builds pop-up dialog
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -120,11 +150,14 @@ class _AccountDetailState extends State<AccountDetail> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(title: Text(widget.username), actions: [
+              /// got to edit selected account
               IconButton(
                   key: Key("editAccount"),
                   icon: Icon(Icons.edit),
                   onPressed: _navigateToEditAccount)
             ]),
+
+            /// drawer with menu
             drawer: IdomDrawer(
                 storage: widget.storage,
                 parentWidgetType: "AccountDetail",
@@ -143,6 +176,8 @@ class _AccountDetailState extends State<AccountDetail> {
                               child: loadingIndicator(_load),
                               alignment: FractionalOffset.center,
                             ),
+
+                            /// general info
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
@@ -165,6 +200,8 @@ class _AccountDetailState extends State<AccountDetail> {
                                         ),
                                       ],
                                     ))),
+
+                            /// username
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 62,
@@ -189,6 +226,8 @@ class _AccountDetailState extends State<AccountDetail> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText2))),
+
+                            /// e-mail address
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 62,
@@ -210,6 +249,8 @@ class _AccountDetailState extends State<AccountDetail> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText2))),
+
+                            /// cell phone number
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 62,
@@ -239,6 +280,8 @@ class _AccountDetailState extends State<AccountDetail> {
                                             .textTheme
                                             .bodyText2))),
                             Divider(),
+
+                            /// notifications
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 30.0,
@@ -262,6 +305,8 @@ class _AccountDetailState extends State<AccountDetail> {
                                         ),
                                       ],
                                     ))),
+
+                            /// language
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 62,
@@ -288,6 +333,8 @@ class _AccountDetailState extends State<AccountDetail> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText2))),
+
+                            /// switches allowing turning notifications on/off
                             Padding(
                                 padding: EdgeInsets.only(
                                     left: 62,
@@ -299,6 +346,7 @@ class _AccountDetailState extends State<AccountDetail> {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
+                                        /// push notifications triggered by sensors
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -318,6 +366,8 @@ class _AccountDetailState extends State<AccountDetail> {
                                             )
                                           ],
                                         ),
+
+                                        /// sms notifications triggered by sensors
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -342,17 +392,20 @@ class _AccountDetailState extends State<AccountDetail> {
                           ])))));
   }
 
+  /// on turning notifications on/off
   _updateNotifications() async {
     var result = await api.editNotifications(account.id,
         appNotificationsOn.toString(), smsNotificationsOn.toString());
 
-    /// on success set
+    /// on success set notifications in storage if selected account is current user
     if (result != null &&
         result['statusCode'] == "200" &&
         currentUserData['username'] == widget.username) {
       widget.storage.setAppNotifications(appNotificationsOn.toString());
       widget.storage.setSmsNotifications(smsNotificationsOn.toString());
     }
+
+    /// on error display message
     if (result != null && result['statusCode'] != "200") {
       final snackBar = new SnackBar(
           content: new Text("Błąd edycji powiadomień. Spróbuj ponownie.".i18n));
@@ -360,6 +413,7 @@ class _AccountDetailState extends State<AccountDetail> {
     }
   }
 
+  /// go to edit account
   _navigateToEditAccount() async {
     var result = await Navigator.push(
         context,
@@ -370,6 +424,7 @@ class _AccountDetailState extends State<AccountDetail> {
                 testApi: widget.testApi),
             fullscreenDialog: true));
 
+    /// on success editing account display message
     if (result == true) {
       final snackBar =
           new SnackBar(content: new Text("Zapisano dane użytkownika.".i18n));
@@ -378,16 +433,21 @@ class _AccountDetailState extends State<AccountDetail> {
     }
   }
 
+  /// fetch user data and refresh widgets
   _refreshAccountDetails() async {
     try {
       setState(() {
         _load = true;
       });
       var res = await api.getUser(widget.username);
+
+      /// on success set fetched user
       if (res[1] == 200) {
         dynamic body = jsonDecode(res[0]);
         account = Account.fromJson(body);
         setState(() {});
+
+        /// on invalid token log out
       } else if (res[1] == 401) {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
@@ -397,7 +457,10 @@ class _AccountDetailState extends State<AccountDetail> {
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
-      } else {
+      }
+
+      /// on error display message
+      else {
         final snackBar = new SnackBar(
             content: new Text(
                 "Odświeżenie danych użytkownika nie powiodło się.".i18n));
@@ -408,6 +471,8 @@ class _AccountDetailState extends State<AccountDetail> {
       setState(() {
         _load = false;
       });
+
+      /// on timeout while sending request display message
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
@@ -415,6 +480,8 @@ class _AccountDetailState extends State<AccountDetail> {
                     .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
+
+      /// on invalid server address display message
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(

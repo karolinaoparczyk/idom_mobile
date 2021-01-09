@@ -17,10 +17,16 @@ import 'package:idom/localization/account/edit_account.i18n.dart';
 class EditAccount extends StatefulWidget {
   EditAccount({@required this.storage, @required this.account, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected account
   final Account account;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _EditAccountState createState() => new _EditAccountState();
 }
@@ -109,8 +115,8 @@ class _EditAccountState extends State<EditAccount> {
         ),
         labelText: "Język powiadomień".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down,
-            color: IdomColors.additionalColor),
+        suffixIcon:
+            Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

@@ -18,10 +18,16 @@ import 'package:idom/widgets/loading_indicator.dart';
 class DriverDetails extends StatefulWidget {
   DriverDetails({@required this.storage, @required this.driver, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected driver
   Driver driver;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _DriverDetailsState createState() => new _DriverDetailsState();
 }

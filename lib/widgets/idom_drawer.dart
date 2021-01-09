@@ -15,6 +15,7 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:idom/localization/widgets/idom_drawer.i18n.dart';
 
+/// displays app menu
 class IdomDrawer extends StatefulWidget {
   IdomDrawer({
     @required this.storage,
@@ -24,12 +25,22 @@ class IdomDrawer extends StatefulWidget {
     this.accountUsername,
   });
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// on which screen user opened menu
   final String parentWidgetType;
+
+  /// what to do when user goes back form chosen item on menu
   final Function onGoBackAction;
+
+  /// what to do on logout failure
   final Function onLogOutFailure;
+
+  /// current signed in user's username
   final String accountUsername;
 
+  /// handles state of widgets
   @override
   _IdomDrawerState createState() => _IdomDrawerState();
 }

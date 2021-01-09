@@ -1,4 +1,9 @@
+/// allowed sensor categories
 class SensorCategories {
+  /// categories values
+  ///
+  /// text: displayed value
+  /// value: value in code
   static final values = [
     {"text": "alkomat", "value": "breathalyser"},
     {"text": "ciśnienie atmosferyczne", "value": "atmo_pressure"},
@@ -12,7 +17,12 @@ class SensorCategories {
   ];
 }
 
+/// allowed driver categories
 class DriverCategories {
+  /// categories values
+  ///
+  /// text: displayed value
+  /// value: value in code
   static final values = [
     {"text": "przycisk", "value": "clicker"},
     {"text": "pilot", "value": "remote_control"},

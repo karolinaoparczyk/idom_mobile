@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:idom/utils/secure_storage.dart';
 
+/// api server connections
 class Api {
+  /// internal storage
   SecureStorage storage;
 
   /// sets api url in constructor
@@ -12,10 +14,16 @@ class Api {
     storage = SecureStorage();
   }
 
+  /// apis server url
   String url;
+
+  /// current signed in user's token
   String token;
+
+  /// http client for handling connections
   Client httpClient;
 
+  /// get api address from storage
   void getApiAddress() async {
     var apiAddress = "https://" + await storage.getApiServerAddress();
 
@@ -30,11 +38,12 @@ class Api {
     }
   }
 
+  /// get token from storage
   void getToken() async {
     token = await storage.getToken();
   }
 
-  /// requests signing in
+  /// signs user in
   Future<List<dynamic>> signIn(username, password) async {
     await getApiAddress();
     var result = await httpClient.post('$url' + '/api-token-auth/', body: {
@@ -76,7 +85,7 @@ class Api {
     return [utf8.decode(result.bodyBytes), result.statusCode];
   }
 
-  /// requests logging out
+  /// loggs user out
   Future<int> logOut() async {
     await getApiAddress();
     await getToken();
@@ -91,7 +100,7 @@ class Api {
     return null;
   }
 
-  /// requests deactivating user
+  /// deactivates user
   Future<int> deactivateAccount(int id) async {
     await getApiAddress();
     await getToken();
@@ -249,7 +258,7 @@ class Api {
     return resDict;
   }
 
-  /// requests deactivating sensor
+  /// deactivates sensor
   Future<int> deactivateSensor(int id) async {
     await getApiAddress();
     await getToken();
@@ -304,7 +313,7 @@ class Api {
     return null;
   }
 
-  /// gets sensors' frequency
+  /// gets sensor's frequency
   Future<Map<String, String>> getSensorData(int sensorId) async {
     await getApiAddress();
     await getToken();
@@ -345,7 +354,7 @@ class Api {
     return null;
   }
 
-  /// requests deleting camera
+  /// deletes camera
   Future<int> deleteCamera(int id) async {
     await getApiAddress();
     await getToken();
@@ -423,7 +432,7 @@ class Api {
     return null;
   }
 
-  /// checks if device token is sent
+  /// checks if device token has been sent
   Future<Map<String, String>> checkIfDeviceTokenSent(String deviceToken) async {
     await getApiAddress();
     await getToken();
@@ -567,7 +576,7 @@ class Api {
     return null;
   }
 
-  /// requests deleting driver
+  /// deletes driver
   Future<int> deleteDriver(int id) async {
     await getApiAddress();
     await getToken();
@@ -582,7 +591,7 @@ class Api {
     return null;
   }
 
-  /// requests starting driver
+  /// starts driver
   Future<int> startDriver(String name) async {
     await getApiAddress();
     await getToken();
@@ -617,7 +626,7 @@ class Api {
     return null;
   }
 
-  /// requests switching bulb
+  /// switches bulb
   Future<int> switchBulb(int bulbId, String flag) async {
     await getApiAddress();
     await getToken();
@@ -632,7 +641,7 @@ class Api {
     return null;
   }
 
-  /// requests changing bulb's color
+  /// changes bulb's color
   Future<int> changeBulbColor(int bulbId, int red, int green, int blue) async {
     await getApiAddress();
     await getToken();
@@ -652,7 +661,7 @@ class Api {
     return null;
   }
 
-  /// requests changing bulb's brightness
+  /// changes bulb's brightness
   Future<int> changeBulbBrightness(int bulbId, int brightness) async {
     await getApiAddress();
     await getToken();
@@ -672,7 +681,7 @@ class Api {
     return null;
   }
 
-  /// requests generating csv file with sensor data
+  /// generates csv file with sensor data
   Future<Map<String, dynamic>> generateFile(
       List<String> sensorIds, List<String> categoriesValues, int days) async {
     await getApiAddress();
@@ -721,7 +730,7 @@ class Api {
     return null;
   }
 
-  /// requests deleting action
+  /// deletes action
   Future<int> deleteAction(int id) async {
     await getApiAddress();
     await getToken();

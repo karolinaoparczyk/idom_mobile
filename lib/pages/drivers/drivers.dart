@@ -14,12 +14,17 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 
+/// displays drivers list
 class Drivers extends StatefulWidget {
   Drivers({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _DriversState createState() => _DriversState();
 }

@@ -14,10 +14,16 @@ import 'package:idom/widgets/loading_indicator.dart';
 class ActionDetails extends StatefulWidget {
   ActionDetails({@required this.storage, @required this.action, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected action
   SensorDriverAction action;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _ActionDetailsState createState() => new _ActionDetailsState();
 }

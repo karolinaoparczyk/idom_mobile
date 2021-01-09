@@ -13,13 +13,17 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
-/// adds new sensor
+/// allows adding new sensor
 class NewSensor extends StatefulWidget {
   NewSensor({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _NewSensorState createState() => new _NewSensorState();
 }
@@ -100,8 +104,8 @@ class _NewSensorState extends State<NewSensor> {
           ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down,
-              color: IdomColors.additionalColor),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -202,8 +206,8 @@ class _NewSensorState extends State<NewSensor> {
               color: canEditFrequency
                   ? IdomColors.additionalColor
                   : Theme.of(context).textTheme.bodyText1.color),
-          suffixIcon: Icon(Icons.arrow_drop_down,
-              color: IdomColors.additionalColor),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

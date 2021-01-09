@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:idom/models.dart';
 
+/// pop-up dialog for selecting existing sensor
 class ChooseSensorDialog extends StatefulWidget {
   ChooseSensorDialog({this.sensors, this.currentSensor});
 
+  /// allowed sensors to select
   final List<Sensor> sensors;
+  /// currently selected sensor
   final Sensor currentSensor;
 
+  /// handles state of widgets
   @override
   _ChooseSensorDialogState createState() => _ChooseSensorDialogState();
 }
 
 class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
+  /// true when searching
   bool searchBarVisible;
   TextEditingController _searchBarController = TextEditingController();
   Sensor selectedSensor;
@@ -21,17 +26,21 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
     super.initState();
     searchBarVisible = false;
     selectedSensor = widget.currentSensor;
+
+    /// builds driver list based on searched word
     _searchBarController.addListener(() {
       setState(() {});
     });
   }
 
+  /// disposing objects after using them
   @override
   void dispose() {
     _searchBarController.dispose();
     super.dispose();
   }
 
+  /// builds pop-up dialog
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -45,15 +54,21 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
             Padding(
               padding: const EdgeInsets.only(
                   left: 15, top: 15, bottom: 10, right: 15),
+
+              /// search bar
               child: AnimatedCrossFade(
                 duration: const Duration(milliseconds: 300),
                 crossFadeState: searchBarVisible
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
+
+                /// on search icon tab
                 firstChild: TextField(
                   controller: _searchBarController,
                   decoration: InputDecoration(
                     hintText: "Wyszukaj...",
+
+                    /// closes searching box
                     prefixIcon: IconButton(
                       onPressed: () {
                         setState(() {
@@ -63,6 +78,8 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
                       },
                       icon: const Icon(Icons.arrow_back),
                     ),
+
+                    /// clears searching text
                     suffixIcon: _searchBarController.text.isNotEmpty
                         ? IconButton(
                             onPressed: () => _searchBarController.clear(),
@@ -71,6 +88,8 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
                         : null,
                   ),
                 ),
+
+                /// default tab
                 secondChild: Row(
                   children: <Widget>[
                     Expanded(
@@ -82,6 +101,8 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
                             .copyWith(fontSize: 21.0),
                       ),
                     ),
+
+                    /// show search bar
                     GestureDetector(
                         onTap: () {
                           setState(() {
@@ -96,12 +117,14 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
             Divider(),
             Expanded(
                 child: ListView(
+              /// if searching, search given word in sensors' names
               children: (searchBarVisible
                       ? widget.sensors.where((sensor) => sensor.name
                           .toLowerCase()
                           .contains(_searchBarController.text.toLowerCase()))
                       : widget.sensors)
                   .map(
+                    /// allows selecting only one sensor
                     (sensor) => RadioListTile(
                       title: Text(sensor.name,
                           style: Theme.of(context)
@@ -123,12 +146,15 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                /// cancel action
                 TextButton(
                     child: Text("Anuluj",
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {
                       Navigator.pop(context, null);
                     }),
+
+                /// confirm action
                 TextButton(
                     key: Key('yesButton'),
                     child: Text("OK",

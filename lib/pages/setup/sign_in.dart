@@ -16,10 +16,19 @@ import 'package:idom/widgets/loading_indicator.dart';
 class SignIn extends StatefulWidget {
   SignIn({@required this.storage, @required this.isFromSignUp, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// whether user came from sign up page or not
+  ///
+  /// true if signed up and ready to sign in
+  /// false if came directly from front page
   final bool isFromSignUp;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _SignInState createState() => new _SignInState();
 }

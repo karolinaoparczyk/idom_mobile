@@ -18,12 +18,17 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:idom/localization/data_download/data_download.i18n.dart';
 
+/// allows downloading data in svg extension
 class DataDownload extends StatefulWidget {
   DataDownload({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _DataDownloadState createState() => _DataDownloadState();
 }

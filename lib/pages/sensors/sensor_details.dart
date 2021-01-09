@@ -16,14 +16,20 @@ import 'package:idom/widgets/loading_indicator.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
-/// displays sensor details and allows editing them
+/// displays sensor details
 class SensorDetails extends StatefulWidget {
   SensorDetails({@required this.storage, @required this.sensor, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected sensor
   Sensor sensor;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _SensorDetailsState createState() => new _SensorDetailsState();
 }

@@ -20,12 +20,14 @@ import 'package:idom/widgets/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// allows to enter email and send reset password request
+/// displays settings and allows editing them
 class Settings extends StatefulWidget {
   Settings({@required this.storage});
 
+  /// internal storage
   final SecureStorage storage;
 
+  /// handles state of widgets
   @override
   _SettingsState createState() => _SettingsState();
 }

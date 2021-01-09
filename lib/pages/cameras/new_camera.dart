@@ -7,12 +7,17 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/cameras/new_camera.i18n.dart';
 
+/// allows adding a new camera
 class NewCamera extends StatefulWidget {
   NewCamera({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _NewCameraState createState() => _NewCameraState();
 }

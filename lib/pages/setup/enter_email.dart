@@ -10,8 +10,10 @@ import 'package:idom/widgets/loading_indicator.dart';
 class EnterEmail extends StatefulWidget {
   EnterEmail({this.testApi});
 
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _EnterEmailState createState() => _EnterEmailState();
 }

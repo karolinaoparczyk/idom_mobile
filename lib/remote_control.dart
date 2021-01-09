@@ -1,8 +1,9 @@
 import 'package:http/http.dart';
 import 'package:idom/models.dart';
 
+/// handles remote control with app interaction
 class RemoteControl {
-  /// sends command
+  /// sends command to remote control
   static Future<int> sendCommand(Driver driver, String command,
       {int channel}) async {
     Client httpClient = Client();

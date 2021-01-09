@@ -9,13 +9,20 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/cameras/edit_camera.i18n.dart';
 
+/// allows editing camera
 class EditCamera extends StatefulWidget {
   EditCamera({@required this.storage, @required this.camera, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected camera
   final Camera camera;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _EditCameraState createState() => _EditCameraState();
 }

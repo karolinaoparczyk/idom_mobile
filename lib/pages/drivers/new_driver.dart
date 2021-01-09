@@ -13,12 +13,17 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/drivers/new_driver.i18n.dart';
 
+/// allows adding new driver
 class NewDriver extends StatefulWidget {
   NewDriver({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _NewDriverState createState() => _NewDriverState();
 }
@@ -109,8 +114,8 @@ class _NewDriverState extends State<NewDriver> {
           ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down,
-              color: IdomColors.additionalColor),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

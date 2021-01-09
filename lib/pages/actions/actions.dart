@@ -12,12 +12,17 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 
+/// displays actions list
 class ActionsList extends StatefulWidget {
   ActionsList({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _ActionsListState createState() => _ActionsListState();
 }

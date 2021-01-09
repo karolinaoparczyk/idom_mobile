@@ -13,13 +13,17 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// displays all sensors
+/// displays sensors list
 class Sensors extends StatefulWidget {
   Sensors({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _SensorsState createState() => _SensorsState();
 }

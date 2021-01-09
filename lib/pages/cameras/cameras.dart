@@ -13,12 +13,17 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/localization/cameras/cameras.i18n.dart';
 
+/// displays cameras list
 class Cameras extends StatefulWidget {
   Cameras({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _CamerasState createState() => _CamerasState();
 }
@@ -239,24 +244,24 @@ class _CamerasState extends State<Cameras> {
             _isSearching
                 ? SizedBox()
                 : IconButton(
-              icon: Icon(Icons.search, size: 25.0),
-              key: Key("searchButton"),
-              onPressed: () {
-                setState(() {
-                  _isSearching = true;
-                });
-              },
-            ),
+                    icon: Icon(Icons.search, size: 25.0),
+                    key: Key("searchButton"),
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = true;
+                      });
+                    },
+                  ),
             _isSearching
                 ? IconButton(
-              icon: Icon(Icons.close, size: 25.0),
-              key: Key("clearSearchingBox"),
-              onPressed: () {
-                setState(() {
-                  _searchController.text = "";
-                });
-              },
-            )
+                    icon: Icon(Icons.close, size: 25.0),
+                    key: Key("clearSearchingBox"),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.text = "";
+                      });
+                    },
+                  )
                 : SizedBox(),
             _isSearching
                 ? SizedBox()

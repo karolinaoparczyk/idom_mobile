@@ -13,12 +13,17 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
+/// allowing adding a new action
 class NewAction extends StatefulWidget {
   NewAction({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _NewActionState createState() => _NewActionState();
 }
@@ -286,8 +291,8 @@ class _NewActionState extends State<NewAction> {
       decoration: InputDecoration(
         labelText: "Operator",
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down,
-            color: IdomColors.additionalColor),
+        suffixIcon:
+            Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
