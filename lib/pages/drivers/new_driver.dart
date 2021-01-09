@@ -59,11 +59,6 @@ class _NewDriverState extends State<NewDriver> {
     super.dispose();
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -180,8 +175,7 @@ class _NewDriverState extends State<NewDriver> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "NewDriver",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "NewDriver"),
 
             /// builds form with driver's properties
             body: SingleChildScrollView(

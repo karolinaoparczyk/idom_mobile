@@ -54,11 +54,6 @@ class _EditCameraState extends State<EditCamera> {
     super.dispose();
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -106,8 +101,7 @@ class _EditCameraState extends State<EditCamera> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditCamera",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "EditCamera"),
 
             /// builds form with camera's properties
             body: SingleChildScrollView(

@@ -70,8 +70,7 @@ class _CameraStreamState extends State<CameraStream> {
         ]),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Camera",
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Camera"),
         body: Column(
           children: [
             Align(
@@ -135,11 +134,6 @@ class _CameraStreamState extends State<CameraStream> {
         ),
       ),
     );
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   _navigateToEditCamera() async {

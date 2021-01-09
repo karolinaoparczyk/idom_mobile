@@ -152,11 +152,6 @@ class _DriversState extends State<Drivers> {
     }
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -219,8 +214,7 @@ class _DriversState extends State<Drivers> {
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Drivers",
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Drivers"),
 
         /// builds cameras' list
         body: Container(child: listDrivers()),

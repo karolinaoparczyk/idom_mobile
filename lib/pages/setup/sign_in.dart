@@ -221,7 +221,7 @@ class _SignInState extends State<SignIn> {
       } else {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }

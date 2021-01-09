@@ -200,11 +200,6 @@ class _SensorsState extends State<Sensors> {
     );
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     var decision = await confirmActionDialog(
         context, "Potwierdź".i18n, "Na pewno wyjść z aplikacji?".i18n);
@@ -268,8 +263,7 @@ class _SensorsState extends State<Sensors> {
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Sensors",
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Sensors"),
 
         /// builds sensor's list
         body: Container(child: listSensors()),

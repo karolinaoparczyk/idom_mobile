@@ -131,11 +131,6 @@ class _AccountDetailState extends State<AccountDetail> {
     }
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   /// on back button clicked goes to previous page
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
@@ -161,8 +156,7 @@ class _AccountDetailState extends State<AccountDetail> {
             drawer: IdomDrawer(
                 storage: widget.storage,
                 parentWidgetType: "AccountDetail",
-                accountUsername: widget.username,
-                onLogOutFailure: onLogOutFailure),
+                accountUsername: widget.username),
             body: SingleChildScrollView(
                 child: Form(
                     key: _formKey,

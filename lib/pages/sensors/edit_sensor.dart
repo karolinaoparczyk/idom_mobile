@@ -270,11 +270,6 @@ class _EditSensorState extends State<EditSensor> {
         validator: UrlFieldValidator.validate);
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -294,8 +289,7 @@ class _EditSensorState extends State<EditSensor> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditSensor",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "EditSensor"),
 
             /// builds form with sensor properties
             body: SingleChildScrollView(

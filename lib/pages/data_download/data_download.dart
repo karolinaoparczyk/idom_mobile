@@ -123,11 +123,6 @@ class _DataDownloadState extends State<DataDownload> {
         validator: LastDaysAmountFieldValidator.validate);
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -142,8 +137,7 @@ class _DataDownloadState extends State<DataDownload> {
           appBar: AppBar(title: Text('Pobierz dane'.i18n)),
           drawer: IdomDrawer(
               storage: widget.storage,
-              parentWidgetType: "DataDownload",
-              onLogOutFailure: onLogOutFailure),
+              parentWidgetType: "DataDownload"),
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(left: 15.5, top: 30, right: 15.5),

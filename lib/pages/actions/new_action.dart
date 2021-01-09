@@ -91,11 +91,6 @@ class _NewActionState extends State<NewAction> {
     super.dispose();
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -478,8 +473,7 @@ class _NewActionState extends State<NewAction> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "NewAction",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "NewAction"),
 
             /// builds form with action's properties
             body: SingleChildScrollView(

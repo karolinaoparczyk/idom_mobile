@@ -326,16 +326,10 @@ class _AccountsState extends State<Accounts> {
             /// drawer with menu
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "Accounts",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "Accounts"),
 
             /// accounts' list builder
             body: Container(child: listAccounts())));
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   /// returns accounts list or a message when list is empty

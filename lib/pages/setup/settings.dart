@@ -124,11 +124,6 @@ class _SettingsState extends State<Settings> {
         validator: UrlFieldValidator.validate);
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -146,8 +141,7 @@ class _SettingsState extends State<Settings> {
           drawer: _isUserLoggedIn == "true"
               ? IdomDrawer(
                   storage: widget.storage,
-                  parentWidgetType: "EditApiAddress",
-                  onLogOutFailure: onLogOutFailure)
+                  parentWidgetType: "EditApiAddress")
               : null,
           body: _load
               ? loadingIndicator(true)

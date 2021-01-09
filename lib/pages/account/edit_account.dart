@@ -178,11 +178,6 @@ class _EditAccountState extends State<EditAccount> {
     super.dispose();
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -202,8 +197,7 @@ class _EditAccountState extends State<EditAccount> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditAccount",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "EditAccount"),
             body: Container(
                 child: Column(children: <Widget>[
               SingleChildScrollView(

@@ -95,11 +95,6 @@ class _ActionsListState extends State<ActionsList> {
     }
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -123,8 +118,7 @@ class _ActionsListState extends State<ActionsList> {
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Actions",
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Actions"),
 
         /// builds actions' list
         body: Container(child: Column(children: <Widget>[listDrivers()])),

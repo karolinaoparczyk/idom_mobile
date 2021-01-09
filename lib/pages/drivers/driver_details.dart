@@ -73,11 +73,6 @@ class _DriverDetailsState extends State<DriverDetails> {
     _shadedColor = _calculateShadedColor(_shadeSliderPosition);
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -97,8 +92,7 @@ class _DriverDetailsState extends State<DriverDetails> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "DriverDetails",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "DriverDetails"),
             body: SingleChildScrollView(
                 child: Form(
               key: _formKey,

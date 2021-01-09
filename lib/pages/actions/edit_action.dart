@@ -118,11 +118,6 @@ class _EditActionState extends State<EditAction> {
     super.dispose();
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -510,8 +505,7 @@ class _EditActionState extends State<EditAction> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditAction",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "EditAction"),
 
             /// builds form with action's properties
             body: SingleChildScrollView(

@@ -187,11 +187,6 @@ class _SensorDetailsState extends State<SensorDetails> {
     super.dispose();
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -211,8 +206,7 @@ class _SensorDetailsState extends State<SensorDetails> {
           ]),
           drawer: IdomDrawer(
               storage: widget.storage,
-              parentWidgetType: "SensorDetails",
-              onLogOutFailure: onLogOutFailure),
+              parentWidgetType: "SensorDetails"),
 
           /// builds form with editable and non-editable sensor properties
           body: SingleChildScrollView(
