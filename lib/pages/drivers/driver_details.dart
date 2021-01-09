@@ -10,6 +10,7 @@ import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/edit_driver.dart';
 import 'package:idom/remote_control.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -91,8 +92,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                   onPressed: _navigateToEditDriver)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "DriverDetails"),
+                storage: widget.storage, parentWidgetType: "DriverDetails"),
             body: SingleChildScrollView(
                 child: Form(
               key: _formKey,
@@ -1676,7 +1676,7 @@ class _DriverDetailsState extends State<DriverDetails> {
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }
-    var message;
+    var messageSnackbar;
     displayProgressDialog(
         context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     var result = await api.changeBulbColor(widget.driver.id, _currentColor.red,
@@ -1684,23 +1684,71 @@ class _DriverDetailsState extends State<DriverDetails> {
     Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
-      message = "Wysłano komendę zmiany koloru żarówki ".i18n +
+      messageSnackbar = "Wysłano komendę zmiany koloru żarówki ".i18n +
           widget.driver.name +
           ".".i18n;
     } else if (result == 404) {
-      message = "Nie znaleziono sterownika ".i18n +
+      messageSnackbar = "Nie znaleziono sterownika ".i18n +
           widget.driver.name +
           " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message = "Nie udało się podłączyć do sterownika ".i18n +
+      messageSnackbar = "Nie udało się podłączyć do sterownika ".i18n +
           widget.driver.name +
           ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+    } else if (result == 401) {
+      final message = await LoginProcedures.signInWithStoredData();
+      if (message != null) {
+        logOut();
+      } else {
+        displayProgressDialog(
+            context: context,
+            key: _keyLoader,
+            text: "Wysyłanie komendy...".i18n);
+        var result = await api.changeBulbColor(widget.driver.id,
+            _currentColor.red, _currentColor.green, _currentColor.blue);
+        Navigator.pop(context);
+
+        if (result == 200) {
+          messageSnackbar = "Wysłano komendę zmiany koloru żarówki ".i18n +
+              widget.driver.name +
+              ".".i18n;
+        } else if (result == 404) {
+          messageSnackbar = "Nie znaleziono sterownika ".i18n +
+              widget.driver.name +
+              " na serwerze. Odswież listę sterowników.".i18n;
+        } else if (serverError.hasMatch(result.toString())) {
+          messageSnackbar = "Nie udało się podłączyć do sterownika ".i18n +
+              widget.driver.name +
+              ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+        } else if (result == 401) {
+          logOut();
+        } else {
+          messageSnackbar =
+              "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                  .i18n;
+        }
+      }
+    } else {
+      messageSnackbar =
+          "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie."
+              .i18n;
     }
-    if (message != null) {
+    if (messageSnackbar != null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
-      final snackBar = new SnackBar(content: new Text(message));
+      final snackBar = new SnackBar(content: new Text(messageSnackbar));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   _changeBulbBrightness() async {
@@ -1711,7 +1759,7 @@ class _DriverDetailsState extends State<DriverDetails> {
       _scaffoldKey.currentState.showSnackBar((snackBar));
       return;
     }
-    var message;
+    var messageSnackbar;
     if (_shadeSliderPosition == 0) _shadeSliderPosition = 1;
     int brightness = (_shadeSliderPosition / 255 * 100).round();
     displayProgressDialog(
@@ -1720,21 +1768,58 @@ class _DriverDetailsState extends State<DriverDetails> {
     Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
-      message = "Wysłano komendę zmiany jasności żarówki ".i18n +
+      messageSnackbar = "Wysłano komendę zmiany jasności żarówki ".i18n +
           widget.driver.name +
           ".".i18n;
     } else if (result == 404) {
-      message = "Nie znaleziono sterownika ".i18n +
+      messageSnackbar = "Nie znaleziono sterownika ".i18n +
           widget.driver.name +
           " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message = "Nie udało się podłączyć do sterownika ".i18n +
+      messageSnackbar = "Nie udało się podłączyć do sterownika ".i18n +
           widget.driver.name +
           ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+    } else if (result == 401) {
+      final message = await LoginProcedures.signInWithStoredData();
+      if (message != null) {
+        logOut();
+      } else {
+        displayProgressDialog(
+            context: context,
+            key: _keyLoader,
+            text: "Wysyłanie komendy...".i18n);
+        var result =
+            await api.changeBulbBrightness(widget.driver.id, brightness);
+        Navigator.pop(context);
+
+        if (result == 200) {
+          messageSnackbar = "Wysłano komendę zmiany jasności żarówki ".i18n +
+              widget.driver.name +
+              ".".i18n;
+        } else if (result == 404) {
+          messageSnackbar = "Nie znaleziono sterownika ".i18n +
+              widget.driver.name +
+              " na serwerze. Odswież listę sterowników.".i18n;
+        } else if (serverError.hasMatch(result.toString())) {
+          messageSnackbar = "Nie udało się podłączyć do sterownika ".i18n +
+              widget.driver.name +
+              ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+        } else if (result == 401) {
+          logOut();
+        } else {
+          messageSnackbar =
+              "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                  .i18n;
+        }
+      }
+    } else {
+      messageSnackbar =
+          "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie."
+              .i18n;
     }
-    if (message != null) {
+    if (messageSnackbar != null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
-      final snackBar = new SnackBar(content: new Text(message));
+      final snackBar = new SnackBar(content: new Text(messageSnackbar));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
@@ -1752,38 +1837,79 @@ class _DriverDetailsState extends State<DriverDetails> {
         : widget.driver.data
             ? "off"
             : "on";
-    var message;
+    var messageSnackbar;
     var result;
     displayProgressDialog(
         context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
-    if (widget.driver.category == "bulb") {
-      result = await api.switchBulb(widget.driver.id, flag);
-    }
+    result = await api.switchBulb(widget.driver.id, flag);
     Navigator.pop(context);
     var serverError = RegExp("50[0-4]");
     if (result == 200) {
       if (flag == "on") {
-        message = "Wysłano komendę włączenia żarówki ".i18n +
+        messageSnackbar = "Wysłano komendę włączenia żarówki ".i18n +
             widget.driver.name +
             ".".i18n;
       } else {
-        message = "Wysłano komendę wyłączenia żarówki ".i18n +
+        messageSnackbar = "Wysłano komendę wyłączenia żarówki ".i18n +
             widget.driver.name +
             ".".i18n;
       }
       await _refreshDriverDetails();
     } else if (result == 404) {
-      message = "Nie znaleziono żarówki ".i18n +
+      messageSnackbar = "Nie znaleziono żarówki ".i18n +
           widget.driver.name +
           " na serwerze. Odswież listę sterowników.".i18n;
     } else if (serverError.hasMatch(result.toString())) {
-      message = "Nie udało się podłączyć do żarówki".i18n +
+      messageSnackbar = "Nie udało się podłączyć do żarówki ".i18n +
           widget.driver.name +
           ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+    } else if (result == 401) {
+      final message = await LoginProcedures.signInWithStoredData();
+      if (message != null) {
+        logOut();
+      } else {
+        displayProgressDialog(
+            context: context,
+            key: _keyLoader,
+            text: "Wysyłanie komendy...".i18n);
+        result = await api.switchBulb(widget.driver.id, flag);
+        Navigator.pop(context);
+
+        if (result == 200) {
+          if (flag == "on") {
+            messageSnackbar = "Wysłano komendę włączenia żarówki ".i18n +
+                widget.driver.name +
+                ".".i18n;
+          } else {
+            messageSnackbar = "Wysłano komendę wyłączenia żarówki ".i18n +
+                widget.driver.name +
+                ".".i18n;
+          }
+          await _refreshDriverDetails();
+        } else if (result == 404) {
+          messageSnackbar = "Nie znaleziono żarówki ".i18n +
+              widget.driver.name +
+              " na serwerze. Odswież listę sterowników.".i18n;
+        } else if (serverError.hasMatch(result.toString())) {
+          messageSnackbar = "Nie udało się podłączyć do żarówki ".i18n +
+              widget.driver.name +
+              ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+        } else if (result == 401) {
+          logOut();
+        } else {
+          messageSnackbar =
+              "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                  .i18n;
+        }
+      }
+    } else {
+      messageSnackbar =
+          "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie."
+              .i18n;
     }
-    if (message != null) {
+    if (messageSnackbar != null) {
       _scaffoldKey.currentState.removeCurrentSnackBar();
-      final snackBar = new SnackBar(content: new Text(message));
+      final snackBar = new SnackBar(content: new Text(messageSnackbar));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
   }
@@ -1793,17 +1919,50 @@ class _DriverDetailsState extends State<DriverDetails> {
         context: context, key: _keyLoader, text: "Wysyłanie komendy...".i18n);
     var result = await api.startDriver(widget.driver.name);
     Navigator.pop(context);
-    var message;
+    var messageSnackbar;
+    var serverError = RegExp("50[0-4]");
     if (result == 200) {
-      message =
+      messageSnackbar =
           "Wysłano komendę do sterownika ".i18n + widget.driver.name + ".".i18n;
-    } else {
-      message = "Wysłanie komendy do sterownika ".i18n +
+    } else if (serverError.hasMatch(result.toString())) {
+      messageSnackbar = "Nie udało się podłączyć do sterownika ".i18n +
           widget.driver.name +
-          " nie powiodło się.".i18n;
+          ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+    } else if (result == 401) {
+      final message = await LoginProcedures.signInWithStoredData();
+      if (message != null) {
+        logOut();
+      } else {
+        displayProgressDialog(
+            context: context,
+            key: _keyLoader,
+            text: "Wysyłanie komendy...".i18n);
+        var result = await api.startDriver(widget.driver.name);
+        Navigator.pop(context);
+
+        if (result == 200) {
+          messageSnackbar = "Wysłano komendę do sterownika ".i18n +
+              widget.driver.name +
+              ".".i18n;
+        } else if (result == 401) {
+          logOut();
+        } else {
+          messageSnackbar =
+              "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                  .i18n;
+        }
+      }
+    } else if (serverError.hasMatch(result.toString())) {
+      messageSnackbar = "Nie udało się podłączyć do sterownika ".i18n +
+          widget.driver.name +
+          ". Sprawdź podłączenie i spróbuj ponownie.".i18n;
+    } else {
+      messageSnackbar =
+          "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie."
+              .i18n;
     }
     _scaffoldKey.currentState.removeCurrentSnackBar();
-    final snackBar = new SnackBar(content: new Text(message));
+    final snackBar = new SnackBar(content: new Text(messageSnackbar));
     _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
@@ -1893,16 +2052,35 @@ class _DriverDetailsState extends State<DriverDetails> {
         setState(() {
           widget.driver = refreshedDriver;
         });
-      } else if (res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else {
+      } /// on invalid token log out
+      else if (res['statusCode'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          setState(() {
+            _load = true;
+          });
+          var res = await api.getDriverDetails(widget.driver.id);
+          setState(() {
+            _load = false;
+          });
+          if (res['statusCode'] == "200") {
+            dynamic body = jsonDecode(res['body']);
+            Driver refreshedDriver = Driver.fromJson(body);
+            setState(() {
+              widget.driver = refreshedDriver;
+            });
+          } else if (res['statusCode'] == "401") {
+            logOut();
+          } else {
+            final snackBar = new SnackBar(
+                content:
+                new Text("Odświeżenie danych sterownika nie powiodło się."));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
+          }
+        }
+      }  else {
         final snackBar = new SnackBar(
             content:
                 new Text("Odświeżenie danych sterownika nie powiodło się."));

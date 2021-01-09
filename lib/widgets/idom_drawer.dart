@@ -20,7 +20,6 @@ class IdomDrawer extends StatefulWidget {
   IdomDrawer({
     @required this.storage,
     @required this.parentWidgetType,
-    this.onGoBackAction,
     this.accountUsername,
   });
 
@@ -29,9 +28,6 @@ class IdomDrawer extends StatefulWidget {
 
   /// on which screen user opened menu
   final String parentWidgetType;
-
-  /// what to do when user goes back form chosen item on menu
-  final Function onGoBackAction;
 
   /// current signed in user's username
   final String accountUsername;
@@ -104,10 +100,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                         Padding(
                           padding: const EdgeInsets.only(left: 25.0),
                           child: Text(title,
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .bodyText2),
+                              style: Theme.of(context).textTheme.bodyText2),
                         ),
                       ],
                     ),
@@ -129,11 +122,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
             Icon(Icons.perm_identity_rounded,
                 color: IdomColors.mainFill, size: 25.0),
             Text(currentUsername,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodyText1
-                    .copyWith(
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
                     fontSize: 25.0,
                     color: IdomColors.whiteTextDark,
                     fontWeight: FontWeight.bold))
@@ -146,9 +135,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
     return SafeArea(
       child: Drawer(
         child: Container(
-          color: Theme
-              .of(context)
-              .backgroundColor,
+          color: Theme.of(context).backgroundColor,
           child: ListView(children: [
             DrawerHeader(
                 decoration: BoxDecoration(
@@ -199,51 +186,44 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            AccountDetail(
-                                storage: widget.storage,
-                                username: currentUsername)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
+                        builder: (context) => AccountDetail(
+                            storage: widget.storage,
+                            username: currentUsername)));
               }
             }),
             isUserStaff == "true"
                 ? customMenuTile(
-                "assets/icons/team.svg", "Wszystkie konta".i18n, () async {
+                    "assets/icons/team.svg", "Wszystkie konta".i18n, () async {
+                    Navigator.pop(context);
+                    if (widget.parentWidgetType != "Accounts") {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Accounts(storage: widget.storage)));
+                    }
+                  })
+                : SizedBox(),
+            customMenuTile("assets/icons/motion-sensor.svg", "Czujniki".i18n,
+                () async {
               Navigator.pop(context);
-              if (widget.parentWidgetType != "Accounts") {
+              if (widget.parentWidgetType != "Sensors") {
+                await Navigator.of(context).popUntil((route) => route.isFirst);
+              }
+            }),
+            customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n,
+                () async {
+              Navigator.pop(context);
+              if (widget.parentWidgetType != "Cameras") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            Accounts(storage: widget.storage)));
-                if (widget.onGoBackAction != null)
-                  widget.onGoBackAction();
+                            Cameras(storage: widget.storage)));
               }
-            })
-                : SizedBox(),
-            customMenuTile("assets/icons/motion-sensor.svg", "Czujniki".i18n,
-                    () async {
-                  Navigator.pop(context);
-                  if (widget.parentWidgetType != "Sensors") {
-                    await Navigator.of(context).popUntil((route) =>
-                    route.isFirst);
-                    if (widget.onGoBackAction != null) widget.onGoBackAction();
-                  }
-                }),
-            customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n,
-                    () async {
-                  Navigator.pop(context);
-                  if (widget.parentWidgetType != "Cameras") {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Cameras(storage: widget.storage)));
-                    if (widget.onGoBackAction != null) widget.onGoBackAction();
-                  }
-                }),
+            }),
             customMenuTile("assets/icons/tap.svg", "Sterowniki".i18n, () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Drivers") {
@@ -253,7 +233,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             Drivers(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             // customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
@@ -269,40 +248,38 @@ class _IdomDrawerState extends State<IdomDrawer> {
             //   }
             // }),
             customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n,
-                    () async {
-                  Navigator.pop(context);
-                  if (widget.parentWidgetType != "EditApiAddress") {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Settings(storage: widget.storage)));
-                    if (widget.onGoBackAction != null) widget.onGoBackAction();
-                  }
-                }),
+                () async {
+              Navigator.pop(context);
+              if (widget.parentWidgetType != "EditApiAddress") {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Settings(storage: widget.storage)));
+              }
+            }),
             customMenuTile("assets/icons/download.svg", "Pobierz dane".i18n,
-                    () async {
-                  Navigator.pop(context);
-                  if (widget.parentWidgetType != "DataDownload") {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                DataDownload(storage: widget.storage)));
-                    if (widget.onGoBackAction != null) widget.onGoBackAction();
-                  }
-                }),
+                () async {
+              Navigator.pop(context);
+              if (widget.parentWidgetType != "DataDownload") {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DataDownload(storage: widget.storage)));
+              }
+            }),
             customMenuTile("assets/icons/logout.svg", "Wyloguj".i18n, () async {
               Navigator.pop(context);
-              await _logOut();
+              await _logOutProcedure();
             }),
             customMenuTile("assets/icons/info.svg", "O projekcie".i18n,
-                    () async {
-                  Navigator.pop(context);
-                  _navigateToProjectWebPage();
-                }),
+                () async {
+              Navigator.pop(context);
+              _navigateToProjectWebPage();
+            }),
           ]),
         ),
       ),
@@ -318,12 +295,15 @@ class _IdomDrawerState extends State<IdomDrawer> {
   }
 
   /// logs the user out of the app
-  Future<void> _logOut() async {
+  Future<void> _logOutProcedure() async {
     displayProgressDialog(
         context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
-    api.logOut();
-    widget.storage.resetUserData();
-    Navigator.pop(context);
+    logOutAndResetData();
     Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<void> logOutAndResetData() async {
+    await api.logOut();
+    widget.storage.resetUserData();
   }
 }

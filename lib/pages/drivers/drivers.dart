@@ -11,6 +11,7 @@ import 'package:idom/pages/drivers/driver_details.dart';
 import 'package:idom/pages/drivers/new_driver.dart';
 import 'package:idom/remote_control.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 
@@ -47,6 +48,9 @@ class _DriversState extends State<Drivers> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     getDrivers();
     _searchController.addListener(() {
       filterSearchResults(_searchController.text);
@@ -69,18 +73,35 @@ class _DriversState extends State<Drivers> {
           zeroFetchedItems = true;
         else
           zeroFetchedItems = false;
-      } else if (res != null && res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+      }  /// on invalid token log out
+      else if (res != null && res['statusCode'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          res = await api.getDrivers();
+
+          /// on success fetching data
+          if (res != null && res['statusCode'] == "200") {
+            List<dynamic> body = jsonDecode(res['body']);
+            setState(() {
+              _driverList =
+                  body.map((dynamic item) => Driver.fromJson(item)).toList();
+            });
+            if (_driverList.length == 0)
+              zeroFetchedItems = true;
+            else
+              zeroFetchedItems = false;
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          } else {
+            _connectionEstablished = false;
+            setState(() {});
+            return null;
+          }
+        }
       }
-      if (res == null) {
+      else {
         _connectionEstablished = false;
         setState(() {});
         return null;
@@ -106,6 +127,18 @@ class _DriversState extends State<Drivers> {
       _duplicateDriverList.clear();
       _duplicateDriverList.addAll(_driverList);
     });
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoaderInvalidToken,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   _buildSearchField() {

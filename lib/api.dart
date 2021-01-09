@@ -76,7 +76,7 @@ class Api {
   Future<List<dynamic>> getUser(username, {userToken}) async {
     await getApiAddress();
     await getToken();
-    if (token != null) {
+    if (token != null && token != "") {
       userToken = token;
     }
     var result = await httpClient.get('$url/users/detail/$username', headers: {

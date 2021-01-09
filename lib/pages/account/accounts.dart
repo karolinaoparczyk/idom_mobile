@@ -8,6 +8,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/localization/account/accounts.i18n.dart';
@@ -60,6 +61,9 @@ class _AccountsState extends State<Accounts> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     checkIfUserIsStaff();
     getAccounts();
 
@@ -102,15 +106,35 @@ class _AccountsState extends State<Accounts> {
 
       /// on invalid token log out
       else if (res != null && res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          var res = await api.getAccounts();
+
+          /// on success fetching data
+          if (res != null && res['statusCode'] == "200") {
+            List<dynamic> body = jsonDecode(res['body']);
+
+            setState(() {
+              /// display only active
+              _accountList = body
+                  .map((dynamic item) => Account.fromJson(item))
+                  .where((account) => account.isActive == true)
+                  .toList();
+            });
+
+            /// when no accounts exist
+            if (_accountList.length == 0) zeroFetchedItems = true;
+            zeroFetchedItems = false;
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          } else {
+            _connectionEstablished = false;
+            setState(() {});
+            return null;
+          }
+        }
       }
 
       /// on error display message
@@ -146,6 +170,17 @@ class _AccountsState extends State<Accounts> {
       _duplicateAccountList.addAll(_accountList);
     });
     return _accountList;
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// deactivates user after confirmation

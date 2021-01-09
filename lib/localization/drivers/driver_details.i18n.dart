@@ -125,7 +125,17 @@ extension Localization on String {
       } +
       {
         "pl_pl": "Wysłanie komendy do pilota nie powiodło się.",
+        "en_uk": "User session has expired. \n Logout in progress...",
+      }  +
+      {
+        "pl_pl": "Sesja użytkownika wygasła. \nTrwa wylogowywanie...",
         "en_uk": "Sending a command to the remote control has failed.",
+      } +
+      {
+        "pl_pl":
+            "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Command sending error. Check the connection to the server and try again.",
       } +
       {
         "pl_pl": "Podnieś rolety",

@@ -7,6 +7,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/enums/languages.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -148,6 +149,9 @@ class _EditAccountState extends State<EditAccount> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     _getCurrentUser();
     _load = false;
     _emailController = TextEditingController(text: widget.account.email);
@@ -196,8 +200,7 @@ class _EditAccountState extends State<EditAccount> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "EditAccount"),
+                storage: widget.storage, parentWidgetType: "EditAccount"),
             body: Container(
                 child: Column(children: <Widget>[
               SingleChildScrollView(
@@ -307,16 +310,37 @@ class _EditAccountState extends State<EditAccount> {
           widget.storage.setLanguage(selectedLanguage);
         }
         Navigator.pop(context, true);
-      } else if (res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+
+      /// on invalid token log out
+      else if (res['statusCode'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          res = await api.editAccount(
+              widget.account.id, email, language, telephone);
+          emailExists = false;
+          emailInvalid = false;
+          telephoneExists = false;
+          telephoneInvalid = false;
+
+          /// on success fetching data
+          if (res['statusCode'] == "200") {
+            setState(() {
+              _load = false;
+              fieldsValidationMessage = null;
+            });
+            if (widget.account.username == currentUsername) {
+              widget.storage.setEmail(_emailController.text);
+              widget.storage.setTelephone(_telephoneController.text);
+              widget.storage.setLanguage(selectedLanguage);
+            }
+            Navigator.pop(context, true);
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          }
+        }
       }
       if (res['body'].contains("Email address already exists")) {
         emailExists = true;
@@ -371,6 +395,18 @@ class _EditAccountState extends State<EditAccount> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoaderInvalidToken,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// confirms saving account changes

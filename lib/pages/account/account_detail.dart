@@ -7,6 +7,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/enums/languages.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/edit_account.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -51,6 +52,8 @@ class _AccountDetailState extends State<AccountDetail> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
 
     /// show loading indicator while fetching data
     _load = true;
@@ -118,6 +121,39 @@ class _AccountDetailState extends State<AccountDetail> {
       });
     }
 
+    /// on invalid token log out
+    else if (userResult[1] == 401) {
+      final message = await LoginProcedures.signInWithStoredData();
+      if (message != null) {
+        logOut();
+      } else {
+        var userResult = await api.getUser(widget.username);
+
+        if (userResult[1] == 200) {
+          dynamic body = jsonDecode(userResult[0]);
+          account = Account.fromJson(body);
+
+          setState(() {
+            /// stop loading and display data
+            _load = false;
+
+            /// set values for notifications switches
+            appNotificationsOn = account.appNotifications;
+            smsNotificationsOn = account.smsNotifications;
+          });
+        } else if (userResult[1] == 401) {
+          logOut();
+        } else {
+          setState(() {
+            _load = false;
+          });
+          final snackBar = new SnackBar(
+              content: new Text("Błąd pobierania danych użytkownika.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        }
+      }
+    }
+
     /// on error while fetching user data
     ///
     /// stop loading and show error message
@@ -129,6 +165,17 @@ class _AccountDetailState extends State<AccountDetail> {
           content: new Text("Błąd pobierania danych użytkownika.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// on back button clicked goes to previous page

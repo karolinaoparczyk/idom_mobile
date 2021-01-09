@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -37,6 +38,9 @@ class _NewCameraState extends State<NewCamera> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     _load = false;
     _nameController = TextEditingController();
   }
@@ -93,8 +97,7 @@ class _NewCameraState extends State<NewCamera> {
                   onPressed: _saveChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "NewCamera"),
+                storage: widget.storage, parentWidgetType: "NewCamera"),
 
             /// builds form with camera's properties
             body: SingleChildScrollView(
@@ -164,19 +167,43 @@ class _NewCameraState extends State<NewCamera> {
           fieldsValidationMessage = null;
           setState(() {});
           Navigator.pop(context, true);
-        } else if (res['statusCode'] == "401") {
-          fieldsValidationMessage = null;
-          setState(() {});
-          displayProgressDialog(
-              context: _scaffoldKey.currentContext,
-              key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-          await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoaderInvalidToken.currentContext,
-                  rootNavigator: true)
-              .pop();
-          await widget.storage.resetUserData();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+
+        /// on invalid token log out
+        else if (res['statusCode'] == "401") {
+          final message = await LoginProcedures.signInWithStoredData();
+          if (message != null) {
+            logOut();
+          } else {
+            setState(() {
+              _load = true;
+            });
+            var res = await api.addCamera(_nameController.text);
+            setState(() {
+              _load = false;
+            });
+            if (res['statusCode'] == "201") {
+              fieldsValidationMessage = null;
+              setState(() {});
+              Navigator.pop(context, true);
+            } else if (res['statusCode'] == "401") {
+              logOut();
+            } else if (res['body']
+                .contains("Camera with provided name already exists")) {
+              fieldsValidationMessage =
+                  "Kamera o podanej nazwie już istnieje.".i18n;
+              setState(() {});
+              return;
+            } else {
+              fieldsValidationMessage = null;
+              setState(() {});
+              final snackBar = new SnackBar(
+                  content: new Text(
+                      "Dodawanie kamery nie powiodło się. Spróbuj ponownie."
+                          .i18n));
+              _scaffoldKey.currentState.showSnackBar((snackBar));
+            }
+          }
         } else if (res['body']
             .contains("Camera with provided name already exists")) {
           fieldsValidationMessage =
@@ -212,5 +239,16 @@ class _NewCameraState extends State<NewCamera> {
         }
       }
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoaderInvalidToken,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }
