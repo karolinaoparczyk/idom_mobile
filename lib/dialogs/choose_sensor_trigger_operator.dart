@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:idom/enums/operators.dart';
+import 'package:idom/localization/dialogs/sensor_trigger_operator.i18n.dart';
 
 /// pop-up dialog for selecting operator for sensor's trigger value
 class SensorTriggerOperatorDialog extends StatefulWidget {
@@ -42,7 +43,7 @@ class _SensorTriggerOperatorDialogState
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                child: Text("Wybierz operator porównania",
+                child: Text("Wybierz operator porównania".i18n,
                     style: Theme.of(context)
                         .textTheme
                         .headline5
@@ -78,7 +79,7 @@ class _SensorTriggerOperatorDialogState
                 children: [
                   /// cancel action
                   TextButton(
-                      child: Text("Anuluj",
+                      child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {
                         Navigator.pop(context);

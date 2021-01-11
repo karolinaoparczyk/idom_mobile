@@ -151,7 +151,7 @@ class DriverFieldValidator {
   /// validates driver is chosen
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Pole wymagane';
+      return 'Pole wymagane'.i18n;
     }
     return null;
   }
@@ -162,7 +162,7 @@ class TimeFieldValidator {
   /// validates time is picked
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Pole wymagane';
+      return 'Pole wymagane'.i18n;
     }
     return null;
   }
@@ -196,11 +196,21 @@ class FrequencyUnitsFieldValidator {
 
 /// validates language field
 class LanguageFieldValidator {
-  /// validates language is chosen
+   static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane'.i18n;
+    }
+    return null;
+  }
+}
+
+/// validates trigger value operator field
+class TriggerValueOperatorFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
     }
     return null;
   }
+}
 }

@@ -463,10 +463,10 @@ class _SettingsState extends State<Settings> {
     }
   }
 
-  _pickFile() async {
+  _pickFile() async 
     File result = await FilePicker.getFile(type: FileType.custom);
     if (result != null) {
-      file = File(result.path);
+      file = File(result.files.single.path);
       try {
         final Map<String, dynamic> googleServicesJson =
             jsonDecode(file.readAsStringSync());

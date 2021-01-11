@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alarmclock/alarmclock.dart';
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/choose_driver_dialog.dart';
@@ -12,6 +13,7 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
+import 'package:idom/localization/actions/new_action.i18n.dart';
 
 /// allowing adding a new action
 class NewAction extends StatefulWidget {
@@ -47,25 +49,26 @@ class _NewActionState extends State<NewAction> {
   TimeOfDay endTime;
   Api api = Api();
   bool _load;
-  List<Sensor> sensors;
-  List<Driver> drivers;
+  List<Sensor> sensors = List<Sensor>();
+  List<Driver> drivers = List<Driver>();
   String fieldsValidationMessage;
   String selectedOperator;
-  List<bool> daysOfWeekSelected = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+  List<bool> daysOfWeekSelected = [true, true, true, true, true, true, true];
+  bool setAlarm = false;
 
   @override
   void initState() {
     super.initState();
+    _startTimeController = TextEditingController();
+    _endTimeController = TextEditingController();
     if (widget.testApi != null) {
       api = widget.testApi;
+      startTime = TimeOfDay(hour: 13, minute: 40);
+      _startTimeController =
+          TextEditingController(text: "${startTime.hour}:${startTime.minute}");
+      endTime = TimeOfDay(hour: 15, minute: 40);
+      _endTimeController =
+          TextEditingController(text: "${endTime.hour}:${endTime.minute}");
     }
     getSensors();
     getDrivers();
@@ -73,8 +76,6 @@ class _NewActionState extends State<NewAction> {
     _nameController = TextEditingController();
     _sensorController = TextEditingController();
     _driverController = TextEditingController();
-    _startTimeController = TextEditingController();
-    _endTimeController = TextEditingController();
     _sensorTriggerController = TextEditingController();
     _sensorTriggerOperatorController = TextEditingController();
   }
@@ -112,7 +113,7 @@ class _NewActionState extends State<NewAction> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
@@ -123,13 +124,15 @@ class _NewActionState extends State<NewAction> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania czujników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -150,7 +153,7 @@ class _NewActionState extends State<NewAction> {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
             key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
         await new Future.delayed(const Duration(seconds: 3));
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         await widget.storage.resetUserData();
@@ -161,13 +164,15 @@ class _NewActionState extends State<NewAction> {
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania sterowników. Adres serwera nieprawidłowy."));
+                "Błąd pobierania sterowników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -177,7 +182,7 @@ class _NewActionState extends State<NewAction> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa",
+          labelText: "Nazwa".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -198,7 +203,7 @@ class _NewActionState extends State<NewAction> {
       controller: _sensorController,
       focusNode: _sensorFocusNode,
       decoration: InputDecoration(
-        labelText: "Czujnik",
+        labelText: "Czujnik".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: selectedSensor == null
             ? Icon(Icons.arrow_drop_down, color: IdomColors.brightGrey)
@@ -237,7 +242,6 @@ class _NewActionState extends State<NewAction> {
           setState(() {});
         }
       },
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       readOnly: true,
       style: TextStyle(fontSize: 21.0),
     );
@@ -256,7 +260,7 @@ class _NewActionState extends State<NewAction> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            labelText: "Wartość",
+            labelText: "Wartość".i18n,
             labelStyle: Theme.of(context)
                 .textTheme
                 .headline5
@@ -264,14 +268,14 @@ class _NewActionState extends State<NewAction> {
           ),
           validator: (String value) {
             if (selectedSensor != null && value.isEmpty) {
-              return "Pole wymagane";
+              return "Pole wymagane".i18n;
             }
             if (value.contains(',')) {
               value = value.replaceFirst(',', '.');
             }
             var doubleValue = double.tryParse(value);
             if (doubleValue == null) {
-              return "Podaj liczbę";
+              return "Podaj liczbę".i18n;
             }
             return null;
           },
@@ -298,16 +302,17 @@ class _NewActionState extends State<NewAction> {
             builder: (context) {
               return Dialog(
                 child: SensorTriggerOperatorDialog(
-                    currentOperator: _sensorTriggerOperatorController.text),
+                    currentOperator: selectedOperator),
               );
             });
         if (operator != null) {
-          _sensorTriggerOperatorController.text = operator;
+          _sensorTriggerOperatorController.text = operator.i18n;
           selectedOperator = operator.substring(0, 1);
           setState(() {});
         }
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: TriggerValueOperatorFieldValidator.validate,
       readOnly: true,
       style: TextStyle(fontSize: 21.0),
     );
@@ -319,7 +324,7 @@ class _NewActionState extends State<NewAction> {
         key: Key("driversButton"),
         controller: _driverController,
         decoration: InputDecoration(
-          labelText: "Sterownik",
+          labelText: "Sterownik".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: Icon(Icons.arrow_drop_down),
           border: OutlineInputBorder(
@@ -332,7 +337,11 @@ class _NewActionState extends State<NewAction> {
               builder: (context) {
                 return Dialog(
                   child: ChooseDriverDialog(
-                      drivers: drivers, currentDriver: selectedDriver),
+                      drivers: drivers
+                          .where(
+                              (element) => element.category != "remote_control")
+                          .toList(),
+                      currentDriver: selectedDriver),
                 );
               });
           if (driver != null) {
@@ -362,9 +371,9 @@ class _NewActionState extends State<NewAction> {
         onTap: () async {
           var now = DateTime.now();
           final TimeOfDay time = await showTimePicker(
-            cancelText: "Anuluj",
+            cancelText: "Anuluj".i18n,
             confirmText: "OK",
-            helpText: "Wybierz godzinę",
+            helpText: "Wybierz godzinę".i18n,
             builder: (BuildContext context, Widget child) {
               return Theme(
                 data: ThemeData.light().copyWith(
@@ -383,6 +392,8 @@ class _NewActionState extends State<NewAction> {
                 startTime ?? TimeOfDay(hour: now.hour, minute: now.minute),
           );
           if (time != null) {
+            var period = time.period;
+            print(period);
             startTime = time;
             _startTimeController.text = "${startTime.format(context)}";
             setState(() {});
@@ -401,7 +412,7 @@ class _NewActionState extends State<NewAction> {
         controller: _endTimeController,
         focusNode: _endTimeFocusNode,
         decoration: InputDecoration(
-          labelText: "Koniec",
+          labelText: "Koniec".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           suffixIcon: endTime == null
               ? Icon(Icons.arrow_drop_down)
@@ -417,7 +428,8 @@ class _NewActionState extends State<NewAction> {
                       });
                     });
                   },
-                  child: Icon(Icons.close, color: IdomColors.brightGrey)),
+                  child: Icon(Icons.close,
+                      color: IdomColors.brightGrey, key: Key("removeEndTime"))),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -428,9 +440,9 @@ class _NewActionState extends State<NewAction> {
           }
           var now = DateTime.now();
           final TimeOfDay time = await showTimePicker(
-            cancelText: "Anuluj",
+            cancelText: "Anuluj".i18n,
             confirmText: "OK",
-            helpText: "Wybierz godzinę",
+            helpText: "Wybierz godzinę".i18n,
             builder: (BuildContext context, Widget child) {
               return Theme(
                 data: ThemeData.light().copyWith(
@@ -465,7 +477,7 @@ class _NewActionState extends State<NewAction> {
         onWillPop: _onBackButton,
         child: Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(title: Text("Dodaj akcję"), actions: [
+            appBar: AppBar(title: Text("Dodaj akcję".i18n), actions: [
               IconButton(
                   key: Key('saveActionButton'),
                   icon: Icon(Icons.save),
@@ -494,7 +506,7 @@ class _NewActionState extends State<NewAction> {
                                 Icon(Icons.info_outline_rounded, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Ogólne",
+                                  child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1),
@@ -528,7 +540,7 @@ class _NewActionState extends State<NewAction> {
                                   Icon(Icons.info_outline_rounded, size: 17.5),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5.0),
-                                    child: Text("Wyzwalacz na czujniku",
+                                    child: Text("Wyzwalacz na czujniku".i18n,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1),
@@ -542,7 +554,7 @@ class _NewActionState extends State<NewAction> {
                         child: Row(
                           children: [
                             Flexible(
-                                flex: 1,
+                                flex: 2,
                                 child: _buildTriggerValueOperatorField()),
                             SizedBox(width: 10),
                             Flexible(
@@ -560,7 +572,7 @@ class _NewActionState extends State<NewAction> {
                                 Icon(Icons.access_time, size: 17.5),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text("Czas działania akcji",
+                                  child: Text("Czas działania akcji".i18n,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1),
@@ -581,29 +593,50 @@ class _NewActionState extends State<NewAction> {
                               splashColor: Colors.transparent,
                               fillColor: IdomColors.lighten(
                                   IdomColors.additionalColor, 0.2),
-                              selectedColor: IdomColors.blackTextLight,
+                              selectedColor: IdomColors.textDark,
                               children: [
-                                Text("pn",
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                Text("wt",
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                Text("śr",
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                Text("czw",
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                Text("pt",
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                Text("sb",
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                Text("nd",
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
+                                Text("pn".i18n,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("wt".i18n,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("śr".i18n,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("czw".i18n,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("pt".i18n,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("sb".i18n,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
+                                Text("nd".i18n,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal)),
                               ],
                               isSelected: daysOfWeekSelected,
                               onPressed: (int index) {
@@ -615,6 +648,29 @@ class _NewActionState extends State<NewAction> {
                         }),
                       ),
                     ),
+                    if (endTime == null)
+                      Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 30.0),
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                activeColor: IdomColors.additionalColor,
+                                value: setAlarm,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    setAlarm = value;
+                                  });
+                                },
+                              ),
+                              Text("Ustaw budzik".i18n,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontWeight: FontWeight.normal))
+                            ],
+                          )),
                     Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 30.0),
@@ -647,15 +703,18 @@ class _NewActionState extends State<NewAction> {
   _validateTime() {
     bool isCorrect = true;
     if (startTime != null && endTime != null) {
+      var startHour = startTime.hour;
+      var endHour = endTime.hour;
       double _doubleStartTime =
-          startTime.hour.toDouble() + (startTime.minute.toDouble() / 60);
+          startHour.toDouble() + (startTime.minute.toDouble() / 60);
       double _doubleEndTime =
-          endTime.hour.toDouble() + (endTime.minute.toDouble() / 60);
+          endHour.toDouble() + (endTime.minute.toDouble() / 60);
       isCorrect = _doubleStartTime < _doubleEndTime;
       if (!isCorrect) {
         setState(() {
           fieldsValidationMessage =
-              "Godzina zakończenia musi być późniejsza od godziny rozpoczęcia.";
+              "Godzina zakończenia musi być późniejsza od godziny rozpoczęcia."
+                  .i18n;
         });
       } else {
         setState(() {
@@ -674,6 +733,26 @@ class _NewActionState extends State<NewAction> {
       }
     }
     var daysString = daysList.join(", ");
+    if (daysList.isEmpty) {
+      setState(() {
+        if (fieldsValidationMessage != null) {
+          fieldsValidationMessage +=
+              "Należy wybrać przynajmniej jeden dzień działania akcji.".i18n;
+        } else {
+          fieldsValidationMessage =
+              "Należy wybrać przynajmniej jeden dzień działania akcji.".i18n;
+        }
+      });
+      return null;
+    } else {
+      setState(() {
+        if (fieldsValidationMessage != null &&
+            !(fieldsValidationMessage.contains("rozpoczęcia") ||
+                fieldsValidationMessage.contains("start"))) {
+          fieldsValidationMessage = null;
+        }
+      });
+    }
     return daysString;
   }
 
@@ -696,15 +775,26 @@ class _NewActionState extends State<NewAction> {
     FocusScope.of(context).unfocus();
     final formState = _formKey.currentState;
     var timeValidated = _validateTime();
-    if (formState.validate() && timeValidated) {
+    var daysString = _getDaysSelectedString();
+    if (formState.validate() && timeValidated && daysString != null) {
       setState(() {
         _load = true;
       });
       try {
         var endTimeString;
         if (endTime != null) {
-          endTimeString = "${endTime.hour}:${endTime.minute}";
+          var endHour = endTime.hour;
+          var endMinute = endTime.minute.toString().length == 1
+              ? "0" + endTime.minute.toString()
+              : endTime.minute.toString();
+          endTimeString = "$endHour:$endMinute";
         }
+        var startTimeString;
+        var startHour = startTime.hour;
+        var startMinute = startTime.minute.toString().length == 1
+            ? "0" + startTime.minute.toString()
+            : startTime.minute.toString();
+        startTimeString = "$startHour:$startMinute";
         var sensor;
         var operator;
         var trigger;
@@ -717,44 +807,84 @@ class _NewActionState extends State<NewAction> {
           operator = selectedOperator;
           trigger = int.tryParse(_sensorTriggerController.text);
         }
+        if (endTime == null && setAlarm) {
+          await Alarmclock.setAlarm(
+              hour: startTime.hour,
+              minute: startTime.minute,
+              message: "akcja".i18n + _nameController.text);
+        }
+
         var res = await api.addAction(
             _nameController.text,
             sensor,
             trigger,
             operator,
             selectedDriver.name,
-            _getDaysSelectedString(),
-            "${startTime.hour}:${startTime.minute}",
+            daysString,
+            startTimeString,
             endTimeString,
             "action",
             _getFlag());
+        setState(() {
+          _load = false;
+        });
         if (res['statusCode'] == "201") {
+          if (endTime == null && setAlarm) {
+            var daysList = [];
+            for (int i = 0; i < daysOfWeekSelected.length; i++) {
+              if (daysOfWeekSelected[i]) {
+                daysList.add(i);
+              }
+            }
+            await Alarmclock.setAlarm(
+                hour: startTime.hour,
+                minute: startTime.minute,
+                message: "akcja".i18n + " ${_nameController.text}");
+          }
+          fieldsValidationMessage = null;
+          setState(() {});
           Navigator.pop(context, true);
         } else if (res['statusCode'] == "401") {
+          fieldsValidationMessage = null;
+          setState(() {});
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoader,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...");
+              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
           await new Future.delayed(const Duration(seconds: 3));
           Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
           await widget.storage.resetUserData();
           Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (res['body']
+            .contains("Action with provided name already exists")) {
+          fieldsValidationMessage = "Akcja o podanej nazwie już istnieje.".i18n;
+          setState(() {});
+          return;
+        } else {
+          fieldsValidationMessage = null;
+          setState(() {});
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Dodawanie akcji nie powiodło się. Spróbuj ponownie.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
         print(e.toString());
         setState(() {
+          fieldsValidationMessage = null;
           _load = false;
         });
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
+                  "Błąd dodawania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania akcji. Adres serwera nieprawidłowy."));
+                  "Błąd dodawania akcji. Adres serwera nieprawidłowy.".i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
