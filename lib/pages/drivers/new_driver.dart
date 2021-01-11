@@ -109,8 +109,8 @@ class _NewDriverState extends State<NewDriver> {
           ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down,
-              color: IdomColors.additionalColor),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -262,12 +262,11 @@ class _NewDriverState extends State<NewDriver> {
                 await api.addIpAddress(driver.id, _ipAddressController.text);
             if (resBulb != 200) {
               _navigateToEditDriver(driver);
-            } else {
-              fieldsValidationMessage = null;
-              setState(() {});
-              Navigator.pop(context, true);
             }
           }
+          fieldsValidationMessage = null;
+          setState(() {});
+          Navigator.pop(context, true);
         } else if (res['statusCode'] == "401") {
           fieldsValidationMessage = null;
           setState(() {});
