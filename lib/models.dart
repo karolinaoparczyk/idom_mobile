@@ -235,7 +235,7 @@ class SensorDriverAction extends Equatable {
   String sensor;
 
   /// value of sensor data for driver to be triggered
-  int trigger;
+  String trigger;
 
   /// operator for trigger value {<, >, =}
   String operator;

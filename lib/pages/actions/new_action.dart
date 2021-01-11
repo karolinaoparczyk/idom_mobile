@@ -593,7 +593,7 @@ class _NewActionState extends State<NewAction> {
                               splashColor: Colors.transparent,
                               fillColor: IdomColors.lighten(
                                   IdomColors.additionalColor, 0.2),
-                              selectedColor: IdomColors.textDark,
+                              selectedColor: IdomColors.blackTextDark,
                               children: [
                                 Text("pn".i18n,
                                     style: Theme.of(context)

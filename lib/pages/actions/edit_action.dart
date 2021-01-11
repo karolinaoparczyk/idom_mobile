@@ -649,7 +649,7 @@ class _EditActionState extends State<EditAction> {
                               splashColor: Colors.transparent,
                               fillColor: IdomColors.lighten(
                                   IdomColors.additionalColor, 0.2),
-                              selectedColor: IdomColors.blackTextLight,
+                              selectedColor: IdomColors.blackTextLight,children:[
                                 Text("pn".i18n,
                                     style: Theme.of(context)
                                         .textTheme
