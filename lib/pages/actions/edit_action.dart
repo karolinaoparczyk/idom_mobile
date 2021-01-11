@@ -650,6 +650,7 @@ class _EditActionState extends State<EditAction> {
                               fillColor: IdomColors.lighten(
                                   IdomColors.additionalColor, 0.2),
                               selectedColor: IdomColors.blackTextLight,
+                                children: [
                                 Text("pn".i18n,
                                     style: Theme.of(context)
                                         .textTheme

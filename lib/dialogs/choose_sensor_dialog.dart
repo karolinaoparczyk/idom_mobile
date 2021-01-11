@@ -129,8 +129,7 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
                       title: Text(sensor.name,
                           style: Theme.of(context)
                               .textTheme
-                              .bodyText1
-                              .copyWith(fontSize: 21.0)),
+                              .bodyText2),
                       value: sensor,
                       groupValue: selectedSensor,
                       onChanged: (value) {

@@ -37,8 +37,8 @@ class _ActionDetailsState extends State<ActionDetails> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   Api api = Api();
   bool _load;
-  Sensor sensor;
   Driver driver;
+  Color setColor;
 
   @override
   void initState() {
@@ -67,8 +67,7 @@ class _ActionDetailsState extends State<ActionDetails> {
                   onPressed: _navigateToEditAction)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "ActionDetails"),
+                storage: widget.storage, parentWidgetType: "ActionDetails"),
             body: SingleChildScrollView(
                 child: Form(
               key: _formKey,
@@ -90,71 +89,73 @@ class _ActionDetailsState extends State<ActionDetails> {
                           alignment: Alignment.centerLeft,
                           child: Row(
                             children: [
-                              Icon(Icons.info_outline_rounded, size: 17.5),
+                              Icon(Icons.info_outline_rounded, size: 21),
                               Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
+                                padding: const EdgeInsets.only(left: 10.0),
                                 child: Text("Ogólne".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                               ),
                             ],
                           ))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Nazwa".i18n,
-                              style: TextStyle(
-                                  color: IdomColors.additionalColor,
-                                  fontSize: 16.5,
-                                  fontWeight: FontWeight.bold)))),
+                              style: Theme.of(context).textTheme.headline5))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(widget.action.name,
-                              style: TextStyle(fontSize: 21.0)))),
+                              style: Theme.of(context).textTheme.bodyText2))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Sterownik".i18n,
-                              style: TextStyle(
-                                  color: IdomColors.additionalColor,
-                                  fontSize: 16.5,
-                                  fontWeight: FontWeight.bold)))),
+                              style: Theme.of(context).textTheme.headline5))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(widget.action.driver,
-                              style: TextStyle(fontSize: 21.0)))),
+                              style: Theme.of(context).textTheme.bodyText2))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 62, top: 10.0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Akcja".i18n,
+                              style: Theme.of(context).textTheme.headline5))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 62, top: 0, right: 30.0, bottom: 0.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(getAction(),
+                              style: Theme.of(context).textTheme.bodyText2))),
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text("Czujnik".i18n,
-                                style: TextStyle(
-                                    color: IdomColors.additionalColor,
-                                    fontSize: 16.5,
-                                    fontWeight: FontWeight.bold)))),
+                                style: Theme.of(context).textTheme.headline5))),
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                            left: 62, top: 0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(widget.action.sensor,
-                                style: TextStyle(fontSize: 21.0)))),
+                                style: Theme.of(context).textTheme.bodyText2))),
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -163,38 +164,33 @@ class _ActionDetailsState extends State<ActionDetails> {
                             alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
-                                Icon(Icons.info_outline_rounded, size: 17.5),
+                                Icon(Icons.info_outline_rounded, size: 21),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
+                                  padding: const EdgeInsets.only(left: 10.0),
                                   child: Text("Wyzwalacz".i18n,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text("Wartość z czujnika".i18n,
-                                style: TextStyle(
-                                    color: IdomColors.additionalColor,
-                                    fontSize: 16.5,
-                                    fontWeight: FontWeight.bold)))),
+                                style: Theme.of(context).textTheme.headline5))),
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                            left: 62, top: 0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                                 "${widget.action.operator} ${_getTriggerValue()}",
-                                style: TextStyle(fontSize: 21.0)))),
+                                style: Theme.of(context).textTheme.bodyText2))),
                   Padding(
                       padding: EdgeInsets.only(
                           left: 30.0, top: 20.0, right: 30.0, bottom: 0.0),
@@ -202,71 +198,82 @@ class _ActionDetailsState extends State<ActionDetails> {
                           alignment: Alignment.centerLeft,
                           child: Row(
                             children: [
-                              Icon(Icons.access_time, size: 17.5),
+                              Icon(Icons.access_time, size: 21),
                               Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
+                                padding: const EdgeInsets.only(left: 10.0),
                                 child: Text("Czas działania akcji".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
                               ),
                             ],
                           ))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Dni tygodnia".i18n,
-                              style: TextStyle(
-                                  color: IdomColors.additionalColor,
-                                  fontSize: 16.5,
-                                  fontWeight: FontWeight.bold)))),
+                              style: Theme.of(context).textTheme.headline5))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(_getDays(),
-                              style: TextStyle(fontSize: 21.0)))),
+                              style: Theme.of(context).textTheme.bodyText2))),
                   if (widget.action.endTime == null)
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text("Godzina".i18n,
-                                style: TextStyle(
-                                    color: IdomColors.additionalColor,
-                                    fontSize: 16.5,
-                                    fontWeight: FontWeight.bold)))),
+                                style: Theme.of(context).textTheme.headline5))),
                   if (widget.action.endTime != null)
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 52.5, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62, top: 10.0, right: 30.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text("Godziny".i18n,
-                                style: TextStyle(
-                                    color: IdomColors.additionalColor,
-                                    fontSize: 16.5,
-                                    fontWeight: FontWeight.bold)))),
+                                style: Theme.of(context).textTheme.headline5))),
                   Padding(
                       padding: EdgeInsets.only(
-                          left: 52.5, top: 0, right: 30.0, bottom: 0.0),
+                          left: 62, top: 0, right: 30.0, bottom: 0.0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(_getHours(),
-                              style: TextStyle(fontSize: 21.0)))),
+                              style: Theme.of(context).textTheme.bodyText2))),
                 ]),
               ),
             ))));
   }
 
-  String _getTriggerValue(){
-    var doubleTrigger = double.parse(widget.action.trigger);
+  String getAction() {
+    String action = "";
+    if (widget.action.action.toString().contains("status")) {
+      action = "Włącz/wyłącz";
+    } else if (widget.action.action.toString().contains("brightness")) {
+      var brightnessJson = widget.action.action.toString().split(",")[1];
+      var brightness = int.tryParse(brightnessJson.split(":")[1]);
+      action = "Ustaw jasność : $brightness";
+    } else if (widget.action.action.toString().contains("colour")) {
+      var redJson = widget.action.action.toString().split(",")[1];
+      var greenJson = widget.action.action.toString().split(",")[2];
+      var blueJson = widget.action.action.toString().split(",")[3];
+      var red = int.tryParse(redJson.split(":")[1]);
+      var green = int.tryParse(greenJson.split(":")[1]);
+      var blue = int.tryParse(
+          blueJson.split(":")[1].substring(0, blueJson.length - 1));
+      setColor = Color.fromRGBO(red, green, blue, 1);
+      action = "Ustaw kolor";
+    }
+
+    return action;
+  }
+
+  String _getTriggerValue() {
+    var doubleTrigger = double.parse(widget.action.trigger.toString());
     return doubleTrigger.toStringAsFixed(2);
   }
 
@@ -311,7 +318,8 @@ class _ActionDetailsState extends State<ActionDetails> {
 
     if (widget.action.endTime != null) {
       var end = DateTime.parse("2020-12-21 " + widget.action.endTime);
-      var string = "${DateFormat.jm(lang).format(start)} - ${DateFormat.jm(lang).format(end)}";
+      var string =
+          "${DateFormat.jm(lang).format(start)} - ${DateFormat.jm(lang).format(end)}";
       return string;
     } else {
       return "${DateFormat.jm(lang).format(start)}";

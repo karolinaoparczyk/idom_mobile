@@ -249,8 +249,7 @@ class Api {
           '$url/sensors/add',
           headers: {HttpHeaders.authorizationHeader: "Token $token"},
           body: body,
-        )
-        .timeout(Duration(seconds: 10));
+        );
     var resDict = {
       "bodySen": utf8.decode(resSen.bodyBytes),
       "statusCodeSen": resSen.statusCode.toString(),
@@ -437,7 +436,7 @@ class Api {
     await getApiAddress();
     await getToken();
     try {
-      var res = await httpClient.get('$url/devices/$deviceToken', headers: {
+      var res = await httpClient.get('$url/devices/$deviceToken/', headers: {
         HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 10));
 

@@ -21,7 +21,7 @@ class _SensorTriggerOperatorDialogState
 
   @override
   void initState() {
-    if (widget.currentOperator != "") {
+    if (widget.currentOperator != null) {
       /// loads allowed operators
       _selectedOperator = Operators.values
           .firstWhere((element) => element == widget.currentOperator);

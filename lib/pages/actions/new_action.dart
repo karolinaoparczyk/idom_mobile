@@ -6,6 +6,7 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/choose_driver_dialog.dart';
 import 'package:idom/dialogs/choose_sensor_dialog.dart';
 import 'package:idom/dialogs/choose_sensor_trigger_operator.dart';
+import 'package:idom/dialogs/driver_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/utils/idom_colors.dart';
@@ -43,8 +44,10 @@ class _NewActionState extends State<NewAction> {
   TextEditingController _endTimeController;
   TextEditingController _sensorTriggerController;
   TextEditingController _sensorTriggerOperatorController;
+  TextEditingController _driverActionController;
   Sensor selectedSensor;
   Driver selectedDriver;
+  String selectedDriverAction;
   TimeOfDay startTime;
   TimeOfDay endTime;
   Api api = Api();
@@ -55,6 +58,7 @@ class _NewActionState extends State<NewAction> {
   String selectedOperator;
   List<bool> daysOfWeekSelected = [true, true, true, true, true, true, true];
   bool setAlarm = false;
+  String selectDriverMessage;
 
   @override
   void initState() {
@@ -78,6 +82,7 @@ class _NewActionState extends State<NewAction> {
     _driverController = TextEditingController();
     _sensorTriggerController = TextEditingController();
     _sensorTriggerOperatorController = TextEditingController();
+    _driverActionController = TextEditingController();
   }
 
   @override
@@ -89,6 +94,7 @@ class _NewActionState extends State<NewAction> {
     _endTimeController.dispose();
     _sensorTriggerController.dispose();
     _sensorTriggerOperatorController.dispose();
+    _driverActionController.dispose();
     super.dispose();
   }
 
@@ -182,14 +188,22 @@ class _NewActionState extends State<NewAction> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
+            labelText: "Nazwa".i18n,
+            labelStyle: Theme.of(context).textTheme.headline5,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            )),
         key: Key('name'),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -203,10 +217,19 @@ class _NewActionState extends State<NewAction> {
       controller: _sensorController,
       focusNode: _sensorFocusNode,
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Czujnik".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: selectedSensor == null
-            ? Icon(Icons.arrow_drop_down, color: IdomColors.brightGrey)
+            ? Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor)
             : InkWell(
                 onTap: () {
                   setState(() {
@@ -219,7 +242,7 @@ class _NewActionState extends State<NewAction> {
                     });
                   });
                 },
-                child: Icon(Icons.close, color: IdomColors.brightGrey)),
+                child: Icon(Icons.close, color: IdomColors.additionalColor)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -243,7 +266,7 @@ class _NewActionState extends State<NewAction> {
         }
       },
       readOnly: true,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
     );
   }
 
@@ -255,9 +278,18 @@ class _NewActionState extends State<NewAction> {
           key: Key('sensorTrigger'),
           keyboardType: TextInputType.number,
           controller: _sensorTriggerController,
-          style: TextStyle(fontSize: 21.0),
+          style: Theme.of(context).textTheme.bodyText2,
           decoration: InputDecoration(
             border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
               borderRadius: BorderRadius.circular(10.0),
             ),
             labelText: "Wartość".i18n,
@@ -295,6 +327,15 @@ class _NewActionState extends State<NewAction> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
       onTap: () async {
         final String operator = await showDialog(
@@ -314,7 +355,60 @@ class _NewActionState extends State<NewAction> {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: TriggerValueOperatorFieldValidator.validate,
       readOnly: true,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
+    );
+  }
+
+  /// builds driver action field
+  Widget _buildDriverActionField() {
+    return TextFormField(
+      key: Key("driverAction"),
+      controller: _driverActionController,
+      decoration: InputDecoration(
+        labelText: "Akcja",
+        labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon:
+            Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+      onTap: () async {
+        if (selectedDriver == null) {
+          setState(() {
+            selectDriverMessage = "Wybierz sterownik";
+          });
+          return;
+        }
+        final Map<String, String> action = await showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                child: DriverActionDialog(
+                  currentAction: selectedDriverAction,
+                  driverCategory: selectedDriver.category,
+                ),
+              );
+            });
+        if (action != null) {
+          _driverActionController.text = action['text'].i18n;
+          selectedDriverAction = action['value'];
+          setState(() {});
+        }
+      },
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: DriverActionFieldValidator.validate,
+      readOnly: true,
+      style: Theme.of(context).textTheme.bodyText2,
     );
   }
 
@@ -326,8 +420,18 @@ class _NewActionState extends State<NewAction> {
         decoration: InputDecoration(
           labelText: "Sterownik".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
@@ -347,11 +451,15 @@ class _NewActionState extends State<NewAction> {
           if (driver != null) {
             _driverController.text = driver.name;
             selectedDriver = driver;
+            selectedDriverAction = null;
+            _driverActionController.text = "";
+            selectDriverMessage = null;
+            setState(() {});
           }
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: DriverFieldValidator.validate);
   }
 
@@ -361,13 +469,21 @@ class _NewActionState extends State<NewAction> {
         key: Key("startTimeButton"),
         controller: _startTimeController,
         decoration: InputDecoration(
-          labelText: "Start",
-          labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
+            labelText: "Start",
+            labelStyle: Theme.of(context).textTheme.headline5,
+            suffixIcon: Icon(Icons.arrow_drop_down),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            )),
         onTap: () async {
           var now = DateTime.now();
           final TimeOfDay time = await showTimePicker(
@@ -401,74 +517,83 @@ class _NewActionState extends State<NewAction> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: TimeFieldValidator.validate);
   }
 
   /// builds end time field
   Widget _buildEndTimeField() {
     return TextFormField(
-        key: Key("endTimeButton"),
-        controller: _endTimeController,
-        focusNode: _endTimeFocusNode,
-        decoration: InputDecoration(
-          labelText: "Koniec".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: endTime == null
-              ? Icon(Icons.arrow_drop_down)
-              : InkWell(
-                  onTap: () {
-                    setState(() {
-                      _endTimeFocusNode.unfocus();
-                      _endTimeFocusNode.canRequestFocus = false;
-                      endTime = null;
-                      _endTimeController.text = "";
-                      Future.delayed(Duration(milliseconds: 100), () {
-                        _endTimeFocusNode.canRequestFocus = true;
-                      });
-                    });
-                  },
-                  child: Icon(Icons.close,
-                      color: IdomColors.brightGrey, key: Key("removeEndTime"))),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
+      key: Key("endTimeButton"),
+      controller: _endTimeController,
+      focusNode: _endTimeFocusNode,
+      decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
         ),
-        onTap: () async {
-          if (!_endTimeFocusNode.canRequestFocus) {
-            return;
-          }
-          var now = DateTime.now();
-          final TimeOfDay time = await showTimePicker(
-            cancelText: "Anuluj".i18n,
-            confirmText: "OK",
-            helpText: "Wybierz godzinę".i18n,
-            builder: (BuildContext context, Widget child) {
-              return Theme(
-                data: ThemeData.light().copyWith(
-                  primaryColor: IdomColors.additionalColor,
-                  accentColor: IdomColors.additionalColor,
-                  colorScheme:
-                      ColorScheme.light(primary: IdomColors.additionalColor),
-                  buttonTheme:
-                      ButtonThemeData(textTheme: ButtonTextTheme.primary),
-                ),
-                child: child,
-              );
-            },
-            context: context,
-            initialTime:
-                endTime ?? TimeOfDay(hour: now.hour, minute: now.minute),
-          );
-          if (time != null) {
-            endTime = time;
-            _endTimeController.text = "${endTime.format(context)}";
-            setState(() {});
-          }
-        },
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        readOnly: true,
-        style: TextStyle(fontSize: 21.0));
+        labelText: "Koniec".i18n,
+        labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon: endTime == null
+            ? Icon(Icons.arrow_drop_down)
+            : InkWell(
+                onTap: () {
+                  setState(() {
+                    _endTimeFocusNode.unfocus();
+                    _endTimeFocusNode.canRequestFocus = false;
+                    endTime = null;
+                    _endTimeController.text = "";
+                    Future.delayed(Duration(milliseconds: 100), () {
+                      _endTimeFocusNode.canRequestFocus = true;
+                    });
+                  });
+                },
+                child: Icon(Icons.close,
+                    color: IdomColors.brightGrey, key: Key("removeEndTime"))),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+      onTap: () async {
+        if (!_endTimeFocusNode.canRequestFocus) {
+          return;
+        }
+        var now = DateTime.now();
+        final TimeOfDay time = await showTimePicker(
+          cancelText: "Anuluj".i18n,
+          confirmText: "OK",
+          helpText: "Wybierz godzinę".i18n,
+          builder: (BuildContext context, Widget child) {
+            return Theme(
+              data: ThemeData.light().copyWith(
+                primaryColor: IdomColors.additionalColor,
+                accentColor: IdomColors.additionalColor,
+                colorScheme:
+                    ColorScheme.light(primary: IdomColors.additionalColor),
+                buttonTheme:
+                    ButtonThemeData(textTheme: ButtonTextTheme.primary),
+              ),
+              child: child,
+            );
+          },
+          context: context,
+          initialTime: endTime ?? TimeOfDay(hour: now.hour, minute: now.minute),
+        );
+        if (time != null) {
+          endTime = time;
+          _endTimeController.text = "${endTime.format(context)}";
+          setState(() {});
+        }
+      },
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      readOnly: true,
+      style: Theme.of(context).textTheme.bodyText2,
+    );
   }
 
   @override
@@ -484,8 +609,7 @@ class _NewActionState extends State<NewAction> {
                   onPressed: _saveChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "NewAction"),
+                storage: widget.storage, parentWidgetType: "NewAction"),
 
             /// builds form with action's properties
             body: SingleChildScrollView(
@@ -515,17 +639,38 @@ class _NewActionState extends State<NewAction> {
                             ))),
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62.0, top: 10.0, right: 62.0, bottom: 0.0),
                         child: _buildName()),
                     Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                            vertical: 10.0, horizontal: 62.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildDriverField())),
                     Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                            vertical: 10.0, horizontal: 62.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: _buildDriverActionField())),
+                    AnimatedCrossFade(
+                      crossFadeState: selectDriverMessage != null
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: Duration(milliseconds: 300),
+                      firstChild: selectDriverMessage != null
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 62.0),
+                              child: Text(selectDriverMessage,
+                                  style: Theme.of(context).textTheme.subtitle1),
+                            )
+                          : SizedBox(),
+                      secondChild: SizedBox(),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 62.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildSensorField())),
@@ -550,7 +695,7 @@ class _NewActionState extends State<NewAction> {
                     if (selectedSensor != null)
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                            vertical: 10.0, horizontal: 62.0),
                         child: Row(
                           children: [
                             Flexible(
@@ -581,7 +726,7 @@ class _NewActionState extends State<NewAction> {
                             ))),
                     Padding(
                       padding: EdgeInsets.only(
-                          left: 30.5, top: 10, right: 20.0, bottom: 10),
+                          left: 60, top: 10, right: 60, bottom: 10),
                       child: Container(
                         width: 300.0, // hardcoded for testing purpose
                         child: LayoutBuilder(builder: (context, constraints) {
@@ -593,50 +738,30 @@ class _NewActionState extends State<NewAction> {
                               splashColor: Colors.transparent,
                               fillColor: IdomColors.lighten(
                                   IdomColors.additionalColor, 0.2),
-                              selectedColor: IdomColors.textDark,
+                              selectedColor:
+                                  Theme.of(context).textTheme.bodyText2.color,
                               children: [
                                 Text("pn".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1),
                                 Text("wt".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1),
                                 Text("śr".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1),
                                 Text("czw".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1),
                                 Text("pt".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1),
                                 Text("sb".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1),
                                 Text("nd".i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1),
                               ],
                               isSelected: daysOfWeekSelected,
                               onPressed: (int index) {
@@ -648,32 +773,32 @@ class _NewActionState extends State<NewAction> {
                         }),
                       ),
                     ),
-                    if (endTime == null)
-                      Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 0.0, horizontal: 30.0),
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              Checkbox(
-                                activeColor: IdomColors.additionalColor,
-                                value: setAlarm,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    setAlarm = value;
-                                  });
-                                },
-                              ),
-                              Text("Ustaw budzik".i18n,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(fontWeight: FontWeight.normal))
-                            ],
-                          )),
+                    // if (endTime == null)
+                    //   Container(
+                    //       padding: EdgeInsets.symmetric(
+                    //           vertical: 0.0, horizontal: 30.0),
+                    //       alignment: Alignment.centerLeft,
+                    //       child: Row(
+                    //         children: [
+                    //           Checkbox(
+                    //             activeColor: IdomColors.additionalColor,
+                    //             value: setAlarm,
+                    //             onChanged: (bool value) {
+                    //               setState(() {
+                    //                 setAlarm = value;
+                    //               });
+                    //             },
+                    //           ),
+                    //           Text("Ustaw budzik".i18n,
+                    //               style: Theme.of(context)
+                    //                   .textTheme
+                    //                   .bodyText1
+                    //                   .copyWith(fontWeight: FontWeight.normal))
+                    //         ],
+                    //       )),
                     Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                            vertical: 10.0, horizontal: 62.0),
                         child: Row(
                           children: [
                             Flexible(flex: 1, child: _buildStartTimeField()),
@@ -681,20 +806,20 @@ class _NewActionState extends State<NewAction> {
                             Flexible(flex: 1, child: _buildEndTimeField())
                           ],
                         )),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
-                      child: AnimatedCrossFade(
-                        crossFadeState: fieldsValidationMessage != null
-                            ? CrossFadeState.showFirst
-                            : CrossFadeState.showSecond,
-                        duration: Duration(milliseconds: 300),
-                        firstChild: fieldsValidationMessage != null
-                            ? Text(fieldsValidationMessage,
-                                style: Theme.of(context).textTheme.bodyText1)
-                            : SizedBox(),
-                        secondChild: SizedBox(),
-                      ),
+                    AnimatedCrossFade(
+                      crossFadeState: fieldsValidationMessage != null
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: Duration(milliseconds: 300),
+                      firstChild: fieldsValidationMessage != null
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 62.0),
+                              child: Text(fieldsValidationMessage,
+                                  style: Theme.of(context).textTheme.subtitle1),
+                            )
+                          : SizedBox(),
+                      secondChild: SizedBox(),
                     ),
                   ])),
             )));
@@ -770,6 +895,34 @@ class _NewActionState extends State<NewAction> {
     return flag;
   }
 
+  Map<String, dynamic> getActionJson() {
+    Map<String, dynamic> action;
+    switch (selectedDriverAction) {
+      case "click":
+        action = {"status": true};
+        break;
+      case "turn_on":
+        action = {"type": "turn", "status": true};
+        break;
+      case "turn_off":
+        action = {"type": "turn", "status": true};
+        break;
+      case "set_color":
+        action = {"type": "colour", "red": 0, "green": 0, "blue": 0};
+        break;
+      case "set_brightness":
+        action = {"type": "brightness", "brightness": 0};
+        break;
+      case "raise_blinds":
+        action = {"status": true};
+        break;
+      case "lower_blinds":
+        action = {"status": false};
+        break;
+    }
+    return action;
+  }
+
   /// saves changes after form fields validation
   _saveChanges() async {
     FocusScope.of(context).unfocus();
@@ -807,12 +960,12 @@ class _NewActionState extends State<NewAction> {
           operator = selectedOperator;
           trigger = int.tryParse(_sensorTriggerController.text);
         }
-        if (endTime == null && setAlarm) {
-          await Alarmclock.setAlarm(
-              hour: startTime.hour,
-              minute: startTime.minute,
-              message: "akcja".i18n + _nameController.text);
-        }
+        // if (endTime == null && setAlarm) {
+        //   await Alarmclock.setAlarm(
+        //       hour: startTime.hour,
+        //       minute: startTime.minute,
+        //       message: "akcja".i18n + _nameController.text);
+        // }
 
         var res = await api.addAction(
             _nameController.text,
@@ -823,7 +976,7 @@ class _NewActionState extends State<NewAction> {
             daysString,
             startTimeString,
             endTimeString,
-            "action",
+            jsonEncode(getActionJson()),
             _getFlag());
         setState(() {
           _load = false;

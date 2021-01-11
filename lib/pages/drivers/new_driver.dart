@@ -174,8 +174,7 @@ class _NewDriverState extends State<NewDriver> {
                   onPressed: _saveChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "NewDriver"),
+                storage: widget.storage, parentWidgetType: "NewDriver"),
 
             /// builds form with driver's properties
             body: SingleChildScrollView(
@@ -261,12 +260,10 @@ class _NewDriverState extends State<NewDriver> {
                 await api.addIpAddress(driver.id, _ipAddressController.text);
             if (resBulb != 200) {
               _navigateToEditDriver(driver);
-            } else {
-              fieldsValidationMessage = null;
-              setState(() {});
-              Navigator.pop(context, true);
-            }
-          }
+            }}
+            fieldsValidationMessage = null;
+            setState(() {});
+            Navigator.pop(context, true);
         } else if (res['statusCode'] == "401") {
           fieldsValidationMessage = null;
           setState(() {});

@@ -235,7 +235,7 @@ class SensorDriverAction extends Equatable {
   String sensor;
 
   /// value of sensor data for driver to be triggered
-  int trigger;
+  String trigger;
 
   /// operator for trigger value {<, >, =}
   String operator;
@@ -297,4 +297,17 @@ class SensorDriverAction extends Equatable {
       flag: json['flag'] as int,
     );
   }
+}
+
+class ActionAction extends Equatable{
+  bool status;
+  int red;
+  int green;
+  int blue;
+  int brightness;
+  String type;
+
+  /// ensures uniqueness
+  @override
+  List<Object> get props => [status, type];
 }
