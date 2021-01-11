@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:i18n_extension/i18n_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -136,10 +137,26 @@ class _ActionDetailsState extends State<ActionDetails> {
                   Padding(
                       padding: EdgeInsets.only(
                           left: 62, top: 0, right: 30.0, bottom: 0.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(getAction(),
-                              style: Theme.of(context).textTheme.bodyText2))),
+                      child: Row(
+                        children: [
+                          Text(getAction(),
+                              style: Theme.of(context).textTheme.bodyText2),
+                          if (widget.action.action.brightness != null ||
+                              widget.action.action.red != null)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: SvgPicture.asset(
+                                  "assets/icons/light_bulb_filled.svg",
+                                  matchTextDirection: false,
+                                  alignment: Alignment.centerRight,
+                                  width: 20,
+                                  height: 20,
+                                  color: setColor,
+                                  key: Key(
+                                      "assets/icons/light_bulb_filled.svg")),
+                            ),
+                        ],
+                      )),
                   if (widget.action.sensor != null)
                     Padding(
                         padding: EdgeInsets.only(
@@ -251,25 +268,63 @@ class _ActionDetailsState extends State<ActionDetails> {
 
   String getAction() {
     String action = "";
-    if (widget.action.action.toString().contains("status")) {
-      action = "Włącz/wyłącz";
-    } else if (widget.action.action.toString().contains("brightness")) {
-      var brightnessJson = widget.action.action.toString().split(",")[1];
-      var brightness = int.tryParse(brightnessJson.split(":")[1]);
-      action = "Ustaw jasność : $brightness";
-    } else if (widget.action.action.toString().contains("colour")) {
-      var redJson = widget.action.action.toString().split(",")[1];
-      var greenJson = widget.action.action.toString().split(",")[2];
-      var blueJson = widget.action.action.toString().split(",")[3];
-      var red = int.tryParse(redJson.split(":")[1]);
-      var green = int.tryParse(greenJson.split(":")[1]);
-      var blue = int.tryParse(
-          blueJson.split(":")[1].substring(0, blueJson.length - 1));
+    if (widget.action.action.status != null) {
+      if (widget.action.action.status) {
+        action = "Włącz".i18n;
+      } else {
+        action = "Wyłącz".i18n;
+      }
+    } else if (widget.action.action.brightness != null) {
+      int brightness = widget.action.action.brightness;
+      setColor =
+          _calculateShadedColor((brightness / 100 * 255).roundToDouble());
+      action = "Ustaw jasność".i18n + " : $brightness";
+    } else if (widget.action.action.red != null) {
+      int red = widget.action.action.red;
+      int green = widget.action.action.green;
+      int blue = widget.action.action.blue;
       setColor = Color.fromRGBO(red, green, blue, 1);
-      action = "Ustaw kolor";
+      action = "Ustaw kolor".i18n;
     }
 
+    setState(() {});
     return action;
+  }
+
+  Color _calculateShadedColor(double position) {
+    Color _currentColor = Colors.black;
+    double ratio = position / 255;
+    if (ratio > 0.5) {
+      int redVal = _currentColor.red != 255
+          ? (_currentColor.red +
+                  (255 - _currentColor.red) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      int greenVal = _currentColor.green != 255
+          ? (_currentColor.green +
+                  (255 - _currentColor.green) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      int blueVal = _currentColor.blue != 255
+          ? (_currentColor.blue +
+                  (255 - _currentColor.blue) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      return Color.fromARGB(255, redVal, greenVal, blueVal);
+    } else if (ratio < 0.5) {
+      int redVal = _currentColor.red != 0
+          ? (_currentColor.red * ratio / 0.5).round()
+          : 0;
+      int greenVal = _currentColor.green != 0
+          ? (_currentColor.green * ratio / 0.5).round()
+          : 0;
+      int blueVal = _currentColor.blue != 0
+          ? (_currentColor.blue * ratio / 0.5).round()
+          : 0;
+      return Color.fromARGB(255, redVal, greenVal, blueVal);
+    } else {
+      return _currentColor;
+    }
   }
 
   String _getTriggerValue() {

@@ -748,13 +748,13 @@ class Api {
   Future<Map<String, String>> addAction(
       String name,
       String sensor,
-      int trigger,
+      double trigger,
       String operator,
       String driver,
       String days,
       String startTime,
       String endTime,
-      String action,
+      Map<String, dynamic> action,
       int flag) async {
     await getApiAddress();
     await getToken();

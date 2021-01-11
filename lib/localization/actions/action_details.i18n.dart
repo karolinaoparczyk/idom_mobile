@@ -11,6 +11,26 @@ extension Localization on String {
         "en_uk": "Name",
       } +
       {
+        "pl_pl": "Akcja",
+        "en_uk": "Action",
+      } +
+      {
+        "pl_pl": "Włącz",
+        "en_uk": "Turn on",
+      } +
+      {
+        "pl_pl": "Wyłącz",
+        "en_uk": "Turn off",
+      } +
+      {
+        "pl_pl": "Ustaw jasność",
+        "en_uk": "Set brightness",
+      } +
+      {
+        "pl_pl": "Ustaw kolor",
+        "en_uk": "Set color",
+      } +
+      {
         "pl_pl": "Czujnik",
         "en_uk": "Sensor",
       } +
@@ -41,7 +61,7 @@ extension Localization on String {
       {
         "pl_pl": "Czas działania akcji",
         "en_uk": "Action time",
-      }  +
+      } +
       {
         "pl_pl": "Dni tygodnia",
         "en_uk": "Days of the week",
@@ -77,19 +97,21 @@ extension Localization on String {
       {
         "pl_pl": "Odświeżenie danych akcji nie powiodło się.",
         "en_uk": "Refreshing action data failed.",
-      }+
+      } +
       {
-        "pl_pl": "Błąd pobierania danych akcji. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Error getting action data. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd pobierania danych akcji. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Error getting action data. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd pobierania danych akcji. Adres serwera nieprawidłowy.",
         "en_uk": "Error getting action data. The server address is invalid.",
-      }  +
+      } +
       {
         "pl_pl": "Zapisano akcję.",
         "en_uk": "Action saved.",
-      } ;
+      };
 
   String get i18n => localize(this, _t);
 }

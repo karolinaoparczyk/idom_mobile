@@ -24,7 +24,7 @@ class _SensorTriggerOperatorDialogState
     if (widget.currentOperator != null) {
       /// loads allowed operators
       _selectedOperator = Operators.values
-          .firstWhere((element) => element == widget.currentOperator);
+          .firstWhere((element) => element.contains(widget.currentOperator));
     }
     super.initState();
   }
@@ -59,7 +59,7 @@ class _SensorTriggerOperatorDialogState
                   itemBuilder: (BuildContext context, int index) {
                     /// allows selecting only one operator
                     return RadioListTile(
-                      title: Text(Operators.values[index],
+                      title: Text(Operators.values[index].i18n,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
                               fontWeight: FontWeight.normal, fontSize: 21.0)),
                       value: Operators.values[index],

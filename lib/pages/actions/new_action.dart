@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/choose_driver_dialog.dart';
 import 'package:idom/dialogs/choose_sensor_dialog.dart';
@@ -8,6 +9,7 @@ import 'package:idom/dialogs/choose_sensor_trigger_operator.dart';
 import 'package:idom/dialogs/driver_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
+import 'package:idom/pages/drivers/driver_details.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
@@ -58,6 +60,25 @@ class _NewActionState extends State<NewAction> {
   List<bool> daysOfWeekSelected = [true, true, true, true, true, true, true];
   bool setAlarm = false;
   String selectDriverMessage;
+  Color _currentColor;
+  Color _shadedColor;
+  double _colorSliderPosition = 255;
+  double _shadeSliderPosition;
+  final List<Color> _colors = [
+    Color.fromARGB(255, 255, 0, 0),
+    Color.fromARGB(255, 255, 128, 0),
+    Color.fromARGB(255, 255, 255, 0),
+    Color.fromARGB(255, 128, 255, 0),
+    Color.fromARGB(255, 0, 255, 0),
+    Color.fromARGB(255, 0, 255, 128),
+    Color.fromARGB(255, 0, 255, 255),
+    Color.fromARGB(255, 0, 128, 255),
+    Color.fromARGB(255, 0, 0, 255),
+    Color.fromARGB(255, 127, 0, 255),
+    Color.fromARGB(255, 255, 0, 255),
+    Color.fromARGB(255, 255, 0, 127),
+    Color.fromARGB(255, 128, 128, 128),
+  ];
 
   @override
   void initState() {
@@ -73,6 +94,9 @@ class _NewActionState extends State<NewAction> {
       _endTimeController =
           TextEditingController(text: "${endTime.hour}:${endTime.minute}");
     }
+    _currentColor = _calculateSelectedColor(_colorSliderPosition);
+    _shadeSliderPosition = 255 / 2; //center the shader selector
+    _shadedColor = _calculateShadedColor(_shadeSliderPosition);
     getSensors();
     getDrivers();
     _load = false;
@@ -399,6 +423,10 @@ class _NewActionState extends State<NewAction> {
               );
             });
         if (action != null) {
+          if (action['value'] == "set_brightness") {
+            _colorSliderPosition = 255;
+            _currentColor = _calculateSelectedColor(_colorSliderPosition);
+          }
           _driverActionController.text = action['text'].i18n;
           selectedDriverAction = action['value'];
           setState(() {});
@@ -652,6 +680,86 @@ class _NewActionState extends State<NewAction> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildDriverActionField())),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (selectedDriverAction == "set_color")
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onHorizontalDragStart: (DragStartDetails details) {
+                              _colorChangeHandler(details.localPosition.dx);
+                            },
+                            onHorizontalDragUpdate:
+                                (DragUpdateDetails details) {
+                              _colorChangeHandler(details.localPosition.dx);
+                            },
+                            onTapDown: (TapDownDetails details) {
+                              _colorChangeHandler(details.localPosition.dx);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(15),
+                              child: Container(
+                                width: 255,
+                                height: 15,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  gradient: LinearGradient(colors: _colors),
+                                ),
+                                child: CustomPaint(
+                                  painter: SliderIndicatorPainter(
+                                      _colorSliderPosition),
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (selectedDriverAction == "set_brightness")
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onHorizontalDragStart: (DragStartDetails details) {
+                              _shadeChangeHandler(details.localPosition.dx);
+                            },
+                            onHorizontalDragUpdate:
+                                (DragUpdateDetails details) {
+                              _shadeChangeHandler(details.localPosition.dx);
+                            },
+                            onTapDown: (TapDownDetails details) {
+                              _shadeChangeHandler(details.localPosition.dx);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(15),
+                              child: Container(
+                                width: 255,
+                                height: 15,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  gradient: LinearGradient(colors: [
+                                    Colors.black,
+                                    _currentColor,
+                                    Colors.white
+                                  ]),
+                                ),
+                                child: CustomPaint(
+                                  painter: SliderIndicatorPainter(
+                                      _shadeSliderPosition),
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (selectedDriverAction == "set_color" ||
+                            selectedDriverAction == "set_brightness")
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: SvgPicture.asset(
+                                "assets/icons/light_bulb_filled.svg",
+                                matchTextDirection: false,
+                                alignment: Alignment.centerRight,
+                                width: 20,
+                                height: 20,
+                                color: _shadedColor,
+                                key: Key("assets/icons/light_bulb_filled.svg")),
+                          ),
+                      ],
+                    ),
                     AnimatedCrossFade(
                       crossFadeState: selectDriverMessage != null
                           ? CrossFadeState.showFirst
@@ -725,8 +833,9 @@ class _NewActionState extends State<NewAction> {
                             ))),
                     Padding(
                       padding: EdgeInsets.only(
-                          left: 60, top: 10, right: 60, bottom: 10),
+                          left: 30, top: 10, right: 30, bottom: 10),
                       child: Container(
+                        alignment: Alignment.center,
                         width: 300.0, // hardcoded for testing purpose
                         child: LayoutBuilder(builder: (context, constraints) {
                           return ToggleButtons(
@@ -824,6 +933,91 @@ class _NewActionState extends State<NewAction> {
             )));
   }
 
+  _colorChangeHandler(double position) {
+    if (position > 255) {
+      position = 255;
+    }
+    if (position < 0) {
+      position = 0;
+    }
+    setState(() {
+      _colorSliderPosition = position;
+      _currentColor = _calculateSelectedColor(_colorSliderPosition);
+      _shadedColor = _calculateShadedColor(_shadeSliderPosition);
+    });
+  }
+
+  _shadeChangeHandler(double position) {
+    if (position > 255) position = 255;
+    if (position < 0) position = 0;
+    setState(() {
+      _shadeSliderPosition = position;
+      _shadedColor = _calculateShadedColor(_shadeSliderPosition);
+    });
+  }
+
+  Color _calculateSelectedColor(double position) {
+    double positionInColorArray = (position / 255 * (_colors.length - 1));
+    int index = positionInColorArray.truncate();
+    double remainder = positionInColorArray - index;
+    if (remainder == 0.0) {
+      _currentColor = _colors[index];
+    } else {
+      int redValue = _colors[index].red == _colors[index + 1].red
+          ? _colors[index].red
+          : (_colors[index].red +
+                  (_colors[index + 1].red - _colors[index].red) * remainder)
+              .round();
+      int greenValue = _colors[index].green == _colors[index + 1].green
+          ? _colors[index].green
+          : (_colors[index].green +
+                  (_colors[index + 1].green - _colors[index].green) * remainder)
+              .round();
+      int blueValue = _colors[index].blue == _colors[index + 1].blue
+          ? _colors[index].blue
+          : (_colors[index].blue +
+                  (_colors[index + 1].blue - _colors[index].blue) * remainder)
+              .round();
+      _currentColor = Color.fromARGB(255, redValue, greenValue, blueValue);
+    }
+    return _currentColor;
+  }
+
+  Color _calculateShadedColor(double position) {
+    double ratio = position / 255;
+    if (ratio > 0.5) {
+      int redVal = _currentColor.red != 255
+          ? (_currentColor.red +
+                  (255 - _currentColor.red) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      int greenVal = _currentColor.green != 255
+          ? (_currentColor.green +
+                  (255 - _currentColor.green) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      int blueVal = _currentColor.blue != 255
+          ? (_currentColor.blue +
+                  (255 - _currentColor.blue) * (ratio - 0.5) / 0.5)
+              .round()
+          : 255;
+      return Color.fromARGB(255, redVal, greenVal, blueVal);
+    } else if (ratio < 0.5) {
+      int redVal = _currentColor.red != 0
+          ? (_currentColor.red * ratio / 0.5).round()
+          : 0;
+      int greenVal = _currentColor.green != 0
+          ? (_currentColor.green * ratio / 0.5).round()
+          : 0;
+      int blueVal = _currentColor.blue != 0
+          ? (_currentColor.blue * ratio / 0.5).round()
+          : 0;
+      return Color.fromARGB(255, redVal, greenVal, blueVal);
+    } else {
+      return _currentColor;
+    }
+  }
+
   _validateTime() {
     bool isCorrect = true;
     if (startTime != null && endTime != null) {
@@ -904,13 +1098,21 @@ class _NewActionState extends State<NewAction> {
         action = {"type": "turn", "status": true};
         break;
       case "turn_off":
-        action = {"type": "turn", "status": true};
+        action = {"type": "turn", "status": false};
         break;
       case "set_color":
-        action = {"type": "colour", "red": 0, "green": 0, "blue": 0};
+        action = {
+          "type": "colour",
+          "red": _currentColor.red,
+          "green": _currentColor.green,
+          "blue": _currentColor.blue
+        };
         break;
       case "set_brightness":
-        action = {"type": "brightness", "brightness": 0};
+        action = {
+          "type": "brightness",
+          "brightness": (_shadeSliderPosition / 255 * 100).round()
+        };
         break;
       case "raise_blinds":
         action = {"status": true};
@@ -957,7 +1159,12 @@ class _NewActionState extends State<NewAction> {
         } else {
           sensor = selectedSensor.name;
           operator = selectedOperator;
-          trigger = int.tryParse(_sensorTriggerController.text);
+          if (_sensorTriggerController.text.toString().contains(",")) {
+            trigger =
+                double.tryParse(_sensorTriggerController.text.toString().replaceFirst(",", "."));
+          } else {
+            trigger = double.tryParse(_sensorTriggerController.text);
+          }
         }
         // if (endTime == null && setAlarm) {
         //   await Alarmclock.setAlarm(
@@ -975,7 +1182,7 @@ class _NewActionState extends State<NewAction> {
             daysString,
             startTimeString,
             endTimeString,
-            jsonEncode(getActionJson()),
+            getActionJson(),
             _getFlag());
         setState(() {
           _load = false;

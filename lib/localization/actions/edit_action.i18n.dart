@@ -1,7 +1,6 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
       {
         "pl_pl": "Sesja użytkownika wygasła. \nTrwa wylogowywanie...",
@@ -9,9 +8,9 @@ extension Localization on String {
       } +
       {
         "pl_pl":
-        "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+            "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
         "en_uk":
-        "Sensors download error. Check the server connection and try again.",
+            "Sensors download error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd pobierania czujników. Adres serwera nieprawidłowy.",
@@ -19,9 +18,9 @@ extension Localization on String {
       } +
       {
         "pl_pl":
-        "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+            "Błąd pobierania sterowników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
         "en_uk":
-        "Drivers download error. Check the server connection and try again.",
+            "Drivers download error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd pobierania sterowników. Adres serwera nieprawidłowy.",
@@ -42,7 +41,7 @@ extension Localization on String {
       {
         "pl_pl": "Pole wymagane",
         "en_uk": "Required field",
-      }  +
+      } +
       {
         "pl_pl": "Podaj liczbę",
         "en_uk": "Enter a number",
@@ -60,6 +59,54 @@ extension Localization on String {
         "en_uk": "Driver",
       } +
       {
+        "pl_pl": "Wciśnij przycisk",
+        "en_uk": "Press the button",
+      } +
+      {
+        "pl_pl": "Włącz żarówkę",
+        "en_uk": "Turn bulb on",
+      } +
+      {
+        "pl_pl": "Wyłącz żarówkę",
+        "en_uk": "Turn bulb off",
+      } +
+      {
+        "pl_pl": "Wybierz akcję",
+        "en_uk": "Select action",
+      } +
+      {
+        "pl_pl": "< mniejsze niż",
+        "en_uk": "< smaller than",
+      } +
+      {
+        "pl_pl": "> większe niż",
+        "en_uk": "> larger than",
+      } +
+      {
+        "pl_pl": "= równe",
+        "en_uk": "= equal to",
+      }  +
+      {
+        "pl_pl": "Akcja",
+        "en_uk": "Action",
+      }  +
+      {
+        "pl_pl": "Ustaw kolor",
+        "en_uk": "Set color",
+      } +
+      {
+        "pl_pl": "Ustaw jasność",
+        "en_uk": "Set brightness",
+      } +
+      {
+        "pl_pl": "Podnieś rolety",
+        "en_uk": "Raise blinds",
+      } +
+      {
+        "pl_pl": "Opuść rolety",
+        "en_uk": "Lower blinds",
+      } +
+      {
         "pl_pl": "Akcja o podanej nazwie już istnieje.",
         "en_uk": "An action with the given name already exists.",
       } +
@@ -69,9 +116,9 @@ extension Localization on String {
       } +
       {
         "pl_pl":
-        "Błąd edytowania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+            "Błąd edytowania akcji. Sprawdź połączenie z serwerem i spróbuj ponownie.",
         "en_uk":
-        "Action editing error. Check the server connection and try again.",
+            "Action editing error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd edytowania akcji. Adres serwera nieprawidłowy.",
@@ -80,11 +127,11 @@ extension Localization on String {
       {
         "pl_pl": "Potwierdź",
         "en_uk": "Confirm",
-      }  +
+      } +
       {
         "pl_pl": "Czy na pewno zapisać zmiany?",
         "en_uk": "Are you sure you want to save the changes?",
-      }+
+      } +
       {
         "pl_pl": "Anuluj",
         "en_uk": "Cancel",
@@ -135,7 +182,7 @@ extension Localization on String {
       } +
       {
         "pl_pl":
-        "Godzina zakończenia musi być późniejsza od godziny rozpoczęcia.",
+            "Godzina zakończenia musi być późniejsza od godziny rozpoczęcia.",
         "en_uk": "The end time must be later than the start time.",
       } +
       {
