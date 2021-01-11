@@ -36,9 +36,6 @@ dependencies:
   flex_color_picker:
   i18n_extension: ^1.4.5
   provider:
-  alarmclock:
-    git:
-      url: https://github.com/karolinaoparczyk/alarmclock
 
 dev_dependencies:
   flutter_test:

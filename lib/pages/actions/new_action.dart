@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:alarmclock/alarmclock.dart';
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/choose_driver_dialog.dart';
@@ -989,10 +988,10 @@ class _NewActionState extends State<NewAction> {
                 daysList.add(i);
               }
             }
-            await Alarmclock.setAlarm(
-                hour: startTime.hour,
-                minute: startTime.minute,
-                message: "akcja".i18n + " ${_nameController.text}");
+            // await Alarmclock.setAlarm(
+            //     hour: startTime.hour,
+            //     minute: startTime.minute,
+            //     message: "akcja".i18n + " ${_nameController.text}");
           }
           fieldsValidationMessage = null;
           setState(() {});
