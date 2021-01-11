@@ -1,7 +1,7 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
+/// translations for driver add dialog in polish and english
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
       {
         "pl_pl": "Nazwa",
@@ -32,15 +32,17 @@ extension Localization on String {
         "en_uk": "Creating driver failed. Try again.",
       } +
       {
-        "pl_pl": "Błąd dodawania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Driver creating error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd dodawania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Driver creating error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd dodawania sterownika. Adres serwera nieprawidłowy.",
         "en_uk": "Driver creating error. The server address is invalid.",
       } +
       {
-        "pl_pl": "naduszacz",
+        "pl_pl": "przycisk",
         "en_uk": "clicker",
       } +
       {
@@ -50,6 +52,14 @@ extension Localization on String {
       {
         "pl_pl": "żarówka",
         "en_uk": "bulb",
+      } +
+      {
+        "pl_pl": "rolety",
+        "en_uk": "blinds",
+      } +
+      {
+        "pl_pl": "Adres IP",
+        "en_uk": "IP address",
       };
 
   String get i18n => localize(this, _t);

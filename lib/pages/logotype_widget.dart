@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/localization/setup/front.i18n.dart';
 
+/// widget displaying project name while waiting for user data to load
 class LogotypeWidget extends StatelessWidget {
+  /// builds widget
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,8 +18,10 @@ class LogotypeWidget extends StatelessWidget {
                   Image.asset('assets/home.png', height: 70.0, width: 70.0),
                   Text(
                     'IDOM',
-                    style:
-                        TextStyle(fontSize: 100.0, color: IdomColors.textDark),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        .copyWith(fontSize: 100.0),
                     textAlign: TextAlign.center,
                   ),
                   Icon(Icons.roofing_rounded,
@@ -34,8 +38,7 @@ class LogotypeWidget extends StatelessWidget {
                 Padding(
                     padding: EdgeInsets.only(top: 20.0),
                     child: Text("Trwa ładowanie...".i18n,
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(
-                            fontSize: 21.0, fontWeight: FontWeight.normal)))
+                        style: Theme.of(context).textTheme.bodyText2))
               ])),
     );
   }

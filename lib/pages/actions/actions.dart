@@ -13,12 +13,17 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/localization/actions/actions.i18n.dart';
 
+/// displays actions list
 class ActionsList extends StatefulWidget {
   ActionsList({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _ActionsListState createState() => _ActionsListState();
 }
@@ -92,11 +97,6 @@ class _ActionsListState extends State<ActionsList> {
     }
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -120,8 +120,7 @@ class _ActionsListState extends State<ActionsList> {
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Actions",
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Actions"),
 
         /// builds actions' list
         body: Container(child: Column(children: <Widget>[listDrivers()])),

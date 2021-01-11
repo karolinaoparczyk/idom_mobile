@@ -75,6 +75,8 @@ void main() {
     expect(find.text("sensor1"), findsNWidgets(2));
     expect(find.text("Kategoria"), findsOneWidget);
     expect(find.text("temperatura powietrza"), findsOneWidget);
+    expect(find.text("Poziom baterii"), findsOneWidget);
+    expect(find.text("- %"), findsOneWidget);
     expect(find.text("Dane z czujnika"), findsOneWidget);
     expect(find.text("Częstotliwość pobierania danych"), findsOneWidget);
     expect(find.text("5 minut"), findsOneWidget);
@@ -309,7 +311,7 @@ void main() {
     await tester.pumpWidget(makePolishTestableWidget(child: page));
 
     expect(find.text("sensor1"), findsNWidgets(2));
-    expect(find.text("stan powietrza"), findsOneWidget);
+    expect(find.text("dym"), findsOneWidget);
     expect(find.text("30 sekund"), findsOneWidget);
     expect(find.text("Ostatni pomiar"), findsNothing);
     expect(find.text("Aktualna wilgotność"), findsNothing);
@@ -388,6 +390,8 @@ void main() {
     expect(find.text("sensor1"), findsNWidgets(2));
     expect(find.text("Category"), findsOneWidget);
     expect(find.text("air temperature"), findsOneWidget);
+    expect(find.text("Battery level"), findsOneWidget);
+    expect(find.text("- %"), findsOneWidget);
     expect(find.text("Sensor data"), findsOneWidget);
     expect(find.text("Data gathering frequency"), findsOneWidget);
     expect(find.text("5 minutes"), findsOneWidget);
@@ -622,7 +626,7 @@ void main() {
     await tester.pumpWidget(makeEnglishTestableWidget(child: page));
 
     expect(find.text("sensor1"), findsNWidgets(2));
-    expect(find.text("air condition"), findsOneWidget);
+    expect(find.text("smoke"), findsOneWidget);
     expect(find.text("30 seconds"), findsOneWidget);
     expect(find.text("Last measurement"), findsNothing);
     expect(find.text("Current temperature"), findsNothing);

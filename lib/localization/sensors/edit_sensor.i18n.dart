@@ -1,7 +1,7 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
+/// translations for sensor edit page in polish and english
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
       {
         "pl_pl": "sekundy",
@@ -56,8 +56,10 @@ extension Localization on String {
         "en_uk": "Editing sensor failed. Try again.",
       } +
       {
-        "pl_pl": "Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Sensor editing error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd edytowania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Sensor editing error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd edytowania czujnika. Adres serwera nieprawidłowy.",
@@ -72,8 +74,10 @@ extension Localization on String {
         "en_uk": "Are you sure you want to save the changes?",
       } +
       {
-        "pl_pl": "Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.",
-        "en_uk": "The data gathering frequency value must be a non-negative integer.",
+        "pl_pl":
+            "Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.",
+        "en_uk":
+            "The data gathering frequency value must be a non-negative integer.",
       } +
       {
         "pl_pl": "Poprawne wartości dla jednostki ",
@@ -86,7 +90,7 @@ extension Localization on String {
       {
         "pl_pl": "Nie wprowadzono żadnych zmian.",
         "en_uk": "No changes have been made.",
-      }+
+      } +
       {
         "pl_pl": "sekundy",
         "en_uk": "seconds",
@@ -102,10 +106,11 @@ extension Localization on String {
       {
         "pl_pl": "dni",
         "en_uk": "days",
-      } +{
-    "pl_pl": "alkomat",
-    "en_uk": "breathalyser",
-  } +
+      } +
+      {
+        "pl_pl": "alkomat",
+        "en_uk": "breathalyser",
+      } +
       {
         "pl_pl": "ciśnienie atmosferyczne",
         "en_uk": "atmospheric pressure",
@@ -123,8 +128,8 @@ extension Localization on String {
         "en_uk": "water temperature",
       } +
       {
-        "pl_pl": "stan powietrza",
-        "en_uk": "air condition",
+        "pl_pl": "dym",
+        "en_uk": "smoke",
       } +
       {
         "pl_pl": "gaz",

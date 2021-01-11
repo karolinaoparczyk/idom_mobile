@@ -16,14 +16,20 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 import '../../models.dart';
 
-/// edits sensor
+/// allows editing sensor
 class EditSensor extends StatefulWidget {
   EditSensor({@required this.storage, @required this.sensor, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected sensor
   final Sensor sensor;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _EditSensorState createState() => new _EditSensorState();
 }
@@ -65,18 +71,22 @@ class _EditSensorState extends State<EditSensor> {
 
     /// setting current sensor category
     _categoryController = TextEditingController(
-        text: SensorCategories.values.firstWhere(
-            (element) => element["value"] == widget.sensor.category)['text'].i18n);
+        text: SensorCategories.values
+            .firstWhere(
+                (element) => element["value"] == widget.sensor.category)['text']
+            .i18n);
     categoryValue = widget.sensor.category;
     if (categoryValue == "rain_sensor" ||
         categoryValue == "water_temp" ||
         categoryValue == "breathalyser" ||
-        categoryValue == "smoke") {
+        categoryValue == "smoke" ||
+        categoryValue == "gas") {
       canEditFrequency = false;
       frequencyUnitsValue = "seconds";
       _frequencyUnitsController.text = FrequencyUnits.values
           .where((element) => element['value'] == "seconds")
-          .first['text'].i18n;
+          .first['text']
+          .i18n;
       _frequencyValueController.text = "30";
     } else {
       canEditFrequency = true;
@@ -97,14 +107,24 @@ class _EditSensorState extends State<EditSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            labelText: "Nazwa".i18n,
+            labelStyle: Theme.of(context).textTheme.headline5,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            counterStyle:
+                Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -117,9 +137,19 @@ class _EditSensorState extends State<EditSensor> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -138,7 +168,9 @@ class _EditSensorState extends State<EditSensor> {
             categoryValue = selectedCategory['value'];
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
-                selectedCategory['value'] == "breathalyser") {
+                selectedCategory['value'] == "breathalyser" ||
+                selectedCategory['value'] == "smoke" ||
+                selectedCategory['value'] == "gas") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values
@@ -153,7 +185,7 @@ class _EditSensorState extends State<EditSensor> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: CategoryFieldValidator.validate);
   }
 
@@ -166,8 +198,17 @@ class _EditSensorState extends State<EditSensor> {
           enabled: canEditFrequency,
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
-          style: TextStyle(fontSize: 21.0),
+          style: Theme.of(context).textTheme.bodyText2,
           decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -175,7 +216,7 @@ class _EditSensorState extends State<EditSensor> {
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
-                    : IdomColors.textDark),
+                    : Theme.of(context).textTheme.bodyText1.color),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -188,12 +229,22 @@ class _EditSensorState extends State<EditSensor> {
         enabled: canEditFrequency,
         controller: _frequencyUnitsController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Jednostki".i18n,
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
-                  : IdomColors.textDark),
-          suffixIcon: Icon(Icons.arrow_drop_down),
+                  : Theme.of(context).textTheme.bodyText1.color),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -215,13 +266,8 @@ class _EditSensorState extends State<EditSensor> {
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: UrlFieldValidator.validate);
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -243,8 +289,7 @@ class _EditSensorState extends State<EditSensor> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditSensor",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "EditSensor"),
 
             /// builds form with sensor properties
             body: SingleChildScrollView(
@@ -262,25 +307,23 @@ class _EditSensorState extends State<EditSensor> {
                             alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
-                                Icon(Icons.info_outline_rounded, size: 17.5),
+                                Icon(Icons.info_outline_rounded, size: 21),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
+                                  padding: const EdgeInsets.only(left: 10.0),
                                   child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62.0, top: 10.0, right: 62.0, bottom: 0.0),
                         child: _buildName()),
                     Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                        padding: EdgeInsets.only(
+                            left: 62.0, top: 10.0, right: 62.0, bottom: 0.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildCategoryField())),
@@ -292,23 +335,21 @@ class _EditSensorState extends State<EditSensor> {
                               alignment: Alignment.centerLeft,
                               child: Row(
                                 children: [
-                                  Icon(Icons.access_time_outlined, size: 17.5),
+                                  Icon(Icons.access_time_outlined, size: 21),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 5.0),
+                                    padding: const EdgeInsets.only(left: 10.0),
                                     child: Text(
                                         "Częstotliwość pobierania danych".i18n,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal)),
+                                            .bodyText1),
                                   ),
                                 ],
                               ))),
                     if (categoryValue != "breathalyser")
                       Padding(
                           padding: EdgeInsets.only(
-                              left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                              left: 62.0, top: 10.0, right: 62.0, bottom: 0.0),
                           child: SizedBox(
                               child: Row(children: <Widget>[
                             Expanded(flex: 8, child: _buildFrequencyValue()),
@@ -327,8 +368,8 @@ class _EditSensorState extends State<EditSensor> {
                           ]))),
                     if (categoryValue != "breathalyser")
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                        padding: EdgeInsets.only(
+                            left: 62.0, top: 10.0, right: 62.0, bottom: 10.0),
                         child: AnimatedCrossFade(
                           crossFadeState: fieldsValidationMessage != null
                               ? CrossFadeState.showFirst
@@ -336,17 +377,14 @@ class _EditSensorState extends State<EditSensor> {
                           duration: Duration(milliseconds: 300),
                           firstChild: fieldsValidationMessage != null
                               ? Text(fieldsValidationMessage,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(fontWeight: FontWeight.normal))
+                                  style: Theme.of(context).textTheme.subtitle1)
                               : SizedBox(),
                           secondChild: SizedBox(),
                         ),
                       ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                      padding: EdgeInsets.only(
+                          left: 62.0, top: 10.0, right: 62.0, bottom: 10.0),
                       child: AnimatedCrossFade(
                         crossFadeState: nameValidationMessage != null
                             ? CrossFadeState.showFirst
@@ -354,10 +392,7 @@ class _EditSensorState extends State<EditSensor> {
                         duration: Duration(milliseconds: 300),
                         firstChild: nameValidationMessage != null
                             ? Text(nameValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context).textTheme.subtitle1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),
@@ -438,7 +473,7 @@ class _EditSensorState extends State<EditSensor> {
       bool changedFrequencyValue, int frequencyInSeconds) async {
     var decision = await confirmActionDialog(
         context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
-    if (decision) {
+    if (decision != null && decision) {
       await _saveChanges(changedName, changedCategory, changedFrequencyValue,
           frequencyInSeconds);
     }

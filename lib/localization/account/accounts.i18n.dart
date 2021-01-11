@@ -1,9 +1,9 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
+/// translations for account list page in polish and english
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
-     {
+      {
         "pl_pl": "Brak wyników wyszukiwania.",
         "en_uk": "No search results.",
       } +
@@ -36,16 +36,20 @@ extension Localization on String {
         "en_uk": "Are you sure you want to remove user ",
       } +
       {
-        "pl_pl": "Błąd pobierania użytkowników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Users download error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd pobierania użytkowników. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Users download error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd pobierania użytkowników. Adres serwera nieprawidłowy.",
         "en_uk": "Users download error. The server address is invalid.",
       } +
       {
-        "pl_pl": "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "User removal error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "User removal error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd usuwania użytkownika. Adres serwera nieprawidłowy.",

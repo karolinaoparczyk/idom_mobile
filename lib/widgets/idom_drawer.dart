@@ -15,21 +15,24 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:idom/localization/widgets/idom_drawer.i18n.dart';
 
+/// displays app menu
 class IdomDrawer extends StatefulWidget {
   IdomDrawer({
     @required this.storage,
     @required this.parentWidgetType,
-    @required this.onLogOutFailure,
-    this.onGoBackAction,
     this.accountUsername,
   });
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// on which screen user opened menu
   final String parentWidgetType;
-  final Function onGoBackAction;
-  final Function onLogOutFailure;
+
+  /// current signed in user's username
   final String accountUsername;
 
+  /// handles state of widgets
   @override
   _IdomDrawerState createState() => _IdomDrawerState();
 }
@@ -76,11 +79,11 @@ class _IdomDrawerState extends State<IdomDrawer> {
                 padding: const EdgeInsets.only(
                     left: 18.0, right: 8, top: 12, bottom: 12),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
                             width: 25,
@@ -95,14 +98,9 @@ class _IdomDrawerState extends State<IdomDrawer> {
                                   color: IdomColors.additionalColor,
                                 ))),
                         Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
+                          padding: const EdgeInsets.only(left: 25.0),
                           child: Text(title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(
-                                      fontSize: 21.0,
-                                      fontWeight: FontWeight.normal)),
+                              style: Theme.of(context).textTheme.bodyText2),
                         ),
                       ],
                     ),
@@ -124,10 +122,10 @@ class _IdomDrawerState extends State<IdomDrawer> {
             Icon(Icons.perm_identity_rounded,
                 color: IdomColors.mainFill, size: 25.0),
             Text(currentUsername,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    .copyWith(fontSize: 25.0))
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                    fontSize: 25.0,
+                    color: IdomColors.whiteTextDark,
+                    fontWeight: FontWeight.bold))
           ]);
     return SizedBox();
   }
@@ -137,6 +135,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
     return SafeArea(
       child: Drawer(
         child: Container(
+          color: Theme.of(context).backgroundColor,
           child: ListView(children: [
             DrawerHeader(
                 decoration: BoxDecoration(
@@ -148,12 +147,13 @@ class _IdomDrawerState extends State<IdomDrawer> {
                         Column(
                           children: [
                             Row(mainAxisSize: MainAxisSize.min, children: [
-                              Icon(Icons.roofing_rounded,
-                                  size: 50.0, color: IdomColors.mainFill),
+                              Image.asset('assets/home.png',
+                                  height: 50.0, width: 50.0),
                               Text(
                                 'IDOM',
                                 style: TextStyle(
-                                    fontSize: 70.0, color: IdomColors.textDark),
+                                    fontSize: 70.0,
+                                    color: IdomColors.blackTextLight),
                                 textAlign: TextAlign.center,
                               ),
                               Icon(Icons.roofing_rounded,
@@ -162,8 +162,8 @@ class _IdomDrawerState extends State<IdomDrawer> {
                             Text(
                               'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU'.i18n,
                               style: TextStyle(
-                                  fontSize: 13.0,
-                                  color: IdomColors.textDark,
+                                  fontSize: 14.0,
+                                  color: IdomColors.blackTextLight,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
@@ -189,12 +189,11 @@ class _IdomDrawerState extends State<IdomDrawer> {
                         builder: (context) => AccountDetail(
                             storage: widget.storage,
                             username: currentUsername)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             isUserStaff == "true"
-                ? customMenuTile("assets/icons/team.svg", "Wszystkie konta".i18n,
-                    () async {
+                ? customMenuTile(
+                    "assets/icons/team.svg", "Wszystkie konta".i18n, () async {
                     Navigator.pop(context);
                     if (widget.parentWidgetType != "Accounts") {
                       Navigator.of(context).popUntil((route) => route.isFirst);
@@ -203,8 +202,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
                           MaterialPageRoute(
                               builder: (context) =>
                                   Accounts(storage: widget.storage)));
-                      if (widget.onGoBackAction != null)
-                        widget.onGoBackAction();
                     }
                   })
                 : SizedBox(),
@@ -213,10 +210,10 @@ class _IdomDrawerState extends State<IdomDrawer> {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Sensors") {
                 await Navigator.of(context).popUntil((route) => route.isFirst);
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n, () async {
+            customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n,
+                () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Cameras") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -225,7 +222,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             Cameras(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile("assets/icons/tap.svg", "Sterowniki".i18n, () async {
@@ -237,22 +233,22 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             Drivers(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "Actions") {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ActionsList(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
-              }
-            }),
-            customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n, () async {
+            // customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
+            //   Navigator.pop(context);
+            //   if (widget.parentWidgetType != "Actions") {
+            //     Navigator.of(context).popUntil((route) => route.isFirst);
+            //     await Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) =>
+            //                 ActionsList(storage: widget.storage)));
+            //     if (widget.onGoBackAction != null) widget.onGoBackAction();
+            //   }
+            // }),
+            customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n,
+                () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "EditApiAddress") {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -261,7 +257,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             Settings(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile("assets/icons/download.svg", "Pobierz dane".i18n,
@@ -274,14 +269,14 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             DataDownload(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile("assets/icons/logout.svg", "Wyloguj".i18n, () async {
               Navigator.pop(context);
-              await _logOut();
+              await _logOutProcedure();
             }),
-            customMenuTile("assets/icons/info.svg", "O projekcie".i18n, () async {
+            customMenuTile("assets/icons/info.svg", "O projekcie".i18n,
+                () async {
               Navigator.pop(context);
               _navigateToProjectWebPage();
             }),
@@ -300,34 +295,15 @@ class _IdomDrawerState extends State<IdomDrawer> {
   }
 
   /// logs the user out of the app
-  Future<void> _logOut() async {
-    try {
-      displayProgressDialog(
-          context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        widget.onLogOutFailure(
-            "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      } else {
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        widget
-            .onLogOutFailure("Wylogowanie nie powiodło się. Spróbuj ponownie.");
-      }
-    } catch (e) {
-      print(e);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (e.toString().contains("TimeoutException")) {
-        widget.onLogOutFailure(
-            "Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      }
-      if (e.toString().contains("SocketException")) {
-        widget
-            .onLogOutFailure("Błąd wylogowania. Adres serwera nieprawidłowy.");
-      }
-    }
+  Future<void> _logOutProcedure() async {
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
+    logOutAndResetData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<void> logOutAndResetData() async {
+    await api.logOut();
+    widget.storage.resetUserData();
   }
 }

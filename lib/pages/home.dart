@@ -6,7 +6,9 @@ import 'package:idom/pages/sensors/sensors.dart';
 import 'package:idom/pages/setup/front.dart';
 import 'package:idom/utils/secure_storage.dart';
 
+/// main widget displaying correct page according to user data
 class Home extends StatefulWidget {
+  /// handles state of widgets
   @override
   _HomeState createState() => _HomeState();
 }

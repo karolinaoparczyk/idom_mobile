@@ -1,23 +1,26 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-class PushNotificationsManager{
+/// handles push notifications
+class PushNotificationsManager {
   PushNotificationsManager._();
 
   factory PushNotificationsManager() => _instance;
 
-  static final PushNotificationsManager _instance = PushNotificationsManager._();
+  /// creates instance
+  static final PushNotificationsManager _instance =
+      PushNotificationsManager._();
 
+  /// firebase messaging object
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  bool _initialized = false;
+
+  /// device token
   String deviceToken;
 
+  /// gets device token based on firebase settings
   Future<void> init() async {
-    if (!_initialized) {
-      String token = await _firebaseMessaging.getToken();
-      print("FirebaseMessaging token: $token");
+    String token = await _firebaseMessaging.getToken();
+    print("FirebaseMessaging token: $token");
 
-      _initialized = true;
-      deviceToken = token;
-    }
+    deviceToken = token;
   }
 }

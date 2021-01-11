@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:idom/api.dart';
+import 'package:idom/dialogs/language_dialog.dart';
 import 'package:idom/localization/setup/sign_up.i18n.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/pages/setup/sign_in.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -14,9 +16,13 @@ import 'package:idom/widgets/loading_indicator.dart';
 class SignUp extends StatefulWidget {
   SignUp({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -30,6 +36,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
+  final TextEditingController _languageController = TextEditingController();
   final FocusScopeNode _node = FocusScopeNode();
   final _scrollController = ScrollController();
   Api api = Api();
@@ -39,6 +46,7 @@ class _SignUpState extends State<SignUp> {
   bool _obscurePassword = true;
   IconData _passwordConfirmIcon = Icons.visibility_outlined;
   bool _obscureConfirmPassword = true;
+  String selectedLanguage;
 
   void initState() {
     super.initState();
@@ -54,6 +62,15 @@ class _SignUpState extends State<SignUp> {
       key: Key('username'),
       autofocus: true,
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Nazwa użytkownika*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
@@ -61,7 +78,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _usernameController,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: UsernameFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -73,6 +90,15 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('password1'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Hasło*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: IconButton(
@@ -96,7 +122,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _passwordController,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: PasswordFieldValidator.validate,
       obscureText: _obscurePassword,
       onEditingComplete: _node.nextFocus,
@@ -109,6 +135,15 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('password2'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Powtórz hasło*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: IconButton(
@@ -132,7 +167,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       controller: _confirmPasswordController,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: (String value) {
         if (value != _passwordController.text) {
           return 'Hasła nie mogą się różnić'.i18n;
@@ -150,6 +185,15 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('email'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Adres e-mail*".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
@@ -158,7 +202,7 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: EmailFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
@@ -170,6 +214,15 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       key: Key('telephone'),
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         labelText: "Nr telefonu komórkowego".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         border: OutlineInputBorder(
@@ -178,10 +231,54 @@ class _SignUpState extends State<SignUp> {
       ),
       controller: _telephoneController,
       keyboardType: TextInputType.phone,
-      style: TextStyle(fontSize: 21.0),
+      style: Theme.of(context).textTheme.bodyText2,
       validator: TelephoneFieldValidator.validate,
       onEditingComplete: _node.nextFocus,
       textInputAction: TextInputAction.next,
+    );
+  }
+
+  /// builds language field
+  Widget _buildLanguageField() {
+    return TextFormField(
+      key: Key("language"),
+      controller: _languageController,
+      decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        labelText: "Język powiadomień".i18n,
+        labelStyle: Theme.of(context).textTheme.headline5,
+        suffixIcon:
+            Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+      onTap: () async {
+        final Map<String, String> language = await showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                child: LanguageDialog(currentLanguage: selectedLanguage),
+              );
+            });
+        if (language != null) {
+          _languageController.text = language['text'].i18n;
+          selectedLanguage = language['value'];
+          setState(() {});
+        }
+      },
+      validator: LanguageFieldValidator.validate,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      readOnly: true,
+      style: Theme.of(context).textTheme.bodyText2,
     );
   }
 
@@ -266,6 +363,15 @@ class _SignUpState extends State<SignUp> {
                                           bottom: 0.0),
                                       child: Align(
                                           alignment: Alignment.centerLeft,
+                                          child: _buildLanguageField())),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 30.0,
+                                          top: 10.0,
+                                          right: 30.0,
+                                          bottom: 0.0),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
                                           child: _buildTelephone())),
                                   Padding(
                                       padding: EdgeInsets.only(
@@ -294,16 +400,13 @@ class _SignUpState extends State<SignUp> {
                                               ? CrossFadeState.showFirst
                                               : CrossFadeState.showSecond,
                                       duration: Duration(milliseconds: 300),
-                                      firstChild: fieldsValidationMessage !=
-                                              null
-                                          ? Text(fieldsValidationMessage,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal))
-                                          : SizedBox(),
+                                      firstChild:
+                                          fieldsValidationMessage != null
+                                              ? Text(fieldsValidationMessage,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1)
+                                              : SizedBox(),
                                       secondChild: SizedBox(),
                                     ),
                                   ),
@@ -318,6 +421,7 @@ class _SignUpState extends State<SignUp> {
     var password1 = _passwordController.text;
     var password2 = _confirmPasswordController.text;
     var email = _emailController.text;
+    var language = selectedLanguage;
     var telephone = _telephoneController.text;
 
     final formState = _formKey.currentState;
@@ -327,8 +431,8 @@ class _SignUpState extends State<SignUp> {
         setState(() {
           _load = true;
         });
-        var res =
-            await api.signUp(username, password1, password2, email, telephone);
+        var res = await api.signUp(
+            username, password1, password2, email, language, telephone);
         setState(() {
           _load = false;
         });
@@ -347,7 +451,8 @@ class _SignUpState extends State<SignUp> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SignIn(storage: widget.storage, isFromSignUp: true)));
+                  builder: (context) =>
+                      SignIn(storage: widget.storage, isFromSignUp: true)));
           return;
         }
         if (res['body'].contains("Username already exists")) {
@@ -369,15 +474,20 @@ class _SignUpState extends State<SignUp> {
         String errorText = "";
         if (loginExists && emailExists && telephoneExists)
           errorText =
-              "Konto dla podanej nazwy użytkownika, adresu e-mail i numeru telefonu już istnieje.".i18n;
+              "Konto dla podanej nazwy użytkownika, adresu e-mail i numeru telefonu już istnieje."
+                  .i18n;
         else if (loginExists && emailExists)
-          errorText = "Konto dla podanej nazwy użytkownika i adresu e-mail już istnieje.".i18n;
+          errorText =
+              "Konto dla podanej nazwy użytkownika i adresu e-mail już istnieje."
+                  .i18n;
         else if (loginExists && telephoneExists)
           errorText =
-              "Konto dla podanej nazwy użytkownika i numeru telefonu już istnieje.".i18n;
+              "Konto dla podanej nazwy użytkownika i numeru telefonu już istnieje."
+                  .i18n;
         else if (emailExists && telephoneExists)
           errorText =
-              "Konto dla podanego adresu e-mail i numeru telefonu już istnieje.".i18n;
+              "Konto dla podanego adresu e-mail i numeru telefonu już istnieje."
+                  .i18n;
         else if (emailExists)
           errorText = "Konto dla podanego adresu e-mail już istnieje.".i18n;
         else if (loginExists)
@@ -386,17 +496,24 @@ class _SignUpState extends State<SignUp> {
           errorText = "Konto dla podanego numeru telefonu już istnieje.".i18n;
 
         if (telephoneInvalid && emailInvalid)
-          errorText += "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
+          errorText +=
+              "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
         else if (telephoneInvalid)
           errorText += "Numer telefonu jest nieprawidłowy.".i18n;
-        else if (emailInvalid) errorText += "Adres e-mail jest nieprawidłowy".i18n;
+        else if (emailInvalid)
+          errorText += "Adres e-mail jest nieprawidłowy".i18n;
 
-        if (errorText != null) {
+        if (errorText.isNotEmpty) {
           FocusScope.of(context).unfocus();
           setState(() {
             fieldsValidationMessage = errorText;
           });
           _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Rejestracja nie powiodła się. Spróbuj ponownie.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
         }
 
         setState(() {
@@ -410,13 +527,19 @@ class _SignUpState extends State<SignUp> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
-              content:
-                  new Text("Błąd rejestracji. Adres serwera nieprawidłowy.".i18n));
+              content: new Text(
+                  "Błąd rejestracji. Adres serwera nieprawidłowy.".i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Błąd rejestracji. Sprawdź połączenie z serwerem i spróbuj ponownie."));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

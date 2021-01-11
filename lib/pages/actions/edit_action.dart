@@ -18,6 +18,7 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/actions/edit_action.i18n.dart';
 
+/// allows editing action
 class EditAction extends StatefulWidget {
   EditAction(
       {@required this.storage,
@@ -26,12 +27,18 @@ class EditAction extends StatefulWidget {
       this.testStartTime,
       this.testEndTime});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected action
   final SensorDriverAction action;
+
+  /// api used for tests
   final Api testApi;
   final String testStartTime;
   final String testEndTime;
 
+  /// handles state of widgets
   @override
   _EditActionState createState() => _EditActionState();
 }
@@ -143,11 +150,6 @@ class _EditActionState extends State<EditAction> {
     _sensorTriggerController.dispose();
     _sensorTriggerOperatorController.dispose();
     super.dispose();
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -349,7 +351,8 @@ class _EditActionState extends State<EditAction> {
       decoration: InputDecoration(
         labelText: "Operator",
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down),
+        suffixIcon:
+            Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -383,7 +386,8 @@ class _EditActionState extends State<EditAction> {
         decoration: InputDecoration(
           labelText: "Sterownik".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -537,8 +541,7 @@ class _EditActionState extends State<EditAction> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditAction",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "EditAction"),
 
             /// builds form with action's properties
             body: SingleChildScrollView(
@@ -562,9 +565,7 @@ class _EditActionState extends State<EditAction> {
                                   child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
@@ -598,9 +599,7 @@ class _EditActionState extends State<EditAction> {
                                     child: Text("Wyzwalacz na czujniku".i18n,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal)),
+                                            .bodyText1),
                                   ),
                                 ],
                               ))),
@@ -632,9 +631,7 @@ class _EditActionState extends State<EditAction> {
                                   child: Text("Czas działania akcji".i18n,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
@@ -652,8 +649,7 @@ class _EditActionState extends State<EditAction> {
                               splashColor: Colors.transparent,
                               fillColor: IdomColors.lighten(
                                   IdomColors.additionalColor, 0.2),
-                              selectedColor: IdomColors.textDark,
-                              children: [
+                              selectedColor: IdomColors.blackTextLight,
                                 Text("pn".i18n,
                                     style: Theme.of(context)
                                         .textTheme
@@ -727,10 +723,7 @@ class _EditActionState extends State<EditAction> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context).textTheme.bodyText1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),
@@ -780,11 +773,7 @@ class _EditActionState extends State<EditAction> {
     var operator;
     trigger =
         changedTrigger ? int.tryParse(_sensorTriggerController.text) : null;
-    operator = !changedOperator
-        ? null
-        : selectedOperator != null
-            ? selectedOperator.substring(0, 1)
-            : null;
+    operator = changedOperator ? selectedOperator.substring(0, 1) : null;
 
     if (changedSensor && selectedSensor != null) {
       sensor = selectedSensor.name;

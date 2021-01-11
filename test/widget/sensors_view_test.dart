@@ -365,6 +365,7 @@ void main() {
     expect(find.byKey(Key("assets/icons/breathalyser.svg")), findsOneWidget);
     expect(find.byKey(Key("assets/icons/temperature.svg")), findsOneWidget);
     expect(find.byKey(Key("assets/icons/humidity.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/battery.svg")), findsNWidgets(7));
     /// scroll categories list
     await tester.drag(
         find.byKey(Key('SensorsList')), const Offset(0.0, -300));

@@ -1,5 +1,5 @@
-import 'package:idom/localization/enums/operators.i18n.dart';
-
+/// allowed operators
 class Operators {
-  static final values = ["< mniejsze niż".i18n, "> większe niż".i18n, "= równe".i18n];
+  /// operators values
+  static final values = ["< mniejsze", "> większe", "= równe"];
 }

@@ -27,12 +27,20 @@ class MainActivity : FlutterActivity() {
                 val completed = createNotificationChannel(argData)
                 if (completed == true) {
                     result.success(completed)
+                    try {
+                        val app = FirebaseApp.getInstance();
+                        app.delete();
+
+                    } catch (e: IllegalStateException) {
+
+                    }
                     val builder: FirebaseOptions.Builder = FirebaseOptions.Builder()
                             .setApplicationId(argData["mobileAppId"].toString())
                             .setApiKey(argData["apiKey"].toString())
                             .setDatabaseUrl(argData["firebaseUrl"].toString())
                             .setStorageBucket(argData["storageBucket"].toString())
                     FirebaseApp.initializeApp(this, builder.build());
+
                 } else {
                     result.error("Error Code", "Error Message", null)
                 }

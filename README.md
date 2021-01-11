@@ -5,7 +5,7 @@ Landing page - https://adriannajmrocki.github.io/idom-website/
 
 # Play Store
 
-Beta version of mobile application wil be available in Play Store on 1st of December 2020.
+https://play.google.com/store/apps/details?id=com.project.idom
 
 # Project status
 

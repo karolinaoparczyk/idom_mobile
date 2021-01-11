@@ -1,19 +1,29 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/category_dialog.dart';
+import 'package:idom/models.dart';
+import 'package:idom/pages/drivers/edit_driver.dart';
+import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/drivers/new_driver.i18n.dart';
 
+/// allows adding new driver
 class NewDriver extends StatefulWidget {
   NewDriver({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _NewDriverState createState() => _NewDriverState();
 }
@@ -24,6 +34,7 @@ class _NewDriverState extends State<NewDriver> {
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   TextEditingController _nameController;
   TextEditingController _categoryController;
+  TextEditingController _ipAddressController;
   String categoryValue;
   Api api = Api();
   bool _load;
@@ -38,6 +49,7 @@ class _NewDriverState extends State<NewDriver> {
     _load = false;
     _nameController = TextEditingController();
     _categoryController = TextEditingController();
+    _ipAddressController = TextEditingController();
   }
 
   @override
@@ -45,11 +57,6 @@ class _NewDriverState extends State<NewDriver> {
     _nameController.dispose();
     _categoryController.dispose();
     super.dispose();
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -61,14 +68,24 @@ class _NewDriverState extends State<NewDriver> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
+            labelText: "Nazwa".i18n,
+            labelStyle: Theme.of(context).textTheme.headline5,
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            counterStyle:
+                Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 12.5)),
         key: Key('name'),
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         autofocus: true,
         maxLength: 30,
         controller: _nameController,
@@ -81,9 +98,19 @@ class _NewDriverState extends State<NewDriver> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -100,12 +127,38 @@ class _NewDriverState extends State<NewDriver> {
           if (selectedCategory != null) {
             _categoryController.text = selectedCategory['text'].i18n;
             categoryValue = selectedCategory['value'];
+            setState(() {});
           }
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 21.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: CategoryFieldValidator.validate);
+  }
+
+  /// build ip address form field
+  Widget _buildIpAddress() {
+    return TextFormField(
+        key: Key("ipAddress"),
+        controller: _ipAddressController,
+        decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          labelText: "Adres IP".i18n,
+          labelStyle: Theme.of(context).textTheme.headline5,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        style: Theme.of(context).textTheme.bodyText2,
+        validator: UrlFieldValidator.validate);
   }
 
   @override
@@ -122,8 +175,7 @@ class _NewDriverState extends State<NewDriver> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "NewDriver",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "NewDriver"),
 
             /// builds form with driver's properties
             body: SingleChildScrollView(
@@ -141,9 +193,9 @@ class _NewDriverState extends State<NewDriver> {
                             alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
-                                Icon(Icons.info_outline_rounded, size: 17.5),
+                                Icon(Icons.info_outline_rounded, size: 21),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
+                                  padding: const EdgeInsets.only(left: 10.0),
                                   child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
@@ -155,17 +207,24 @@ class _NewDriverState extends State<NewDriver> {
                             ))),
                     Padding(
                         padding: EdgeInsets.only(
-                            left: 30.0, top: 10.0, right: 30.0, bottom: 0.0),
+                            left: 62.0, top: 10.0, right: 62.0, bottom: 0.0),
                         child: _buildName()),
                     Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 30.0),
+                            vertical: 10.0, horizontal: 62.0),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: _buildCategoryField())),
+                    if (categoryValue != null && categoryValue == "bulb")
+                      Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 62.0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: _buildIpAddress())),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
+                          vertical: 10.0, horizontal: 62.0),
                       child: AnimatedCrossFade(
                         crossFadeState: fieldsValidationMessage != null
                             ? CrossFadeState.showFirst
@@ -173,10 +232,7 @@ class _NewDriverState extends State<NewDriver> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context).textTheme.subtitle1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),
@@ -199,9 +255,18 @@ class _NewDriverState extends State<NewDriver> {
           _load = false;
         });
         if (res['statusCode'] == "201") {
-          fieldsValidationMessage = null;
-          setState(() {});
-          Navigator.pop(context, true);
+          if (categoryValue == "bulb" && _ipAddressController.text.isNotEmpty) {
+            var driver = Driver.fromJson(jsonDecode(res['body']));
+            var resBulb =
+                await api.addIpAddress(driver.id, _ipAddressController.text);
+            if (resBulb != 200) {
+              _navigateToEditDriver(driver);
+            } else {
+              fieldsValidationMessage = null;
+              setState(() {});
+              Navigator.pop(context, true);
+            }
+          }
         } else if (res['statusCode'] == "401") {
           fieldsValidationMessage = null;
           setState(() {});
@@ -217,7 +282,12 @@ class _NewDriverState extends State<NewDriver> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else if (res['body']
             .contains("Driver with provided name already exists")) {
-          fieldsValidationMessage = "Sterownik o podanej nazwie już istnieje.".i18n;
+          fieldsValidationMessage =
+              "Sterownik o podanej nazwie już istnieje.".i18n;
+          setState(() {});
+          return;
+        } else if (res['body'].contains("Enter a valid IPv4 or IPv6 address")) {
+          fieldsValidationMessage = "Adres IP jest nieprawidłowy".i18n;
           setState(() {});
           return;
         } else {
@@ -225,7 +295,8 @@ class _NewDriverState extends State<NewDriver> {
           setState(() {});
           final snackBar = new SnackBar(
               content: new Text(
-                  "Dodawanie sterownika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Dodawanie sterownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -237,16 +308,42 @@ class _NewDriverState extends State<NewDriver> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd dodawania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania sterownika. Adres serwera nieprawidłowy.".i18n));
+                  "Błąd dodawania sterownika. Adres serwera nieprawidłowy."
+                      .i18n));
+          _scaffoldKey.currentState.showSnackBar((snackBar));
+        } else {
+          final snackBar = new SnackBar(
+              content: new Text(
+                  "Dodawanie sterownika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
+    }
+  }
+
+  _navigateToEditDriver(Driver driver) async {
+    _scaffoldKey.currentState.removeCurrentSnackBar();
+    var result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EditDriver(
+                storage: widget.storage,
+                driver: driver,
+                testApi: widget.testApi,
+                notSetIp: true),
+            fullscreenDialog: true));
+    if (result == true) {
+      Navigator.pop(context, true);
+    } else {
+      Navigator.pop(context);
     }
   }
 }

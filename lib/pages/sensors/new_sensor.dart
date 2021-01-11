@@ -13,13 +13,17 @@ import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 
-/// adds new sensor
+/// allows adding new sensor
 class NewSensor extends StatefulWidget {
   NewSensor({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _NewSensorState createState() => new _NewSensorState();
 }
@@ -59,16 +63,26 @@ class _NewSensorState extends State<NewSensor> {
   Widget _buildName() {
     return TextFormField(
         decoration: InputDecoration(
-          labelText: "Nazwa".i18n,
-          labelStyle: Theme.of(context).textTheme.headline5,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            labelText: "Nazwa".i18n,
+            labelStyle: Theme.of(context).textTheme.headline5,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            counterStyle:
+                Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 12.5)),
         autofocus: true,
         key: Key('name'),
         maxLength: 30,
-        style: TextStyle(fontSize: 17.0),
+        style: Theme.of(context).textTheme.bodyText2,
         controller: _nameController,
         validator: SensorNameFieldValidator.validate);
   }
@@ -79,10 +93,19 @@ class _NewSensorState extends State<NewSensor> {
         key: Key("categoriesButton"),
         controller: _categoryController,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
-          prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -102,25 +125,30 @@ class _NewSensorState extends State<NewSensor> {
             if (selectedCategory['value'] == "rain_sensor" ||
                 selectedCategory['value'] == "water_temp" ||
                 selectedCategory['value'] == "breathalyser" ||
-                selectedCategory['value'] == "smoke") {
+                selectedCategory['value'] == "smoke" ||
+                selectedCategory['value'] == "gas") {
               _frequencyUnitsController = TextEditingController();
               frequencyUnitsValue = null;
               _frequencyUnitsController.text = FrequencyUnits.values
                   .where((element) => element['value'] == "seconds")
-                  .first['text'].i18n;
+                  .first['text']
+                  .i18n;
               frequencyUnitsValue = "seconds";
               _frequencyValueController = TextEditingController(text: "30");
               setState(() {});
               canEditFrequency = false;
             } else {
               canEditFrequency = true;
+              frequencyUnitsValue = null;
+              _frequencyUnitsController = TextEditingController();
+              _frequencyValueController = TextEditingController();
             }
             setState(() {});
           }
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 17.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: CategoryFieldValidator.validate);
   }
 
@@ -133,8 +161,17 @@ class _NewSensorState extends State<NewSensor> {
           enabled: canEditFrequency,
           keyboardType: TextInputType.number,
           controller: _frequencyValueController,
-          style: TextStyle(fontSize: 17.0),
+          style: Theme.of(context).textTheme.bodyText2,
           decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -142,7 +179,7 @@ class _NewSensorState extends State<NewSensor> {
             labelStyle: Theme.of(context).textTheme.headline5.copyWith(
                 color: canEditFrequency
                     ? IdomColors.additionalColor
-                    : IdomColors.textDark),
+                    : Theme.of(context).textTheme.bodyText1.color),
           ),
           validator: SensorFrequencyFieldValidator.validate,
         ));
@@ -155,13 +192,22 @@ class _NewSensorState extends State<NewSensor> {
         controller: _frequencyUnitsController,
         enabled: canEditFrequency,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           labelText: "Jednostki".i18n,
           labelStyle: Theme.of(context).textTheme.headline5.copyWith(
               color: canEditFrequency
                   ? IdomColors.additionalColor
-                  : IdomColors.textDark),
-          suffixIcon: Icon(Icons.arrow_drop_down),
-          prefixStyle: TextStyle(color: IdomColors.textDark, fontSize: 17.0),
+                  : Theme.of(context).textTheme.bodyText1.color),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -176,13 +222,14 @@ class _NewSensorState extends State<NewSensor> {
                 );
               });
           if (selectedFrequencyUnits != null) {
-            _frequencyUnitsController.text = selectedFrequencyUnits['text'].i18n;
+            _frequencyUnitsController.text =
+                selectedFrequencyUnits['text'].i18n;
             frequencyUnitsValue = selectedFrequencyUnits['value'];
           }
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
-        style: TextStyle(fontSize: 17.0),
+        style: Theme.of(context).textTheme.bodyText2,
         validator: FrequencyUnitsFieldValidator.validate);
   }
 
@@ -200,11 +247,6 @@ class _NewSensorState extends State<NewSensor> {
     FocusScope.of(context).unfocus();
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -220,9 +262,11 @@ class _NewSensorState extends State<NewSensor> {
               IconButton(
                 icon: Icon(Icons.restore_page_rounded),
                 onPressed: () async {
-                  var decision = await confirmActionDialog(context, "Potwierdź".i18n,
+                  var decision = await confirmActionDialog(
+                      context,
+                      "Potwierdź".i18n,
                       "Czy na pewno wyczyścić wszystkie pola?".i18n);
-                  if (decision) {
+                  if (decision != null && decision) {
                     clearFields();
                   }
                 },
@@ -234,8 +278,7 @@ class _NewSensorState extends State<NewSensor> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "NewSensor",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "NewSensor"),
 
             /// builds form with sensor properties
             body: Container(
@@ -261,30 +304,30 @@ class _NewSensorState extends State<NewSensor> {
                                     child: Row(
                                       children: [
                                         Icon(Icons.info_outline_rounded,
-                                            size: 17.5),
+                                            size: 21),
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(left: 5.0),
+                                              const EdgeInsets.only(left: 10.0),
                                           child: Text("Ogólne".i18n,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal)),
+                                                  .bodyText1),
                                         ),
                                       ],
                                     ))),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    left: 30.0,
+                                    left: 62.0,
                                     top: 10.0,
-                                    right: 30.0,
+                                    right: 62.0,
                                     bottom: 0.0),
                                 child: _buildName()),
                             Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 30.0),
+                                padding: EdgeInsets.only(
+                                    left: 62.0,
+                                    top: 10.0,
+                                    right: 62.0,
+                                    bottom: 0.0),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: _buildCategoryField())),
@@ -297,27 +340,25 @@ class _NewSensorState extends State<NewSensor> {
                                       child: Row(
                                         children: [
                                           Icon(Icons.access_time_outlined,
-                                              size: 17.5),
+                                              size: 21),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                left: 5.0),
+                                                left: 10.0),
                                             child: Text(
-                                                "Częstotliwość pobierania danych".i18n,
+                                                "Częstotliwość pobierania danych"
+                                                    .i18n,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .bodyText1
-                                                    .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.normal)),
+                                                    .bodyText1),
                                           ),
                                         ],
                                       ))),
                             if (categoryValue != "breathalyser")
                               Padding(
                                   padding: EdgeInsets.only(
-                                      left: 30.0,
+                                      left: 62.0,
                                       top: 10.0,
-                                      right: 30.0,
+                                      right: 62.0,
                                       bottom: 0.0),
                                   child: SizedBox(
                                       child: Row(children: <Widget>[
@@ -340,7 +381,7 @@ class _NewSensorState extends State<NewSensor> {
                             if (categoryValue != "breathalyser")
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 30.0),
+                                    vertical: 10.0, horizontal: 62.0),
                                 child: AnimatedCrossFade(
                                   crossFadeState:
                                       fieldsValidationMessage != null
@@ -351,17 +392,14 @@ class _NewSensorState extends State<NewSensor> {
                                       ? Text(fieldsValidationMessage,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyText1
-                                              .copyWith(
-                                                  fontWeight:
-                                                      FontWeight.normal))
+                                              .subtitle1)
                                       : SizedBox(),
                                   secondChild: SizedBox(),
                                 ),
                               ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 30.0),
+                                  vertical: 10.0, horizontal: 62.0),
                               child: AnimatedCrossFade(
                                 crossFadeState: nameValidationMessage != null
                                     ? CrossFadeState.showFirst
@@ -371,9 +409,7 @@ class _NewSensorState extends State<NewSensor> {
                                     ? Text(nameValidationMessage,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal))
+                                            .subtitle1)
                                     : SizedBox(),
                                 secondChild: SizedBox(),
                               ),
@@ -389,7 +425,8 @@ class _NewSensorState extends State<NewSensor> {
       int valInt = int.tryParse(_frequencyValueController.text);
       if (valInt == null || valInt <= 0) {
         fieldsValidationMessage =
-            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.'.i18n;
+            'Wartość częstotliwości pobierania danych musi być nieujemną liczbą całkowitą.'
+                .i18n;
         setState(() {});
         return;
       }
@@ -399,13 +436,12 @@ class _NewSensorState extends State<NewSensor> {
           SensorFrequencyFieldValidator.isFrequencyValueValid(
               _frequencyValueController.text, frequencyUnitsValue);
       if (!validFrequencyValue) {
-        var text =
-            "Poprawne wartości dla jednostki ".i18n +
-                englishToPolishUnits[frequencyUnitsValue] +
-                " to ".i18n +
-                unitsToMinValues[frequencyUnitsValue].toString() +
-                " - " +
-                unitsToMaxValues[frequencyUnitsValue].toString();
+        var text = "Poprawne wartości dla jednostki ".i18n +
+            englishToPolishUnits[frequencyUnitsValue] +
+            " to ".i18n +
+            unitsToMinValues[frequencyUnitsValue].toString() +
+            " - " +
+            unitsToMaxValues[frequencyUnitsValue].toString();
         setState(() {
           fieldsValidationMessage = text;
         });
@@ -463,7 +499,8 @@ class _NewSensorState extends State<NewSensor> {
           setState(() {});
           final snackBar = new SnackBar(
               content: new Text(
-                  "Dodawanie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Dodawanie czujnika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -475,13 +512,15 @@ class _NewSensorState extends State<NewSensor> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd dodawania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd dodawania czujnika. Adres serwera nieprawidłowy.".i18n));
+                  "Błąd dodawania czujnika. Adres serwera nieprawidłowy."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }

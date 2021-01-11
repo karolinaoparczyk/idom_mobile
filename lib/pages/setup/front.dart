@@ -11,14 +11,17 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/button.dart';
 
-
 /// allows signing in or signing up
 class Front extends StatefulWidget {
   Front({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _FrontState createState() => _FrontState();
 }
@@ -29,7 +32,7 @@ class _FrontState extends State<Front> {
   bool apiAddressSet;
 
   void initState() {
-    if (widget.testApi != null){
+    if (widget.testApi != null) {
       api = widget.testApi;
     }
     checkApiAddressSet();
@@ -53,105 +56,73 @@ class _FrontState extends State<Front> {
             Icon(Icons.warning_amber_outlined,
                 size: 16, color: IdomColors.error),
             Text(' Adres serwera nie został ustawiony'.i18n,
-                style: TextStyle(fontSize: 16, color: IdomColors.error))
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1
+                    .copyWith(color: IdomColors.error))
           ]);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData;
-    queryData = MediaQuery.of(context);
-
     return Scaffold(
         key: _scaffoldKey,
-        body: SingleChildScrollView(
-            child: Container(
-                alignment: Alignment.center,
-                child: Center(
-                    child: Column(
-                  mainAxisSize: MainAxisSize.min,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    SizedBox(
-                        height: queryData.size.height / 15 * 7,
-                        child: AnimatedContainer(
-                            curve: Curves.easeInToLinear,
-                            duration: Duration(
-                              milliseconds: 10,
-                            ),
-                            alignment: Alignment.topCenter,
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.asset('assets/home.png', height: 70.0, width: 70.0),
-                                        Text(
-                                          'IDOM',
-                                          style: TextStyle(
-                                              fontSize: 100.0,
-                                              color: IdomColors.textDark),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Icon(Icons.roofing_rounded,
-                                            size: 70.0,
-                                            color: Colors.transparent),
-                                      ]),
-                                  Text(
-                                    'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU'.i18n,
-                                    style: TextStyle(
-                                        fontSize: 21,
-                                        color: IdomColors.additionalColor,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ]))),
-                    SizedBox(
-                        height: queryData.size.height / 15 * 7,
-                        child: AnimatedContainer(
-                            curve: Curves.easeInToLinear,
-                            duration: Duration(
-                              milliseconds: 10,
-                            ),
-                            alignment: Alignment.topCenter,
-                            child: Column(children: [
-                              setApiAddressEmptyMessage(),
-                              TextButton(
-                                key: Key('editApiServer'),
-                                child: Text('Edytuj adres serwera'.i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
-                                onPressed: navigateToEditApiAddress,
-                              ),
-                              buttonWidget(
-                                  context, "Zaloguj".i18n, Icons.arrow_right_outlined, navigateToSignIn),
-                              SizedBox(height: 10),
-                              buttonWidget(
-                                  context, "Zarejestruj".i18n, Icons.arrow_right_outlined, navigateToSignUp),
-                              TextButton(
-                                key: Key('passwordReset'),
-                                child: Text('Zapomniałeś/aś hasła?'.i18n,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            fontWeight: FontWeight.normal)),
-                                onPressed: navigateToEnterEmail,
-                              ),
-                            ]))),
-                  ],
-                )))));
+                  children: [
+                    Image.asset('assets/home.png', height: 70.0, width: 70.0),
+                    Text(
+                      'IDOM',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontSize: 100.0),
+                      textAlign: TextAlign.center,
+                    ),
+                    Icon(Icons.roofing_rounded,
+                        size: 70.0, color: Colors.transparent),
+                  ]),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 18.0),
+                child: Text(
+                  'TWÓJ INTELIGENTNY DOM\nW JEDNYM MIEJSCU'.i18n,
+                  style: TextStyle(
+                      fontSize: 21,
+                      color: IdomColors.additionalColor,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              setApiAddressEmptyMessage(),
+              TextButton(
+                key: Key('editApiServer'),
+                child: Text('Edytuj adres serwera'.i18n,
+                    style: Theme.of(context).textTheme.bodyText2),
+                onPressed: navigateToEditApiAddress,
+              ),
+              buttonWidget(context, "Zaloguj".i18n, navigateToSignIn),
+              SizedBox(height: 10),
+              buttonWidget(context, "Zarejestruj".i18n, navigateToSignUp),
+              TextButton(
+                key: Key('passwordReset'),
+                child: Text('Zapomniałeś/aś hasła?'.i18n,
+                    style: Theme.of(context).textTheme.bodyText2),
+                onPressed: navigateToEnterEmail,
+              ),
+            ],
+          ),
+        ));
   }
 
   /// navigates to editing api server address
   navigateToEditApiAddress() async {
+    _scaffoldKey.currentState.removeCurrentSnackBar();
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -161,8 +132,8 @@ class _FrontState extends State<Front> {
     /// displays success message when server address is set
     if (result == true) {
       await checkApiAddressSet();
-      final snackBar =
-          new SnackBar(content: new Text("Adres serwera został zapisany.".i18n));
+      final snackBar = new SnackBar(
+          content: new Text("Adres serwera został zapisany.".i18n));
 
       _scaffoldKey.currentState.showSnackBar((snackBar));
     }
@@ -171,10 +142,12 @@ class _FrontState extends State<Front> {
   /// navigates to sending reset password request page
   navigateToEnterEmail() async {
     if (apiAddressSet != null && apiAddressSet) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
       var result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => EnterEmail(testApi: widget.testApi), fullscreenDialog: true));
+              builder: (context) => EnterEmail(testApi: widget.testApi),
+              fullscreenDialog: true));
 
       /// displays success message when the email is successfully sent
       if (result == true) {
@@ -189,10 +162,12 @@ class _FrontState extends State<Front> {
   /// navigates to signing in page
   void navigateToSignIn() async {
     if (apiAddressSet != null && apiAddressSet) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => SignIn(storage: widget.storage, isFromSignUp: false),
+              builder: (context) =>
+                  SignIn(storage: widget.storage, isFromSignUp: false),
               fullscreenDialog: true));
     }
   }
@@ -200,6 +175,7 @@ class _FrontState extends State<Front> {
   /// navigates to signing up page
   void navigateToSignUp() async {
     if (apiAddressSet != null && apiAddressSet) {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
       Navigator.push(
           context,
           MaterialPageRoute(

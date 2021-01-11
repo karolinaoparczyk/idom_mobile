@@ -1,7 +1,7 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
+/// translations for sign in page in polish and english
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
       {
         "pl_pl": "Konto zostało utworzone. Możesz się zalogować.",
@@ -16,15 +16,19 @@ extension Localization on String {
         "en_uk": "Password",
       } +
       {
-        "pl_pl": "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie.",
+        "pl_pl":
+            "Błąd pobierania danych użytkownika. Spróbuj zalogować się ponownie.",
         "en_uk": "User data download error. Please try logging in again.",
       } +
       {
-        "pl_pl": "Błąd logowania. Błędne hasło lub konto z podanym loginem nie istnieje.",
-        "en_uk": "Login error. Wrong password or account with the given login does not exist.",
+        "pl_pl":
+            "Błąd logowania. Błędne hasło lub konto z podaną nazwą użytkownika nie istnieje.",
+        "en_uk":
+            "Login error. Wrong password or account with the given login does not exist.",
       } +
       {
-        "pl_pl": "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "pl_pl":
+            "Błąd logowania. Sprawdź połączenie z serwerem i spróbuj ponownie.",
         "en_uk": "Login error. Check the server connection and try again.",
       } +
       {

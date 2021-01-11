@@ -73,9 +73,10 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsNWidgets(2));
+    expect(find.text("przycisk"), findsNWidgets(2));
     expect(find.text("pilot"), findsOneWidget);
-    expect(find.text("żarówka"), findsOneWidget);
+    expect(find.text("rolety"), findsOneWidget);
+    await tester.tap(find.text("żarówka").last);
     await tester.tap(find.text("żarówka").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -89,6 +90,152 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
     verify(await mockApi.editDriver(1, 'newname', "bulb")).called(1);
+  });
+
+  /// tests if edits bulb, ip address invalid
+  testWidgets('edits bulb, ip address invalid', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.111.11.11",
+        data: null);
+    when(mockApi.editDriver(1, 'newname', null)).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "200"}));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(400));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    EditDriver page = EditDriver(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('editDriverButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editDriver(1, 'newname', null)).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+    expect(find.byType(EditDriver), findsOneWidget);
+    expect(find.text("Adres IP jest niepoprawny."), findsOneWidget);
+  });
+
+  /// tests if edits bulb, name exists
+  testWidgets('edits bulb, name exists', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.111.11.11",
+        data: null);
+    when(mockApi.editDriver(1, 'newname', null)).thenAnswer((_) async =>
+        Future.value({
+          "body": "Driver with provided name already exists",
+          "statusCode": "400"
+        }));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    EditDriver page = EditDriver(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('editDriverButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editDriver(1, 'newname', null)).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+    expect(find.byType(EditDriver), findsOneWidget);
+    expect(
+        find.text("Sterownik o podanej nazwie już istnieje."), findsOneWidget);
+  });
+
+  /// tests if edits bulb, name exists and ip address invalid
+  testWidgets('edits bulb, name exists and ip address invalid',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.111.11.11",
+        data: null);
+    when(mockApi.editDriver(1, 'newname', null)).thenAnswer((_) async =>
+        Future.value({
+          "body": "Driver with provided name already exists",
+          "statusCode": "400"
+        }));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(400));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    EditDriver page = EditDriver(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('editDriverButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editDriver(1, 'newname', null)).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+    expect(find.byType(EditDriver), findsOneWidget);
+    expect(
+        find.text(
+            "Sterownik o podanej nazwie już istnieje. Adres IP jest niepoprawny."),
+        findsOneWidget);
   });
 
   /// tests if does not edit driver when api error
@@ -128,7 +275,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsNWidgets(2));
+    expect(find.text("przycisk"), findsNWidgets(2));
     expect(find.text("pilot"), findsOneWidget);
     expect(find.text("żarówka"), findsOneWidget);
     await tester.tap(find.text("żarówka").last);
@@ -188,7 +335,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text("Wybierz kategorię"), findsOneWidget);
     expect(find.text("Anuluj"), findsOneWidget);
-    expect(find.text("naduszacz"), findsNWidgets(2));
+    expect(find.text("przycisk"), findsNWidgets(2));
     expect(find.text("pilot"), findsOneWidget);
     expect(find.text("żarówka"), findsOneWidget);
     await tester.tap(find.text("żarówka").last);
@@ -291,7 +438,8 @@ void main() {
     await tester.tap(find.byKey(Key('editDriverButton')));
     await tester.pumpAndSettle();
     expect(find.text("Confirm"), findsOneWidget);
-    expect(find.text("Are you sure you want to save the changes?"), findsOneWidget);
+    expect(find.text("Are you sure you want to save the changes?"),
+        findsOneWidget);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
     await tester.pump();
@@ -346,13 +494,13 @@ void main() {
     await tester.tap(find.byKey(Key('editDriverButton')));
     await tester.pumpAndSettle();
     expect(find.text("Confirm"), findsOneWidget);
-    expect(find.text("Are you sure you want to save the changes?"), findsOneWidget);
+    expect(find.text("Are you sure you want to save the changes?"),
+        findsOneWidget);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    expect(find.text("Editing driver failed. Try again."),
-        findsOneWidget);
+    expect(find.text("Editing driver failed. Try again."), findsOneWidget);
     verify(await mockApi.editDriver(1, 'newname', "bulb")).called(1);
   });
 
@@ -399,6 +547,7 @@ void main() {
     expect(find.text("clicker"), findsNWidgets(2));
     expect(find.text("remote control"), findsOneWidget);
     expect(find.text("bulb"), findsOneWidget);
+    expect(find.text("blinds"), findsOneWidget);
     await tester.tap(find.text("bulb").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
@@ -406,18 +555,20 @@ void main() {
     await tester.tap(find.byKey(Key('editDriverButton')));
     await tester.pumpAndSettle();
     expect(find.text("Confirm"), findsOneWidget);
-    expect(find.text("Are you sure you want to save the changes?"), findsOneWidget);
+    expect(find.text("Are you sure you want to save the changes?"),
+        findsOneWidget);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));
-    expect(
-        find.text("A driver with the given name already exists."), findsOneWidget);
+    expect(find.text("A driver with the given name already exists."),
+        findsOneWidget);
     verify(await mockApi.editDriver(1, 'newname', "bulb")).called(1);
   });
 
   /// tests if does not edit driver when empty name, english
-  testWidgets('english,edits driver when empty name', (WidgetTester tester) async {
+  testWidgets('english,edits driver when empty name',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Driver driver = Driver(
         id: 1,
@@ -451,5 +602,153 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text("Required field"), findsOneWidget);
     verifyNever(await mockApi.editDriver(1, null, "clicker"));
+  });
+
+  /// tests if edits bulb, ip address invalid, english
+  testWidgets('english edits bulb, ip address invalid',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.111.11.11",
+        data: null);
+    when(mockApi.editDriver(1, 'newname', null)).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "200"}));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(400));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    EditDriver page = EditDriver(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('editDriverButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editDriver(1, 'newname', null)).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+    expect(find.byType(EditDriver), findsOneWidget);
+    expect(find.text("The IP address is incorrect."), findsOneWidget);
+  });
+
+  /// tests if edits bulb, name exists, english
+  testWidgets('english edits bulb, name exists', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.111.11.11",
+        data: null);
+    when(mockApi.editDriver(1, 'newname', null)).thenAnswer((_) async =>
+        Future.value({
+          "body": "Driver with provided name already exists",
+          "statusCode": "400"
+        }));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(200));
+
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    EditDriver page = EditDriver(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('editDriverButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editDriver(1, 'newname', null)).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+    expect(find.byType(EditDriver), findsOneWidget);
+    expect(find.text("A driver with the given name already exists."),
+        findsOneWidget);
+  });
+
+  /// tests if edits bulb, name exists and ip address invalid, english
+  testWidgets('english edits bulb, name exists and ip address invalid',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "bulb",
+        ipAddress: "111.111.11.11",
+        data: null);
+    when(mockApi.editDriver(1, 'newname', null)).thenAnswer((_) async =>
+        Future.value({
+          "body": "Driver with provided name already exists",
+          "statusCode": "400"
+        }));
+    when(mockApi.addIpAddress(1, '111.222.33.44'))
+        .thenAnswer((_) async => Future.value(400));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    EditDriver page = EditDriver(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    Finder ipField = find.byKey(Key('ipAddress'));
+    await tester.enterText(ipField, '111.222.33.44');
+
+    await tester.tap(find.byKey(Key('editDriverButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editDriver(1, 'newname', null)).called(1);
+    verify(await mockApi.addIpAddress(1, '111.222.33.44')).called(1);
+    expect(find.byType(EditDriver), findsOneWidget);
+    expect(
+        find.text(
+            "A driver with the given name already exists. The IP address is incorrect."),
+        findsOneWidget);
   });
 }

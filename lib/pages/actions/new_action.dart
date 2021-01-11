@@ -15,12 +15,17 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/actions/new_action.i18n.dart';
 
+/// allowing adding a new action
 class NewAction extends StatefulWidget {
   NewAction({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _NewActionState createState() => _NewActionState();
 }
@@ -85,11 +90,6 @@ class _NewActionState extends State<NewAction> {
     _sensorTriggerController.dispose();
     _sensorTriggerOperatorController.dispose();
     super.dispose();
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -290,7 +290,8 @@ class _NewActionState extends State<NewAction> {
       decoration: InputDecoration(
         labelText: "Operator",
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down),
+        suffixIcon:
+            Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -484,8 +485,7 @@ class _NewActionState extends State<NewAction> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "NewAction",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "NewAction"),
 
             /// builds form with action's properties
             body: SingleChildScrollView(
@@ -509,9 +509,7 @@ class _NewActionState extends State<NewAction> {
                                   child: Text("Ogólne".i18n,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
@@ -545,9 +543,7 @@ class _NewActionState extends State<NewAction> {
                                     child: Text("Wyzwalacz na czujniku".i18n,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyText1
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal)),
+                                            .bodyText1),
                                   ),
                                 ],
                               ))),
@@ -579,9 +575,7 @@ class _NewActionState extends State<NewAction> {
                                   child: Text("Czas działania akcji".i18n,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyText1
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal)),
+                                          .bodyText1),
                                 ),
                               ],
                             ))),
@@ -697,10 +691,7 @@ class _NewActionState extends State<NewAction> {
                         duration: Duration(milliseconds: 300),
                         firstChild: fieldsValidationMessage != null
                             ? Text(fieldsValidationMessage,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(fontWeight: FontWeight.normal))
+                                style: Theme.of(context).textTheme.bodyText1)
                             : SizedBox(),
                         secondChild: SizedBox(),
                       ),

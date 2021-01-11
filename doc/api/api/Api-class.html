@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Api class from the api library, for the Dart programming language.">
+  <title>Api class - api library - Dart API</title>
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500,400i,400,300|Source+Sans+Pro:400,300,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+</head>
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">idom</a></li>
+    <li><a href="../api/api-library.html">api</a></li>
+    <li class="self-crumb">Api class</li>
+  </ol>
+  <div class="self-name">Api</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+  <div id="dartdoc-sidebar-left" class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+      <form class="search-sidebar" role="search">
+        <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+      </form>
+    </header>
+    
+    <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+      <li><a href="../index.html">idom</a></li>
+      <li><a href="../api/api-library.html">api</a></li>
+      <li class="self-crumb">Api class</li>
+    </ol>
+    
+    <h5>api library</h5>
+    <ol>
+  <li class="section-title"><a href="../api/api-library.html#classes">Classes</a></li>
+  <li><a href="../api/Api-class.html">Api</a></li>
+
+
+
+
+
+
+
+
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
+      <div><h1><span class="kind-class">Api</span> class  </h1></div>
+
+    <section class="desc markdown">
+      <p>api server connections</p>
+    </section>
+    
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="Api" class="callable">
+          <span class="name"><a href="../api/Api/Api.html">Api</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          sets api url in constructor 
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+          <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+          <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>         
+        </dt>
+        <dd class="inherited">
+          The hash code for this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">[...]</a>
+                  <div class="features">read-only, inherited</div>
+</dd>
+        <dt id="httpClient" class="property">
+          <span class="name"><a href="../api/Api/httpClient.html">httpClient</a></span>
+          <span class="signature">&#8596; <a href="https://pub.dev/documentation/http/0.12.2/http/Client-class.html">Client</a></span>         
+        </dt>
+        <dd>
+          http client for handling connections 
+                  <div class="features">read / write</div>
+</dd>
+        <dt id="runtimeType" class="property inherited">
+          <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+          <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>         
+        </dt>
+        <dd class="inherited">
+          A representation of the runtime type of the object. 
+                  <div class="features">read-only, inherited</div>
+</dd>
+        <dt id="storage" class="property">
+          <span class="name"><a href="../api/Api/storage.html">storage</a></span>
+          <span class="signature">&#8596; <a href="../utils_secure_storage/SecureStorage-class.html">SecureStorage</a></span>         
+        </dt>
+        <dd>
+          internal storage 
+                  <div class="features">read / write</div>
+</dd>
+        <dt id="token" class="property">
+          <span class="name"><a href="../api/Api/token.html">token</a></span>
+          <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
+        </dt>
+        <dd>
+          current signed in user's token 
+                  <div class="features">read / write</div>
+</dd>
+        <dt id="url" class="property">
+          <span class="name"><a href="../api/Api/url.html">url</a></span>
+          <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
+        </dt>
+        <dd>
+          apis server url 
+                  <div class="features">read / write</div>
+</dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="addAction" class="callable">
+          <span class="name"><a href="../api/Api/addAction.html">addAction</a></span><span class="signature">(<wbr><span class="parameter" id="addAction-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span><span class="parameter" id="addAction-param-sensor"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">sensor</span>, </span><span class="parameter" id="addAction-param-trigger"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">trigger</span>, </span><span class="parameter" id="addAction-param-operator"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">operator</span>, </span><span class="parameter" id="addAction-param-driver"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">driver</span>, </span><span class="parameter" id="addAction-param-days"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">days</span>, </span><span class="parameter" id="addAction-param-startTime"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">startTime</span>, </span><span class="parameter" id="addAction-param-endTime"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">endTime</span>, </span><span class="parameter" id="addAction-param-action"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">action</span>, </span><span class="parameter" id="addAction-param-flag"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">flag</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          adds action 
+                  
+</dd>
+        <dt id="addCamera" class="callable">
+          <span class="name"><a href="../api/Api/addCamera.html">addCamera</a></span><span class="signature">(<wbr><span class="parameter" id="addCamera-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          adds camera 
+                  
+</dd>
+        <dt id="addDriver" class="callable">
+          <span class="name"><a href="../api/Api/addDriver.html">addDriver</a></span><span class="signature">(<wbr><span class="parameter" id="addDriver-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span><span class="parameter" id="addDriver-param-category"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">category</span>, </span><span class="parameter" id="addDriver-param-data">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">data</span>: <span class="default-value">null</span>}</span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          adds driver 
+                  
+</dd>
+        <dt id="addIpAddress" class="callable">
+          <span class="name"><a href="../api/Api/addIpAddress.html">addIpAddress</a></span><span class="signature">(<wbr><span class="parameter" id="addIpAddress-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span>, </span><span class="parameter" id="addIpAddress-param-ipAddress"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">ipAddress</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          adds ip address to bulb 
+                  
+</dd>
+        <dt id="addSensor" class="callable">
+          <span class="name"><a href="../api/Api/addSensor.html">addSensor</a></span><span class="signature">(<wbr><span class="parameter" id="addSensor-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span><span class="parameter" id="addSensor-param-category"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">category</span>, </span><span class="parameter" id="addSensor-param-frequency"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">frequency</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          adds sensor 
+                  
+</dd>
+        <dt id="changeBulbBrightness" class="callable">
+          <span class="name"><a href="../api/Api/changeBulbBrightness.html">changeBulbBrightness</a></span><span class="signature">(<wbr><span class="parameter" id="changeBulbBrightness-param-bulbId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">bulbId</span>, </span><span class="parameter" id="changeBulbBrightness-param-brightness"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">brightness</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          changes bulb's brightness 
+                  
+</dd>
+        <dt id="changeBulbColor" class="callable">
+          <span class="name"><a href="../api/Api/changeBulbColor.html">changeBulbColor</a></span><span class="signature">(<wbr><span class="parameter" id="changeBulbColor-param-bulbId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">bulbId</span>, </span><span class="parameter" id="changeBulbColor-param-red"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">red</span>, </span><span class="parameter" id="changeBulbColor-param-green"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">green</span>, </span><span class="parameter" id="changeBulbColor-param-blue"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">blue</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          changes bulb's color 
+                  
+</dd>
+        <dt id="checkIfDeviceTokenSent" class="callable">
+          <span class="name"><a href="../api/Api/checkIfDeviceTokenSent.html">checkIfDeviceTokenSent</a></span><span class="signature">(<wbr><span class="parameter" id="checkIfDeviceTokenSent-param-deviceToken"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">deviceToken</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          checks if device token has been sent 
+                  
+</dd>
+        <dt id="deactivateAccount" class="callable">
+          <span class="name"><a href="../api/Api/deactivateAccount.html">deactivateAccount</a></span><span class="signature">(<wbr><span class="parameter" id="deactivateAccount-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          deactivates user 
+                  
+</dd>
+        <dt id="deactivateSensor" class="callable">
+          <span class="name"><a href="../api/Api/deactivateSensor.html">deactivateSensor</a></span><span class="signature">(<wbr><span class="parameter" id="deactivateSensor-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          deactivates sensor 
+                  
+</dd>
+        <dt id="deleteAction" class="callable">
+          <span class="name"><a href="../api/Api/deleteAction.html">deleteAction</a></span><span class="signature">(<wbr><span class="parameter" id="deleteAction-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          deletes action 
+                  
+</dd>
+        <dt id="deleteCamera" class="callable">
+          <span class="name"><a href="../api/Api/deleteCamera.html">deleteCamera</a></span><span class="signature">(<wbr><span class="parameter" id="deleteCamera-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          deletes camera 
+                  
+</dd>
+        <dt id="deleteDriver" class="callable">
+          <span class="name"><a href="../api/Api/deleteDriver.html">deleteDriver</a></span><span class="signature">(<wbr><span class="parameter" id="deleteDriver-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          deletes driver 
+                  
+</dd>
+        <dt id="editAccount" class="callable">
+          <span class="name"><a href="../api/Api/editAccount.html">editAccount</a></span><span class="signature">(<wbr><span class="parameter" id="editAccount-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span>, </span><span class="parameter" id="editAccount-param-email"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">email</span>, </span><span class="parameter" id="editAccount-param-language"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">language</span>, </span><span class="parameter" id="editAccount-param-telephone"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">telephone</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          edits users data 
+                  
+</dd>
+        <dt id="editAction" class="callable">
+          <span class="name"><a href="../api/Api/editAction.html">editAction</a></span><span class="signature">(<wbr><span class="parameter" id="editAction-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span>, </span><span class="parameter" id="editAction-param-body"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">body</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          edits action 
+                  
+</dd>
+        <dt id="editCamera" class="callable">
+          <span class="name"><a href="../api/Api/editCamera.html">editCamera</a></span><span class="signature">(<wbr><span class="parameter" id="editCamera-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span>, </span><span class="parameter" id="editCamera-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          edits camera 
+                  
+</dd>
+        <dt id="editDriver" class="callable">
+          <span class="name"><a href="../api/Api/editDriver.html">editDriver</a></span><span class="signature">(<wbr><span class="parameter" id="editDriver-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span>, </span><span class="parameter" id="editDriver-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span><span class="parameter" id="editDriver-param-category"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">category</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          edits driver 
+                  
+</dd>
+        <dt id="editNotifications" class="callable">
+          <span class="name"><a href="../api/Api/editNotifications.html">editNotifications</a></span><span class="signature">(<wbr><span class="parameter" id="editNotifications-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span>, </span><span class="parameter" id="editNotifications-param-appNotifications"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">appNotifications</span>, </span><span class="parameter" id="editNotifications-param-smsNotifications"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">smsNotifications</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          edits users notifications 
+                  
+</dd>
+        <dt id="editSensor" class="callable">
+          <span class="name"><a href="../api/Api/editSensor.html">editSensor</a></span><span class="signature">(<wbr><span class="parameter" id="editSensor-param-id"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">id</span>, </span><span class="parameter" id="editSensor-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span><span class="parameter" id="editSensor-param-category"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">category</span>, </span><span class="parameter" id="editSensor-param-frequency"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">frequency</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          edits sensor 
+                  
+</dd>
+        <dt id="generateFile" class="callable">
+          <span class="name"><a href="../api/Api/generateFile.html">generateFile</a></span><span class="signature">(<wbr><span class="parameter" id="generateFile-param-sensorIds"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">sensorIds</span>, </span><span class="parameter" id="generateFile-param-categoriesValues"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">categoriesValues</span>, </span><span class="parameter" id="generateFile-param-days"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">days</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          generates csv file with sensor data 
+                  
+</dd>
+        <dt id="getAccounts" class="callable">
+          <span class="name"><a href="../api/Api/getAccounts.html">getAccounts</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets accounts 
+                  
+</dd>
+        <dt id="getActionDetails" class="callable">
+          <span class="name"><a href="../api/Api/getActionDetails.html">getActionDetails</a></span><span class="signature">(<wbr><span class="parameter" id="getActionDetails-param-actionId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">actionId</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets action details 
+                  
+</dd>
+        <dt id="getActions" class="callable">
+          <span class="name"><a href="../api/Api/getActions.html">getActions</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets actions 
+                  
+</dd>
+        <dt id="getApiAddress" class="callable">
+          <span class="name"><a href="../api/Api/getApiAddress.html">getApiAddress</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; void</span>
+          </span>
+                  </dt>
+        <dd>
+          get api address from storage 
+                  
+</dd>
+        <dt id="getCameraDetails" class="callable">
+          <span class="name"><a href="../api/Api/getCameraDetails.html">getCameraDetails</a></span><span class="signature">(<wbr><span class="parameter" id="getCameraDetails-param-cameraId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">cameraId</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets camera details 
+                  
+</dd>
+        <dt id="getCameras" class="callable">
+          <span class="name"><a href="../api/Api/getCameras.html">getCameras</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets cameras 
+                  
+</dd>
+        <dt id="getDriverDetails" class="callable">
+          <span class="name"><a href="../api/Api/getDriverDetails.html">getDriverDetails</a></span><span class="signature">(<wbr><span class="parameter" id="getDriverDetails-param-driverId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">driverId</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets driver details 
+                  
+</dd>
+        <dt id="getDrivers" class="callable">
+          <span class="name"><a href="../api/Api/getDrivers.html">getDrivers</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets drivers 
+                  
+</dd>
+        <dt id="getSensorData" class="callable">
+          <span class="name"><a href="../api/Api/getSensorData.html">getSensorData</a></span><span class="signature">(<wbr><span class="parameter" id="getSensorData-param-sensorId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">sensorId</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets sensor's frequency 
+                  
+</dd>
+        <dt id="getSensorDetails" class="callable">
+          <span class="name"><a href="../api/Api/getSensorDetails.html">getSensorDetails</a></span><span class="signature">(<wbr><span class="parameter" id="getSensorDetails-param-sensorId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">sensorId</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets sensor details 
+                  
+</dd>
+        <dt id="getSensors" class="callable">
+          <span class="name"><a href="../api/Api/getSensors.html">getSensors</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets sensors 
+                  
+</dd>
+        <dt id="getToken" class="callable">
+          <span class="name"><a href="../api/Api/getToken.html">getToken</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; void</span>
+          </span>
+                  </dt>
+        <dd>
+          get token from storage 
+                  
+</dd>
+        <dt id="getUser" class="callable">
+          <span class="name"><a href="../api/Api/getUser.html">getUser</a></span><span class="signature">(<wbr><span class="parameter" id="getUser-param-username"><span class="type-annotation">dynamic</span> <span class="parameter-name">username</span>, </span><span class="parameter" id="getUser-param-userToken">{<span class="type-annotation">dynamic</span> <span class="parameter-name">userToken</span>}</span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          gets user data 
+                  
+</dd>
+        <dt id="logOut" class="callable">
+          <span class="name"><a href="../api/Api/logOut.html">logOut</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          loggs user out 
+                  
+</dd>
+        <dt id="noSuchMethod" class="callable inherited">
+          <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+                  </dt>
+        <dd class="inherited">
+          Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
+                  <div class="features">inherited</div>
+</dd>
+        <dt id="resetPassword" class="callable">
+          <span class="name"><a href="../api/Api/resetPassword.html">resetPassword</a></span><span class="signature">(<wbr><span class="parameter" id="resetPassword-param-email"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">email</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          sends request to reset password 
+                  
+</dd>
+        <dt id="sendDeviceToken" class="callable">
+          <span class="name"><a href="../api/Api/sendDeviceToken.html">sendDeviceToken</a></span><span class="signature">(<wbr><span class="parameter" id="sendDeviceToken-param-deviceToken"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">deviceToken</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          sends device token 
+                  
+</dd>
+        <dt id="signIn" class="callable">
+          <span class="name"><a href="../api/Api/signIn.html">signIn</a></span><span class="signature">(<wbr><span class="parameter" id="signIn-param-username"><span class="type-annotation">dynamic</span> <span class="parameter-name">username</span>, </span><span class="parameter" id="signIn-param-password"><span class="type-annotation">dynamic</span> <span class="parameter-name">password</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          signs user in 
+                  
+</dd>
+        <dt id="signUp" class="callable">
+          <span class="name"><a href="../api/Api/signUp.html">signUp</a></span><span class="signature">(<wbr><span class="parameter" id="signUp-param-username"><span class="type-annotation">dynamic</span> <span class="parameter-name">username</span>, </span><span class="parameter" id="signUp-param-password1"><span class="type-annotation">dynamic</span> <span class="parameter-name">password1</span>, </span><span class="parameter" id="signUp-param-password2"><span class="type-annotation">dynamic</span> <span class="parameter-name">password2</span>, </span><span class="parameter" id="signUp-param-email"><span class="type-annotation">dynamic</span> <span class="parameter-name">email</span>, </span><span class="parameter" id="signUp-param-language"><span class="type-annotation">dynamic</span> <span class="parameter-name">language</span>, </span><span class="parameter" id="signUp-param-telephone"><span class="type-annotation">dynamic</span> <span class="parameter-name">telephone</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          registers user 
+                  
+</dd>
+        <dt id="startDriver" class="callable">
+          <span class="name"><a href="../api/Api/startDriver.html">startDriver</a></span><span class="signature">(<wbr><span class="parameter" id="startDriver-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          starts driver 
+                  
+</dd>
+        <dt id="switchBulb" class="callable">
+          <span class="name"><a href="../api/Api/switchBulb.html">switchBulb</a></span><span class="signature">(<wbr><span class="parameter" id="switchBulb-param-bulbId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">bulbId</span>, </span><span class="parameter" id="switchBulb-param-flag"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">flag</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          switches bulb 
+                  
+</dd>
+        <dt id="toString" class="callable inherited">
+          <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+          </span>
+                  </dt>
+        <dd class="inherited">
+          Returns a string representation of this object. 
+                  <div class="features">inherited</div>
+</dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor inherited" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+          <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+          </span>
+                  </dt>
+        <dd class="inherited">
+          The equality operator. <a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">[...]</a>
+                  <div class="features">inherited</div>
+</dd>
+      </dl>
+    </section>
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+    <ol>
+
+
+    <li class="section-title"><a href="../api/Api-class.html#constructors">Constructors</a></li>
+    <li><a href="../api/Api/Api.html">Api</a></li>
+
+    <li class="section-title"> <a href="../api/Api-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../api/Api/httpClient.html">httpClient</a></li>
+    <li><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../api/Api/storage.html">storage</a></li>
+    <li><a href="../api/Api/token.html">token</a></li>
+    <li><a href="../api/Api/url.html">url</a></li>
+
+    <li class="section-title"><a href="../api/Api-class.html#instance-methods">Methods</a></li>
+    <li><a href="../api/Api/addAction.html">addAction</a></li>
+    <li><a href="../api/Api/addCamera.html">addCamera</a></li>
+    <li><a href="../api/Api/addDriver.html">addDriver</a></li>
+    <li><a href="../api/Api/addIpAddress.html">addIpAddress</a></li>
+    <li><a href="../api/Api/addSensor.html">addSensor</a></li>
+    <li><a href="../api/Api/changeBulbBrightness.html">changeBulbBrightness</a></li>
+    <li><a href="../api/Api/changeBulbColor.html">changeBulbColor</a></li>
+    <li><a href="../api/Api/checkIfDeviceTokenSent.html">checkIfDeviceTokenSent</a></li>
+    <li><a href="../api/Api/deactivateAccount.html">deactivateAccount</a></li>
+    <li><a href="../api/Api/deactivateSensor.html">deactivateSensor</a></li>
+    <li><a href="../api/Api/deleteAction.html">deleteAction</a></li>
+    <li><a href="../api/Api/deleteCamera.html">deleteCamera</a></li>
+    <li><a href="../api/Api/deleteDriver.html">deleteDriver</a></li>
+    <li><a href="../api/Api/editAccount.html">editAccount</a></li>
+    <li><a href="../api/Api/editAction.html">editAction</a></li>
+    <li><a href="../api/Api/editCamera.html">editCamera</a></li>
+    <li><a href="../api/Api/editDriver.html">editDriver</a></li>
+    <li><a href="../api/Api/editNotifications.html">editNotifications</a></li>
+    <li><a href="../api/Api/editSensor.html">editSensor</a></li>
+    <li><a href="../api/Api/generateFile.html">generateFile</a></li>
+    <li><a href="../api/Api/getAccounts.html">getAccounts</a></li>
+    <li><a href="../api/Api/getActionDetails.html">getActionDetails</a></li>
+    <li><a href="../api/Api/getActions.html">getActions</a></li>
+    <li><a href="../api/Api/getApiAddress.html">getApiAddress</a></li>
+    <li><a href="../api/Api/getCameraDetails.html">getCameraDetails</a></li>
+    <li><a href="../api/Api/getCameras.html">getCameras</a></li>
+    <li><a href="../api/Api/getDriverDetails.html">getDriverDetails</a></li>
+    <li><a href="../api/Api/getDrivers.html">getDrivers</a></li>
+    <li><a href="../api/Api/getSensorData.html">getSensorData</a></li>
+    <li><a href="../api/Api/getSensorDetails.html">getSensorDetails</a></li>
+    <li><a href="../api/Api/getSensors.html">getSensors</a></li>
+    <li><a href="../api/Api/getToken.html">getToken</a></li>
+    <li><a href="../api/Api/getUser.html">getUser</a></li>
+    <li><a href="../api/Api/logOut.html">logOut</a></li>
+    <li><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../api/Api/resetPassword.html">resetPassword</a></li>
+    <li><a href="../api/Api/sendDeviceToken.html">sendDeviceToken</a></li>
+    <li><a href="../api/Api/signIn.html">signIn</a></li>
+    <li><a href="../api/Api/signUp.html">signUp</a></li>
+    <li><a href="../api/Api/startDriver.html">startDriver</a></li>
+    <li><a href="../api/Api/switchBulb.html">switchBulb</a></li>
+    <li><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title"><a href="../api/Api-class.html#operators">Operators</a></li>
+    <li><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    idom
+      1.3.0+5
+  </span>
+
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="../static-assets/typeahead.bundle.min.js"></script>
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/URI.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+</body>
+
+</html>

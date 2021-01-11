@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// returns pop-up with loading icon while an action is in progress
 Widget loadingIndicator(bool load) {
   return load
       ? new Container(

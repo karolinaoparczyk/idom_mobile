@@ -13,13 +13,17 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// displays all sensors
+/// displays sensors list
 class Sensors extends StatefulWidget {
   Sensors({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _SensorsState createState() => _SensorsState();
 }
@@ -31,7 +35,7 @@ class _SensorsState extends State<Sensors> {
   final TextEditingController _searchController = TextEditingController();
   Api api = Api();
   List<String> menuItems;
-  List<Sensor> _sensorList;
+  List<Sensor> _sensorList = List<Sensor>();
   List<Sensor> _duplicateSensorList = List<Sensor>();
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
@@ -83,24 +87,26 @@ class _SensorsState extends State<Sensors> {
             .pop();
         await widget.storage.resetUserData();
         Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-      if (res == null) {
+      } else {
         _connectionEstablished = false;
         setState(() {});
         return null;
       }
     } catch (e) {
+      setState(() {});
       print(e.toString());
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                "Błąd pobierania czujników. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
       if (e.toString().contains("SocketException")) {
         final snackBar = new SnackBar(
             content: new Text(
-                "Błąd pobierania czujników. Adres serwera nieprawidłowy.".i18n));
+                "Błąd pobierania czujników. Adres serwera nieprawidłowy."
+                    .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
@@ -143,12 +149,14 @@ class _SensorsState extends State<Sensors> {
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         } else {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       } catch (e) {
@@ -157,13 +165,15 @@ class _SensorsState extends State<Sensors> {
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie.".i18n));
+                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
-                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
+                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."
+                      .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
@@ -175,16 +185,12 @@ class _SensorsState extends State<Sensors> {
       key: Key('searchField'),
       controller: _searchController,
       style: TextStyle(
-          color: IdomColors.textLight,
-          fontSize: 20,
-          letterSpacing: 2.0),
+          color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
       autofocus: true,
       decoration: InputDecoration(
         hintText: "Wyszukaj...".i18n,
         hintStyle: TextStyle(
-            color: IdomColors.textLight,
-            fontSize: 20,
-            letterSpacing: 2.0),
+            color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: IdomColors.additionalColor)),
         focusedBorder: UnderlineInputBorder(
@@ -192,11 +198,6 @@ class _SensorsState extends State<Sensors> {
         ),
       ),
     );
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -229,15 +230,28 @@ class _SensorsState extends State<Sensors> {
                 ),
           title: _isSearching ? _buildSearchField() : Text('Czujniki'.i18n),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search, size: 25.0),
-              key: Key("searchButton"),
-              onPressed: () {
-                setState(() {
-                  _isSearching = true;
-                });
-              },
-            ),
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.search, size: 25.0),
+                    key: Key("searchButton"),
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = true;
+                      });
+                    },
+                  ),
+            _isSearching
+                ? IconButton(
+                    icon: Icon(Icons.close, size: 25.0),
+                    key: Key("clearSearchingBox"),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.text = "";
+                      });
+                    },
+                  )
+                : SizedBox(),
             _isSearching
                 ? SizedBox()
                 : IconButton(
@@ -249,88 +263,109 @@ class _SensorsState extends State<Sensors> {
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Sensors",
-            onGoBackAction: () async {
-              await getSensors();
-            },
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Sensors"),
 
         /// builds sensor's list
-        body: Container(child: Column(children: <Widget>[listSensors()])),
+        body: Container(child: listSensors()),
       ),
     );
   }
 
   Widget listSensors() {
     if (zeroFetchedItems) {
-      return Padding(
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text("Brak czujników w systemie.".i18n,
-                  style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+      return RefreshIndicator(
+          backgroundColor: IdomColors.mainBackgroundDark,
+          onRefresh: _pullRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  padding: EdgeInsets.only(
+                      left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("Brak czujników w systemie.".i18n,
+                          style: Theme.of(context).textTheme.bodyText2,
+                          textAlign: TextAlign.center)))));
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-        _sensorList == null) {
-      return Padding(
-          padding:
-              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
-          child: Align(
-              alignment: Alignment.topCenter,
-              child: Text("Błąd połączenia z serwerem.".i18n,
-                  style: TextStyle(fontSize: 16.5),
-                  textAlign: TextAlign.center)));
+        _sensorList.isEmpty) {
+      return RefreshIndicator(
+        backgroundColor: IdomColors.mainBackgroundDark,
+        onRefresh: _pullRefresh,
+        child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Container(
+                height: MediaQuery.of(context).size.height,
+                padding: EdgeInsets.only(
+                    left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+                alignment: Alignment.topCenter,
+                child: Text("Błąd połączenia z serwerem.".i18n,
+                    style: Theme.of(context).textTheme.bodyText2,
+                    textAlign: TextAlign.center))),
+      );
     } else if (!zeroFetchedItems &&
-        _sensorList != null &&
-        _sensorList.length == 0) {
+        _duplicateSensorList.isNotEmpty &&
+        _sensorList.isEmpty) {
       return Padding(
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.".i18n,
-                  style: TextStyle(fontSize: 16.5),
+                  style: Theme.of(context).textTheme.bodyText2,
                   textAlign: TextAlign.center)));
-    } else if (_sensorList != null && _sensorList.length > 0) {
-      return Expanded(
-          child: Scrollbar(
-              child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10.0, top: 10, right: 10.0, bottom: 0.0),
-                    child: ListView.builder(
-                      key: Key("SensorsList"),
-                      shrinkWrap: true,
-                      itemCount: _sensorList.length,
-                      itemBuilder: (BuildContext buildContext, index) =>
-                          Container(
-                              height: 80,
-                              child: Card(
-                                  child: ListTile(
-                                      key: Key(_sensorList[index].name),
-                                      title: Text(_sensorList[index].name,
-                                          style: TextStyle(fontSize: 21.0)),
-                                      subtitle: Text(
+    } else if (_sensorList.isNotEmpty && _sensorList.length > 0) {
+      return Column(children: [
+        Expanded(
+            child: Scrollbar(
+                child: RefreshIndicator(
+                    backgroundColor: IdomColors.mainBackgroundDark,
+                    onRefresh: _pullRefresh,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, top: 10, right: 10.0, bottom: 0.0),
+                      child: ListView.builder(
+                        key: Key("SensorsList"),
+                        shrinkWrap: true,
+                        itemCount: _sensorList.length,
+                        itemBuilder: (BuildContext buildContext, index) =>
+                            Container(
+                                height: 80,
+                                child: Card(
+                                    child: ListTile(
+                                        key: Key(_sensorList[index].name),
+                                        title: Text(
+                                          _sensorList[index].name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              .copyWith(fontSize: 21.0),
+                                        ),
+                                        subtitle: Text(
                                           sensorData(_sensorList[index]),
-                                          style: TextStyle(
-                                              fontSize: 16.5,
-                                              color: IdomColors.textDark)),
-                                      onTap: () {
-                                        navigateToSensorDetails(
-                                            _sensorList[index]);
-                                      },
-                                      leading:
-                                          getCategoryImage(_sensorList[index]),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText2
+                                              .copyWith(
+                                                  fontSize: 16.5,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                        ),
+                                        onTap: () {
+                                          navigateToSensorDetails(
+                                              _sensorList[index]);
+                                        },
+                                        leading: getCategoryImage(
+                                            _sensorList[index]),
 
-                                      /// delete sensor button
-                                      trailing: deleteButtonTrailing(
-                                          buildContext, _sensorList[index])))),
-                    ),
-                  ))));
+                                        /// delete sensor button
+                                        trailing: getTrailing(buildContext,
+                                            _sensorList[index])))),
+                      ),
+                    ))))
+      ]);
     }
 
     /// shows progress indicator while fetching data
@@ -354,6 +389,8 @@ class _SensorsState extends State<Sensors> {
         imageUrl = "assets/icons/breathalyser.svg";
         break;
       case "gas":
+        imageUrl = "assets/icons/gas-bottle.svg";
+        break;
       case "smoke":
         imageUrl = "assets/icons/smoke.svg";
         break;
@@ -460,7 +497,8 @@ class _SensorsState extends State<Sensors> {
 
     /// displays success message if sensor added succesfully
     if (result == true) {
-      final snackBar = new SnackBar(content: new Text("Dodano nowy czujnik.".i18n));
+      final snackBar =
+          new SnackBar(content: new Text("Dodano nowy czujnik.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
       await getSensors();
     }
@@ -474,31 +512,64 @@ class _SensorsState extends State<Sensors> {
     await getSensors();
   }
 
-  /// deletes sensor
-  deleteButtonTrailing(BuildContext buildContext, Sensor sensor) {
-    return SizedBox(
-        width: 35,
-        child: Container(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              key: Key("deleteButton"),
-              child: SizedBox(
-                  width: 35,
-                  child: Container(
-                      padding: EdgeInsets.only(top: 5),
-                      alignment: Alignment.topRight,
-                      child: SvgPicture.asset(
-                        "assets/icons/dustbin.svg",
-                        matchTextDirection: false,
-                        width: 32,
-                        height: 32,
-                        color: IdomColors.mainFill,
-                      ))),
-              onPressed: () {
-                setState(() {
-                  _deactivateSensor(sensor);
-                });
-              },
-            )));
+  getTrailing(BuildContext buildContext, Sensor sensor) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+            width: 40,
+            child: Container(
+                alignment: Alignment.center,
+                child: SizedBox(
+                    width: 40,
+                    child: Stack(children: [
+                      Container(
+                          padding: EdgeInsets.all(5),
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            "assets/icons/battery.svg",
+                            key: Key("assets/icons/battery.svg"),
+                            matchTextDirection: false,
+                            width: 36,
+                            height: 36,
+                            color: IdomColors.additionalColor,
+                          )),
+                      Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                              sensor.batteryLevel != null
+                                  ? sensor.batteryLevel.toString() + "%"
+                                  : "-%",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontSize: 13.5)))
+                    ])))),
+        SizedBox(
+            width: 35,
+            child: Container(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  key: Key("deleteButton"),
+                  child: SizedBox(
+                      width: 35,
+                      child: Container(
+                          padding: EdgeInsets.only(top: 5),
+                          alignment: Alignment.topRight,
+                          child: SvgPicture.asset(
+                            "assets/icons/dustbin.svg",
+                            matchTextDirection: false,
+                            width: 32,
+                            height: 32,
+                            color: Theme.of(context).textTheme.bodyText1.color,
+                          ))),
+                  onPressed: () {
+                    setState(() {
+                      _deactivateSensor(sensor);
+                    });
+                  },
+                ))),
+      ],
+    );
   }
 }

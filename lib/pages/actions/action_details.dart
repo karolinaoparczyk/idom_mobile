@@ -17,10 +17,16 @@ import 'package:idom/localization/actions/action_details.i18n.dart';
 class ActionDetails extends StatefulWidget {
   ActionDetails({@required this.storage, @required this.action, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected action
   SensorDriverAction action;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _ActionDetailsState createState() => new _ActionDetailsState();
 }
@@ -43,11 +49,6 @@ class _ActionDetailsState extends State<ActionDetails> {
     _load = false;
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -67,8 +68,7 @@ class _ActionDetailsState extends State<ActionDetails> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "ActionDetails",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "ActionDetails"),
             body: SingleChildScrollView(
                 child: Form(
               key: _formKey,

@@ -1,9 +1,9 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
+/// translations for driver edit dialog in polish and english
 extension Localization on String {
-
   static var _t = Translations("pl_pl") +
-     {
+      {
         "pl_pl": "Nazwa",
         "en_uk": "Name",
       } +
@@ -28,8 +28,10 @@ extension Localization on String {
         "en_uk": "Editing driver failed. Try again.",
       } +
       {
-        "pl_pl": "Błąd edytowania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
-        "en_uk": "Driver editing error. Check the server connection and try again.",
+        "pl_pl":
+            "Błąd edytowania sterownika. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Driver editing error. Check the server connection and try again.",
       } +
       {
         "pl_pl": "Błąd edytowania sterownika. Adres serwera nieprawidłowy.",
@@ -48,7 +50,7 @@ extension Localization on String {
         "en_uk": "No changes have been made.",
       } +
       {
-        "pl_pl": "naduszacz",
+        "pl_pl": "przycisk",
         "en_uk": "clicker",
       } +
       {
@@ -58,6 +60,29 @@ extension Localization on String {
       {
         "pl_pl": "żarówka",
         "en_uk": "bulb",
+      } +
+      {
+        "pl_pl": "rolety",
+        "en_uk": "blinds",
+      } +
+      {
+        "pl_pl": "Adres IP",
+        "en_uk": "IP address",
+      } +
+      {
+        "pl_pl":
+            "Podczas dodawania żarówki nie udało się zapisać adresu IP. Spróbuj ponownie.",
+        "en_uk": "IP address could not be saved while adding bulb. Try again.",
+      } +
+      {
+        "pl_pl":
+            "Sterownik o podanej nazwie już istnieje. Adres IP jest niepoprawny.",
+        "en_uk":
+            "A driver with the given name already exists. The IP address is incorrect.",
+      } +
+      {
+        "pl_pl": "Adres IP jest niepoprawny.",
+        "en_uk": "The IP address is incorrect.",
       };
 
   String get i18n => localize(this, _t);
