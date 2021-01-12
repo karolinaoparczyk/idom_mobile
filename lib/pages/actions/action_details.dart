@@ -269,7 +269,7 @@ class _ActionDetailsState extends State<ActionDetails> {
   String getAction() {
     String action = "";
     if (widget.action.action.status != null) {
-      if (widget.action.action.status) {
+      if (widget.action.action.status == "on") {
         action = "Włącz".i18n;
       } else {
         action = "Wyłącz".i18n;

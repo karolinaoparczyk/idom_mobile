@@ -311,7 +311,7 @@ class SensorDriverAction extends Equatable {
 }
 
 class ActionAction extends Equatable {
-  bool status;
+  String status;
   int red;
   int green;
   int blue;
@@ -334,7 +334,7 @@ class ActionAction extends Equatable {
   /// generates object form json format
   factory ActionAction.fromJson(Map<String, dynamic> json) {
     return ActionAction(
-      status: json['status'] as bool,
+      status: json['status'] as String,
       red: json['red'] as int,
       green: json['green'] as int,
       blue: json['blue'] as int,
