@@ -179,6 +179,7 @@ void main() {
     await tester.enterText(ipField, '111.222.33.44');
 
     await tester.tap(find.byKey(Key('saveDriverButton')));
+    await tester.pumpAndSettle();
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 5));

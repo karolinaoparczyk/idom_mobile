@@ -140,8 +140,7 @@ class _SettingsState extends State<Settings> {
           ]),
           drawer: _isUserLoggedIn == "true"
               ? IdomDrawer(
-                  storage: widget.storage,
-                  parentWidgetType: "EditApiAddress")
+                  storage: widget.storage, parentWidgetType: "EditApiAddress")
               : null,
           body: _load
               ? loadingIndicator(true)
@@ -521,7 +520,7 @@ class _SettingsState extends State<Settings> {
       bool changedPort, bool changedGoogleServicesFile) async {
     var decision = await confirmActionDialog(
         context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
-    if (decision) {
+    if (decision != null && decision) {
       await _saveChanges(changedProtocol, changedAddress, changedPort,
           changedGoogleServicesFile);
     }
@@ -545,7 +544,7 @@ class _SettingsState extends State<Settings> {
         if (result) {
           var tokenSent = await sendDeviceToken();
           Navigator.pop(context);
-          if (!tokenSent) {
+          if (tokenSent != null && !tokenSent) {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Nie udało się połączyć z serwisem firebase. Sprawdź czy plik google_services.json jest aktualny oraz połączenie z internetem."
