@@ -224,7 +224,9 @@ class _NewActionState extends State<NewAction> {
               borderSide: BorderSide(
                   color: Theme.of(context).textTheme.bodyText2.color),
               borderRadius: BorderRadius.circular(10.0),
-            )),
+            ),
+            counterStyle:
+                Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 12.5)),
         key: Key('name'),
         style: Theme.of(context).textTheme.bodyText2,
         autofocus: true,
@@ -498,7 +500,7 @@ class _NewActionState extends State<NewAction> {
         decoration: InputDecoration(
             labelText: "Start",
             labelStyle: Theme.of(context).textTheme.headline5,
-            suffixIcon: Icon(Icons.arrow_drop_down),
+            suffixIcon: Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -520,12 +522,12 @@ class _NewActionState extends State<NewAction> {
             builder: (BuildContext context, Widget child) {
               return Theme(
                 data: ThemeData.light().copyWith(
-                  primaryColor: IdomColors.additionalColor,
-                  accentColor: IdomColors.additionalColor,
-                  colorScheme:
-                      ColorScheme.light(primary: IdomColors.additionalColor),
+                  colorScheme: ColorScheme.light(
+                      primary: IdomColors.additionalColor,
+                      surface: Theme.of(context).backgroundColor,
+                      onSurface: Theme.of(context).textTheme.bodyText2.color),
                   buttonTheme:
-                      ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                  ButtonThemeData(textTheme: ButtonTextTheme.primary),
                 ),
                 child: child,
               );
@@ -557,17 +559,17 @@ class _NewActionState extends State<NewAction> {
       decoration: InputDecoration(
         focusedBorder: OutlineInputBorder(
             borderSide:
-                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
             borderRadius: BorderRadius.circular(10.0)),
         enabledBorder: OutlineInputBorder(
           borderSide:
-              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
           borderRadius: BorderRadius.circular(10.0),
         ),
         labelText: "Koniec".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: endTime == null
-            ? Icon(Icons.arrow_drop_down)
+            ? Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor)
             : InkWell(
                 onTap: () {
                   setState(() {
@@ -598,12 +600,12 @@ class _NewActionState extends State<NewAction> {
           builder: (BuildContext context, Widget child) {
             return Theme(
               data: ThemeData.light().copyWith(
-                primaryColor: IdomColors.additionalColor,
-                accentColor: IdomColors.additionalColor,
-                colorScheme:
-                    ColorScheme.light(primary: IdomColors.additionalColor),
+                colorScheme: ColorScheme.light(
+                    primary: IdomColors.additionalColor,
+                    surface: Theme.of(context).backgroundColor,
+                    onSurface: Theme.of(context).textTheme.bodyText2.color),
                 buttonTheme:
-                    ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                ButtonThemeData(textTheme: ButtonTextTheme.primary),
               ),
               child: child,
             );
@@ -849,27 +851,85 @@ class _NewActionState extends State<NewAction> {
                               selectedColor:
                                   Theme.of(context).textTheme.bodyText2.color,
                               children: [
-                                Text("pn".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                Text(
+                                  "pn".i18n,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1
+                                      .copyWith(
+                                          color: daysOfWeekSelected[0]
+                                              ? IdomColors.whiteTextDark
+                                              : Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .color),
+                                ),
                                 Text("wt".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[1]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("śr".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[2]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("czw".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[3]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("pt".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[4]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("sb".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[5]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("nd".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[6]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                               ],
                               isSelected: daysOfWeekSelected,
                               onPressed: (int index) {
@@ -1160,8 +1220,9 @@ class _NewActionState extends State<NewAction> {
           sensor = selectedSensor.name;
           operator = selectedOperator;
           if (_sensorTriggerController.text.toString().contains(",")) {
-            trigger =
-                double.tryParse(_sensorTriggerController.text.toString().replaceFirst(",", "."));
+            trigger = double.tryParse(_sensorTriggerController.text
+                .toString()
+                .replaceFirst(",", "."));
           } else {
             trigger = double.tryParse(_sensorTriggerController.text);
           }

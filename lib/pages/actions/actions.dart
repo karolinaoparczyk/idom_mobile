@@ -313,7 +313,7 @@ class _ActionsListState extends State<ActionsList> {
                         matchTextDirection: false,
                         width: 32,
                         height: 32,
-                        color: IdomColors.mainFill,
+                        color: Theme.of(context).textTheme.bodyText1.color,
                       ))),
               onPressed: () {
                 setState(() {
