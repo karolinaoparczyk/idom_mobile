@@ -1,3 +1,5 @@
+/// allowed operators
 class Operators {
-  static final values = ["< mniejsze", "> większe", "= równe"];
+  /// operators values
+  static final values = ["< mniejsze niż", "> większe niż", "= równe"];
 }

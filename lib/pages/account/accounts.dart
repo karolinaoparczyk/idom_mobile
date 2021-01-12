@@ -8,41 +8,66 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/localization/account/accounts.i18n.dart';
 
-/// displays all accounts
+/// displays accounts list
 class Accounts extends StatefulWidget {
   Accounts({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _AccountsState createState() => _AccountsState();
 }
 
+/// handles state of widgets
 class _AccountsState extends State<Accounts> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   final TextEditingController _searchController = TextEditingController();
   Api api = Api();
-  List<Account> _accountList;
+
+  /// account list currently displayed including filtering
+  List<Account> _accountList = List<Account>();
+
+  /// account list with all available items
   List<Account> _duplicateAccountList = List<Account>();
+
+  /// true if no accounts exist, false if any exist
   bool zeroFetchedItems = false;
+
+  /// user is admin
   String _isUserStaff;
+
+  /// true if connection with server has been established, false if not
   bool _connectionEstablished;
+
+  /// true if searching is on
   bool _isSearching = false;
 
   void initState() {
     super.initState();
+
+    /// use test api when in test mode
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     checkIfUserIsStaff();
     getAccounts();
+
+    /// builds accounts list based on searched word
     _searchController.addListener(() {
       filterSearchResults(_searchController.text);
     });
@@ -62,35 +87,68 @@ class _AccountsState extends State<Accounts> {
     try {
       var res = await api.getAccounts();
 
+      /// on success fetching data
       if (res != null && res['statusCode'] == "200") {
         List<dynamic> body = jsonDecode(res['body']);
 
         setState(() {
+          /// display only active
           _accountList = body
               .map((dynamic item) => Account.fromJson(item))
               .where((account) => account.isActive == true)
               .toList();
         });
+
+        /// when no accounts exist
         if (_accountList.length == 0) zeroFetchedItems = true;
         zeroFetchedItems = false;
-      } else if (res != null && res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
       }
-      if (res == null) {
+
+      /// on invalid token log out
+      else if (res != null && res['statusCode'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          var res = await api.getAccounts();
+
+          /// on success fetching data
+          if (res != null && res['statusCode'] == "200") {
+            List<dynamic> body = jsonDecode(res['body']);
+
+            setState(() {
+              /// display only active
+              _accountList = body
+                  .map((dynamic item) => Account.fromJson(item))
+                  .where((account) => account.isActive == true)
+                  .toList();
+            });
+
+            /// when no accounts exist
+            if (_accountList.length == 0) zeroFetchedItems = true;
+            zeroFetchedItems = false;
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          } else {
+            _connectionEstablished = false;
+            setState(() {});
+            return null;
+          }
+        }
+      }
+
+      /// on error display message
+      else {
         _connectionEstablished = false;
         setState(() {});
         return null;
       }
     } catch (e) {
+      _connectionEstablished = false;
+      setState(() {});
       print(e.toString());
+
+      /// on timeout while sending request display message
       if (e.toString().contains("TimeoutException")) {
         final snackBar = new SnackBar(
             content: new Text(
@@ -98,6 +156,8 @@ class _AccountsState extends State<Accounts> {
                     .i18n));
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
+
+      /// on invalid server address display message
       if (e.toString().contains("No address associated with hostname")) {
         final snackBar = new SnackBar(
             content: new Text(
@@ -107,17 +167,31 @@ class _AccountsState extends State<Accounts> {
       }
     }
     setState(() {
+      /// refresh accounts list
       _duplicateAccountList.clear();
       _duplicateAccountList.addAll(_accountList);
     });
     return _accountList;
   }
 
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
   /// deactivates user after confirmation
   _deactivateAccount(Account account) async {
     var decision = await confirmActionDialog(context, "Potwierdź".i18n,
         "Czy na pewno chcesz usunąć konto ".i18n + account.username + "?");
-    if (decision) {
+
+    /// deactivate user only when decision confirmed
+    if (decision != null && decision) {
       try {
         displayProgressDialog(
             context: _scaffoldKey.currentContext,
@@ -131,7 +205,10 @@ class _AccountsState extends State<Accounts> {
             /// refreshes accounts' list
             getAccounts();
           });
-        } else if (statusCode == 401) {
+        }
+
+        /// on invalid token log out
+        else if (statusCode == 401) {
           displayProgressDialog(
               context: _scaffoldKey.currentContext,
               key: _keyLoaderInvalidToken,
@@ -142,7 +219,10 @@ class _AccountsState extends State<Accounts> {
               .pop();
           await widget.storage.resetUserData();
           Navigator.of(context).popUntil((route) => route.isFirst);
-        } else if (statusCode == null) {
+        }
+
+        /// on error display message
+        else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
                   "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
@@ -157,6 +237,8 @@ class _AccountsState extends State<Accounts> {
         }
       } catch (e) {
         print(e.toString());
+
+        /// on timeout while sending request display message
         if (e.toString().contains("TimeoutException")) {
           final snackBar = new SnackBar(
               content: new Text(
@@ -164,6 +246,8 @@ class _AccountsState extends State<Accounts> {
                       .i18n));
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
+
+        /// on invalid server address display message
         if (e.toString().contains("SocketException")) {
           final snackBar = new SnackBar(
               content: new Text(
@@ -175,11 +259,13 @@ class _AccountsState extends State<Accounts> {
     }
   }
 
+  /// build search field when search icon is clicked
   _buildSearchField() {
     return TextField(
       key: Key("searchField"),
       controller: _searchController,
       onChanged: (value) {
+        /// filter through accounts list and refresh it accordingly
         filterSearchResults(value);
       },
       style: TextStyle(
@@ -198,11 +284,13 @@ class _AccountsState extends State<Accounts> {
     );
   }
 
+  /// on back button clicked goes to previous page
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
   }
 
+  /// builds pop-up dialog
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -210,6 +298,10 @@ class _AccountsState extends State<Accounts> {
         child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
+              /// leading icon
+              ///
+              /// arrow back when searching to go back to main list
+              /// menu icon when not searching to open drawer
               leading: _isSearching
                   ? IconButton(
                       icon: Icon(Icons.arrow_back),
@@ -225,36 +317,61 @@ class _AccountsState extends State<Accounts> {
                         _scaffoldKey.currentState.openDrawer();
                       },
                     ),
+
+              /// title
+              ///
+              /// search field when searching
+              /// list title when not searching
               title: _isSearching
                   ? _buildSearchField()
                   : Text('Wszystkie konta'.i18n),
               actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.search, size: 25.0),
-                  key: Key("searchButton"),
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = true;
-                    });
-                  },
-                ),
+                /// action one
+                ///
+                /// nothing when searching
+                /// search icon when not searching to display search field
+                _isSearching
+                    ? SizedBox()
+                    : IconButton(
+                        icon: Icon(Icons.search, size: 25.0),
+                        key: Key("searchButton"),
+                        onPressed: () {
+                          setState(() {
+                            _isSearching = true;
+                          });
+                        },
+                      ),
+
+                /// action two
+                ///
+                /// close icon when searching to clear text field
+                /// search icon when not searching to display search field
+                _isSearching
+                    ? IconButton(
+                        icon: Icon(Icons.close, size: 25.0),
+                        key: Key("clearSearchingBox"),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.text = "";
+                          });
+                        },
+                      )
+                    : SizedBox(),
               ],
             ),
+
+            /// drawer with menu
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "Accounts",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "Accounts"),
 
             /// accounts' list builder
             body: Container(child: listAccounts())));
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
+  /// returns accounts list or a message when list is empty
   Widget listAccounts() {
+    /// list is empty on server
     if (zeroFetchedItems) {
       return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
@@ -271,9 +388,11 @@ class _AccountsState extends State<Accounts> {
                           style: Theme.of(context).textTheme.subtitle1,
                           textAlign: TextAlign.center)))));
     }
+
+    /// connection to server has not been established
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-        _accountList == null) {
+        _accountList.isEmpty) {
       return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
           onRefresh: _pullRefresh,
@@ -288,9 +407,12 @@ class _AccountsState extends State<Accounts> {
                       child: Text("Błąd połączenia z serwerem.".i18n,
                           style: Theme.of(context).textTheme.subtitle1,
                           textAlign: TextAlign.center)))));
-    } else if (!zeroFetchedItems &&
-        _accountList != null &&
-        _accountList.length == 0) {
+    }
+
+    /// search result is empty
+    else if (!zeroFetchedItems &&
+        _duplicateAccountList.isNotEmpty &&
+        _accountList.isEmpty) {
       return Padding(
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
@@ -299,7 +421,10 @@ class _AccountsState extends State<Accounts> {
               child: Text("Brak wyników wyszukiwania.".i18n,
                   style: Theme.of(context).textTheme.subtitle1,
                   textAlign: TextAlign.center)));
-    } else if (_accountList != null && _accountList.length > 0) {
+    }
+
+    /// list is not empty or/and search result is not empty
+    else if (_accountList != null && _accountList.length > 0) {
       return Column(
         children: [
           Expanded(
@@ -318,15 +443,20 @@ class _AccountsState extends State<Accounts> {
                               child: Card(
                                   child: ListTile(
                                       key: Key(_accountList[index].username),
+
+                                      /// main title on account card
                                       title: Text(_accountList[index].username,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyText1
                                               .copyWith(fontSize: 21.0)),
                                       onTap: () {
+                                        /// open account details on tap
                                         navigateToAccountDetails(
                                             _accountList[index]);
                                       },
+
+                                      /// leading icon
                                       leading: SizedBox(
                                           width: 35,
                                           child: Container(
@@ -357,6 +487,7 @@ class _AccountsState extends State<Accounts> {
     );
   }
 
+  /// fetches data on refresh
   Future<void> _pullRefresh() async {
     await Future.delayed(Duration(seconds: 1));
     setState(() {
@@ -365,6 +496,7 @@ class _AccountsState extends State<Accounts> {
     });
   }
 
+  /// filters through accounts list based on given word
   void filterSearchResults(String query) {
     query = query.toLowerCase();
     List<Account> dummySearchList = List<Account>();
@@ -389,15 +521,18 @@ class _AccountsState extends State<Accounts> {
     }
   }
 
+  /// goes to account's details
   navigateToAccountDetails(Account account) async {
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => AccountDetail(
             storage: widget.storage, username: account.username)));
+
+    /// refreshes accounts list when goes back
     await getAccounts();
   }
 
   /// delete account button
-  deleteButtonTrailing(Account account) {
+  Widget deleteButtonTrailing(Account account) {
     if (_isUserStaff == "true") {
       return SizedBox(
           width: 35,
@@ -414,6 +549,7 @@ class _AccountsState extends State<Accounts> {
                 ),
                 onPressed: () {
                   setState(() {
+                    /// deactivate button
                     _deactivateAccount(account);
                   });
                 },

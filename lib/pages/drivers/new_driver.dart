@@ -13,12 +13,17 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/drivers/new_driver.i18n.dart';
 
+/// allows adding new driver
 class NewDriver extends StatefulWidget {
   NewDriver({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _NewDriverState createState() => _NewDriverState();
 }
@@ -52,11 +57,6 @@ class _NewDriverState extends State<NewDriver> {
     _nameController.dispose();
     _categoryController.dispose();
     super.dispose();
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -174,9 +174,7 @@ class _NewDriverState extends State<NewDriver> {
                   onPressed: _saveChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "NewDriver",
-                onLogOutFailure: onLogOutFailure),
+                storage: widget.storage, parentWidgetType: "NewDriver"),
 
             /// builds form with driver's properties
             body: SingleChildScrollView(
@@ -260,8 +258,12 @@ class _NewDriverState extends State<NewDriver> {
             var driver = Driver.fromJson(jsonDecode(res['body']));
             var resBulb =
                 await api.addIpAddress(driver.id, _ipAddressController.text);
-            if (resBulb != 200) {
+            if (resBulb != 200 && resBulb != 503) {
               _navigateToEditDriver(driver);
+            } else {
+              fieldsValidationMessage = null;
+              setState(() {});
+              Navigator.pop(context, true);
             }
           } else {
             fieldsValidationMessage = null;

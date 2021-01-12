@@ -16,9 +16,13 @@ import 'package:idom/widgets/loading_indicator.dart';
 class SignUp extends StatefulWidget {
   SignUp({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -251,8 +255,8 @@ class _SignUpState extends State<SignUp> {
         ),
         labelText: "Język powiadomień".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
-        suffixIcon: Icon(Icons.arrow_drop_down,
-            color: IdomColors.additionalColor),
+        suffixIcon:
+            Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

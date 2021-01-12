@@ -1,6 +1,8 @@
 import 'package:idom/localization/utils/frequency_calculations.i18n.dart';
 
+/// returns frequency value based on given seconds
 class FrequencyCalculation {
+  /// returns frequency value based on given seconds
   static String calculateFrequencyValue(int frequency) {
     int hours = frequency ~/ 3600;
     int minutes = ((frequency ~/ 60)) % 60;
@@ -23,6 +25,7 @@ class FrequencyCalculation {
     return "";
   }
 
+  /// returns name of unit with correct ending based on value and unit type
   static String getName(int value, String type) {
     var lastDigitFrequencyValue =
         value.toString().substring(value.toString().length - 1);

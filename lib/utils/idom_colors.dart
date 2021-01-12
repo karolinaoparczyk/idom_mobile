@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// colors used in app
 class IdomColors {
   /// light mode
   static const Color mainBackgroundLight = Color(0xFFFFFFFF);
@@ -17,6 +18,7 @@ class IdomColors {
   static const Color cardDark = Colors.black87;
   static const Color buttonSplashColorDark = Color(0xFF767676);
 
+  /// general
   static const Color mainFill = Color(0xFF0C0C0F);
   static const Color error = Color(0xFF9C1F03);
   static const Color buttonBackground = Color(0xFF0C0C0F);
@@ -31,6 +33,7 @@ class IdomColors {
   static const Color brightGreen = Color(0xFFF0F8F0);
   static const Color brightGrey = Color(0xFFA2A2A2);
 
+  /// darken color base on given intensity
   static Color darken(Color color, [double amount = 0.1]) {
     assert(amount >= 0 && amount <= 1);
 
@@ -40,6 +43,7 @@ class IdomColors {
     return hslDark.toColor();
   }
 
+  /// lighten color base on given intensity
   static Color lighten(Color color, [double amount = 0.1]) {
     assert(amount >= 0 && amount <= 1);
 

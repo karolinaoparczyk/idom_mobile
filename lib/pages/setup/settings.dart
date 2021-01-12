@@ -20,12 +20,14 @@ import 'package:idom/widgets/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// allows to enter email and send reset password request
+/// displays settings and allows editing them
 class Settings extends StatefulWidget {
   Settings({@required this.storage});
 
+  /// internal storage
   final SecureStorage storage;
 
+  /// handles state of widgets
   @override
   _SettingsState createState() => _SettingsState();
 }
@@ -122,11 +124,6 @@ class _SettingsState extends State<Settings> {
         validator: UrlFieldValidator.validate);
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -143,9 +140,7 @@ class _SettingsState extends State<Settings> {
           ]),
           drawer: _isUserLoggedIn == "true"
               ? IdomDrawer(
-                  storage: widget.storage,
-                  parentWidgetType: "EditApiAddress",
-                  onLogOutFailure: onLogOutFailure)
+                  storage: widget.storage, parentWidgetType: "EditApiAddress")
               : null,
           body: _load
               ? loadingIndicator(true)
@@ -468,9 +463,9 @@ class _SettingsState extends State<Settings> {
   }
 
   _pickFile() async {
-    File result = await FilePicker.getFile(type: FileType.custom);
+    FilePickerResult result = await FilePicker.platform.pickFiles(type: FileType.custom);
     if (result != null) {
-      file = File(result.path);
+      file = File(result.files.first.path);
       try {
         final Map<String, dynamic> googleServicesJson =
             jsonDecode(file.readAsStringSync());
@@ -525,7 +520,7 @@ class _SettingsState extends State<Settings> {
       bool changedPort, bool changedGoogleServicesFile) async {
     var decision = await confirmActionDialog(
         context, "Potwierdź".i18n, "Czy na pewno zapisać zmiany?".i18n);
-    if (decision) {
+    if (decision != null && decision) {
       await _saveChanges(changedProtocol, changedAddress, changedPort,
           changedGoogleServicesFile);
     }
@@ -549,7 +544,7 @@ class _SettingsState extends State<Settings> {
         if (result) {
           var tokenSent = await sendDeviceToken();
           Navigator.pop(context);
-          if (!tokenSent) {
+          if (tokenSent != null && !tokenSent) {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Nie udało się połączyć z serwisem firebase. Sprawdź czy plik google_services.json jest aktualny oraz połączenie z internetem."

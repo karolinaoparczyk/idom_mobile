@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:idom/enums/languages.dart';
 import 'package:idom/localization/dialogs/language.i18n.dart';
 
+/// pop-up dialog for selecting notifications language
 class LanguageDialog extends StatefulWidget {
+  /// currently selected language
   final String currentLanguage;
 
   LanguageDialog({this.currentLanguage});
 
+  /// handles state of widgets
   @override
   _LanguageDialogState createState() => _LanguageDialogState();
 }
@@ -17,12 +20,14 @@ class _LanguageDialogState extends State<LanguageDialog> {
   @override
   void initState() {
     if (widget.currentLanguage != null) {
+      /// loads allowed languages
       _selectedLanguage = Languages.values
           .firstWhere((element) => element['value'] == widget.currentLanguage);
     }
     super.initState();
   }
 
+  /// builds pop-up dialog
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -48,6 +53,7 @@ class _LanguageDialogState extends State<LanguageDialog> {
                   key: Key("languagesList"),
                   itemCount: Languages.values.length,
                   itemBuilder: (BuildContext context, int index) {
+                    /// allows selecting only one language
                     return RadioListTile(
                       title: Text(Languages.values[index]['text'].i18n,
                           style: Theme.of(context).textTheme.bodyText2),
@@ -66,12 +72,15 @@ class _LanguageDialogState extends State<LanguageDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  /// cancel action
                   TextButton(
                       child: Text("Anuluj",
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {
                         Navigator.pop(context);
                       }),
+
+                  /// confirm action
                   TextButton(
                       key: Key('yesButton'),
                       child: Text("OK",

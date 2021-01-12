@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:idom/enums/operators.dart';
+import 'package:idom/localization/dialogs/sensor_trigger_operator.i18n.dart';
 
+/// pop-up dialog for selecting operator for sensor's trigger value
 class SensorTriggerOperatorDialog extends StatefulWidget {
+  /// currently selected operator
   final String currentOperator;
 
   SensorTriggerOperatorDialog({this.currentOperator});
 
+  /// handles state of widgets
   @override
   _SensorTriggerOperatorDialogState createState() =>
       _SensorTriggerOperatorDialogState();
@@ -17,13 +21,15 @@ class _SensorTriggerOperatorDialogState
 
   @override
   void initState() {
-    if (widget.currentOperator != "") {
+    if (widget.currentOperator != null) {
+      /// loads allowed operators
       _selectedOperator = Operators.values
-          .firstWhere((element) => element == widget.currentOperator);
+          .firstWhere((element) => element.contains(widget.currentOperator));
     }
     super.initState();
   }
 
+  /// builds pop-up dialog
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -37,7 +43,7 @@ class _SensorTriggerOperatorDialogState
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                child: Text("Wybierz operator porównania",
+                child: Text("Wybierz operator porównania".i18n,
                     style: Theme.of(context)
                         .textTheme
                         .headline5
@@ -51,8 +57,9 @@ class _SensorTriggerOperatorDialogState
                   key: Key("operatorList"),
                   itemCount: Operators.values.length,
                   itemBuilder: (BuildContext context, int index) {
+                    /// allows selecting only one operator
                     return RadioListTile(
-                      title: Text(Operators.values[index],
+                      title: Text(Operators.values[index].i18n,
                           style: Theme.of(context).textTheme.bodyText1.copyWith(
                               fontWeight: FontWeight.normal, fontSize: 21.0)),
                       value: Operators.values[index],
@@ -70,12 +77,14 @@ class _SensorTriggerOperatorDialogState
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  /// cancel action
                   TextButton(
-                      child: Text("Anuluj",
+                      child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {
                         Navigator.pop(context);
                       }),
+                  /// confirm action
                   TextButton(
                       key: Key('yesButton'),
                       child: Text("OK",

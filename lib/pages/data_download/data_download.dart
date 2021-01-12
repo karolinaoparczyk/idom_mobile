@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -18,12 +19,17 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:idom/localization/data_download/data_download.i18n.dart';
 
+/// allows downloading data in svg extension
 class DataDownload extends StatefulWidget {
   DataDownload({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _DataDownloadState createState() => _DataDownloadState();
 }
@@ -47,6 +53,9 @@ class _DataDownloadState extends State<DataDownload> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     getSensors();
   }
 
@@ -62,15 +71,28 @@ class _DataDownloadState extends State<DataDownload> {
           sensors =
               bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
         });
-      } else if (res != null && res['statusCodeSensors'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+
+      /// on invalid token log out
+      else if (res != null && res['statusCodeSensors'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          res = await api.getSensors();
+
+          /// on success fetching data
+          if (res != null && res['statusCodeSensors'] == "200") {
+            List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
+            setState(() {
+              sensors = bodySensors
+                  .map((dynamic item) => Sensor.fromJson(item))
+                  .toList();
+            });
+          } else if (res != null && res['statusCodeSensors'] == "401") {
+            logOut();
+          }
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -89,6 +111,17 @@ class _DataDownloadState extends State<DataDownload> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// builds range date field
@@ -118,11 +151,6 @@ class _DataDownloadState extends State<DataDownload> {
         validator: LastDaysAmountFieldValidator.validate);
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -136,9 +164,7 @@ class _DataDownloadState extends State<DataDownload> {
           key: _scaffoldKey,
           appBar: AppBar(title: Text('Pobierz dane'.i18n)),
           drawer: IdomDrawer(
-              storage: widget.storage,
-              parentWidgetType: "DataDownload",
-              onLogOutFailure: onLogOutFailure),
+              storage: widget.storage, parentWidgetType: "DataDownload"),
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(left: 15.5, top: 30, right: 15.5),
@@ -495,22 +521,26 @@ class _DataDownloadState extends State<DataDownload> {
           days);
       String data = result["body"];
       if (result != null && result["statusCode"] == 200) {
-        if (await requestWritePermission()) {
-          try {
-            final externalDirectory = await getExternalStorageDirectory();
-            var path = externalDirectory.path
-                .replaceAll("Android/data/com.project.idom/files", "");
-            var now = DateTime.now();
-            var file = File(
-                '$path/sensors_data_${DateFormat("yyy-MM-dd_hh:mm:ss").format(now)}.csv');
-            await file.writeAsString(data);
-            final snackBar = new SnackBar(
-                content: new Text("Plik ".i18n +
-                    "sensors_data_${DateFormat("yyy-MM-dd_hh:mm:ss").format(now)}.csv " +
-                    "został wygenerowany i zapisany w plikach urządzenia."
-                        .i18n));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
-          } catch (e) {
+        await onSuccess(data);
+      }
+
+      /// on invalid token log out
+      else if (result != null && result["statusCode"] == 401) {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          result = await api.generateFile(
+              selectedSensorsIds.isNotEmpty ? selectedSensorsIds : null,
+              selectedCategoriesValues.isNotEmpty
+                  ? selectedCategoriesValues
+                  : null,
+              days);
+          if (result != null && result["statusCode"] == 200) {
+            await onSuccess(data);
+          } else if (result != null && result["statusCode"] == 401) {
+            logOut();
+          } else {
             final snackBar = new SnackBar(
                 content: new Text(
                     "Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
@@ -518,6 +548,30 @@ class _DataDownloadState extends State<DataDownload> {
           }
         }
       } else {
+        final snackBar = new SnackBar(
+            content: new Text(
+                "Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      }
+    }
+  }
+
+  Future<void> onSuccess(String data) async {
+    if (await requestWritePermission()) {
+      try {
+        final externalDirectory = await getExternalStorageDirectory();
+        var path = externalDirectory.path
+            .replaceAll("Android/data/com.project.idom/files", "");
+        var now = DateTime.now();
+        var file = File(
+            '$path/sensors_data_${DateFormat("yyy-MM-dd_hh:mm:ss").format(now)}.csv');
+        await file.writeAsString(data);
+        final snackBar = new SnackBar(
+            content: new Text("Plik ".i18n +
+                "sensors_data_${DateFormat("yyy-MM-dd_hh:mm:ss").format(now)}.csv " +
+                "został wygenerowany i zapisany w plikach urządzenia.".i18n));
+        _scaffoldKey.currentState.showSnackBar((snackBar));
+      } catch (e) {
         final snackBar = new SnackBar(
             content: new Text(
                 "Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));

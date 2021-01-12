@@ -1,5 +1,6 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
+/// translations for driver list dialog in polish and english
 extension Localization on String {
   static var _t = Translations("pl_pl") +
       {
@@ -9,6 +10,14 @@ extension Localization on String {
       {
         "pl_pl": "Wciśnij przycisk",
         "en_uk": "Press the button",
+      } +
+      {
+        "pl_pl": "Wyszukaj...",
+        "en_uk": "Search...",
+      } +
+      {
+        "pl_pl": "Brak wyników wyszukiwania.",
+        "en_uk": "No search results.",
       } +
       {
         "pl_pl": "Błąd połączenia z serwerem.",

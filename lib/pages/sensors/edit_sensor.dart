@@ -16,14 +16,20 @@ import 'package:idom/widgets/loading_indicator.dart';
 
 import '../../models.dart';
 
-/// edits sensor
+/// allows editing sensor
 class EditSensor extends StatefulWidget {
   EditSensor({@required this.storage, @required this.sensor, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected sensor
   final Sensor sensor;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _EditSensorState createState() => new _EditSensorState();
 }
@@ -142,8 +148,8 @@ class _EditSensorState extends State<EditSensor> {
           ),
           labelText: "Kategoria".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down,
-              color: IdomColors.additionalColor),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -237,8 +243,8 @@ class _EditSensorState extends State<EditSensor> {
               color: canEditFrequency
                   ? IdomColors.additionalColor
                   : Theme.of(context).textTheme.bodyText1.color),
-          suffixIcon: Icon(Icons.arrow_drop_down,
-              color: IdomColors.additionalColor),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -264,11 +270,6 @@ class _EditSensorState extends State<EditSensor> {
         validator: UrlFieldValidator.validate);
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context, false);
     return true;
@@ -288,8 +289,7 @@ class _EditSensorState extends State<EditSensor> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditSensor",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "EditSensor"),
 
             /// builds form with sensor properties
             body: SingleChildScrollView(

@@ -15,21 +15,24 @@ import 'package:idom/utils/secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:idom/localization/widgets/idom_drawer.i18n.dart';
 
+/// displays app menu
 class IdomDrawer extends StatefulWidget {
   IdomDrawer({
     @required this.storage,
     @required this.parentWidgetType,
-    @required this.onLogOutFailure,
-    this.onGoBackAction,
     this.accountUsername,
   });
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// on which screen user opened menu
   final String parentWidgetType;
-  final Function onGoBackAction;
-  final Function onLogOutFailure;
+
+  /// current signed in user's username
   final String accountUsername;
 
+  /// handles state of widgets
   @override
   _IdomDrawerState createState() => _IdomDrawerState();
 }
@@ -186,7 +189,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
                         builder: (context) => AccountDetail(
                             storage: widget.storage,
                             username: currentUsername)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             isUserStaff == "true"
@@ -200,8 +202,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
                           MaterialPageRoute(
                               builder: (context) =>
                                   Accounts(storage: widget.storage)));
-                      if (widget.onGoBackAction != null)
-                        widget.onGoBackAction();
                     }
                   })
                 : SizedBox(),
@@ -210,7 +210,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Sensors") {
                 await Navigator.of(context).popUntil((route) => route.isFirst);
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n,
@@ -223,7 +222,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             Cameras(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile("assets/icons/tap.svg", "Sterowniki".i18n, () async {
@@ -235,21 +233,19 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             Drivers(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
-            // customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
-            //   Navigator.pop(context);
-            //   if (widget.parentWidgetType != "Actions") {
-            //     Navigator.of(context).popUntil((route) => route.isFirst);
-            //     await Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //             builder: (context) =>
-            //                 ActionsList(storage: widget.storage)));
-            //     if (widget.onGoBackAction != null) widget.onGoBackAction();
-            //   }
-            // }),
+            customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
+              Navigator.pop(context);
+              if (widget.parentWidgetType != "Actions") {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ActionsList(storage: widget.storage)));
+              }
+            }),
             customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n,
                 () async {
               Navigator.pop(context);
@@ -260,7 +256,6 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             Settings(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile("assets/icons/download.svg", "Pobierz dane".i18n,
@@ -273,12 +268,11 @@ class _IdomDrawerState extends State<IdomDrawer> {
                     MaterialPageRoute(
                         builder: (context) =>
                             DataDownload(storage: widget.storage)));
-                if (widget.onGoBackAction != null) widget.onGoBackAction();
               }
             }),
             customMenuTile("assets/icons/logout.svg", "Wyloguj".i18n, () async {
               Navigator.pop(context);
-              await _logOut();
+              await _logOutProcedure();
             }),
             customMenuTile("assets/icons/info.svg", "O projekcie".i18n,
                 () async {
@@ -300,34 +294,15 @@ class _IdomDrawerState extends State<IdomDrawer> {
   }
 
   /// logs the user out of the app
-  Future<void> _logOut() async {
-    try {
-      displayProgressDialog(
-          context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
-      var statusCode = await api.logOut();
-      if (statusCode == 200 || statusCode == 404 || statusCode == 401) {
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else if (statusCode == null) {
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        widget.onLogOutFailure(
-            "Błąd wylogowywania. Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      } else {
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        widget
-            .onLogOutFailure("Wylogowanie nie powiodło się. Spróbuj ponownie.");
-      }
-    } catch (e) {
-      print(e);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-      if (e.toString().contains("TimeoutException")) {
-        widget.onLogOutFailure(
-            "Błąd wylogowania. Sprawdź połączenie z serwerem i spróbuj ponownie.");
-      }
-      if (e.toString().contains("SocketException")) {
-        widget
-            .onLogOutFailure("Błąd wylogowania. Adres serwera nieprawidłowy.");
-      }
-    }
+  Future<void> _logOutProcedure() async {
+    displayProgressDialog(
+        context: context, key: _keyLoader, text: "Trwa wylogowywanie...");
+    logOutAndResetData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<void> logOutAndResetData() async {
+    await api.logOut();
+    widget.storage.resetUserData();
   }
 }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/localization/setup/front.i18n.dart';
 
+/// widget displaying project name while waiting for user data to load
 class LogotypeWidget extends StatelessWidget {
+  /// builds widget
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -6,6 +6,7 @@ import 'package:idom/utils/idom_colors.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
+/// runs app
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DarkMode.init();
@@ -18,7 +19,9 @@ Future<void> main() async {
   );
 }
 
+/// skeleton of the application
 class MyApp extends StatelessWidget {
+  /// build skeleton of the application
   @override
   Widget build(BuildContext context) {
     return Consumer<AppStateNotifier>(builder: (context, appState, child) {
@@ -48,6 +51,9 @@ class MyApp extends StatelessWidget {
           dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
           indicatorColor: IdomColors.mainBackgroundLight,
           splashColor: IdomColors.buttonSplashColorLight,
+          cursorColor: IdomColors.additionalColor,
+          textSelectionColor: IdomColors.additionalColor,
+          textSelectionHandleColor: IdomColors.additionalColor,
           dialogTheme: DialogTheme(
               elevation: 20,
               backgroundColor: IdomColors.mainBackgroundLight,
@@ -102,6 +108,9 @@ class MyApp extends StatelessWidget {
           dividerTheme: DividerThemeData(color: IdomColors.lightBlack),
           indicatorColor: IdomColors.mainBackgroundDark,
           splashColor: IdomColors.buttonSplashColorDark,
+          cursorColor: IdomColors.additionalColor,
+          textSelectionColor: IdomColors.additionalColor,
+          textSelectionHandleColor: IdomColors.additionalColor,
           dialogTheme: DialogTheme(
               elevation: 20,
               backgroundColor: IdomColors.mainBackgroundDark,

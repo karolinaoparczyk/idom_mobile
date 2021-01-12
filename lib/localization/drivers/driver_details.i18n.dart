@@ -1,5 +1,6 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
+/// translations for driver details dialog in polish and english
 extension Localization on String {
   static var _t = Translations("pl_pl") +
       {
@@ -124,15 +125,21 @@ extension Localization on String {
       } +
       {
         "pl_pl": "Wysłanie komendy do pilota nie powiodło się.",
+        "en_uk": "User session has expired. \n Logout in progress...",
+      } +
+      {
+        "pl_pl": "Sesja użytkownika wygasła. \nTrwa wylogowywanie...",
         "en_uk": "Sending a command to the remote control has failed.",
       } +
       {
-        "pl_pl": "Podnieś rolety",
-        "en_uk": "Raise blinds",
+        "pl_pl":
+            "Błąd wysyłania komendy. Sprawdź połączenie z serwerem i spróbuj ponownie.",
+        "en_uk":
+            "Command sending error. Check the connection to the server and try again.",
       } +
       {
-        "pl_pl": "Opuść rolety",
-        "en_uk": "Lower blinds",
+        "pl_pl": "Podnieś/opuść rolety",
+        "en_uk": "Raise/lower blinds",
       } +
       {
         "pl_pl": "podniesione",

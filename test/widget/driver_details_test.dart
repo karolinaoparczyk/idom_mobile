@@ -107,8 +107,7 @@ void main() {
     expect(find.text("Aktualny stan"), findsOneWidget);
     expect(find.text("podniesione"), findsOneWidget);
     expect(find.text("opuszczone"), findsNothing);
-    expect(find.text("Podnieś rolety"), findsOneWidget);
-    expect(find.text("Opuść rolety"), findsOneWidget);
+    expect(find.text("Podnieś/opuść rolety"), findsOneWidget);
     expect(find.byKey(Key("assets/icons/up-arrow.svg")), findsOneWidget);
     expect(find.byKey(Key("assets/icons/down-arrow.svg")), findsOneWidget);
   });
@@ -861,8 +860,7 @@ void main() {
     expect(find.text("Current state"), findsOneWidget);
     expect(find.text("raised"), findsOneWidget);
     expect(find.text("lowered"), findsNothing);
-    expect(find.text("Raise blinds"), findsOneWidget);
-    expect(find.text("Lower blinds"), findsOneWidget);
+    expect(find.text("Raise/lower blinds"), findsOneWidget);
     expect(find.byKey(Key("assets/icons/up-arrow.svg")), findsOneWidget);
     expect(find.byKey(Key("assets/icons/down-arrow.svg")), findsOneWidget);
   });

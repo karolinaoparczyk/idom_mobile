@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:idom/utils/idom_colors.dart';
 
-/// default app button
-Widget buttonWidget(
-    BuildContext context, String text, Function onPressed) {
+/// returns default app button with given text and on pressed function
+Widget buttonWidget(BuildContext context, String text, Function onPressed) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[

@@ -8,19 +8,27 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/cameras/edit_camera.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:idom/localization/cameras/camera_stream.i18n.dart';
 
+/// displays camera stream
 class CameraStream extends StatefulWidget {
   CameraStream({@required this.storage, @required this.camera, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected camera
   Camera camera;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _CameraStreamState createState() => _CameraStreamState();
 }
@@ -39,6 +47,9 @@ class _CameraStreamState extends State<CameraStream> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     _loading = true;
     _load = false;
     getApiURL();
@@ -63,8 +74,7 @@ class _CameraStreamState extends State<CameraStream> {
         ]),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Camera",
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Camera"),
         body: Column(
           children: [
             Align(
@@ -130,11 +140,6 @@ class _CameraStreamState extends State<CameraStream> {
     );
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   _navigateToEditCamera() async {
     _scaffoldKey.currentState.removeCurrentSnackBar();
     var result = await Navigator.push(
@@ -168,15 +173,35 @@ class _CameraStreamState extends State<CameraStream> {
         setState(() {
           widget.camera = refreshedCamera;
         });
-      } else if (res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+      /// on invalid token log out
+      else if (res['statusCode'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          setState(() {
+            _load = true;
+          });
+          res = await api.getCameraDetails(widget.camera.id);
+          setState(() {
+            _load = false;
+          });
+          if (res['statusCode'] == "200") {
+            dynamic body = jsonDecode(res['body']);
+            Camera refreshedCamera = Camera.fromJson(body);
+            setState(() {
+              widget.camera = refreshedCamera;
+            });
+          } else if (res['statusCode'] == "401") {
+            logOut();
+          } else {
+            final snackBar = new SnackBar(
+                content:
+                new Text("Odświeżenie danych kamery nie powiodło się.".i18n));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
+          }
+        }
       } else {
         final snackBar = new SnackBar(
             content:
@@ -206,5 +231,16 @@ class _CameraStreamState extends State<CameraStream> {
     setState(() {
       _load = false;
     });
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

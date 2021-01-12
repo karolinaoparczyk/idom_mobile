@@ -15,9 +15,13 @@ import 'package:idom/widgets/button.dart';
 class Front extends StatefulWidget {
   Front({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _FrontState createState() => _FrontState();
 }

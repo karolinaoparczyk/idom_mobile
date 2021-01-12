@@ -13,6 +13,7 @@ import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/drivers/edit_driver.i18n.dart';
 
+/// allows editing driver
 class EditDriver extends StatefulWidget {
   EditDriver(
       {@required this.storage,
@@ -20,11 +21,21 @@ class EditDriver extends StatefulWidget {
       this.testApi,
       this.notSetIp});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected driver
   final Driver driver;
+
+  /// api used for tests
   final Api testApi;
+
+  /// used only when adding ip address to a new bulb causes error
+  ///
+  /// true if error occurred - displays message to user
   final bool notSetIp;
 
+  /// handles state of widgets
   @override
   _EditDriverState createState() => _EditDriverState();
 }
@@ -70,11 +81,6 @@ class _EditDriverState extends State<EditDriver> {
     _nameController.dispose();
     _categoryController.dispose();
     super.dispose();
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -200,8 +206,7 @@ class _EditDriverState extends State<EditDriver> {
             ]),
             drawer: IdomDrawer(
                 storage: widget.storage,
-                parentWidgetType: "EditDriver",
-                onLogOutFailure: onLogOutFailure),
+                parentWidgetType: "EditDriver"),
 
             /// builds form with driver's properties
             body: SingleChildScrollView(

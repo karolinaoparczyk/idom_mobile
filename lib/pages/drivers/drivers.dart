@@ -11,15 +11,21 @@ import 'package:idom/pages/drivers/driver_details.dart';
 import 'package:idom/pages/drivers/new_driver.dart';
 import 'package:idom/remote_control.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 
+/// displays drivers list
 class Drivers extends StatefulWidget {
   Drivers({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _DriversState createState() => _DriversState();
 }
@@ -28,10 +34,13 @@ class _DriversState extends State<Drivers> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = GlobalKey<State>();
+  final TextEditingController _searchController = TextEditingController();
   Api api = Api();
-  List<Driver> _driverList;
+  List<Driver> _driverList = List<Driver>();
+  List<Driver> _duplicateDriverList = List<Driver>();
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -39,7 +48,13 @@ class _DriversState extends State<Drivers> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     getDrivers();
+    _searchController.addListener(() {
+      filterSearchResults(_searchController.text);
+    });
   }
 
   /// returns list of drivers
@@ -58,18 +73,35 @@ class _DriversState extends State<Drivers> {
           zeroFetchedItems = true;
         else
           zeroFetchedItems = false;
-      } else if (res != null && res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+      }  /// on invalid token log out
+      else if (res != null && res['statusCode'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          res = await api.getDrivers();
+
+          /// on success fetching data
+          if (res != null && res['statusCode'] == "200") {
+            List<dynamic> body = jsonDecode(res['body']);
+            setState(() {
+              _driverList =
+                  body.map((dynamic item) => Driver.fromJson(item)).toList();
+            });
+            if (_driverList.length == 0)
+              zeroFetchedItems = true;
+            else
+              zeroFetchedItems = false;
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          } else {
+            _connectionEstablished = false;
+            setState(() {});
+            return null;
+          }
+        }
       }
-      if (res == null) {
+      else {
         _connectionEstablished = false;
         setState(() {});
         return null;
@@ -91,11 +123,66 @@ class _DriversState extends State<Drivers> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+    setState(() {
+      _duplicateDriverList.clear();
+      _duplicateDriverList.addAll(_driverList);
+    });
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoaderInvalidToken,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  _buildSearchField() {
+    return TextField(
+      key: Key('searchField'),
+      controller: _searchController,
+      style: TextStyle(
+          color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Wyszukaj...".i18n,
+        hintStyle: TextStyle(
+            color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: IdomColors.additionalColor)),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: IdomColors.additionalColor),
+        ),
+      ),
+    );
+  }
+
+  void filterSearchResults(String query) {
+    query = query.toLowerCase();
+    List<Driver> dummySearchList = List<Driver>();
+    dummySearchList.addAll(_duplicateDriverList);
+    if (query.isNotEmpty) {
+      List<Driver> dummyListData = List<Driver>();
+      dummySearchList.forEach((item) {
+        if (item.name.toLowerCase().contains(query)) {
+          dummyListData.add(item);
+        }
+      });
+      setState(() {
+        _driverList.clear();
+        _driverList.addAll(dummyListData);
+      });
+      return;
+    } else {
+      setState(() {
+        _driverList.clear();
+        _driverList.addAll(_duplicateDriverList);
+      });
+    }
   }
 
   Future<bool> _onBackButton() async {
@@ -110,19 +197,57 @@ class _DriversState extends State<Drivers> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('Sterowniki'.i18n),
+          leading: _isSearching
+              ? IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = false;
+                      _searchController.text = "";
+                    });
+                  })
+              : IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                ),
+          title: _isSearching ? _buildSearchField() : Text('Sterowniki'.i18n),
           actions: [
-            IconButton(
-              icon: Icon(Icons.add, size: 30.0),
-              key: Key("addDriverButton"),
-              onPressed: navigateToNewDriver,
-            )
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.search, size: 25.0),
+                    key: Key("searchButton"),
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = true;
+                      });
+                    },
+                  ),
+            _isSearching
+                ? IconButton(
+                    icon: Icon(Icons.close, size: 25.0),
+                    key: Key("clearSearchingBox"),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.text = "";
+                      });
+                    },
+                  )
+                : SizedBox(),
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.add, size: 30.0),
+                    key: Key("addDriverButton"),
+                    onPressed: navigateToNewDriver,
+                  )
           ],
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Drivers",
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Drivers"),
 
         /// builds cameras' list
         body: Container(child: listDrivers()),
@@ -149,7 +274,7 @@ class _DriversState extends State<Drivers> {
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-        _driverList == null) {
+        _driverList.isEmpty) {
       return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
           onRefresh: _pullRefresh,
@@ -164,7 +289,18 @@ class _DriversState extends State<Drivers> {
                       child: Text("Błąd połączenia z serwerem.".i18n,
                           style: Theme.of(context).textTheme.bodyText1,
                           textAlign: TextAlign.center)))));
-    } else if (_driverList != null && _driverList.length > 0) {
+    } else if (!zeroFetchedItems &&
+        _duplicateDriverList.isNotEmpty &&
+        _driverList.isEmpty) {
+      return Padding(
+          padding:
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text("Brak wyników wyszukiwania.".i18n,
+                  style: Theme.of(context).textTheme.bodyText2,
+                  textAlign: TextAlign.center)));
+    } else if (_driverList.isNotEmpty && _driverList.length > 0) {
       return Column(
         children: [
           Expanded(

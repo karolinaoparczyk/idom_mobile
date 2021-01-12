@@ -3,19 +3,27 @@ import 'package:idom/api.dart';
 import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:idom/localization/cameras/edit_camera.i18n.dart';
 
+/// allows editing camera
 class EditCamera extends StatefulWidget {
   EditCamera({@required this.storage, @required this.camera, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected camera
   final Camera camera;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _EditCameraState createState() => _EditCameraState();
 }
@@ -35,6 +43,9 @@ class _EditCameraState extends State<EditCamera> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     _load = false;
 
     /// seting current camera name
@@ -45,11 +56,6 @@ class _EditCameraState extends State<EditCamera> {
   void dispose() {
     _nameController.dispose();
     super.dispose();
-  }
-
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<bool> _onBackButton() async {
@@ -98,9 +104,7 @@ class _EditCameraState extends State<EditCamera> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "EditCamera",
-                onLogOutFailure: onLogOutFailure),
+                storage: widget.storage, parentWidgetType: "EditCamera"),
 
             /// builds form with camera's properties
             body: SingleChildScrollView(
@@ -169,17 +173,44 @@ class _EditCameraState extends State<EditCamera> {
         fieldsValidationMessage = null;
         setState(() {});
         Navigator.pop(context, true);
-      } else if (res['statusCode'] == "401") {
-        fieldsValidationMessage = null;
-        setState(() {});
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+
+      /// on invalid token log out
+      else if (res['statusCode'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          setState(() {
+            _load = true;
+          });
+          var res = await api.editCamera(widget.camera.id, name);
+          setState(() {
+            _load = false;
+          });
+
+          /// on success fetching data
+          if (res['statusCode'] == "200") {
+            fieldsValidationMessage = null;
+            setState(() {});
+            Navigator.pop(context, true);
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          } else if (res['body']
+              .contains("Camera with provided name already exists")) {
+            fieldsValidationMessage =
+                "Kamera o podanej nazwie już istnieje.".i18n;
+            setState(() {});
+            return;
+          } else {
+            fieldsValidationMessage = null;
+            setState(() {});
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Edycja kamery nie powiodła się. Spróbuj ponownie.".i18n));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
+          }
+        }
       } else if (res['body']
           .contains("Camera with provided name already exists")) {
         fieldsValidationMessage = "Kamera o podanej nazwie już istnieje.".i18n;
@@ -213,6 +244,18 @@ class _EditCameraState extends State<EditCamera> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// confirms saving changes

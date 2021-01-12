@@ -9,16 +9,22 @@ import 'package:idom/models.dart';
 import 'package:idom/pages/cameras/camera_stream.dart';
 import 'package:idom/pages/cameras/new_camera.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/localization/cameras/cameras.i18n.dart';
 
+/// displays cameras list
 class Cameras extends StatefulWidget {
   Cameras({@required this.storage, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _CamerasState createState() => _CamerasState();
 }
@@ -26,10 +32,13 @@ class Cameras extends StatefulWidget {
 class _CamerasState extends State<Cameras> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = GlobalKey<State>();
+  final TextEditingController _searchController = TextEditingController();
   Api api = Api();
-  List<Camera> _cameraList;
+  List<Camera> _cameraList = List<Camera>();
+  List<Camera> _duplicateCameraList = List<Camera>();
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -37,7 +46,13 @@ class _CamerasState extends State<Cameras> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     getCameras();
+    _searchController.addListener(() {
+      filterSearchResults(_searchController.text);
+    });
   }
 
   /// returns list of cameras
@@ -56,17 +71,35 @@ class _CamerasState extends State<Cameras> {
           zeroFetchedItems = true;
         else
           zeroFetchedItems = false;
-      } else if (res != null && res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+      } /// on invalid token log out
+      else if (res != null && res['statusCode'] == "401") {
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          res = await api.getCameras();
+
+          /// on success fetching data
+          if (res != null && res['statusCode'] == "200") {
+            List<dynamic> body = jsonDecode(res['body']);
+            setState(() {
+              _cameraList =
+                  body.map((dynamic item) => Camera.fromJson(item)).toList();
+            });
+            if (_cameraList.length == 0)
+              zeroFetchedItems = true;
+            else
+              zeroFetchedItems = false;
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          } else {
+            _connectionEstablished = false;
+            setState(() {});
+            return null;
+          }
+        }
       }
-      if (res == null) {
+      else {
         _connectionEstablished = false;
         setState(() {});
         return null;
@@ -87,7 +120,23 @@ class _CamerasState extends State<Cameras> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+    setState(() {
+      _duplicateCameraList.clear();
+      _duplicateCameraList.addAll(_cameraList);
+    });
   }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
 
   /// deletes camera
   _deleteCamera(Camera camera) async {
@@ -148,14 +197,53 @@ class _CamerasState extends State<Cameras> {
     }
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
+  }
+
+  _buildSearchField() {
+    return TextField(
+      key: Key('searchField'),
+      controller: _searchController,
+      style: TextStyle(
+          color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Wyszukaj...".i18n,
+        hintStyle: TextStyle(
+            color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: IdomColors.additionalColor)),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: IdomColors.additionalColor),
+        ),
+      ),
+    );
+  }
+
+  void filterSearchResults(String query) {
+    query = query.toLowerCase();
+    List<Camera> dummySearchList = List<Camera>();
+    dummySearchList.addAll(_duplicateCameraList);
+    if (query.isNotEmpty) {
+      List<Camera> dummyListData = List<Camera>();
+      dummySearchList.forEach((item) {
+        if (item.name.toLowerCase().contains(query)) {
+          dummyListData.add(item);
+        }
+      });
+      setState(() {
+        _cameraList.clear();
+        _cameraList.addAll(dummyListData);
+      });
+      return;
+    } else {
+      setState(() {
+        _cameraList.clear();
+        _cameraList.addAll(_duplicateCameraList);
+      });
+    }
   }
 
   @override
@@ -165,19 +253,57 @@ class _CamerasState extends State<Cameras> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('Kamery'.i18n),
+          leading: _isSearching
+              ? IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = false;
+                      _searchController.text = "";
+                    });
+                  })
+              : IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                ),
+          title: _isSearching ? _buildSearchField() : Text('Kamery'.i18n),
           actions: [
-            IconButton(
-              icon: Icon(Icons.add, size: 30.0),
-              key: Key("addCameraButton"),
-              onPressed: navigateToNewCamera,
-            )
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.search, size: 25.0),
+                    key: Key("searchButton"),
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = true;
+                      });
+                    },
+                  ),
+            _isSearching
+                ? IconButton(
+                    icon: Icon(Icons.close, size: 25.0),
+                    key: Key("clearSearchingBox"),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.text = "";
+                      });
+                    },
+                  )
+                : SizedBox(),
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.add, size: 30.0),
+                    key: Key("addCameraButton"),
+                    onPressed: navigateToNewCamera,
+                  )
           ],
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
-            parentWidgetType: "Cameras",
-            onLogOutFailure: onLogOutFailure),
+            parentWidgetType: "Cameras"),
 
         /// builds cameras' list
         body: Container(child: listCameras()),
@@ -204,7 +330,7 @@ class _CamerasState extends State<Cameras> {
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-        _cameraList == null) {
+        _cameraList.isEmpty) {
       return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
           onRefresh: _pullRefresh,
@@ -219,7 +345,18 @@ class _CamerasState extends State<Cameras> {
                       child: Text("Błąd połączenia z serwerem.".i18n,
                           style: Theme.of(context).textTheme.subtitle1,
                           textAlign: TextAlign.center)))));
-    } else if (_cameraList != null && _cameraList.length > 0) {
+    } else if (!zeroFetchedItems &&
+        _duplicateCameraList.isNotEmpty &&
+        _cameraList.isEmpty) {
+      return Padding(
+          padding:
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text("Brak wyników wyszukiwania.".i18n,
+                  style: Theme.of(context).textTheme.bodyText2,
+                  textAlign: TextAlign.center)));
+    } else if (_cameraList.isNotEmpty && _cameraList.length > 0) {
       return Column(
         children: [
           Expanded(

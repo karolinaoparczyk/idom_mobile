@@ -16,14 +16,20 @@ import 'package:idom/widgets/loading_indicator.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
-/// displays sensor details and allows editing them
+/// displays sensor details
 class SensorDetails extends StatefulWidget {
   SensorDetails({@required this.storage, @required this.sensor, this.testApi});
 
+  /// internal storage
   final SecureStorage storage;
+
+  /// selected sensor
   Sensor sensor;
+
+  /// api used for tests
   final Api testApi;
 
+  /// handles state of widgets
   @override
   _SensorDetailsState createState() => new _SensorDetailsState();
 }
@@ -181,11 +187,6 @@ class _SensorDetailsState extends State<SensorDetails> {
     super.dispose();
   }
 
-  onLogOutFailure(String text) {
-    final snackBar = new SnackBar(content: new Text(text));
-    _scaffoldKey.currentState.showSnackBar((snackBar));
-  }
-
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
@@ -205,8 +206,7 @@ class _SensorDetailsState extends State<SensorDetails> {
           ]),
           drawer: IdomDrawer(
               storage: widget.storage,
-              parentWidgetType: "SensorDetails",
-              onLogOutFailure: onLogOutFailure),
+              parentWidgetType: "SensorDetails"),
 
           /// builds form with editable and non-editable sensor properties
           body: SingleChildScrollView(

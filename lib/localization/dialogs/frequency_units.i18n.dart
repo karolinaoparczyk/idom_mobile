@@ -1,5 +1,6 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
+/// translations for frequency units dialog in polish and english
 extension Localization on String {
   static var _t = Translations("pl_pl") +
       {

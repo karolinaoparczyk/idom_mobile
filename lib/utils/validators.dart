@@ -1,9 +1,8 @@
 import 'package:idom/localization/utils/validators.i18n.dart';
 
-/// form fields validators
-///
 /// username field validator
 class UsernameFieldValidator {
+  /// validates username
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -20,6 +19,7 @@ class UsernameFieldValidator {
 
 /// password field validator
 class PasswordFieldValidator {
+  /// validates password
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -36,6 +36,7 @@ class PasswordFieldValidator {
 
 /// email field validator
 class EmailFieldValidator {
+  /// validates e-mail address
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -51,6 +52,7 @@ class EmailFieldValidator {
 
 /// telephone field validator
 class TelephoneFieldValidator {
+  /// validates cell phone number
   static String validate(String value) {
     value = value.replaceAll(' ', '');
     if (value.isNotEmpty && !RegExp(r"^\+\d{11}$").hasMatch(value)) {
@@ -62,6 +64,7 @@ class TelephoneFieldValidator {
 
 /// sensor name field validator
 class SensorNameFieldValidator {
+  /// validates sensor name
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -72,6 +75,7 @@ class SensorNameFieldValidator {
 
 /// driver name field validator
 class DriverNameFieldValidator {
+  /// validates driver name
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -80,13 +84,15 @@ class DriverNameFieldValidator {
   }
 }
 
-/// minimum and maximum frequency values due to chosen frequency units
+/// minimum frequency values due to chosen frequency units
 Map<String, int> unitsToMinValues = {
   "seconds": 30,
   "minutes": 1,
   "hours": 1,
   "days": 1
 };
+
+/// maximum frequency values due to chosen frequency units
 Map<String, int> unitsToMaxValues = {
   "seconds": 21474836,
   "minutes": 357913,
@@ -96,6 +102,7 @@ Map<String, int> unitsToMaxValues = {
 
 /// frequency field validator
 class SensorFrequencyFieldValidator {
+  /// validates frequency
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -119,6 +126,7 @@ class SensorFrequencyFieldValidator {
 
 /// validates url field
 class UrlFieldValidator {
+  /// validates url
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -129,6 +137,7 @@ class UrlFieldValidator {
 
 /// validates category field
 class CategoryFieldValidator {
+  /// validates category
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -139,9 +148,10 @@ class CategoryFieldValidator {
 
 /// validates driver field
 class DriverFieldValidator {
+  /// validates driver is chosen
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Pole wymagane';
+      return 'Pole wymagane'.i18n;
     }
     return null;
   }
@@ -149,9 +159,10 @@ class DriverFieldValidator {
 
 /// validates time field
 class TimeFieldValidator {
+  /// validates time is picked
   static String validate(String value) {
     if (value.isEmpty) {
-      return 'Pole wymagane';
+      return 'Pole wymagane'.i18n;
     }
     return null;
   }
@@ -159,6 +170,7 @@ class TimeFieldValidator {
 
 /// validates last days amount field
 class LastDaysAmountFieldValidator {
+  /// validates last days value
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -173,6 +185,7 @@ class LastDaysAmountFieldValidator {
 
 /// validates frequency units field
 class FrequencyUnitsFieldValidator {
+  /// validates frequency units is chosen
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
@@ -183,6 +196,26 @@ class FrequencyUnitsFieldValidator {
 
 /// validates language field
 class LanguageFieldValidator {
+   static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane'.i18n;
+    }
+    return null;
+  }
+}
+
+/// validates trigger value operator field
+class TriggerValueOperatorFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane'.i18n;
+    }
+    return null;
+  }
+}
+
+/// validates driver action field
+class DriverActionFieldValidator {
   static String validate(String value) {
     if (value.isEmpty) {
       return 'Pole wymagane'.i18n;
