@@ -926,7 +926,7 @@ class _EditActionState extends State<EditAction> {
           _currentColor = Colors.black;
           _shadedColor = _shadeChangeHandler(widget.action.action.brightness / 100 * 255);
         } else if (widget.action.action.type == "turn") {
-          if (widget.action.action.status) {
+          if (widget.action.action.status == "on") {
             action =
                 actions.firstWhere((element) => element['value'] == "turn_on");
           } else {
@@ -936,7 +936,7 @@ class _EditActionState extends State<EditAction> {
         }
         break;
       case "roller_blind":
-        if (widget.action.action.status) {
+        if (widget.action.action.status == "on") {
           action = actions
               .firstWhere((element) => element['value'] == "raise_blinds");
         } else {
@@ -1062,13 +1062,13 @@ class _EditActionState extends State<EditAction> {
     Map<String, dynamic> action;
     switch (selectedDriverAction) {
       case "click":
-        action = {"status": true};
+        action = {"status": "on"};
         break;
       case "turn_on":
-        action = {"type": "turn", "status": true};
+        action = {"type": "turn", "status": "on"};
         break;
       case "turn_off":
-        action = {"type": "turn", "status": false};
+        action = {"type": "turn", "status": "off"};
         break;
       case "set_color":
         action = {
@@ -1085,10 +1085,10 @@ class _EditActionState extends State<EditAction> {
         };
         break;
       case "raise_blinds":
-        action = {"status": true};
+        action = {"status": "on"};
         break;
       case "lower_blinds":
-        action = {"status": false};
+        action = {"status": "off"};
         break;
     }
     return action;

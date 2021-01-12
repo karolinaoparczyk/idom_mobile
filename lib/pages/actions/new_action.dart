@@ -1092,13 +1092,13 @@ class _NewActionState extends State<NewAction> {
     Map<String, dynamic> action;
     switch (selectedDriverAction) {
       case "click":
-        action = {"status": true};
+        action = {"status": "on"};
         break;
       case "turn_on":
-        action = {"type": "turn", "status": true};
+        action = {"type": "turn", "status": "on"};
         break;
       case "turn_off":
-        action = {"type": "turn", "status": false};
+        action = {"type": "turn", "status": "off"};
         break;
       case "set_color":
         action = {
@@ -1115,10 +1115,10 @@ class _NewActionState extends State<NewAction> {
         };
         break;
       case "raise_blinds":
-        action = {"status": true};
+        action = {"status": "on"};
         break;
       case "lower_blinds":
-        action = {"status": false};
+        action = {"status": "off"};
         break;
     }
     return action;
