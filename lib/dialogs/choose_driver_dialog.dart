@@ -126,8 +126,7 @@ class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
                     /// allows selecting only one driver
                     (driver) => RadioListTile(
                       title: Text(driver.name,
-                          style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontWeight: FontWeight.normal, fontSize: 21.0)),
+                          style: Theme.of(context).textTheme.bodyText2),
                       value: driver,
                       groupValue: selectedDriver,
                       onChanged: (value) {

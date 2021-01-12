@@ -213,3 +213,13 @@ class TriggerValueOperatorFieldValidator {
     return null;
   }
 }
+
+/// validates driver action field
+class DriverActionFieldValidator {
+  static String validate(String value) {
+    if (value.isEmpty) {
+      return 'Pole wymagane'.i18n;
+    }
+    return null;
+  }
+}

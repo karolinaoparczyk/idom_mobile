@@ -145,7 +145,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                             alignment: Alignment.centerLeft,
                             child: Text("Adres IP".i18n,
                                 style: Theme.of(context).textTheme.headline5))),
-                  Padding(
+                  if (widget.driver.category == "bulb")
+                    Padding(
                       padding: EdgeInsets.only(
                           left: 62, top: 0, right: 30.0, bottom: 10.0),
                       child: Align(
@@ -1373,7 +1374,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                           ),
                           child: CustomPaint(
                             painter:
-                                _SliderIndicatorPainter(_colorSliderPosition),
+                                SliderIndicatorPainter(_colorSliderPosition),
                           ),
                         ),
                       ),
@@ -1442,7 +1443,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                           ),
                           child: CustomPaint(
                             painter:
-                                _SliderIndicatorPainter(_shadeSliderPosition),
+                                SliderIndicatorPainter(_shadeSliderPosition),
                           ),
                         ),
                       ),
@@ -2110,10 +2111,10 @@ class _DriverDetailsState extends State<DriverDetails> {
   }
 }
 
-class _SliderIndicatorPainter extends CustomPainter {
+class SliderIndicatorPainter extends CustomPainter {
   final double position;
 
-  _SliderIndicatorPainter(this.position);
+  SliderIndicatorPainter(this.position);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -2122,7 +2123,7 @@ class _SliderIndicatorPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_SliderIndicatorPainter old) {
+  bool shouldRepaint(SliderIndicatorPainter old) {
     return true;
   }
 }

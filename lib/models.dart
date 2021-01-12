@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -253,7 +255,7 @@ class SensorDriverAction extends Equatable {
   String endTime;
 
   /// action itself
-  String action;
+  ActionAction action;
 
   /// action type
   ///
@@ -283,6 +285,15 @@ class SensorDriverAction extends Equatable {
 
   /// generates object form json format
   factory SensorDriverAction.fromJson(Map<String, dynamic> json) {
+    getJson(dynamic action) {
+      if (action is String) {
+        var jsonDecoded = jsonDecode(action.replaceAll("\"", ""));
+        return jsonDecoded;
+      } else {
+        return action;
+      }
+    }
+
     return SensorDriverAction(
       id: json['id'] as int,
       name: json['name'] as String,
@@ -293,8 +304,42 @@ class SensorDriverAction extends Equatable {
       days: json['days'] as String,
       startTime: json['start_event'] as String,
       endTime: json['end_event'] as String,
-      action: json['action'] as String,
+      action: ActionAction.fromJson(getJson(json['action'])),
       flag: json['flag'] as int,
+    );
+  }
+}
+
+class ActionAction extends Equatable {
+  bool status;
+  int red;
+  int green;
+  int blue;
+  int brightness;
+  String type;
+
+  /// creates action action
+  ActionAction(
+      {this.status,
+      this.red,
+      this.green,
+      this.blue,
+      this.brightness,
+      this.type});
+
+  /// ensures uniqueness
+  @override
+  List<Object> get props => [status, type];
+
+  /// generates object form json format
+  factory ActionAction.fromJson(Map<String, dynamic> json) {
+    return ActionAction(
+      status: json['status'] as bool,
+      red: json['red'] as int,
+      green: json['green'] as int,
+      blue: json['blue'] as int,
+      brightness: json['brightness'] as int,
+      type: json['type'] as String,
     );
   }
 }

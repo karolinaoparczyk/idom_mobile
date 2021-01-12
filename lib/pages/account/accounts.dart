@@ -37,7 +37,7 @@ class _AccountsState extends State<Accounts> {
   Api api = Api();
 
   /// account list currently displayed including filtering
-  List<Account> _accountList;
+  List<Account> _accountList = List<Account>();
 
   /// account list with all available items
   List<Account> _duplicateAccountList = List<Account>();
@@ -144,6 +144,8 @@ class _AccountsState extends State<Accounts> {
         return null;
       }
     } catch (e) {
+      _connectionEstablished = false;
+      setState(() {});
       print(e.toString());
 
       /// on timeout while sending request display message
@@ -390,7 +392,7 @@ class _AccountsState extends State<Accounts> {
     /// connection to server has not been established
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-        _accountList == null) {
+        _accountList.isEmpty) {
       return RefreshIndicator(
           backgroundColor: IdomColors.mainBackgroundDark,
           onRefresh: _pullRefresh,
@@ -409,8 +411,8 @@ class _AccountsState extends State<Accounts> {
 
     /// search result is empty
     else if (!zeroFetchedItems &&
-        _accountList != null &&
-        _accountList.length == 0) {
+        _duplicateAccountList.isNotEmpty &&
+        _accountList.isEmpty) {
       return Padding(
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),

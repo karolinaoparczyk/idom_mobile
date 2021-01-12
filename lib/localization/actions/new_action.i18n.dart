@@ -27,6 +27,38 @@ extension Localization on String {
         "en_uk": "Drivers download error. The server address is invalid.",
       } +
       {
+        "pl_pl": "Wciśnij przycisk",
+        "en_uk": "Press the button",
+      } +
+      {
+        "pl_pl": "Włącz żarówkę",
+        "en_uk": "Turn bulb on",
+      } +
+      {
+        "pl_pl": "Wyłącz żarówkę",
+        "en_uk": "Turn bulb off",
+      } +
+      {
+        "pl_pl": "Wybierz akcję",
+        "en_uk": "Select action",
+      } +
+      {
+        "pl_pl": "Ustaw kolor",
+        "en_uk": "Set color",
+      } +
+      {
+        "pl_pl": "Ustaw jasność",
+        "en_uk": "Set brightness",
+      } +
+      {
+        "pl_pl": "Podnieś rolety",
+        "en_uk": "Raise blinds",
+      } +
+      {
+        "pl_pl": "Opuść rolety",
+        "en_uk": "Lower blinds",
+      } +
+      {
         "pl_pl": "Nazwa",
         "en_uk": "Name",
       } +
@@ -95,7 +127,7 @@ extension Localization on String {
       {
         "pl_pl": "Czas działania akcji",
         "en_uk": "Action time",
-      }  +
+      } +
       {
         "pl_pl": "Podaj liczbę",
         "en_uk": "Enter a number",
@@ -152,7 +184,7 @@ extension Localization on String {
       {
         "pl_pl": "akcja",
         "en_uk": "action",
-      }+
+      } +
       {
         "pl_pl": "Ustaw budzik",
         "en_uk": "Set an alarm",
