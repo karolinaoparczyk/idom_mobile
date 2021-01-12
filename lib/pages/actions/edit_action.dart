@@ -275,6 +275,15 @@ class _EditActionState extends State<EditAction> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
         key: Key('name'),
         style: Theme.of(context).textTheme.bodyText2,
@@ -309,6 +318,15 @@ class _EditActionState extends State<EditAction> {
                 },
                 child: Icon(Icons.close, color: IdomColors.additionalColor)),
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
           borderRadius: BorderRadius.circular(10.0),
         ),
       ),
@@ -349,6 +367,15 @@ class _EditActionState extends State<EditAction> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).textTheme.bodyText2.color),
+                borderRadius: BorderRadius.circular(10.0)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             labelText: "Wartość".i18n,
             labelStyle: Theme.of(context)
                 .textTheme
@@ -382,6 +409,15 @@ class _EditActionState extends State<EditAction> {
         suffixIcon:
             Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
           borderRadius: BorderRadius.circular(10.0),
         ),
       ),
@@ -479,6 +515,15 @@ class _EditActionState extends State<EditAction> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
         onTap: () async {
           final Driver driver = await showDialog(
@@ -516,8 +561,18 @@ class _EditActionState extends State<EditAction> {
         decoration: InputDecoration(
           labelText: "Start",
           labelStyle: Theme.of(context).textTheme.headline5,
-          suffixIcon: Icon(Icons.arrow_drop_down),
+          suffixIcon:
+              Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
           border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyText2.color),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
@@ -530,12 +585,12 @@ class _EditActionState extends State<EditAction> {
             builder: (BuildContext context, Widget child) {
               return Theme(
                 data: ThemeData.light().copyWith(
-                  primaryColor: IdomColors.additionalColor,
-                  accentColor: IdomColors.additionalColor,
-                  colorScheme:
-                      ColorScheme.light(primary: IdomColors.additionalColor),
+                  colorScheme: ColorScheme.light(
+                      primary: IdomColors.additionalColor,
+                      surface: Theme.of(context).backgroundColor,
+                      onSurface: Theme.of(context).textTheme.bodyText2.color),
                   buttonTheme:
-                      ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                  ButtonThemeData(textTheme: ButtonTextTheme.primary),
                 ),
                 child: child,
               );
@@ -566,7 +621,7 @@ class _EditActionState extends State<EditAction> {
         labelText: "Koniec".i18n,
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon: endTime == null
-            ? Icon(Icons.arrow_drop_down)
+            ? Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor)
             : InkWell(
                 onTap: () {
                   setState(() {
@@ -583,6 +638,15 @@ class _EditActionState extends State<EditAction> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+            borderRadius: BorderRadius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
       onTap: () async {
         if (!_endTimeFocusNode.canRequestFocus) {
@@ -596,10 +660,10 @@ class _EditActionState extends State<EditAction> {
           builder: (BuildContext context, Widget child) {
             return Theme(
               data: ThemeData.light().copyWith(
-                primaryColor: IdomColors.additionalColor,
-                accentColor: IdomColors.additionalColor,
-                colorScheme:
-                    ColorScheme.light(primary: IdomColors.additionalColor),
+                colorScheme: ColorScheme.light(
+                    primary: IdomColors.additionalColor,
+                    surface: Theme.of(context).backgroundColor,
+                    onSurface: Theme.of(context).textTheme.bodyText2.color),
                 buttonTheme:
                     ButtonThemeData(textTheme: ButtonTextTheme.primary),
               ),
@@ -846,27 +910,85 @@ class _EditActionState extends State<EditAction> {
                                   IdomColors.additionalColor, 0.2),
                               selectedColor: IdomColors.blackTextLight,
                               children: [
-                                Text("pn".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                Text(
+                                  "pn".i18n,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1
+                                      .copyWith(
+                                          color: daysOfWeekSelected[0]
+                                              ? IdomColors.whiteTextDark
+                                              : Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .color),
+                                ),
                                 Text("wt".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[1]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("śr".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[2]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("czw".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[3]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("pt".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[4]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("sb".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[5]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                                 Text("nd".i18n,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: daysOfWeekSelected[6]
+                                                ? IdomColors.whiteTextDark
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .color)),
                               ],
                               isSelected: daysOfWeekSelected,
                               onPressed: (int index) {
@@ -924,7 +1046,8 @@ class _EditActionState extends State<EditAction> {
           action = actions
               .firstWhere((element) => element['value'] == "set_brightness");
           _currentColor = Colors.black;
-          _shadedColor = _shadeChangeHandler(widget.action.action.brightness / 100 * 255);
+          _shadedColor =
+              _shadeChangeHandler(widget.action.action.brightness / 100 * 255);
         } else if (widget.action.action.type == "turn") {
           if (widget.action.action.status == "on") {
             action =
