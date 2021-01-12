@@ -147,15 +147,15 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 style: Theme.of(context).textTheme.headline5))),
                   if (widget.driver.category == "bulb")
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: 62, top: 0, right: 30.0, bottom: 10.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                              widget.driver.ipAddress != null
-                                  ? widget.driver.ipAddress
-                                  : "-",
-                              style: Theme.of(context).textTheme.bodyText2))),
+                        padding: EdgeInsets.only(
+                            left: 62, top: 0, right: 30.0, bottom: 10.0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                                widget.driver.ipAddress != null
+                                    ? widget.driver.ipAddress
+                                    : "-",
+                                style: Theme.of(context).textTheme.bodyText2))),
                   Divider(),
                   Padding(
                       padding: EdgeInsets.only(
@@ -1517,56 +1517,40 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     color: IdomColors.lighten(
                                         IdomColors.additionalColor, 0.4),
                                     child: InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          _clickDriver();
+                                        },
                                         borderRadius:
                                             BorderRadius.circular(50.0),
                                         splashColor: IdomColors.lighten(
                                             IdomColors.additionalColor, 0.2),
                                         child: Padding(
                                           padding: const EdgeInsets.all(13.0),
-                                          child: SvgPicture.asset(
-                                              "assets/icons/up-arrow.svg",
-                                              matchTextDirection: false,
-                                              width: 10,
-                                              height: 10,
-                                              color: IdomColors.additionalColor,
-                                              key: Key(
-                                                  "assets/icons/up-arrow.svg")),
+                                          child: Column(
+                                            children: [
+                                              SvgPicture.asset(
+                                                  "assets/icons/up-arrow.svg",
+                                                  matchTextDirection: false,
+                                                  width: 15,
+                                                  height: 15,
+                                                  color: IdomColors
+                                                      .additionalColor,
+                                                  key: Key(
+                                                      "assets/icons/up-arrow.svg")),
+                                              SvgPicture.asset(
+                                                  "assets/icons/down-arrow.svg",
+                                                  matchTextDirection: false,
+                                                  width: 15,
+                                                  height: 15,
+                                                  color: IdomColors
+                                                      .additionalColor,
+                                                  key: Key(
+                                                      "assets/icons/down-arrow.svg"))
+                                            ],
+                                          ),
                                         ))))),
                         Container(
-                          child: Text("Podnieś rolety".i18n,
-                              style: Theme.of(context).textTheme.bodyText2),
-                        ),
-                        SizedBox(height: 30),
-                        SizedBox.fromSize(
-                            size: Size(56, 56),
-                            child: ClipOval(
-                                child: Material(
-                                    color: IdomColors.lighten(
-                                        IdomColors.additionalColor, 0.4),
-                                    child: InkWell(
-                                        onTap: () {},
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                        splashColor: IdomColors.lighten(
-                                            IdomColors.additionalColor, 0.2),
-                                        child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 13.0,
-                                                right: 13.0,
-                                                top: 15.0,
-                                                bottom: 13.0),
-                                            child: SvgPicture.asset(
-                                                "assets/icons/down-arrow.svg",
-                                                matchTextDirection: false,
-                                                width: 10,
-                                                height: 10,
-                                                color:
-                                                    IdomColors.additionalColor,
-                                                key: Key(
-                                                    "assets/icons/down-arrow.svg"))))))),
-                        Container(
-                          child: Text("Opuść rolety".i18n,
+                          child: Text("Podnieś/opuść rolety".i18n,
                               style: Theme.of(context).textTheme.bodyText2),
                         ),
                       ]),
@@ -2053,7 +2037,9 @@ class _DriverDetailsState extends State<DriverDetails> {
         setState(() {
           widget.driver = refreshedDriver;
         });
-      } /// on invalid token log out
+      }
+
+      /// on invalid token log out
       else if (res['statusCode'] == "401") {
         final message = await LoginProcedures.signInWithStoredData();
         if (message != null) {
@@ -2076,12 +2062,12 @@ class _DriverDetailsState extends State<DriverDetails> {
             logOut();
           } else {
             final snackBar = new SnackBar(
-                content:
-                new Text("Odświeżenie danych sterownika nie powiodło się."));
+                content: new Text(
+                    "Odświeżenie danych sterownika nie powiodło się."));
             _scaffoldKey.currentState.showSnackBar((snackBar));
           }
         }
-      }  else {
+      } else {
         final snackBar = new SnackBar(
             content:
                 new Text("Odświeżenie danych sterownika nie powiodło się."));

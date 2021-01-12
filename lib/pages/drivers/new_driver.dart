@@ -258,8 +258,12 @@ class _NewDriverState extends State<NewDriver> {
             var driver = Driver.fromJson(jsonDecode(res['body']));
             var resBulb =
                 await api.addIpAddress(driver.id, _ipAddressController.text);
-            if (resBulb != 200) {
+            if (resBulb != 200 && resBulb != 503) {
               _navigateToEditDriver(driver);
+            } else {
+              fieldsValidationMessage = null;
+              setState(() {});
+              Navigator.pop(context, true);
             }
           } else {
             fieldsValidationMessage = null;
