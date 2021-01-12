@@ -437,7 +437,7 @@ class Api {
     await getApiAddress();
     await getToken();
     try {
-      var res = await httpClient.get('$url/devices/$deviceToken', headers: {
+      var res = await httpClient.get('$url/devices/$deviceToken/', headers: {
         HttpHeaders.authorizationHeader: "Token $token"
       }).timeout(Duration(seconds: 10));
 

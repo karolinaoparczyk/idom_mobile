@@ -261,11 +261,11 @@ class _NewDriverState extends State<NewDriver> {
                 await api.addIpAddress(driver.id, _ipAddressController.text);
             if (resBulb != 200) {
               _navigateToEditDriver(driver);
-            } else {
-              fieldsValidationMessage = null;
-              setState(() {});
-              Navigator.pop(context, true);
             }
+          } else {
+            fieldsValidationMessage = null;
+            setState(() {});
+            Navigator.pop(context, true);
           }
         } else if (res['statusCode'] == "401") {
           fieldsValidationMessage = null;

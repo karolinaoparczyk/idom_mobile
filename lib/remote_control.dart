@@ -13,7 +13,7 @@ class RemoteControl {
     }
 
     var res = await httpClient
-        .post('${driver.ipAddress}/receive?name=${driver.name}&data=$command}')
+        .post('http://${driver.ipAddress}:8000/receive?name=${driver.name}&data=$command}')
         .timeout(Duration(seconds: 5));
 
     return res.statusCode;
