@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alarmclock/alarmclock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/api.dart';
@@ -500,7 +501,8 @@ class _NewActionState extends State<NewAction> {
         decoration: InputDecoration(
             labelText: "Start",
             labelStyle: Theme.of(context).textTheme.headline5,
-            suffixIcon: Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
+            suffixIcon:
+                Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -527,7 +529,7 @@ class _NewActionState extends State<NewAction> {
                       surface: Theme.of(context).backgroundColor,
                       onSurface: Theme.of(context).textTheme.bodyText2.color),
                   buttonTheme:
-                  ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                      ButtonThemeData(textTheme: ButtonTextTheme.primary),
                 ),
                 child: child,
               );
@@ -559,11 +561,11 @@ class _NewActionState extends State<NewAction> {
       decoration: InputDecoration(
         focusedBorder: OutlineInputBorder(
             borderSide:
-            BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+                BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
             borderRadius: BorderRadius.circular(10.0)),
         enabledBorder: OutlineInputBorder(
           borderSide:
-          BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
+              BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
           borderRadius: BorderRadius.circular(10.0),
         ),
         labelText: "Koniec".i18n,
@@ -605,7 +607,7 @@ class _NewActionState extends State<NewAction> {
                     surface: Theme.of(context).backgroundColor,
                     onSurface: Theme.of(context).textTheme.bodyText2.color),
                 buttonTheme:
-                ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                    ButtonThemeData(textTheme: ButtonTextTheme.primary),
               ),
               child: child,
             );
@@ -941,29 +943,29 @@ class _NewActionState extends State<NewAction> {
                         }),
                       ),
                     ),
-                    // if (endTime == null)
-                    //   Container(
-                    //       padding: EdgeInsets.symmetric(
-                    //           vertical: 0.0, horizontal: 30.0),
-                    //       alignment: Alignment.centerLeft,
-                    //       child: Row(
-                    //         children: [
-                    //           Checkbox(
-                    //             activeColor: IdomColors.additionalColor,
-                    //             value: setAlarm,
-                    //             onChanged: (bool value) {
-                    //               setState(() {
-                    //                 setAlarm = value;
-                    //               });
-                    //             },
-                    //           ),
-                    //           Text("Ustaw budzik".i18n,
-                    //               style: Theme.of(context)
-                    //                   .textTheme
-                    //                   .bodyText1
-                    //                   .copyWith(fontWeight: FontWeight.normal))
-                    //         ],
-                    //       )),
+                    if (endTime == null)
+                      Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 50.0),
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                activeColor: IdomColors.additionalColor,
+                                value: setAlarm,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    setAlarm = value;
+                                  });
+                                },
+                              ),
+                              Text("Ustaw budzik".i18n,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontWeight: FontWeight.normal))
+                            ],
+                          )),
                     Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 62.0),
@@ -1227,12 +1229,6 @@ class _NewActionState extends State<NewAction> {
             trigger = double.tryParse(_sensorTriggerController.text);
           }
         }
-        // if (endTime == null && setAlarm) {
-        //   await Alarmclock.setAlarm(
-        //       hour: startTime.hour,
-        //       minute: startTime.minute,
-        //       message: "akcja".i18n + _nameController.text);
-        // }
 
         var res = await api.addAction(
             _nameController.text,
@@ -1250,16 +1246,19 @@ class _NewActionState extends State<NewAction> {
         });
         if (res['statusCode'] == "201") {
           if (endTime == null && setAlarm) {
-            var daysList = [];
-            for (int i = 0; i < daysOfWeekSelected.length; i++) {
-              if (daysOfWeekSelected[i]) {
-                daysList.add(i);
-              }
-            }
-            // await Alarmclock.setAlarm(
-            //     hour: startTime.hour,
-            //     minute: startTime.minute,
-            //     message: "akcja".i18n + " ${_nameController.text}");
+            await Alarmclock.setAlarm(
+              skipui: true,
+              hour: startTime.hour,
+              minute: startTime.minute,
+              message: "akcja".i18n + " " + _nameController.text,
+              monday: daysOfWeekSelected[0],
+              tuesday: daysOfWeekSelected[1],
+              wednesday: daysOfWeekSelected[2],
+              thursday: daysOfWeekSelected[3],
+              friday: daysOfWeekSelected[4],
+              saturday: daysOfWeekSelected[5],
+              sunday: daysOfWeekSelected[6],
+            );
           }
           fieldsValidationMessage = null;
           setState(() {});

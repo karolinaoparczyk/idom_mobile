@@ -24,6 +24,10 @@ extension Localization on String {
         "en_uk": "Cameras",
       } +
       {
+        "pl_pl": "Akcje",
+        "en_uk": "Actions",
+      } +
+      {
         "pl_pl": "Sterowniki",
         "en_uk": "Drivers",
       } +
