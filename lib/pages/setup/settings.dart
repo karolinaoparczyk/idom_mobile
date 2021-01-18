@@ -10,6 +10,7 @@ import 'package:idom/dialogs/confirm_action_dialog.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 
 import 'package:idom/localization/setup/settings.i18n.dart';
+import 'package:idom/main.dart';
 import 'package:idom/push_notifications.dart';
 import 'package:idom/utils/app_state_notifier.dart';
 import 'package:idom/utils/idom_colors.dart';
@@ -393,7 +394,7 @@ class _SettingsState extends State<Settings> {
                                         setState(() {
                                           Provider.of<AppStateNotifier>(context,
                                                   listen: false)
-                                              .updateTheme();
+                                              .updateState();
                                           selectedMode[0] = !selectedMode[0];
                                           selectedMode[1] = !selectedMode[1];
                                         });
@@ -463,7 +464,8 @@ class _SettingsState extends State<Settings> {
   }
 
   _pickFile() async {
-    FilePickerResult result = await FilePicker.platform.pickFiles(type: FileType.custom);
+    FilePickerResult result =
+        await FilePicker.platform.pickFiles(type: FileType.custom);
     if (result != null) {
       file = File(result.files.first.path);
       try {
@@ -591,6 +593,15 @@ class _SettingsState extends State<Settings> {
   Future<bool> sendDeviceToken() async {
     final pushNotificationsManager = PushNotificationsManager();
     await pushNotificationsManager.init();
+    pushNotificationsManager.getFM().configure(
+        onMessage: (Map<String, dynamic> message) async {
+      print("onMessage: $message");
+      notifyMessage = message;
+
+      Provider.of<AppStateNotifier>(context, listen: false)
+          .updateState();
+      return null;
+    });
     if (pushNotificationsManager.deviceToken == null) {
       return false;
     }
