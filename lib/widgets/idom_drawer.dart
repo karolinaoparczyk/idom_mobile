@@ -235,7 +235,7 @@ class _IdomDrawerState extends State<IdomDrawer> {
                             Drivers(storage: widget.storage)));
               }
             }),
-            customMenuTile("assets/icons/hammer.svg", "Akcje", () async {
+            customMenuTile("assets/icons/hammer.svg", "Akcje".i18n, () async {
               Navigator.pop(context);
               if (widget.parentWidgetType != "Actions") {
                 Navigator.of(context).popUntil((route) => route.isFirst);

@@ -85,11 +85,15 @@ extension Localization on String {
       {
         "pl_pl": "= równe",
         "en_uk": "= equal to",
-      }  +
+      } +
+      {
+        "pl_pl": "Ustaw budzik",
+        "en_uk": "Set an alarm",
+      } +
       {
         "pl_pl": "Akcja",
         "en_uk": "Action",
-      }  +
+      } +
       {
         "pl_pl": "Ustaw kolor",
         "en_uk": "Set color",
