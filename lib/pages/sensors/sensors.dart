@@ -5,13 +5,17 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/api.dart';
 
 import 'package:idom/localization/sensors/sensors.i18n.dart';
+import 'package:idom/main.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/sensors/new_sensor.dart';
 import 'package:idom/pages/sensors/sensor_details.dart';
+import 'package:idom/push_notifications.dart';
+import 'package:idom/utils/app_state_notifier.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 /// displays sensors list
 class Sensors extends StatefulWidget {
@@ -47,9 +51,23 @@ class _SensorsState extends State<Sensors> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+    initFM();
     getSensors();
     _searchController.addListener(() {
       filterSearchResults(_searchController.text);
+    });
+  }
+
+  initFM() async {
+    final pushNotificationsManager = PushNotificationsManager();
+    await pushNotificationsManager.init();
+    pushNotificationsManager.getFM().configure(
+        onMessage: (Map<String, dynamic> message) async {
+      print("onMessage: $message");
+      notifyMessage = message;
+
+      Provider.of<AppStateNotifier>(context, listen: false).updateState();
+      return null;
     });
   }
 
@@ -261,9 +279,8 @@ class _SensorsState extends State<Sensors> {
                   )
           ],
         ),
-        drawer: IdomDrawer(
-            storage: widget.storage,
-            parentWidgetType: "Sensors"),
+        drawer:
+            IdomDrawer(storage: widget.storage, parentWidgetType: "Sensors"),
 
         /// builds sensor's list
         body: Container(child: listSensors()),

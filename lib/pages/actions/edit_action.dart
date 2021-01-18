@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:alarmclock/alarmclock.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/dialogs/driver_action_dialog.dart';
 import 'package:idom/enums/driver_actions.dart';
@@ -69,6 +70,7 @@ class _EditActionState extends State<EditAction> {
   TimeOfDay endTime;
   Api api = Api();
   bool _load;
+  bool setAlarm = false;
   List<Sensor> sensors = List<Sensor>();
   List<Driver> drivers = List<Driver>();
   String fieldsValidationMessage;
@@ -1000,6 +1002,29 @@ class _EditActionState extends State<EditAction> {
                         }),
                       ),
                     ),
+                    if (endTime == null)
+                      Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 50.0),
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                activeColor: IdomColors.additionalColor,
+                                value: setAlarm,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    setAlarm = value;
+                                  });
+                                },
+                              ),
+                              Text("Ustaw budzik".i18n,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(fontWeight: FontWeight.normal))
+                            ],
+                          )),
                     Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 62.0),
@@ -1356,6 +1381,21 @@ class _EditActionState extends State<EditAction> {
         _load = false;
       });
       if (res['statusCode'] == "200") {
+        if (endTime == null && setAlarm) {
+          await Alarmclock.setAlarm(
+            skipui: true,
+            hour: startTime.hour,
+            minute: startTime.minute,
+            message: "akcja".i18n + " " + _nameController.text,
+            monday: daysOfWeekSelected[0],
+            tuesday: daysOfWeekSelected[1],
+            wednesday: daysOfWeekSelected[2],
+            thursday: daysOfWeekSelected[3],
+            friday: daysOfWeekSelected[4],
+            saturday: daysOfWeekSelected[5],
+            sunday: daysOfWeekSelected[6],
+          );
+        }
         Navigator.pop(context, true);
       } else if (res['statusCode'] == "401") {
         displayProgressDialog(

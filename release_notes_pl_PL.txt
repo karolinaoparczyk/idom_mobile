@@ -1,3 +1,4 @@
+- Powiadomienia czujników w trakcie działania aplikacji
+- Automatyczne ustawianie budzika w telefonie przy dodawaniu akcji dla sterownika
 - Tryb ciemnych kolorów
 - Obsługa języka angielskiego
-- Sterowanie akcjami dla sterowników
