@@ -91,6 +91,10 @@ extension Localization on String {
         "en_uk": "Set an alarm",
       } +
       {
+        "pl_pl": "akcja",
+        "en_uk": "action",
+      }+
+      {
         "pl_pl": "Akcja",
         "en_uk": "Action",
       } +

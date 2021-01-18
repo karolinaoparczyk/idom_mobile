@@ -3,8 +3,8 @@ import 'package:idom/utils/secure_storage.dart';
 
 /// notifies widgets about app state change
 class AppStateNotifier extends ChangeNotifier {
-  /// updates theme mode
-  void updateTheme() async {
+  /// updates state
+  void updateState() async {
     notifyListeners();
   }
 }
