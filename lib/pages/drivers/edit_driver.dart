@@ -185,8 +185,7 @@ class _EditDriverState extends State<EditDriver> {
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        style: Theme.of(context).textTheme.bodyText2,
-        validator: UrlFieldValidator.validate);
+        style: Theme.of(context).textTheme.bodyText2);
   }
 
   _displayNotSetIpAddressMessage() {
@@ -505,7 +504,7 @@ class _EditDriverState extends State<EditDriver> {
   _verifyChanges() async {
     var name = _nameController.text;
     var category = categoryValue;
-    var ipAddress = _ipAddressController.text;
+    var ipAddress = _ipAddressController.text == "" ? null : _ipAddressController.text;
     var changedName = false;
     var changedCategory = false;
     var changedIpAddress = false;

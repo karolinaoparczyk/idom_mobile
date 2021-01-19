@@ -161,8 +161,7 @@ class _NewDriverState extends State<NewDriver> {
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        style: Theme.of(context).textTheme.bodyText2,
-        validator: UrlFieldValidator.validate);
+        style: Theme.of(context).textTheme.bodyText2);
   }
 
   @override
