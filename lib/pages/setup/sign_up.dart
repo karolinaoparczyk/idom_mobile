@@ -405,7 +405,7 @@ class _SignUpState extends State<SignUp> {
                                               ? Text(fieldsValidationMessage,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .bodyText1)
+                                                      .subtitle1)
                                               : SizedBox(),
                                       secondChild: SizedBox(),
                                     ),
@@ -455,16 +455,19 @@ class _SignUpState extends State<SignUp> {
                       SignIn(storage: widget.storage, isFromSignUp: true)));
           return;
         }
-        if (res['body'].contains("Username already exists")) {
+        if (res['body'].contains("username") &&
+            res['body'].contains("This field must be unique")) {
           loginExists = true;
         }
-        if (res['body'].contains("Email address already exists")) {
+        if (res['body'].contains("email") &&
+            res['body'].contains("This field must be unique")) {
           emailExists = true;
         }
         if (res['body'].contains("Enter a valid phone number")) {
           telephoneInvalid = true;
         }
-        if (res['body'].contains("Telephone number already exists")) {
+        if (res['body'].contains("telephone") &&
+            res['body'].contains("This field must be unique")) {
           telephoneExists = true;
         }
         if (res['body'].contains("Enter a valid email address")) {
@@ -496,12 +499,12 @@ class _SignUpState extends State<SignUp> {
           errorText = "Konto dla podanego numeru telefonu już istnieje.".i18n;
 
         if (telephoneInvalid && emailInvalid)
-          errorText +=
+          errorText += " " +
               "Adres e-mail oraz numer telefonu są nieprawidłowe.".i18n;
         else if (telephoneInvalid)
-          errorText += "Numer telefonu jest nieprawidłowy.".i18n;
+          errorText += " " + "Numer telefonu jest nieprawidłowy.".i18n;
         else if (emailInvalid)
-          errorText += "Adres e-mail jest nieprawidłowy".i18n;
+          errorText += " " + "Adres e-mail jest nieprawidłowy".i18n;
 
         if (errorText.isNotEmpty) {
           FocusScope.of(context).unfocus();
