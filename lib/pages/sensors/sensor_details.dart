@@ -10,6 +10,7 @@ import 'package:idom/models.dart';
 import 'package:idom/pages/sensors/edit_sensor.dart';
 import 'package:idom/utils/frequency_calculations.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -53,6 +54,8 @@ class _SensorDetailsState extends State<SensorDetails> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
 
     _load = true;
     noDataForChart = false;
@@ -102,14 +105,42 @@ class _SensorDetailsState extends State<SensorDetails> {
             dataLoaded = false;
           }
         } else if (res != null && res['statusSensorData'] == "401") {
-          displayProgressDialog(
-              context: _scaffoldKey.currentContext,
-              key: _keyLoader,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-          await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-          await widget.storage.resetUserData();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          final message = await LoginProcedures.signInWithStoredData();
+          if (message != null) {
+            logOut();
+          } else {
+            var res = await api.getSensorData(widget.sensor.id);
+            if (res == null) {
+              noDataForChart = true;
+              dataLoaded = false;
+            }
+
+            /// on success fetching data
+            if (res['statusSensorData'] == "200") {
+              if (res['bodySensorData'] != "[]") {
+                List<dynamic> bodySensorData =
+                    jsonDecode(res['bodySensorData']);
+                sensorData = List<SensorData>();
+                for (var i = 0; i < bodySensorData.length; i++) {
+                  sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
+                }
+                noDataForChart = false;
+                dataLoaded = true;
+                return sensorData;
+              } else {
+                noDataForChart = true;
+                dataLoaded = false;
+              }
+            } else if (res != null && res['statusSensorData'] == "401") {
+              logOut();
+            } else {
+              noDataForChart = true;
+              dataLoaded = false;
+            }
+          }
+        } else {
+          noDataForChart = true;
+          dataLoaded = false;
         }
       }
     } catch (e) {
@@ -129,6 +160,17 @@ class _SensorDetailsState extends State<SensorDetails> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   getDataForChart() {
@@ -205,8 +247,7 @@ class _SensorDetailsState extends State<SensorDetails> {
                 onPressed: _navigateToEditSensor)
           ]),
           drawer: IdomDrawer(
-              storage: widget.storage,
-              parentWidgetType: "SensorDetails"),
+              storage: widget.storage, parentWidgetType: "SensorDetails"),
 
           /// builds form with editable and non-editable sensor properties
           body: SingleChildScrollView(

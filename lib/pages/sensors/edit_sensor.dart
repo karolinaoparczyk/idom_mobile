@@ -9,6 +9,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:idom/enums/frequency_units.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -64,6 +65,9 @@ class _EditSensorState extends State<EditSensor> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     _load = false;
 
     /// seting current sensor name
@@ -288,8 +292,7 @@ class _EditSensorState extends State<EditSensor> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "EditSensor"),
+                storage: widget.storage, parentWidgetType: "EditSensor"),
 
             /// builds form with sensor properties
             body: SingleChildScrollView(
@@ -424,15 +427,44 @@ class _EditSensorState extends State<EditSensor> {
       } else if (res['statusCode'] == "401") {
         nameValidationMessage = null;
         setState(() {});
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          setState(() {
+            _load = true;
+          });
+          var res = await api.editSensor(
+              widget.sensor.id, name, category, frequencyValue);
+          setState(() {
+            _load = false;
+          });
+
+          /// on success fetching data
+          if (res['statusCode'] == "200") {
+            nameValidationMessage = null;
+            setState(() {});
+            Navigator.pop(context, true);
+          } else if (res != null && res['statusCode'] == "401") {
+            nameValidationMessage = null;
+            setState(() {});
+            logOut();
+          } else if (res['body']
+              .contains("Sensor with provided name already exists")) {
+            nameValidationMessage =
+                "Czujnik o podanej nazwie już istnieje.".i18n;
+            setState(() {});
+            return;
+          } else {
+            nameValidationMessage = null;
+            setState(() {});
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Edycja czujnika nie powiodła się. Spróbuj ponownie."
+                        .i18n));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
+          }
+        }
       } else if (res['body']
           .contains("Sensor with provided name already exists")) {
         nameValidationMessage = "Czujnik o podanej nazwie już istnieje.".i18n;
@@ -466,6 +498,18 @@ class _EditSensorState extends State<EditSensor> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoaderInvalidToken,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// confirms saving changes

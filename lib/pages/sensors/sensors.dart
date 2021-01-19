@@ -12,6 +12,7 @@ import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/push_notifications.dart';
 import 'package:idom/utils/app_state_notifier.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -51,6 +52,9 @@ class _SensorsState extends State<Sensors> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     initFM();
     getSensors();
     _searchController.addListener(() {
@@ -96,15 +100,31 @@ class _SensorsState extends State<Sensors> {
         else
           zeroFetchedItems = false;
       } else if (res != null && res['statusCodeSensors'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          var res = await api.getSensors();
+
+          /// on success fetching data
+          if (res != null && res['statusCodeSensors'] == "200") {
+            List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
+            setState(() {
+              _sensorList =
+                  bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
+            });
+            if (_sensorList.length == 0)
+              zeroFetchedItems = true;
+            else
+              zeroFetchedItems = false;
+          } else if (res != null && res['statusCodeSensors'] == "401") {
+            logOut();
+          } else {
+            _connectionEstablished = false;
+            setState(() {});
+            return null;
+          }
+        }
       } else {
         _connectionEstablished = false;
         setState(() {});
@@ -154,16 +174,34 @@ class _SensorsState extends State<Sensors> {
             getSensors();
           });
         } else if (statusCode == 401) {
-          displayProgressDialog(
-              context: _scaffoldKey.currentContext,
-              key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-          await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoaderInvalidToken.currentContext,
-                  rootNavigator: true)
-              .pop();
-          await widget.storage.resetUserData();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          final message = await LoginProcedures.signInWithStoredData();
+          if (message != null) {
+            logOut();
+          } else {
+            statusCode = await api.deactivateSensor(sensor.id);
+
+            /// on success fetching data
+            if (statusCode == 200) {
+              setState(() {
+                /// refreshes sensors' list
+                getSensors();
+              });
+            } else if (statusCode == 401) {
+              logOut();
+            } else if (statusCode == null) {
+              final snackBar = new SnackBar(
+                  content: new Text(
+                      "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                          .i18n));
+              _scaffoldKey.currentState.showSnackBar((snackBar));
+            } else {
+              final snackBar = new SnackBar(
+                  content: new Text(
+                      "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."
+                          .i18n));
+              _scaffoldKey.currentState.showSnackBar((snackBar));
+            }
+          }
         } else if (statusCode == null) {
           final snackBar = new SnackBar(
               content: new Text(
@@ -196,6 +234,18 @@ class _SensorsState extends State<Sensors> {
         }
       }
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoaderInvalidToken,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   _buildSearchField() {
