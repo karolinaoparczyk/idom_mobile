@@ -7,6 +7,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/enums/categories.dart';
 import 'package:idom/models.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -59,6 +60,9 @@ class _EditDriverState extends State<EditDriver> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     driver = widget.driver;
     _load = false;
 
@@ -181,8 +185,7 @@ class _EditDriverState extends State<EditDriver> {
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        style: Theme.of(context).textTheme.bodyText2,
-        validator: UrlFieldValidator.validate);
+        style: Theme.of(context).textTheme.bodyText2);
   }
 
   _displayNotSetIpAddressMessage() {
@@ -205,8 +208,7 @@ class _EditDriverState extends State<EditDriver> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage,
-                parentWidgetType: "EditDriver"),
+                storage: widget.storage, parentWidgetType: "EditDriver"),
 
             /// builds form with driver's properties
             body: SingleChildScrollView(
@@ -394,14 +396,57 @@ class _EditDriverState extends State<EditDriver> {
       } else if (res != null && res['statusCode'] == "401") {
         fieldsValidationMessage = null;
         setState(() {});
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final message = await LoginProcedures.signInWithStoredData();
+        if (message != null) {
+          logOut();
+        } else {
+          if (changedName || changedCategory) {
+            res = await api.editDriver(widget.driver.id, name, category);
+          }
+          if (changedIpAddress) {
+            resIP = await api.addIpAddress(widget.driver.id, ipAddress);
+          }
+
+          if ((res != null && res['statusCode'] == "200" || res == null) &&
+              (resIP == 200 || resIP == 503 || resIP == null)) {
+            fieldsValidationMessage = null;
+            setState(() {});
+            Navigator.pop(context, true);
+          } else if (resIP == 400 &&
+              res != null &&
+              res['body']
+                  .contains("Driver with provided name already exists")) {
+            _refreshDriverDetails(false, true, false);
+            fieldsValidationMessage =
+                "Sterownik o podanej nazwie już istnieje. Adres IP jest niepoprawny."
+                    .i18n;
+            setState(() {});
+          } else if (resIP == 400) {
+            _refreshDriverDetails(true, true, false);
+            fieldsValidationMessage = "Adres IP jest niepoprawny.".i18n;
+            setState(() {});
+          } else if (res != null &&
+              res['body']
+                  .contains("Driver with provided name already exists")) {
+            _refreshDriverDetails(false, true, true);
+            fieldsValidationMessage =
+                "Sterownik o podanej nazwie już istnieje.".i18n;
+            setState(() {});
+            return;
+          } else if (res != null && res['statusCode'] == "401") {
+            fieldsValidationMessage = null;
+            setState(() {});
+            logOut();
+          } else {
+            fieldsValidationMessage = null;
+            setState(() {});
+            final snackBar = new SnackBar(
+                content: new Text(
+                    "Edycja sterownika nie powiodła się. Spróbuj ponownie."
+                        .i18n));
+            _scaffoldKey.currentState.showSnackBar((snackBar));
+          }
+        }
       } else {
         fieldsValidationMessage = null;
         setState(() {});
@@ -433,6 +478,18 @@ class _EditDriverState extends State<EditDriver> {
     }
   }
 
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
   /// confirms saving changes
   _confirmSavingChanges(
       bool changedName, bool changedCategory, bool changedIpAddress) async {
@@ -447,7 +504,7 @@ class _EditDriverState extends State<EditDriver> {
   _verifyChanges() async {
     var name = _nameController.text;
     var category = categoryValue;
-    var ipAddress = _ipAddressController.text;
+    var ipAddress = _ipAddressController.text == "" ? null : _ipAddressController.text;
     var changedName = false;
     var changedCategory = false;
     var changedIpAddress = false;

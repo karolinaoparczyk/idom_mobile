@@ -7,6 +7,7 @@ import 'package:idom/dialogs/category_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/edit_driver.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -46,6 +47,9 @@ class _NewDriverState extends State<NewDriver> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     _load = false;
     _nameController = TextEditingController();
     _categoryController = TextEditingController();
@@ -157,8 +161,7 @@ class _NewDriverState extends State<NewDriver> {
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        style: Theme.of(context).textTheme.bodyText2,
-        validator: UrlFieldValidator.validate);
+        style: Theme.of(context).textTheme.bodyText2);
   }
 
   @override
@@ -271,18 +274,60 @@ class _NewDriverState extends State<NewDriver> {
             Navigator.pop(context, true);
           }
         } else if (res['statusCode'] == "401") {
-          fieldsValidationMessage = null;
-          setState(() {});
-          displayProgressDialog(
-              context: _scaffoldKey.currentContext,
-              key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-          await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoaderInvalidToken.currentContext,
-                  rootNavigator: true)
-              .pop();
-          await widget.storage.resetUserData();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          final message = await LoginProcedures.signInWithStoredData();
+          if (message != null) {
+            logOut();
+          } else {
+            setState(() {
+              _load = true;
+            });
+            var res = await api.addDriver(_nameController.text, categoryValue);
+            setState(() {
+              _load = false;
+            });
+
+            /// on success fetching data
+            if (res['statusCode'] == "201") {
+              if (categoryValue == "bulb" &&
+                  _ipAddressController.text.isNotEmpty) {
+                var driver = Driver.fromJson(jsonDecode(res['body']));
+                var resBulb = await api.addIpAddress(
+                    driver.id, _ipAddressController.text);
+                if (resBulb != 200 && resBulb != 503) {
+                  _navigateToEditDriver(driver);
+                } else {
+                  fieldsValidationMessage = null;
+                  setState(() {});
+                  Navigator.pop(context, true);
+                }
+              } else {
+                fieldsValidationMessage = null;
+                setState(() {});
+                Navigator.pop(context, true);
+              }
+            } else if (res != null && res['statusCode'] == "401") {
+              logOut();
+            } else if (res['body']
+                .contains("Driver with provided name already exists")) {
+              fieldsValidationMessage =
+                  "Sterownik o podanej nazwie już istnieje.".i18n;
+              setState(() {});
+              return;
+            } else if (res['body']
+                .contains("Enter a valid IPv4 or IPv6 address")) {
+              fieldsValidationMessage = "Adres IP jest nieprawidłowy".i18n;
+              setState(() {});
+              return;
+            } else {
+              fieldsValidationMessage = null;
+              setState(() {});
+              final snackBar = new SnackBar(
+                  content: new Text(
+                      "Dodawanie sterownika nie powiodło się. Spróbuj ponownie."
+                          .i18n));
+              _scaffoldKey.currentState.showSnackBar((snackBar));
+            }
+          }
         } else if (res['body']
             .contains("Driver with provided name already exists")) {
           fieldsValidationMessage =
@@ -330,6 +375,18 @@ class _NewDriverState extends State<NewDriver> {
         }
       }
     }
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoaderInvalidToken,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   _navigateToEditDriver(Driver driver) async {
