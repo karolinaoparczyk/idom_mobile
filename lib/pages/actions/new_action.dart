@@ -573,6 +573,7 @@ class _NewActionState extends State<NewAction> {
         suffixIcon: endTime == null
             ? Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor)
             : InkWell(
+                key: Key("removeEndTime"),
                 onTap: () {
                   setState(() {
                     _endTimeFocusNode.unfocus();
@@ -584,8 +585,7 @@ class _NewActionState extends State<NewAction> {
                     });
                   });
                 },
-                child: Icon(Icons.close,
-                    color: IdomColors.brightGrey, key: Key("removeEndTime"))),
+                child: Icon(Icons.close, color: IdomColors.brightGrey)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -640,7 +640,9 @@ class _NewActionState extends State<NewAction> {
                   onPressed: _saveChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "NewAction"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "NewAction"),
 
             /// builds form with action's properties
             body: SingleChildScrollView(

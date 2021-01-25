@@ -208,7 +208,9 @@ class _EditDriverState extends State<EditDriver> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditDriver"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "EditDriver"),
 
             /// builds form with driver's properties
             body: SingleChildScrollView(
@@ -484,8 +486,7 @@ class _EditDriverState extends State<EditDriver> {
         key: _keyLoader,
         text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
     await new Future.delayed(const Duration(seconds: 3));
-    Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-        .pop();
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
     await widget.storage.resetUserData();
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
@@ -504,7 +505,8 @@ class _EditDriverState extends State<EditDriver> {
   _verifyChanges() async {
     var name = _nameController.text;
     var category = categoryValue;
-    var ipAddress = _ipAddressController.text == "" ? null : _ipAddressController.text;
+    var ipAddress =
+        _ipAddressController.text == "" ? null : _ipAddressController.text;
     var changedName = false;
     var changedCategory = false;
     var changedIpAddress = false;

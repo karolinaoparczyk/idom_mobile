@@ -11,6 +11,14 @@ extension Localization on String {
         "en_uk": "No actions in the system.",
       } +
       {
+        "pl_pl": "Brak wyników wyszukiwania.",
+        "en_uk": "No search results.",
+      } +
+      {
+        "pl_pl": "Wyszukaj...",
+        "en_uk": "Search...",
+      } +
+      {
         "pl_pl": "Akcje",
         "en_uk": "Actions",
       } +

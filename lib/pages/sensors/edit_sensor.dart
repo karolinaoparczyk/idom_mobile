@@ -294,7 +294,9 @@ class _EditSensorState extends State<EditSensor> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditSensor"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "EditSensor"),
 
             /// builds form with sensor properties
             body: SingleChildScrollView(

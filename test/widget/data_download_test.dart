@@ -93,7 +93,7 @@ void main() {
         findsOneWidget);
     expect(find.text("Czujniki"), findsOneWidget);
     expect(find.text("Kategorie"), findsOneWidget);
-    expect(find.text("Ilość ostatnich dni"), findsOneWidget);
+    expect(find.text("Liczba ostatnich dni"), findsOneWidget);
     expect(find.text("Pobierz dane"), findsOneWidget);
     expect(find.text("Generuj plik"), findsOneWidget);
     expect(find.text("Dodaj"), findsNWidgets(2));

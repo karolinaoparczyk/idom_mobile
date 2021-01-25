@@ -71,7 +71,9 @@ class _CamerasState extends State<Cameras> {
           zeroFetchedItems = true;
         else
           zeroFetchedItems = false;
-      } /// on invalid token log out
+      }
+
+      /// on invalid token log out
       else if (res != null && res['statusCode'] == "401") {
         final message = await LoginProcedures.signInWithStoredData();
         if (message != null) {
@@ -98,8 +100,7 @@ class _CamerasState extends State<Cameras> {
             return null;
           }
         }
-      }
-      else {
+      } else {
         _connectionEstablished = false;
         setState(() {});
         return null;
@@ -136,7 +137,6 @@ class _CamerasState extends State<Cameras> {
     await widget.storage.resetUserData();
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
-
 
   /// deletes camera
   _deleteCamera(Camera camera) async {
@@ -263,6 +263,7 @@ class _CamerasState extends State<Cameras> {
                     });
                   })
               : IconButton(
+                  key: Key("drawer"),
                   icon: Icon(Icons.menu),
                   onPressed: () {
                     _scaffoldKey.currentState.openDrawer();
@@ -303,6 +304,7 @@ class _CamerasState extends State<Cameras> {
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
+            testApi: widget.testApi,
             parentWidgetType: "Cameras"),
 
         /// builds cameras' list
@@ -324,7 +326,7 @@ class _CamerasState extends State<Cameras> {
                       left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
                   child: Align(
                       alignment: Alignment.topCenter,
-                      child: Text("Brak kamer w systemie".i18n,
+                      child: Text("Brak kamer w systemie.".i18n,
                           style: Theme.of(context).textTheme.subtitle1,
                           textAlign: TextAlign.center)))));
     }

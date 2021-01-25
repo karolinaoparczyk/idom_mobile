@@ -38,12 +38,12 @@ void main() {
         home: I18n(child: child));
   }
 
-  /// tests if adds action without sensor with time range
-  testWidgets('adds action without sensor with time range',
+  /// tests if adds action without sensor with time range, turn on
+  testWidgets('adds action without sensor with time range, turn on',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', null, null, null, "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 2))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 2))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
 
@@ -128,12 +128,19 @@ void main() {
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
-    expect(find.text("driver2"), findsNWidgets(2));
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
 
     verify(await mockApi.addAction('name', null, null, null, "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 2))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 2))
         .called(1);
   });
 
@@ -142,7 +149,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', null, null, null, "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", null, "action", 1))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", null, {"status": "on"}, 1))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
 
@@ -213,20 +220,27 @@ void main() {
     await tester.tap(find.byKey(Key('removeEndTime')));
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
 
     verify(await mockApi.addAction('name', null, null, null, "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", null, "action", 1))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", null, {"status": "on"}, 1))
         .called(1);
   });
 
-  /// tests if adds action with sensor with time range
-  testWidgets('adds action with sensor with time range',
+  /// tests if adds action with sensor with time range, raise blinds
+  testWidgets('adds action with sensor with time range, raise blinds',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
 
@@ -261,7 +275,7 @@ void main() {
       {
         "id": 2,
         "name": "driver2",
-        "category": "clicker",
+        "category": "roller_blind",
         "ipAddress": "113.113.13.13",
         "data": true
       }
@@ -316,6 +330,13 @@ void main() {
     await tester.enterText(sensorTrigger, '5');
     await tester.pumpAndSettle();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Podnieś rolety").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     expect(find.text("driver2"), findsOneWidget);
     expect(find.text("sensor1"), findsOneWidget);
     expect(find.text("< mniejsze niż"), findsOneWidget);
@@ -324,16 +345,16 @@ void main() {
     await tester.pumpAndSettle();
 
     verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .called(1);
   });
 
-  /// tests if adds action with sensor with end time
-  testWidgets('adds action with sensor with end time',
+  /// tests if adds action with sensor with time range, lower blinds
+  testWidgets('adds action with sensor with time range, lower blinds',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", null, "action", 3))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "off"}, 4))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
 
@@ -368,7 +389,130 @@ void main() {
       {
         "id": 2,
         "name": "driver2",
+        "category": "roller_blind",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('triggerValueOperator')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text("Wybierz operator porównania"), findsOneWidget);
+    expect(find.text("Anuluj"), findsOneWidget);
+    expect(find.text("OK"), findsOneWidget);
+    expect(find.text("< mniejsze niż"), findsOneWidget);
+    expect(find.text("> większe niż"), findsOneWidget);
+    expect(find.text("= równe"), findsOneWidget);
+    await tester.tap(find.text("< mniejsze niż").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    Finder sensorTrigger = find.byKey(Key('sensorTrigger'));
+    await tester.enterText(sensorTrigger, '5');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Opuść rolety").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+    expect(find.text("< mniejsze niż"), findsOneWidget);
+    expect(find.text("5"), findsOneWidget);
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "off"}, 4))
+        .called(1);
+  });
+
+  /// tests if adds action with sensor, turn on bulb
+  testWidgets('adds action with sensor, turn on bulb',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction(
+            'name',
+            "sensor1",
+            5.0,
+            "<",
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"type": "turn", "status": "on"},
+            4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "201"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "bulb",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
         "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "bulb",
         "ipAddress": "113.113.13.13",
         "data": true
       }
@@ -413,12 +557,15 @@ void main() {
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Włącz żarówkę").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     Finder sensorTrigger = find.byKey(Key('sensorTrigger'));
     await tester.enterText(sensorTrigger, '5');
-
-    await tester.tap(find.byKey(Key('removeEndTime')));
-
-    await tester.pumpAndSettle();
 
     expect(find.text("Wyzwalacz na czujniku"), findsOneWidget);
     expect(find.text("Operator"), findsOneWidget);
@@ -431,8 +578,17 @@ void main() {
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
 
-    verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", null, "action", 3))
+    verify(await mockApi.addAction(
+            'name',
+            "sensor1",
+            5.0,
+            "<",
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"type": "turn", "status": "on"},
+            4))
         .called(1);
   });
 
@@ -441,7 +597,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction(null, null, null, null, null, "0, 1, 2, 3, 4, 5, 6",
-            "13:40", "15:40", "action", 2))
+            "13:40", "15:40", {"status": "on"}, 2))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "400"}));
 
@@ -500,18 +656,37 @@ void main() {
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
 
-    expect(find.text("Pole wymagane"), findsNWidgets(2));
+    expect(find.text("Pole wymagane"), findsNWidgets(3));
 
-    verifyNever(await mockApi.addAction(null, null, null, null, null,
-        "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 2));
+    verifyNever(await mockApi.addAction(
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0, 1, 2, 3, 4, 5, 6",
+        "13:40",
+        "15:40",
+        {"type": "turn", "status": "on"},
+        2));
   });
 
-  /// tests if does not add if no trigger, no operator if sensor chosen
-  testWidgets('does not add if no trigger, no operator if sensor chosen',
+  /// tests if does not add if no trigger, no operator if sensor chosen, turn off bulb
+  testWidgets(
+      'does not add if no trigger, no operator if sensor chosen, turn off bulb',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.addAction(null, "sensor1", null, null, "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+    when(mockApi.addAction(
+            null,
+            "sensor1",
+            null,
+            null,
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"type": "turn", "status": "off"},
+            4))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "400"}));
 
@@ -546,7 +721,7 @@ void main() {
       {
         "id": 2,
         "name": "driver2",
-        "category": "clicker",
+        "category": "bulb",
         "ipAddress": "113.113.13.13",
         "data": true
       }
@@ -589,20 +764,272 @@ void main() {
     expect(find.text("driver2"), findsOneWidget);
     expect(find.text("sensor1"), findsOneWidget);
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wyłącz żarówkę").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
 
     expect(find.text("Pole wymagane"), findsNWidgets(2));
 
-    verifyNever(await mockApi.addAction(null, "sensor1", null, null, "driver2",
-        "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4));
+    verifyNever(await mockApi.addAction(
+        null,
+        "sensor1",
+        null,
+        null,
+        "driver2",
+        "0, 1, 2, 3, 4, 5, 6",
+        "13:40",
+        "15:40",
+        {"type": "turn", "status": "off"},
+        4));
+  });
+
+  /// tests if does not add if no trigger, no operator if sensor chosen, set bulb color
+  testWidgets(
+      'does not add if no trigger, no operator if sensor chosen, set bulb color',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction(
+            null,
+            "sensor1",
+            null,
+            null,
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"red": 128, "blue": 128, "type": "colour", "green": 128},
+            4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "400"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "bulb",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Ustaw kolor").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Pole wymagane"), findsNWidgets(2));
+
+    verifyNever(await mockApi.addAction(
+        null,
+        "sensor1",
+        null,
+        null,
+        "driver2",
+        "0, 1, 2, 3, 4, 5, 6",
+        "13:40",
+        "15:40",
+        {"red": 128, "blue": 128, "type": "colour", "green": 128},
+        4));
+  });
+
+  /// tests if does not add if no trigger, no operator if sensor chosen, set bulb brightness
+  testWidgets(
+      'does not add if no trigger, no operator if sensor chosen, set bulb brightness',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction(
+            null,
+            "sensor1",
+            null,
+            null,
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"type": "brightness", "brightness": 50},
+            4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "400"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "bulb",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Ustaw jasność").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Pole wymagane"), findsNWidgets(2));
+
+    verifyNever(await mockApi.addAction(
+        null,
+        "sensor1",
+        null,
+        null,
+        "driver2",
+        "0, 1, 2, 3, 4, 5, 6",
+        "13:40",
+        "15:40",
+        {"type": "brightness", "brightness": 50},
+        4));
   });
 
   /// tests if does not add when api error
   testWidgets('does not add when api error', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "404"}));
 
@@ -675,6 +1102,13 @@ void main() {
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('triggerValueOperator')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -697,7 +1131,7 @@ void main() {
         findsOneWidget);
 
     verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .called(1);
   });
 
@@ -705,7 +1139,7 @@ void main() {
   testWidgets('does not add when action exists', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .thenAnswer((_) async => Future.value({
               "body": "Action with provided name already exists",
               "statusCode": "404"
@@ -780,6 +1214,13 @@ void main() {
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('triggerValueOperator')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -798,11 +1239,10 @@ void main() {
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
 
-    expect(find.text("Akcja o podanej nazwie już istnieje."),
-        findsOneWidget);
+    expect(find.text("Akcja o podanej nazwie już istnieje."), findsOneWidget);
 
     verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .called(1);
   });
 
@@ -811,7 +1251,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', null, null, null, "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 2))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 2))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
 
@@ -896,12 +1336,19 @@ void main() {
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
-    expect(find.text("driver2"), findsNWidgets(2));
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Press the button").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
 
     verify(await mockApi.addAction('name', null, null, null, "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 2))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 2))
         .called(1);
   });
 
@@ -910,7 +1357,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
 
@@ -1000,6 +1447,13 @@ void main() {
     await tester.enterText(sensorTrigger, '5');
     await tester.pumpAndSettle();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Press the button").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     expect(find.text("driver2"), findsOneWidget);
     expect(find.text("sensor1"), findsOneWidget);
     expect(find.text("< smaller than"), findsOneWidget);
@@ -1008,7 +1462,7 @@ void main() {
     await tester.pumpAndSettle();
 
     verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .called(1);
   });
 
@@ -1017,7 +1471,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction(null, null, null, null, null, "0, 1, 2, 3, 4, 5, 6",
-            "13:40", "15:40", "action", 2))
+            "13:40", "15:40", {"status": "on"}, 2))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "400"}));
 
@@ -1076,10 +1530,10 @@ void main() {
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
 
-    expect(find.text("Required field"), findsNWidgets(2));
+    expect(find.text("Required field"), findsNWidgets(3));
 
     verifyNever(await mockApi.addAction(null, null, null, null, null,
-        "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 2));
+        "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 2));
   });
 
   /// tests if does not add if no trigger, no operator if sensor chosen, english
@@ -1088,7 +1542,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction(null, "sensor1", null, null, "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "400"}));
 
@@ -1161,6 +1615,13 @@ void main() {
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Press the button").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.pumpAndSettle();
 
     expect(find.text("driver2"), findsOneWidget);
@@ -1172,7 +1633,7 @@ void main() {
     expect(find.text("Required field"), findsNWidgets(2));
 
     verifyNever(await mockApi.addAction(null, "sensor1", null, null, "driver2",
-        "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4));
+        "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4));
   });
 
   /// tests if does not add when api error, english
@@ -1180,7 +1641,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "404"}));
 
@@ -1264,6 +1725,13 @@ void main() {
     await tester.enterText(sensorTrigger, '5');
     await tester.pumpAndSettle();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Press the button").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     expect(find.text("driver2"), findsOneWidget);
     expect(find.text("sensor1"), findsOneWidget);
     expect(find.text("< smaller than"), findsOneWidget);
@@ -1274,19 +1742,20 @@ void main() {
     expect(find.text("Creating action failed. Try again."), findsOneWidget);
 
     verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .called(1);
   });
 
   /// tests if does not add when action exists, english
-  testWidgets('english does not add when action exists', (WidgetTester tester) async {
+  testWidgets('english does not add when action exists',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-        "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .thenAnswer((_) async => Future.value({
-      "body": "Action with provided name already exists",
-      "statusCode": "404"
-    }));
+              "body": "Action with provided name already exists",
+              "statusCode": "404"
+            }));
 
     List<Map<String, dynamic>> sensors = [
       {
@@ -1357,6 +1826,13 @@ void main() {
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Press the button").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('triggerValueOperator')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -1379,7 +1855,712 @@ void main() {
         findsOneWidget);
 
     verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
-        "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", "action", 4))
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
         .called(1);
+  });
+
+  /// tests if adds action with sensor with time range, raise blinds, english
+  testWidgets('english adds action with sensor with time range, raise blinds',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "201"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "roller_blind",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('triggerValueOperator')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text("Choose a comparison operator"), findsOneWidget);
+    expect(find.text("Cancel"), findsOneWidget);
+    expect(find.text("OK"), findsOneWidget);
+    expect(find.text("< smaller than"), findsOneWidget);
+    expect(find.text("> larger than"), findsOneWidget);
+    expect(find.text("= equal to"), findsOneWidget);
+    await tester.tap(find.text("< smaller than").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    Finder sensorTrigger = find.byKey(Key('sensorTrigger'));
+    await tester.enterText(sensorTrigger, '5');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Raise blinds").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+    expect(find.text("< smaller than"), findsOneWidget);
+    expect(find.text("5"), findsOneWidget);
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "on"}, 4))
+        .called(1);
+  });
+
+  /// tests if adds action with sensor with time range, lower blinds, english
+  testWidgets('english adds action with sensor with time range, lower blinds',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction('name', "sensor1", 5, "<", "driver2",
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "off"}, 4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "201"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "roller_blind",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('triggerValueOperator')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("< smaller than").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    Finder sensorTrigger = find.byKey(Key('sensorTrigger'));
+    await tester.enterText(sensorTrigger, '5');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Lower blinds").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+    expect(find.text("< smaller than"), findsOneWidget);
+    expect(find.text("5"), findsOneWidget);
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    verify(await mockApi.addAction('name', "sensor1", 5, "<", "driver2",
+            "0, 1, 2, 3, 4, 5, 6", "13:40", "15:40", {"status": "off"}, 4))
+        .called(1);
+  });
+
+  /// tests if adds action with sensor, turn on bulb, english
+  testWidgets('english adds action with sensor, turn on bulb',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction(
+            'name',
+            "sensor1",
+            5.0,
+            "<",
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"type": "turn", "status": "on"},
+            4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "201"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "bulb",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "bulb",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('triggerValueOperator')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("< smaller than").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Turn bulb on").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    Finder sensorTrigger = find.byKey(Key('sensorTrigger'));
+    await tester.enterText(sensorTrigger, '5');
+
+    expect(find.text("Trigger on the sensor"), findsOneWidget);
+    expect(find.text("Operator"), findsOneWidget);
+    expect(find.text("Value"), findsOneWidget);
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+    expect(find.text("< smaller than"), findsOneWidget);
+    expect(find.text("5"), findsOneWidget);
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    verify(await mockApi.addAction(
+            'name',
+            "sensor1",
+            5.0,
+            "<",
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"type": "turn", "status": "on"},
+            4))
+        .called(1);
+  });
+
+  /// tests if does not add if no trigger, no operator if sensor chosen, turn off bulb, english
+  testWidgets(
+      'english, does not add if no trigger, no operator if sensor chosen, turn off bulb',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction(
+            null,
+            "sensor1",
+            null,
+            null,
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"type": "turn", "status": "off"},
+            4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "400"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "bulb",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Turn bulb off").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Required field"), findsNWidgets(2));
+
+    verifyNever(await mockApi.addAction(
+        null,
+        "sensor1",
+        null,
+        null,
+        "driver2",
+        "0, 1, 2, 3, 4, 5, 6",
+        "13:40",
+        "15:40",
+        {"type": "turn", "status": "off"},
+        4));
+  });
+
+  /// tests if does not add if no trigger, no operator if sensor chosen, set bulb color, ensligh
+  testWidgets(
+      'english does not add if no trigger, no operator if sensor chosen, set bulb color',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction(
+            null,
+            "sensor1",
+            null,
+            null,
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"red": 128, "blue": 128, "type": "colour", "green": 128},
+            4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "400"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "bulb",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Set color").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Required field"), findsNWidgets(2));
+
+    verifyNever(await mockApi.addAction(
+        null,
+        "sensor1",
+        null,
+        null,
+        "driver2",
+        "0, 1, 2, 3, 4, 5, 6",
+        "13:40",
+        "15:40",
+        {"red": 128, "blue": 128, "type": "colour", "green": 128},
+        4));
+  });
+
+  /// tests if does not add if no trigger, no operator if sensor chosen, set bulb brightness, english
+  testWidgets(
+      'english does not add if no trigger, no operator if sensor chosen, set bulb brightness',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addAction(
+            null,
+            "sensor1",
+            null,
+            null,
+            "driver2",
+            "0, 1, 2, 3, 4, 5, 6",
+            "13:40",
+            "15:40",
+            {"type": "brightness", "brightness": 50},
+            4))
+        .thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "400"}));
+
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "bulb",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewAction page = NewAction(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+
+    await tester.tap(find.byKey(Key('sensorsButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("sensor1").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('driversButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("driver2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.text("sensor1"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Set brightness").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('saveActionButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Required field"), findsNWidgets(2));
+
+    verifyNever(await mockApi.addAction(
+        null,
+        "sensor1",
+        null,
+        null,
+        "driver2",
+        "0, 1, 2, 3, 4, 5, 6",
+        "13:40",
+        "15:40",
+        {"type": "brightness", "brightness": 50},
+        4));
   });
 }

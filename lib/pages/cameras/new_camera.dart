@@ -97,7 +97,9 @@ class _NewCameraState extends State<NewCamera> {
                   onPressed: _saveChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "NewCamera"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "NewCamera"),
 
             /// builds form with camera's properties
             body: SingleChildScrollView(
@@ -247,7 +249,8 @@ class _NewCameraState extends State<NewCamera> {
         key: _keyLoaderInvalidToken,
         text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
     await new Future.delayed(const Duration(seconds: 3));
-    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true).pop();
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+        .pop();
     await widget.storage.resetUserData();
     Navigator.of(context).popUntil((route) => route.isFirst);
   }

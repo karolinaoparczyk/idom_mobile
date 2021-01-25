@@ -20,6 +20,7 @@ class IdomDrawer extends StatefulWidget {
   IdomDrawer({
     @required this.storage,
     @required this.parentWidgetType,
+    this.testApi,
     this.accountUsername,
   });
 
@@ -32,13 +33,16 @@ class IdomDrawer extends StatefulWidget {
   /// current signed in user's username
   final String accountUsername;
 
+  /// test api
+  final Api testApi;
+
   /// handles state of widgets
   @override
   _IdomDrawerState createState() => _IdomDrawerState();
 }
 
 class _IdomDrawerState extends State<IdomDrawer> {
-  final Api api = Api();
+  Api api = Api();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   String isUserStaff;
   List<String> menuItems;
@@ -47,6 +51,9 @@ class _IdomDrawerState extends State<IdomDrawer> {
 
   @override
   void initState() {
+    if (widget.testApi != null) {
+      api = widget.testApi;
+    }
     checkIfUserIsStaff();
     getCurrentUserId();
     getCurrentUserName();
@@ -82,27 +89,31 @@ class _IdomDrawerState extends State<IdomDrawer> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                            width: 25,
-                            child: Container(
-                                padding: EdgeInsets.only(top: 5),
-                                alignment: Alignment.topRight,
-                                child: SvgPicture.asset(
-                                  imageUrl,
-                                  matchTextDirection: false,
-                                  width: 25,
-                                  height: 25,
-                                  color: IdomColors.additionalColor,
-                                ))),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 25.0),
-                          child: Text(title,
-                              style: Theme.of(context).textTheme.bodyText2),
-                        ),
-                      ],
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              width: 25,
+                              child: Container(
+                                  padding: EdgeInsets.only(top: 5),
+                                  alignment: Alignment.topRight,
+                                  child: SvgPicture.asset(
+                                    imageUrl,
+                                    matchTextDirection: false,
+                                    width: 25,
+                                    height: 25,
+                                    color: IdomColors.additionalColor,
+                                  ))),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 25.0),
+                              child: Text(title,
+                                  style: Theme.of(context).textTheme.bodyText2),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Icon(Icons.arrow_right)
                   ],
@@ -140,145 +151,178 @@ class _IdomDrawerState extends State<IdomDrawer> {
             DrawerHeader(
                 decoration: BoxDecoration(
                     color: IdomColors.lighten(IdomColors.additionalColor, 0.1)),
-                child: Container(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'IDOM',
+                                    style: TextStyle(
+                                        fontSize: 65.0,
+                                        color: IdomColors.blackTextLight),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ]),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Row(
                           children: [
-                            Row(mainAxisSize: MainAxisSize.min, children: [
-                              Image.asset('assets/home.png',
-                                  height: 50.0, width: 50.0),
-                              Text(
-                                'IDOM',
+                            Expanded(
+                              child: Text(
+                                'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU'.i18n,
                                 style: TextStyle(
-                                    fontSize: 70.0,
-                                    color: IdomColors.blackTextLight),
+                                    fontSize: 14.0,
+                                    color: IdomColors.blackTextLight,
+                                    fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),
-                              Icon(Icons.roofing_rounded,
-                                  size: 50.0, color: Colors.transparent),
-                            ]),
-                            Text(
-                              'TWÓJ INTELIGENTNY DOM W JEDNYM MIEJSCU'.i18n,
-                              style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: IdomColors.blackTextLight,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),
-                        userRow(),
-                      ]),
-                )),
-            customMenuTile("assets/icons/man.svg", "Moje konto".i18n, () async {
-              Navigator.pop(context);
-              var toPush = false;
-              if (widget.parentWidgetType == "AccountDetail") {
-                if (widget.accountUsername != currentUsername) {
-                  toPush = true;
-                }
-              } else
-                toPush = true;
-              if (toPush) {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AccountDetail(
-                            storage: widget.storage,
-                            username: currentUsername)));
-              }
-            }),
-            isUserStaff == "true"
-                ? customMenuTile(
-                    "assets/icons/team.svg", "Wszystkie konta".i18n, () async {
-                    Navigator.pop(context);
-                    if (widget.parentWidgetType != "Accounts") {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                      await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Accounts(storage: widget.storage)));
+                      ),
+                      userRow(),
+                    ])),
+            Column(
+              key: Key("drawerList"),
+              children: [
+                customMenuTile("assets/icons/man.svg", "Moje konto".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  var toPush = false;
+                  if (widget.parentWidgetType == "AccountDetail") {
+                    if (widget.accountUsername != currentUsername) {
+                      toPush = true;
                     }
-                  })
-                : SizedBox(),
-            customMenuTile("assets/icons/motion-sensor.svg", "Czujniki".i18n,
-                () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "Sensors") {
-                await Navigator.of(context).popUntil((route) => route.isFirst);
-              }
-            }),
-            customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n,
-                () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "Cameras") {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Cameras(storage: widget.storage)));
-              }
-            }),
-            customMenuTile("assets/icons/tap.svg", "Sterowniki".i18n, () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "Drivers") {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Drivers(storage: widget.storage)));
-              }
-            }),
-            customMenuTile("assets/icons/hammer.svg", "Akcje".i18n, () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "Actions") {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ActionsList(storage: widget.storage)));
-              }
-            }),
-            customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n,
-                () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "EditApiAddress") {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Settings(storage: widget.storage)));
-              }
-            }),
-            customMenuTile("assets/icons/download.svg", "Pobierz dane".i18n,
-                () async {
-              Navigator.pop(context);
-              if (widget.parentWidgetType != "DataDownload") {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            DataDownload(storage: widget.storage)));
-              }
-            }),
-            customMenuTile("assets/icons/logout.svg", "Wyloguj".i18n, () async {
-              Navigator.pop(context);
-              await _logOutProcedure();
-            }),
-            customMenuTile("assets/icons/info.svg", "O projekcie".i18n,
-                () async {
-              Navigator.pop(context);
-              _navigateToProjectWebPage();
-            }),
+                  } else
+                    toPush = true;
+                  if (toPush) {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AccountDetail(
+                                storage: widget.storage,
+                                username: currentUsername)));
+                  }
+                }),
+                isUserStaff == "true"
+                    ? customMenuTile(
+                        "assets/icons/team.svg", "Wszystkie konta".i18n,
+                        () async {
+                        Navigator.pop(context);
+                        if (widget.parentWidgetType != "Accounts") {
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Accounts(
+                                        storage: widget.storage,
+                                        testApi: widget.testApi,
+                                      )));
+                        }
+                      })
+                    : SizedBox(),
+                customMenuTile(
+                    "assets/icons/motion-sensor.svg", "Czujniki".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  if (widget.parentWidgetType != "Sensors") {
+                    await Navigator.of(context)
+                        .popUntil((route) => route.isFirst);
+                  }
+                }),
+                customMenuTile("assets/icons/video-camera.svg", "Kamery".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  if (widget.parentWidgetType != "Cameras") {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Cameras(
+                                  storage: widget.storage,
+                                  testApi: widget.testApi,
+                                )));
+                  }
+                }),
+                customMenuTile("assets/icons/tap.svg", "Sterowniki".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  if (widget.parentWidgetType != "Drivers") {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Drivers(
+                                  storage: widget.storage,
+                                  testApi: widget.testApi,
+                                )));
+                  }
+                }),
+                customMenuTile("assets/icons/hammer.svg", "Akcje".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  if (widget.parentWidgetType != "Actions") {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ActionsList(
+                                  storage: widget.storage,
+                                  testApi: widget.testApi,
+                                )));
+                  }
+                }),
+                customMenuTile("assets/icons/settings.svg", "Ustawienia".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  if (widget.parentWidgetType != "Settings") {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Settings(storage: widget.storage)));
+                  }
+                }),
+                customMenuTile("assets/icons/download.svg", "Pobierz dane".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  if (widget.parentWidgetType != "DataDownload") {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DataDownload(
+                                  storage: widget.storage,
+                                  testApi: widget.testApi,
+                                )));
+                  }
+                }),
+                customMenuTile("assets/icons/logout.svg", "Wyloguj".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  await _logOutProcedure();
+                }),
+                customMenuTile("assets/icons/info.svg", "O projekcie".i18n,
+                    () async {
+                  Navigator.pop(context);
+                  _navigateToProjectWebPage();
+                }),
+              ],
+            ),
           ]),
         ),
       ),

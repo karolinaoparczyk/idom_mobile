@@ -100,8 +100,11 @@ class _AccountsState extends State<Accounts> {
         });
 
         /// when no accounts exist
-        if (_accountList.length == 0) zeroFetchedItems = true;
-        zeroFetchedItems = false;
+        if (_accountList.length == 0) {
+          zeroFetchedItems = true;
+        } else {
+          zeroFetchedItems = false;
+        }
       }
 
       /// on invalid token log out
@@ -125,8 +128,11 @@ class _AccountsState extends State<Accounts> {
             });
 
             /// when no accounts exist
-            if (_accountList.length == 0) zeroFetchedItems = true;
-            zeroFetchedItems = false;
+            if (_accountList.length == 0) {
+              zeroFetchedItems = true;
+            } else {
+              zeroFetchedItems = false;
+            }
           } else if (res != null && res['statusCode'] == "401") {
             logOut();
           } else {
@@ -312,6 +318,7 @@ class _AccountsState extends State<Accounts> {
                         });
                       })
                   : IconButton(
+                      key: Key("drawer"),
                       icon: Icon(Icons.menu),
                       onPressed: () {
                         _scaffoldKey.currentState.openDrawer();
@@ -363,6 +370,7 @@ class _AccountsState extends State<Accounts> {
             /// drawer with menu
             drawer: IdomDrawer(
                 storage: widget.storage,
+                testApi: widget.testApi,
                 parentWidgetType: "Accounts"),
 
             /// accounts' list builder

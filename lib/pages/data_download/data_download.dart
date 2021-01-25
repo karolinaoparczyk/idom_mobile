@@ -140,7 +140,7 @@ class _DataDownloadState extends State<DataDownload> {
                 BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
             borderRadius: BorderRadius.circular(10.0),
           ),
-          labelText: "Ilość ostatnich dni".i18n,
+          labelText: "Liczba ostatnich dni".i18n,
           labelStyle: Theme.of(context).textTheme.headline5,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -164,7 +164,9 @@ class _DataDownloadState extends State<DataDownload> {
           key: _scaffoldKey,
           appBar: AppBar(title: Text('Pobierz dane'.i18n)),
           drawer: IdomDrawer(
-              storage: widget.storage, parentWidgetType: "DataDownload"),
+              storage: widget.storage,
+              testApi: widget.testApi,
+              parentWidgetType: "DataDownload"),
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(left: 15.5, top: 30, right: 15.5),

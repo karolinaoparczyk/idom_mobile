@@ -32,10 +32,13 @@ class _ActionsListState extends State<ActionsList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<State> _keyLoader = GlobalKey<State>();
   final GlobalKey<State> _keyLoaderInvalidToken = GlobalKey<State>();
+  final TextEditingController _searchController = TextEditingController();
   Api api = Api();
-  List<SensorDriverAction> _actionList;
+  List<SensorDriverAction> _actionList = List<SensorDriverAction>();
+  List<SensorDriverAction> _duplicateActionList = List<SensorDriverAction>();
   bool zeroFetchedItems = false;
   bool _connectionEstablished;
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -44,6 +47,33 @@ class _ActionsListState extends State<ActionsList> {
       api = widget.testApi;
     }
     getActions();
+    _searchController.addListener(() {
+      filterSearchResults(_searchController.text);
+    });
+  }
+
+  void filterSearchResults(String query) {
+    query = query.toLowerCase();
+    List<SensorDriverAction> dummySearchList = List<SensorDriverAction>();
+    dummySearchList.addAll(_duplicateActionList);
+    if (query.isNotEmpty) {
+      List<SensorDriverAction> dummyListData = List<SensorDriverAction>();
+      dummySearchList.forEach((item) {
+        if (item.name.toLowerCase().contains(query)) {
+          dummyListData.add(item);
+        }
+      });
+      setState(() {
+        _actionList.clear();
+        _actionList.addAll(dummyListData);
+      });
+      return;
+    } else {
+      setState(() {
+        _actionList.clear();
+        _actionList.addAll(_duplicateActionList);
+      });
+    }
   }
 
   /// returns list of actions
@@ -95,11 +125,35 @@ class _ActionsListState extends State<ActionsList> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+    setState(() {
+      _duplicateActionList.clear();
+      _duplicateActionList.addAll(_actionList);
+    });
   }
 
   Future<bool> _onBackButton() async {
     Navigator.pop(context);
     return true;
+  }
+
+  _buildSearchField() {
+    return TextField(
+      key: Key('searchField'),
+      controller: _searchController,
+      style: TextStyle(
+          color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Wyszukaj...".i18n,
+        hintStyle: TextStyle(
+            color: IdomColors.whiteTextLight, fontSize: 20, letterSpacing: 2.0),
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: IdomColors.additionalColor)),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: IdomColors.additionalColor),
+        ),
+      ),
+    );
   }
 
   @override
@@ -109,17 +163,58 @@ class _ActionsListState extends State<ActionsList> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('Akcje'.i18n),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.add, size: 30.0),
-              key: Key("addActionButton"),
-              onPressed: navigateToNewAction,
-            )
+          title: _isSearching ? _buildSearchField() : Text('Akcje'.i18n),
+          leading: _isSearching
+              ? IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = false;
+                      _searchController.text = "";
+                    });
+                  })
+              : IconButton(
+                  key: Key("drawer"),
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                ),
+          actions: <Widget>[
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.search, size: 25.0),
+                    key: Key("searchButton"),
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = true;
+                      });
+                    },
+                  ),
+            _isSearching
+                ? IconButton(
+                    icon: Icon(Icons.close, size: 25.0),
+                    key: Key("clearSearchingBox"),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.text = "";
+                      });
+                    },
+                  )
+                : SizedBox(),
+            _isSearching
+                ? SizedBox()
+                : IconButton(
+                    icon: Icon(Icons.add, size: 30.0),
+                    key: Key("addActionButton"),
+                    onPressed: navigateToNewAction,
+                  )
           ],
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
+            testApi: widget.testApi,
             parentWidgetType: "Actions"),
 
         /// builds actions' list
@@ -141,7 +236,7 @@ class _ActionsListState extends State<ActionsList> {
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-        _actionList == null) {
+         _actionList.isEmpty) {
       return Padding(
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
@@ -150,7 +245,18 @@ class _ActionsListState extends State<ActionsList> {
               child: Text("Błąd połączenia z serwerem.".i18n,
                   style: TextStyle(fontSize: 16.5),
                   textAlign: TextAlign.center)));
-    } else if (_actionList != null && _actionList.length > 0) {
+    } else if (!zeroFetchedItems &&
+        _duplicateActionList.isNotEmpty &&
+        _actionList.isEmpty) {
+      return Padding(
+          padding:
+          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: Text("Brak wyników wyszukiwania.".i18n,
+                  style: Theme.of(context).textTheme.bodyText2,
+                  textAlign: TextAlign.center)));
+    } else if (_actionList.isNotEmpty && _actionList.length > 0) {
       return Expanded(
           child: Scrollbar(
               child: RefreshIndicator(

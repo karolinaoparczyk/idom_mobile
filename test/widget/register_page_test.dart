@@ -154,7 +154,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Username already exists",
+      "body": "username This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -204,7 +204,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Email address already exists",
+      "body": "email This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -254,7 +254,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Telephone number already exists",
+      "body": "telephone This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -304,7 +304,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Telephone number already exists. Email address already exists",
+      "body": "telephone email This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -356,7 +356,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Telephone number already exists. Username already exists",
+      "body": "telephone username This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -408,7 +408,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Email address already exists. Username already exists",
+      "body": "email username This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -462,7 +462,7 @@ void main() {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
       "body":
-          "Email address already exists. Username already exists. Telephone number already exists",
+          "email username telephone This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -553,7 +553,7 @@ void main() {
     verify(await mockApi.signUp("username", "password", "password",
             "email@email.com", "pl", "+48765678789"))
         .called(1);
-    expect(find.text("Numer telefonu jest nieprawidłowy."), findsOneWidget);
+    expect(find.text(" Numer telefonu jest nieprawidłowy."), findsOneWidget);
     expect(find.byType(SignUp), findsOneWidget);
   });
 
@@ -602,7 +602,7 @@ void main() {
     verify(await mockApi.signUp("username", "password", "password",
             "email@email.com", "pl", "+48765678789"))
         .called(1);
-    expect(find.text("Adres e-mail jest nieprawidłowy"), findsOneWidget);
+    expect(find.text(" Adres e-mail jest nieprawidłowy"), findsOneWidget);
     expect(find.byType(SignUp), findsOneWidget);
   });
 
@@ -651,7 +651,7 @@ void main() {
     verify(await mockApi.signUp("username", "password", "password",
             "email@email.com", "pl", "+48765678789"))
         .called(1);
-    expect(find.text("Adres e-mail oraz numer telefonu są nieprawidłowe."), findsOneWidget);
+    expect(find.text(" Adres e-mail oraz numer telefonu są nieprawidłowe."), findsOneWidget);
     expect(find.byType(SignUp), findsOneWidget);
   });
 
@@ -726,7 +726,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Username already exists",
+      "body": "username This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -776,7 +776,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Email address already exists",
+      "body": "email This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -826,7 +826,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Telephone number already exists",
+      "body": "telephone This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -876,7 +876,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Telephone number already exists. Email address already exists",
+      "body": "email telephone This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -928,7 +928,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Telephone number already exists. Username already exists",
+      "body": "username telephone This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -980,7 +980,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
-      "body": "Email address already exists. Username already exists",
+      "body": "email username This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -1034,7 +1034,7 @@ void main() {
     MockApi mockApi = MockApi();
     Map<String, String> res = {
       "body":
-          "Email address already exists. Username already exists. Telephone number already exists",
+          "email username telephone This field must be unique",
       "statusCode": "400",
     };
     when(mockApi.signUp("username", "password", "password", "email@email.com",
@@ -1125,7 +1125,7 @@ void main() {
     verify(await mockApi.signUp("username", "password", "password",
             "email@email.com", "pl", "+48765678789"))
         .called(1);
-    expect(find.text("The cell phone number is invalid."), findsOneWidget);
+    expect(find.text(" The cell phone number is invalid."), findsOneWidget);
     expect(find.byType(SignUp), findsOneWidget);
   });
 
@@ -1174,7 +1174,7 @@ void main() {
         verify(await mockApi.signUp("username", "password", "password",
             "email@email.com", "pl", "+48765678789"))
             .called(1);
-        expect(find.text("The e-mail address is invalid."), findsOneWidget);
+        expect(find.text(" The e-mail address is invalid."), findsOneWidget);
         expect(find.byType(SignUp), findsOneWidget);
       });
 
@@ -1223,7 +1223,7 @@ void main() {
         verify(await mockApi.signUp("username", "password", "password",
             "email@email.com", "pl", "+48765678789"))
             .called(1);
-        expect(find.text("The e-mail address and cell phone number are invalid."), findsOneWidget);
+        expect(find.text(" The e-mail address and cell phone number are invalid."), findsOneWidget);
         expect(find.byType(SignUp), findsOneWidget);
       });
 

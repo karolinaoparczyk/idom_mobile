@@ -92,7 +92,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                   onPressed: _navigateToEditDriver)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "DriverDetails"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "DriverDetails"),
             body: SingleChildScrollView(
                 child: Form(
               key: _formKey,

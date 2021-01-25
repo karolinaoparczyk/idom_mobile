@@ -73,7 +73,9 @@ class _DriversState extends State<Drivers> {
           zeroFetchedItems = true;
         else
           zeroFetchedItems = false;
-      }  /// on invalid token log out
+      }
+
+      /// on invalid token log out
       else if (res != null && res['statusCode'] == "401") {
         final message = await LoginProcedures.signInWithStoredData();
         if (message != null) {
@@ -100,8 +102,7 @@ class _DriversState extends State<Drivers> {
             return null;
           }
         }
-      }
-      else {
+      } else {
         _connectionEstablished = false;
         setState(() {});
         return null;
@@ -207,6 +208,7 @@ class _DriversState extends State<Drivers> {
                     });
                   })
               : IconButton(
+                  key: Key("drawer"),
                   icon: Icon(Icons.menu),
                   onPressed: () {
                     _scaffoldKey.currentState.openDrawer();
@@ -247,6 +249,7 @@ class _DriversState extends State<Drivers> {
         ),
         drawer: IdomDrawer(
             storage: widget.storage,
+            testApi: widget.testApi,
             parentWidgetType: "Drivers"),
 
         /// builds cameras' list

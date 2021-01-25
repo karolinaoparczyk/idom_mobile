@@ -46,20 +46,28 @@ void main() {
       {
         "id": 1,
         "name": "action1",
-        "sensor_id": 1,
-        "driver_id": 1,
-        "start_time": "17:30",
-        "end_time": "19:30",
-        "action": "action",
+        "sensor": "sensor1",
+        "trigger": "25",
+        "operator": "=",
+        "driver": "driver1",
+        "days": "1,2,3",
+        "start_event": "17:30",
+        "end_event": "19:30",
+        "action": {"status": "on"},
+        "flag": 4
       },
       {
-        "id": 1,
+        "id": 2,
         "name": "action2",
-        "sensor_id": 2,
-        "driver_id": 2,
-        "start_time": "13:20",
-        "end_time": "16:40",
-        "action": "action",
+        "sensor": null,
+        "trigger": null,
+        "operator": null,
+        "driver": "driver2",
+        "days": "4,5,6",
+        "start_event": "11:30",
+        "end_event": "15:50",
+        "action": {"status": "off"},
+        "flag": 2
       }
     ];
     when(mockApi.getActions()).thenAnswer((_) async =>
@@ -74,6 +82,7 @@ void main() {
 
     await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
+    expect(find.text("Akcje"), findsOneWidget);
     expect(find
         .byType(ListTile)
         .evaluate()
@@ -114,20 +123,28 @@ void main() {
       {
         "id": 1,
         "name": "action1",
-        "sensor_id": 1,
-        "driver_id": 1,
-        "start_time": "17:30",
-        "end_time": "19:30",
-        "action": "action",
+        "sensor": "sensor1",
+        "trigger": "25",
+        "operator": "=",
+        "driver": "driver1",
+        "days": "1,2,3",
+        "start_event": "17:30",
+        "end_event": "19:30",
+        "action": {"status": "on"},
+        "flag": 4
       },
       {
-        "id": 1,
+        "id": 2,
         "name": "action2",
-        "sensor_id": 2,
-        "driver_id": 2,
-        "start_time": "13:20",
-        "end_time": "16:40",
-        "action": "action",
+        "sensor": null,
+        "trigger": null,
+        "operator": null,
+        "driver": "driver2",
+        "days": "4,5,6",
+        "start_event": "11:30",
+        "end_event": "15:50",
+        "action": {"status": "off"},
+        "flag": 2
       }
     ];
     when(mockApi.getActions()).thenAnswer((_) async =>
@@ -201,20 +218,28 @@ void main() {
       {
         "id": 1,
         "name": "action1",
-        "sensor_id": 1,
-        "driver_id": 1,
-        "start_time": "17:30",
-        "end_time": "19:30",
-        "action": "action",
+        "sensor": "sensor1",
+        "trigger": "25",
+        "operator": "=",
+        "driver": "driver1",
+        "days": "1,2,3",
+        "start_event": "17:30",
+        "end_event": "19:30",
+        "action": {"status": "on"},
+        "flag": 4
       },
       {
-        "id": 1,
+        "id": 2,
         "name": "action2",
-        "sensor_id": 2,
-        "driver_id": 2,
-        "start_time": "13:20",
-        "end_time": "16:40",
-        "action": "action",
+        "sensor": null,
+        "trigger": null,
+        "operator": null,
+        "driver": "driver2",
+        "days": "4,5,6",
+        "start_event": "11:30",
+        "end_event": "15:50",
+        "action": {"status": "off"},
+        "flag": 2
       }
     ];
     when(mockApi.getActions()).thenAnswer((_) async =>
@@ -231,6 +256,7 @@ void main() {
 
     await tester.pumpWidget(makeEnglishTestableWidget(child: page));
     await tester.pumpAndSettle();
+    expect(find.text("Actions"), findsOneWidget);
     expect(find
         .byType(ListTile)
         .evaluate()
