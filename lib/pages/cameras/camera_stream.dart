@@ -74,6 +74,7 @@ class _CameraStreamState extends State<CameraStream> {
         ]),
         drawer: IdomDrawer(
             storage: widget.storage,
+            testApi: widget.testApi,
             parentWidgetType: "Camera"),
         body: Column(
           children: [

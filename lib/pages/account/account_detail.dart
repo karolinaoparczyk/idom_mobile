@@ -43,6 +43,7 @@ class _AccountDetailState extends State<AccountDetail> {
   Map<String, dynamic> currentUserData;
   bool appNotificationsOn;
   bool smsNotificationsOn;
+  String fieldsValidationMessage;
 
   @override
   void initState() {
@@ -203,6 +204,7 @@ class _AccountDetailState extends State<AccountDetail> {
             drawer: IdomDrawer(
                 storage: widget.storage,
                 parentWidgetType: "AccountDetail",
+                testApi: widget.testApi,
                 accountUsername: widget.username),
             body: SingleChildScrollView(
                 child: Form(
@@ -420,16 +422,50 @@ class _AccountDetailState extends State<AccountDetail> {
                                               key: Key("smsNotifications"),
                                               value: smsNotificationsOn,
                                               onChanged: (value) async {
+                                                if ((account.telephone ==
+                                                            null ||
+                                                        account.telephone ==
+                                                            "") &&
+                                                    value) {
+                                                  setState(() {
+                                                    fieldsValidationMessage =
+                                                        "Nalezy dodać numer telefonu."
+                                                            .i18n;
+                                                  });
+                                                  return;
+                                                }
                                                 setState(() {
                                                   smsNotificationsOn = value;
+                                                  fieldsValidationMessage =
+                                                      null;
                                                 });
                                                 await _updateNotifications();
                                               },
                                             )
                                           ],
-                                        )
+                                        ),
                                       ],
                                     ))),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 62.0),
+                              child: AnimatedCrossFade(
+                                crossFadeState:
+                                    fieldsValidationMessage != null &&(
+                                            account.telephone == null ||
+                                            account.telephone == "")
+                                        ? CrossFadeState.showFirst
+                                        : CrossFadeState.showSecond,
+                                duration: Duration(milliseconds: 300),
+                                firstChild: fieldsValidationMessage != null
+                                    ? Text(fieldsValidationMessage,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1)
+                                    : SizedBox(),
+                                secondChild: SizedBox(),
+                              ),
+                            ),
                           ])))));
   }
 

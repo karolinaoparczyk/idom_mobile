@@ -141,7 +141,8 @@ class _SettingsState extends State<Settings> {
           ]),
           drawer: _isUserLoggedIn == "true"
               ? IdomDrawer(
-                  storage: widget.storage, parentWidgetType: "EditApiAddress")
+                  storage: widget.storage,
+                  parentWidgetType: "Settings")
               : null,
           body: _load
               ? loadingIndicator(true)
@@ -598,8 +599,7 @@ class _SettingsState extends State<Settings> {
       print("onMessage: $message");
       notifyMessage = message;
 
-      Provider.of<AppStateNotifier>(context, listen: false)
-          .updateState();
+      Provider.of<AppStateNotifier>(context, listen: false).updateState();
       return null;
     });
     if (pushNotificationsManager.deviceToken == null) {

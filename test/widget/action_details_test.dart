@@ -55,6 +55,7 @@ void main() {
   testWidgets('displays action details, with sensor and time range',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -66,7 +67,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -92,7 +93,8 @@ void main() {
     expect(find.text("Wyzwalacz"), findsOneWidget);
     expect(find.text("Wartość z czujnika"), findsOneWidget);
     expect(find.text("= 30.00"), findsOneWidget);
-    expect(find.text("Czas działania akcji"), findsOneWidget);
+    expect(find.text("Akcja"), findsOneWidget);
+    expect(find.text("Włącz"), findsOneWidget);
     expect(find.text("Dni tygodnia"), findsOneWidget);
     expect(find.text("pn, wt, śr, czw, pt, sb, nd"), findsOneWidget);
     expect(find.text("Godziny"), findsOneWidget);
@@ -103,6 +105,7 @@ void main() {
   testWidgets('displays action details, without sensor, with time range',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    ActionAction actionAction = ActionAction(status: "off");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -114,7 +117,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -140,6 +143,8 @@ void main() {
     expect(find.text("Wyzwalacz"), findsNothing);
     expect(find.text("Wartość z czujnika"), findsNothing);
     expect(find.text("= 30.00"), findsNothing);
+    expect(find.text("Akcja"), findsOneWidget);
+    expect(find.text("Wyłącz"), findsOneWidget);
     expect(find.text("Czas działania akcji"), findsOneWidget);
     expect(find.text("Dni tygodnia"), findsOneWidget);
     expect(find.text("pn, wt, śr, czw, pt, sb, nd"), findsOneWidget);
@@ -151,6 +156,7 @@ void main() {
   testWidgets('displays action details, with sensor and only start time',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    ActionAction actionAction = ActionAction(red: 0, blue: 255, type: "colour", green: 141);
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -162,7 +168,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: null,
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -188,6 +194,8 @@ void main() {
     expect(find.text("Wyzwalacz"), findsOneWidget);
     expect(find.text("Wartość z czujnika"), findsOneWidget);
     expect(find.text("= 30.00"), findsOneWidget);
+    expect(find.text("Akcja"), findsOneWidget);
+    expect(find.text("Ustaw kolor"), findsOneWidget);
     expect(find.text("Czas działania akcji"), findsOneWidget);
     expect(find.text("Dni tygodnia"), findsOneWidget);
     expect(find.text("pn, wt, śr, czw, pt, sb, nd"), findsOneWidget);
@@ -199,6 +207,7 @@ void main() {
   testWidgets('displays action details, without sensor and only start time',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    ActionAction actionAction = ActionAction(brightness: 84, type: "brightness");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -210,7 +219,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: null,
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -236,6 +245,8 @@ void main() {
     expect(find.text("Wyzwalacz"), findsNothing);
     expect(find.text("Wartość z czujnika"), findsNothing);
     expect(find.text("= 30.00"), findsNothing);
+    expect(find.text("Akcja"), findsOneWidget);
+    expect(find.text("Ustaw jasność: 84"), findsOneWidget);
     expect(find.text("Czas działania akcji"), findsOneWidget);
     expect(find.text("Dni tygodnia"), findsOneWidget);
     expect(find.text("pn, wt, śr, czw, pt, sb, nd"), findsOneWidget);
@@ -247,6 +258,7 @@ void main() {
   testWidgets('english displays action details, with sensor and time range',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -258,7 +270,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -284,6 +296,8 @@ void main() {
     expect(find.text("Trigger"), findsOneWidget);
     expect(find.text("Sensor value"), findsOneWidget);
     expect(find.text("= 30.00"), findsOneWidget);
+    expect(find.text("Action"), findsOneWidget);
+    expect(find.text("Turn on"), findsOneWidget);
     expect(find.text("Action time"), findsOneWidget);
     expect(find.text("Days of the week"), findsOneWidget);
     expect(find.text("Mon, Tue, Wed, Thur, Fri, Sat, Sun"), findsOneWidget);
@@ -296,6 +310,7 @@ void main() {
       'english displays action details, without sensor, with time range',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    ActionAction actionAction = ActionAction(status: "off");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -307,7 +322,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -333,6 +348,8 @@ void main() {
     expect(find.text("Trigger"), findsNothing);
     expect(find.text("Sensor value"), findsNothing);
     expect(find.text("= 30.00"), findsNothing);
+    expect(find.text("Action"), findsOneWidget);
+    expect(find.text("Turn off"), findsOneWidget);
     expect(find.text("Action time"), findsOneWidget);
     expect(find.text("Days of the week"), findsOneWidget);
     expect(find.text("Mon, Tue, Wed, Thur, Fri, Sat, Sun"), findsOneWidget);
@@ -345,6 +362,7 @@ void main() {
       'english displays action details, with sensor and only start time',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    ActionAction actionAction = ActionAction(red: 0, blue: 255, type: "colour", green: 141);
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -356,7 +374,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: null,
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -382,6 +400,8 @@ void main() {
     expect(find.text("Trigger"), findsOneWidget);
     expect(find.text("Sensor value"), findsOneWidget);
     expect(find.text("= 30.00"), findsOneWidget);
+    expect(find.text("Action"), findsOneWidget);
+    expect(find.text("Set color"), findsOneWidget);
     expect(find.text("Action time"), findsOneWidget);
     expect(find.text("Days of the week"), findsOneWidget);
     expect(find.text("Mon, Tue, Wed, Thur, Fri, Sat, Sun"), findsOneWidget);
@@ -394,6 +414,7 @@ void main() {
       'english displays action details, without sensor and only start time',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    ActionAction actionAction = ActionAction(brightness: 84, type: "brightness");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -405,7 +426,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: null,
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -431,6 +452,8 @@ void main() {
     expect(find.text("Trigger"), findsNothing);
     expect(find.text("Sensor value"), findsNothing);
     expect(find.text("= 30.00"), findsNothing);
+    expect(find.text("Action"), findsOneWidget);
+    expect(find.text("Set brightness: 84"), findsOneWidget);
     expect(find.text("Action time"), findsOneWidget);
     expect(find.text("Days of the week"), findsOneWidget);
     expect(find.text("Mon, Tue, Wed, Thur, Fri, Sat, Sun"), findsOneWidget);

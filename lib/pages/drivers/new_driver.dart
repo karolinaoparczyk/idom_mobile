@@ -177,7 +177,9 @@ class _NewDriverState extends State<NewDriver> {
                   onPressed: _saveChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "NewDriver"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "NewDriver"),
 
             /// builds form with driver's properties
             body: SingleChildScrollView(

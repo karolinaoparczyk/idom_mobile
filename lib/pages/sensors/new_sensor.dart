@@ -282,7 +282,9 @@ class _NewSensorState extends State<NewSensor> {
                   onPressed: _saveChanges),
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "NewSensor"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "NewSensor"),
 
             /// builds form with sensor properties
             body: Container(

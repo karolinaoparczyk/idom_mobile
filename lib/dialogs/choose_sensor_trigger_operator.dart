@@ -41,13 +41,15 @@ class _SensorTriggerOperatorDialogState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                child: Text("Wybierz operator porównania".i18n,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(fontSize: 21.0)),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
+                  child: Text("Wybierz operator porównania".i18n,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline5
+                          .copyWith(fontSize: 21.0)),
+                ),
               ),
               Divider(),
               SizedBox(

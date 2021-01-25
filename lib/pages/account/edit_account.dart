@@ -200,7 +200,9 @@ class _EditAccountState extends State<EditAccount> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditAccount"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "EditAccount"),
             body: Container(
                 child: Column(children: <Widget>[
               SingleChildScrollView(

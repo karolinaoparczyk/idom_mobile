@@ -292,6 +292,7 @@ class _SensorsState extends State<Sensors> {
                     });
                   })
               : IconButton(
+                  key: Key("drawer"),
                   icon: Icon(Icons.menu),
                   onPressed: () {
                     _scaffoldKey.currentState.openDrawer();
@@ -330,8 +331,10 @@ class _SensorsState extends State<Sensors> {
                   )
           ],
         ),
-        drawer:
-            IdomDrawer(storage: widget.storage, parentWidgetType: "Sensors"),
+        drawer: IdomDrawer(
+            storage: widget.storage,
+            testApi: widget.testApi,
+            parentWidgetType: "Sensors"),
 
         /// builds sensor's list
         body: Container(child: listSensors()),
@@ -591,35 +594,40 @@ class _SensorsState extends State<Sensors> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-            width: 40,
-            child: Container(
-                alignment: Alignment.center,
-                child: SizedBox(
-                    width: 40,
-                    child: Stack(children: [
-                      Container(
-                          padding: EdgeInsets.all(5),
-                          alignment: Alignment.center,
-                          child: SvgPicture.asset(
-                            "assets/icons/battery.svg",
-                            key: Key("assets/icons/battery.svg"),
-                            matchTextDirection: false,
-                            width: 36,
-                            height: 36,
-                            color: IdomColors.additionalColor,
-                          )),
-                      Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                              sensor.batteryLevel != null
-                                  ? sensor.batteryLevel.toString() + "%"
-                                  : "-%",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(fontSize: 13.5)))
-                    ])))),
+        if (sensor.category == "temperature" ||
+            sensor.category == "water_temp" ||
+            sensor.category == "atmo_pressure" ||
+            sensor.category == "air_humidity" ||
+            sensor.category == "humidity")
+          SizedBox(
+              width: 40,
+              child: Container(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                      width: 40,
+                      child: Stack(children: [
+                        Container(
+                            padding: EdgeInsets.all(5),
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              "assets/icons/battery.svg",
+                              key: Key("assets/icons/battery.svg"),
+                              matchTextDirection: false,
+                              width: 36,
+                              height: 36,
+                              color: IdomColors.additionalColor,
+                            )),
+                        Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                                sensor.batteryLevel != null
+                                    ? sensor.batteryLevel.toString() + "%"
+                                    : "-%",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(fontSize: 13.5)))
+                      ])))),
         SizedBox(
             width: 35,
             child: Container(

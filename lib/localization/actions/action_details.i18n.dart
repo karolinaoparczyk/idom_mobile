@@ -11,6 +11,10 @@ extension Localization on String {
         "en_uk": "Name",
       } +
       {
+        "pl_pl": "Nalezy dodać numer telefonu.",
+        "en_uk": "A phone number must be added.",
+      } +
+      {
         "pl_pl": "Akcja",
         "en_uk": "Action",
       } +

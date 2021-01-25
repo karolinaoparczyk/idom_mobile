@@ -104,7 +104,9 @@ class _EditCameraState extends State<EditCamera> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditCamera"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "EditCamera"),
 
             /// builds form with camera's properties
             body: SingleChildScrollView(
@@ -252,8 +254,7 @@ class _EditCameraState extends State<EditCamera> {
         key: _keyLoader,
         text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
     await new Future.delayed(const Duration(seconds: 3));
-    Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-        .pop();
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
     await widget.storage.resetUserData();
     Navigator.of(context).popUntil((route) => route.isFirst);
   }

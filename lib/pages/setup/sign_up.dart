@@ -253,7 +253,7 @@ class _SignUpState extends State<SignUp> {
               BorderSide(color: Theme.of(context).textTheme.bodyText2.color),
           borderRadius: BorderRadius.circular(10.0),
         ),
-        labelText: "Język powiadomień".i18n,
+        labelText: "Język powiadomień".i18n + "*",
         labelStyle: Theme.of(context).textTheme.headline5,
         suffixIcon:
             Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor),

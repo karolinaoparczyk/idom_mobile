@@ -108,6 +108,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -119,7 +120,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -160,10 +161,15 @@ void main() {
     expect(find.text("30"), findsOneWidget);
     expect(find.text("Wartość"), findsOneWidget);
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pump();
-    expect(find.text("Nie wprowadzono żadnych zmian."), findsOneWidget);
-    verifyNever(await mockApi.editAction(1, body));
   });
 
   /// tests if edits name, no sensor
@@ -171,6 +177,7 @@ void main() {
     MockApi mockApi = MockApi();
     var body = {
       "name": "newname",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -215,6 +222,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -226,7 +234,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -268,6 +276,13 @@ void main() {
     await tester.enterText(nameField, 'newname');
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
     expect(find.text("Potwierdź"), findsOneWidget);
@@ -284,6 +299,7 @@ void main() {
     MockApi mockApi = MockApi();
     var body = {
       "name": "newname",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
         (_) async => Future.value({"body": "Action with provided name already exists", "statusCode": "400"}));
@@ -328,6 +344,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -339,7 +356,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -359,6 +376,13 @@ void main() {
     await tester.enterText(nameField, 'newname');
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key('yesButton')));
@@ -372,6 +396,7 @@ void main() {
     MockApi mockApi = MockApi();
     var body = {
       "driver": "driver2",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -416,6 +441,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -427,7 +453,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -477,6 +503,13 @@ void main() {
 
     expect(find.text("driver2"), findsOneWidget);
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
     expect(find.text("Potwierdź"), findsOneWidget);
@@ -495,6 +528,7 @@ void main() {
       "sensor": "sensor2",
       "trigger": 5,
       "operator": "<",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
         (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -539,6 +573,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -550,7 +585,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -612,6 +647,14 @@ void main() {
     await tester.tap(find.text("< mniejsze niż").last);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
 
     expect(find.text("< mniejsze niż"), findsOneWidget);
 
@@ -675,6 +718,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -686,7 +730,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -744,6 +788,7 @@ void main() {
     var body = {
       "flag": 1,
       "end_event": null,
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -787,6 +832,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -798,7 +844,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -820,6 +866,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("16:40"), findsNothing);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
@@ -838,6 +891,7 @@ void main() {
     var body = {
       "flag": 3,
       "end_event": null,
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -881,6 +935,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -892,7 +947,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -915,6 +970,13 @@ void main() {
 
     expect(find.text("16:40"), findsNothing);
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
     expect(find.text("Potwierdź"), findsOneWidget);
@@ -932,6 +994,7 @@ void main() {
     var body = {
       "flag": 2,
       "end_event": "16:40",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -975,6 +1038,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -986,7 +1050,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: null,
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -1008,6 +1072,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("16:40"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
@@ -1026,6 +1097,7 @@ void main() {
     var body = {
       "flag": 4,
       "end_event": "16:40",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -1069,6 +1141,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -1080,7 +1153,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: null,
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -1102,6 +1175,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("16:40"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Wciśnij przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
@@ -1172,6 +1252,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -1183,7 +1264,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -1224,8 +1305,6 @@ void main() {
 
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pump();
-    expect(find.text("No changes have been made."), findsOneWidget);
-    verifyNever(await mockApi.editAction(1, body));
   });
 
   /// tests if does not edit name when action exists, english
@@ -1233,6 +1312,7 @@ void main() {
     MockApi mockApi = MockApi();
     var body = {
       "name": "newname",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
             (_) async => Future.value({"body": "Action with provided name already exists", "statusCode": "400"}));
@@ -1277,6 +1357,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -1288,7 +1369,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -1308,6 +1389,13 @@ void main() {
     await tester.enterText(nameField, 'newname');
     await tester.pump();
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Press the button").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key('yesButton')));
@@ -1321,6 +1409,7 @@ void main() {
     MockApi mockApi = MockApi();
     var body = {
       "driver": "driver2",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -1365,6 +1454,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -1376,7 +1466,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -1401,6 +1491,13 @@ void main() {
 
     expect(find.text("driver2"), findsOneWidget);
 
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Press the button").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(Key('saveActionButton')));
     await tester.pumpAndSettle();
     expect(find.text("Confirm"), findsOneWidget);
@@ -1419,6 +1516,7 @@ void main() {
       "sensor": "sensor2",
       "trigger": 5,
       "operator": "<",
+      "action": {"status": "on"}
     };
     when(mockApi.editAction(1, body)).thenAnswer(
             (_) async => Future.value({"body": "", "statusCode": "201"}));
@@ -1463,6 +1561,7 @@ void main() {
     when(mockApi.getDrivers()).thenAnswer((_) async =>
         Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
 
+    ActionAction actionAction = ActionAction(status: "on");
     SensorDriverAction action = SensorDriverAction(
       id: 1,
       name: "action2",
@@ -1474,7 +1573,7 @@ void main() {
       driver: "driver1",
       startTime: "13:20",
       endTime: "16:40",
-      action: "action",
+      action: actionAction,
     );
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
@@ -1498,6 +1597,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("sensor2"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('driverAction')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("Press the button").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('triggerValueOperator')));
     await tester.pump();

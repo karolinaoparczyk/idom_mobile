@@ -16,7 +16,7 @@ extension Localization on String {
         "en_uk": "Download data",
       } +
       {
-        "pl_pl": "Ilość ostatnich dni",
+        "pl_pl": "Liczba ostatnich dni",
         "en_uk": "Amount of past days",
       } +
       {

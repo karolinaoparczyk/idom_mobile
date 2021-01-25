@@ -592,7 +592,7 @@ class _EditActionState extends State<EditAction> {
                       surface: Theme.of(context).backgroundColor,
                       onSurface: Theme.of(context).textTheme.bodyText2.color),
                   buttonTheme:
-                  ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                      ButtonThemeData(textTheme: ButtonTextTheme.primary),
                 ),
                 child: child,
               );
@@ -700,7 +700,9 @@ class _EditActionState extends State<EditAction> {
                   onPressed: _verifyChanges)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "EditAction"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "EditAction"),
 
             /// builds form with action's properties
             body: SingleChildScrollView(

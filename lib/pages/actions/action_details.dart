@@ -68,7 +68,9 @@ class _ActionDetailsState extends State<ActionDetails> {
                   onPressed: _navigateToEditAction)
             ]),
             drawer: IdomDrawer(
-                storage: widget.storage, parentWidgetType: "ActionDetails"),
+                storage: widget.storage,
+                testApi: widget.testApi,
+                parentWidgetType: "ActionDetails"),
             body: SingleChildScrollView(
                 child: Form(
               key: _formKey,
@@ -278,7 +280,7 @@ class _ActionDetailsState extends State<ActionDetails> {
       int brightness = widget.action.action.brightness;
       setColor =
           _calculateShadedColor((brightness / 100 * 255).roundToDouble());
-      action = "Ustaw jasność".i18n + " : $brightness";
+      action = "Ustaw jasność".i18n + ": $brightness";
     } else if (widget.action.action.red != null) {
       int red = widget.action.action.red;
       int green = widget.action.action.green;

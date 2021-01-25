@@ -125,7 +125,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                     jsonDecode(res['bodySensorData']);
                 sensorDataList = List<SensorData>();
                 for (var i = 0; i < bodySensorData.length; i++) {
-                  sensorDataList.add(SensorData.fromJson(bodySensorData[i], i + 1));
+                  sensorDataList
+                      .add(SensorData.fromJson(bodySensorData[i], i + 1));
                 }
                 noDataForChart = false;
                 dataLoaded = true;
@@ -250,7 +251,9 @@ class _SensorDetailsState extends State<SensorDetails> {
                 onPressed: _navigateToEditSensor)
           ]),
           drawer: IdomDrawer(
-              storage: widget.storage, parentWidgetType: "SensorDetails"),
+              storage: widget.storage,
+              testApi: widget.testApi,
+              parentWidgetType: "SensorDetails"),
 
           /// builds form with editable and non-editable sensor properties
           body: SingleChildScrollView(
