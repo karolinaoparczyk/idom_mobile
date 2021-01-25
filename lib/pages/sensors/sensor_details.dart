@@ -550,7 +550,8 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   String getSensorLastData() {
-    if (widget.sensor.lastData == null) return "-";
+    if (widget.sensor.lastData == null ||
+        double.tryParse(widget.sensor.lastData) == null) return "-";
     var data;
     switch (widget.sensor.category) {
       case "temperature":

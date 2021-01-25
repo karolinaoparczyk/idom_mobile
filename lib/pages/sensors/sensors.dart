@@ -528,6 +528,9 @@ class _SensorsState extends State<Sensors> {
     var stringData;
     if (sensor.lastData != null) {
       doubleData = double.tryParse(sensor.lastData);
+      if (doubleData == null) {
+        return "";
+      }
       stringData = doubleData.toStringAsFixed(2);
     }
     var lastDataLabel = "ostatnia dana".i18n;
