@@ -84,7 +84,8 @@ class _EditSensorState extends State<EditSensor> {
         categoryValue == "water_temp" ||
         categoryValue == "breathalyser" ||
         categoryValue == "smoke" ||
-        categoryValue == "gas") {
+        categoryValue == "gas" ||
+        categoryValue == "motion_sensor") {
       canEditFrequency = false;
       frequencyUnitsValue = "seconds";
       _frequencyUnitsController.text = FrequencyUnits.values
@@ -174,7 +175,8 @@ class _EditSensorState extends State<EditSensor> {
                 selectedCategory['value'] == "water_temp" ||
                 selectedCategory['value'] == "breathalyser" ||
                 selectedCategory['value'] == "smoke" ||
-                selectedCategory['value'] == "gas") {
+                selectedCategory['value'] == "gas" ||
+                selectedCategory['value'] == "motion_sensor") {
               canEditFrequency = false;
               frequencyUnitsValue = "seconds";
               _frequencyUnitsController.text = FrequencyUnits.values

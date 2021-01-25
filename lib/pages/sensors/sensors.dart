@@ -110,8 +110,9 @@ class _SensorsState extends State<Sensors> {
           if (res != null && res['statusCodeSensors'] == "200") {
             List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
             setState(() {
-              _sensorList =
-                  bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
+              _sensorList = bodySensors
+                  .map((dynamic item) => Sensor.fromJson(item))
+                  .toList();
             });
             if (_sensorList.length == 0)
               zeroFetchedItems = true;
@@ -473,6 +474,9 @@ class _SensorsState extends State<Sensors> {
       case "rain_sensor":
         imageUrl = "assets/icons/rain.svg";
         break;
+      case "motion_sensor":
+        imageUrl = "assets/icons/motion.svg";
+        break;
     }
     return SizedBox(
         width: 35,
@@ -524,6 +528,9 @@ class _SensorsState extends State<Sensors> {
     var stringData;
     if (sensor.lastData != null) {
       doubleData = double.tryParse(sensor.lastData);
+      if (doubleData == null) {
+        return "";
+      }
       stringData = doubleData.toStringAsFixed(2);
     }
     var lastDataLabel = "ostatnia dana".i18n;
@@ -549,6 +556,7 @@ class _SensorsState extends State<Sensors> {
       case "smoke":
       case "gas":
       case "rain_sensor":
+      case "motion_sensor":
         return "";
     }
   }

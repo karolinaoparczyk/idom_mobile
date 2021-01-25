@@ -12,6 +12,7 @@ class SensorCategories {
     {"text": "temperatura wody", "value": "water_temp"},
     {"text": "dym", "value": "smoke"},
     {"text": "gaz", "value": "gas"},
+    {"text": "ruch", "value": "motion_sensor"},
     {"text": "wilgotność gleby", "value": "humidity"},
     {"text": "wilgotność powietrza", "value": "air_humidity"},
   ];
