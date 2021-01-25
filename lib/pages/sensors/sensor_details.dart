@@ -41,7 +41,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   Api api = Api();
   bool _load;
-  List<SensorData> sensorData;
+  List<SensorData> sensorDataList;
   List<SensorData> _seriesData;
   List<bool> measurementTimeSelected;
   bool noDataForChart;
@@ -63,7 +63,7 @@ class _SensorDetailsState extends State<SensorDetails> {
     _seriesData = List<SensorData>();
     measurementTimeSelected = [true, false, false];
     getSensorData().then((value) => setState(() {
-          if (sensorData != null && sensorData.length > 0) {
+          if (sensorDataList != null && sensorDataList.length > 0) {
             getDataForChart();
           }
           chartWid = buildChartWidget();
@@ -93,13 +93,16 @@ class _SensorDetailsState extends State<SensorDetails> {
         if (res['statusSensorData'] == "200") {
           if (res['bodySensorData'] != "[]") {
             List<dynamic> bodySensorData = jsonDecode(res['bodySensorData']);
-            sensorData = List<SensorData>();
+            sensorDataList = List<SensorData>();
             for (var i = 0; i < bodySensorData.length; i++) {
-              sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
+              var sensorData = SensorData.fromJson(bodySensorData[i], i + 1);
+              if (double.tryParse(sensorData.data) != null) {
+                sensorDataList.add(sensorData);
+              }
             }
             noDataForChart = false;
             dataLoaded = true;
-            return sensorData;
+            return sensorDataList;
           } else {
             noDataForChart = true;
             dataLoaded = false;
@@ -120,13 +123,13 @@ class _SensorDetailsState extends State<SensorDetails> {
               if (res['bodySensorData'] != "[]") {
                 List<dynamic> bodySensorData =
                     jsonDecode(res['bodySensorData']);
-                sensorData = List<SensorData>();
+                sensorDataList = List<SensorData>();
                 for (var i = 0; i < bodySensorData.length; i++) {
-                  sensorData.add(SensorData.fromJson(bodySensorData[i], i + 1));
+                  sensorDataList.add(SensorData.fromJson(bodySensorData[i], i + 1));
                 }
                 noDataForChart = false;
                 dataLoaded = true;
-                return sensorData;
+                return sensorDataList;
               } else {
                 noDataForChart = true;
                 dataLoaded = false;
@@ -178,7 +181,7 @@ class _SensorDetailsState extends State<SensorDetails> {
 
     /// today
     if (measurementTimeSelected[0] == true) {
-      _seriesData = sensorData
+      _seriesData = sensorDataList
           .where((data) =>
               data.deliveryTime.year == now.year &&
               data.deliveryTime.month == now.month &&
@@ -188,7 +191,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       /// last 2 weeks
     } else if (measurementTimeSelected[1] == true) {
       _seriesData.clear();
-      for (SensorData data in sensorData) {
+      for (SensorData data in sensorDataList) {
         var date = DateTime(data.deliveryTime.year, data.deliveryTime.month,
             data.deliveryTime.day);
         int diff = now.difference(date).inDays;
@@ -200,7 +203,7 @@ class _SensorDetailsState extends State<SensorDetails> {
       /// last 30 days
     } else if (measurementTimeSelected[2] == true) {
       _seriesData.clear();
-      for (SensorData data in sensorData) {
+      for (SensorData data in sensorDataList) {
         var date = DateTime(data.deliveryTime.year, data.deliveryTime.month,
             data.deliveryTime.day);
         int diff = now.difference(date).inDays;
@@ -525,8 +528,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                                         measurementTimeSelected[i] = false;
                                       }
                                     }
-                                    if (sensorData != null &&
-                                        sensorData.length > 0) {
+                                    if (sensorDataList != null &&
+                                        sensorDataList.length > 0) {
                                       getDataForChart();
                                     }
                                     chartWid = buildChartWidget();
@@ -621,7 +624,7 @@ class _SensorDetailsState extends State<SensorDetails> {
         Sensor refreshedSensor = Sensor.fromJson(body);
         getSensorData().then((value) => setState(() {
               widget.sensor = refreshedSensor;
-              if (sensorData != null && sensorData.length > 0) {
+              if (sensorDataList != null && sensorDataList.length > 0) {
                 getDataForChart();
               }
               chartWid = buildChartWidget();
