@@ -130,7 +130,8 @@ class _NewSensorState extends State<NewSensor> {
                 selectedCategory['value'] == "water_temp" ||
                 selectedCategory['value'] == "breathalyser" ||
                 selectedCategory['value'] == "smoke" ||
-                selectedCategory['value'] == "gas") {
+                selectedCategory['value'] == "gas" ||
+                selectedCategory['value'] == "motion_sensor") {
               _frequencyUnitsController = TextEditingController();
               frequencyUnitsValue = null;
               _frequencyUnitsController.text = FrequencyUnits.values

@@ -121,6 +121,10 @@ extension Localization on String {
       {
         "pl_pl": "gaz",
         "en_uk": "gas",
+      }  +
+      {
+        "pl_pl": "ruch",
+        "en_uk": "motion",
       } +
       {
         "pl_pl": "wilgotność gleby",

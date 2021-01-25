@@ -379,7 +379,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                             )),
                       if (widget.sensor.category != "rain_sensor" &&
                           widget.sensor.category != "smoke" &&
-                          widget.sensor.category != "gas")
+                          widget.sensor.category != "gas" &&
+                          widget.sensor.category != "motion_sensor")
                         Padding(
                             padding: EdgeInsets.only(
                                 top: 0, left: 62, right: 30.0, bottom: 0.0),
@@ -390,7 +391,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                             )),
                       if (widget.sensor.category != "rain_sensor" &&
                           widget.sensor.category != "smoke" &&
-                          widget.sensor.category != "gas")
+                          widget.sensor.category != "gas" &&
+                          widget.sensor.category != "motion_sensor")
                         Padding(
                             padding: EdgeInsets.only(
                                 left: 62, top: 0.0, right: 30, bottom: 10.0),
@@ -403,7 +405,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                       Divider(),
                       if (widget.sensor.category != "rain_sensor" &&
                           widget.sensor.category != "smoke" &&
-                          widget.sensor.category != "gas")
+                          widget.sensor.category != "gas" &&
+                          widget.sensor.category != "motion_sensor")
                         Padding(
                             padding: EdgeInsets.only(
                                 left: 30.0,
@@ -429,7 +432,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                                 ))),
                       if (widget.sensor.category != "rain_sensor" &&
                           widget.sensor.category != "smoke" &&
-                          widget.sensor.category != "gas")
+                          widget.sensor.category != "gas" &&
+                          widget.sensor.category != "motion_sensor")
                         Padding(
                           padding: EdgeInsets.only(
                               left: 30, top: 13.5, right: 30.0, bottom: 0),
@@ -532,7 +536,8 @@ class _SensorDetailsState extends State<SensorDetails> {
                         ),
                       if (widget.sensor.category != "rain_sensor" &&
                           widget.sensor.category != "smoke" &&
-                          widget.sensor.category != "gas")
+                          widget.sensor.category != "gas" &&
+                          widget.sensor.category != "motion_sensor")
                         Container(
                             width: MediaQuery.of(context).size.width - 40,
                             padding: EdgeInsets.only(
