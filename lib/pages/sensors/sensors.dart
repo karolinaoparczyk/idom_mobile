@@ -284,6 +284,7 @@ class _SensorsState extends State<Sensors> {
         appBar: AppBar(
           leading: _isSearching
               ? IconButton(
+                  key: Key("arrowBack"),
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
                     setState(() {

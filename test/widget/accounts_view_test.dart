@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:idom/pages/account/account_detail.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/pages/account/accounts.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,21 @@ void main() {
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getIsUserStaff())
         .thenAnswer((_) async => Future.value("false"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "false",
+      "isActive": "true",
+      "token": "token"
+    };
 
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
     Accounts page = Accounts(
       storage: mockSecureStorage,
       testApi: mockApi,
@@ -79,6 +94,27 @@ void main() {
     expect(find.byType(ListTile).evaluate().length, 1);
     expect(find.text("user1"), findsOneWidget);
     expect(find.text("USER2"), findsNothing);
+    await tester.tap(find.byKey(Key('arrowBack')));
+    await tester.pumpAndSettle();
+    expect(find.text("user1"), findsOneWidget);
+    expect(find.text("USER2"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, '2');
+    await tester.pumpAndSettle();
+    expect(find.text("user1"), findsNothing);
+    expect(find.text("USER2"), findsOneWidget);
+    expect(find.byType(ListTile).evaluate().length, 1);
+    await tester.tap(find.byKey(Key('clearSearchingBox')));
+    await tester.pumpAndSettle();
+    expect(find.text("user1"), findsOneWidget);
+    expect(find.text("USER2"), findsOneWidget);
+
+    await tester.tap(find.text("user1"));
+    await tester.pumpAndSettle();
+    expect(find.byType(AccountDetail), findsOneWidget);
   });
 
   /// tests if can delete if is staff
@@ -123,5 +159,9 @@ void main() {
     expect(find.byKey(Key("deleteButton")).evaluate().length, 2);
     expect(find.text("user1"), findsOneWidget);
     expect(find.text("user2"), findsOneWidget);
+
+    await tester.drag(find.byKey(Key('AccountsList')), const Offset(0.0, 300));
+    await tester.pumpAndSettle();
+    verify(await mockApi.getAccounts()).called(2);
   });
 }

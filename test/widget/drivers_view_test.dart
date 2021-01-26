@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
+import 'package:idom/pages/drivers/driver_details.dart';
 import 'package:idom/pages/drivers/drivers.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
@@ -91,6 +92,42 @@ void main() {
     expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text("Wysłano komendę do sterownika driver1."), findsOneWidget);
     verify(await mockApi.startDriver("driver1")).called(1);
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, 'driver');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+    expect(find.text("driver1"), findsOneWidget);
+    expect(find.text("driver2"), findsOneWidget);
+
+    await tester.enterText(searchField, '1');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 1);
+    expect(find.text("driver1"), findsOneWidget);
+    expect(find.text("driver2"), findsNothing);
+    await tester.tap(find.byKey(Key('arrowBack')));
+    await tester.pumpAndSettle();
+    expect(find.text("driver1"), findsOneWidget);
+    expect(find.text("driver2"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, '2');
+    await tester.pumpAndSettle();
+    expect(find.text("driver1"), findsNothing);
+    expect(find.text("driver2"), findsOneWidget);
+    expect(find.byType(ListTile).evaluate().length, 1);
+    await tester.tap(find.byKey(Key('clearSearchingBox')));
+    await tester.pumpAndSettle();
+    expect(find.text("driver1"), findsOneWidget);
+    expect(find.text("driver2"), findsOneWidget);
+
+    await tester.tap(find.text("driver1"));
+    await tester.pumpAndSettle();
+    expect(find.byType(DriverDetails), findsOneWidget);
   });
 
   /// tests if drivers on list, delete driver from context menu
@@ -181,6 +218,10 @@ void main() {
     expect(find.text("Usuń"), findsOneWidget);
     await tester.tap(find.byKey(Key("click")));
     await tester.pumpAndSettle();
+
+    await tester.drag(find.byKey(Key('DriversList')), const Offset(0.0, 300));
+    await tester.pumpAndSettle();
+    verify(await mockApi.getDrivers()).called(2);
   });
 
   /// tests if turns on/off bulb from context menu

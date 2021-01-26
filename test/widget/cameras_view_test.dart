@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
+import 'package:idom/pages/cameras/camera_stream.dart';
 import 'package:idom/pages/cameras/cameras.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,8 @@ void main() {
         Future.value({"body": jsonEncode(cameras), "statusCode": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
-
+    when(mockSecureStorage.getApiServerAddress()).thenAnswer((_) async =>
+        Future.value("apiAddress"));
     Cameras page = Cameras(
       storage: mockSecureStorage,
       testApi: mockApi,
@@ -73,6 +75,44 @@ void main() {
     expect(find.text("camera1"), findsOneWidget);
     expect(find.text("camera2"), findsOneWidget);
     expect(find.byKey(Key("assets/icons/video-camera.svg")), findsNWidgets(2));
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, 'camera');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+    expect(find.text("camera1"), findsOneWidget);
+    expect(find.text("camera2"), findsOneWidget);
+
+    await tester.enterText(searchField, '1');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 1);
+    expect(find.text("camera1"), findsOneWidget);
+    expect(find.text("camera2"), findsNothing);
+    await tester.tap(find.byKey(Key('arrowBack')));
+    await tester.pumpAndSettle();
+    expect(find.text("camera1"), findsOneWidget);
+    expect(find.text("camera2"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, '2');
+    await tester.pumpAndSettle();
+    expect(find.text("camera1"), findsNothing);
+    expect(find.text("camera2"), findsOneWidget);
+    expect(find.byType(ListTile).evaluate().length, 1);
+    await tester.tap(find.byKey(Key('clearSearchingBox')));
+    await tester.pumpAndSettle();
+    expect(find.text("camera1"), findsOneWidget);
+    expect(find.text("camera2"), findsOneWidget);
+
+    await tester.tap(find.text("camera1"));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    expect(find.byType(CameraStream), findsOneWidget);
   });
 
   /// tests if deletes camera
@@ -167,6 +207,10 @@ void main() {
    expect(find.text("Usunięcie kamery nie powiodło się. Spróbuj ponownie."), findsOneWidget);
    
     verify(await mockApi.deleteCamera(1)).called(1);
+
+    await tester.drag(find.byKey(Key('CamerasList')), const Offset(0.0, 300));
+    await tester.pumpAndSettle();
+    verify(await mockApi.getCameras()).called(2);
   });
 
   /// tests if deletes camera, english

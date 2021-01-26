@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
+import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -106,6 +107,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(ListTile).evaluate().length, 1);
     expect(find.text("sensor1"), findsOneWidget);
+
+    await tester.tap(find.text("sensor1"));
+    await tester.pumpAndSettle();
+    expect(find.byType(SensorDetails), findsOneWidget);
   });
 
   /// tests if deletes sensor after confirmation
@@ -159,7 +164,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("Potwierdź"), findsOneWidget);
-    expect(find.text("Czy na pewno chcesz usunąć czujnik sensor1?"), findsOneWidget);
+    expect(find.text("Czy na pewno chcesz usunąć czujnik sensor1?"),
+        findsOneWidget);
     expect(find.text("Tak"), findsOneWidget);
     expect(find.text("Nie"), findsOneWidget);
     await tester.tap(find.byKey(Key('yesButton')));
@@ -222,6 +228,10 @@ void main() {
     await tester.pumpAndSettle();
 
     verifyNever(await mockApi.deactivateSensor(1));
+
+    await tester.drag(find.byKey(Key('SensorsList')), const Offset(0.0, 300));
+    await tester.pumpAndSettle();
+    verify(await mockApi.getSensors()).called(2);
   });
 
   /// tests eror message when api error
@@ -366,15 +376,16 @@ void main() {
     expect(find.byKey(Key("assets/icons/temperature.svg")), findsOneWidget);
     expect(find.byKey(Key("assets/icons/humidity.svg")), findsOneWidget);
     expect(find.byKey(Key("assets/icons/battery.svg")), findsNWidgets(4));
+
     /// scroll categories list
-    await tester.drag(
-        find.byKey(Key('SensorsList')), const Offset(0.0, -300));
+    await tester.drag(find.byKey(Key('SensorsList')), const Offset(0.0, -300));
     await tester.pump();
     expect(find.byKey(Key("assets/icons/barometer.svg")), findsOneWidget);
   });
 
   /// tests if sensors on list english
-  testWidgets('english sensors on list, search results', (WidgetTester tester) async {
+  testWidgets('english sensors on list, search results',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     List<Map<String, dynamic>> sensors = [
@@ -441,6 +452,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(ListTile).evaluate().length, 1);
     expect(find.text("sensor1"), findsOneWidget);
+    expect(find.text("SENSOR2"), findsNothing);
+    await tester.tap(find.byKey(Key('arrowBack')));
+    await tester.pumpAndSettle();
+    expect(find.text("sensor1"), findsOneWidget);
+    expect(find.text("SENSOR2"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, '2');
+    await tester.pumpAndSettle();
+    expect(find.text("sensor1"), findsNothing);
+    expect(find.text("SENSOR2"), findsOneWidget);
+    expect(find.byType(ListTile).evaluate().length, 1);
+    await tester.tap(find.byKey(Key('clearSearchingBox')));
+    await tester.pumpAndSettle();
+    expect(find.text("sensor1"), findsOneWidget);
+    expect(find.text("SENSOR2"), findsOneWidget);
   });
 
   /// tests if deletes sensor after confirmation, english
@@ -494,7 +523,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("Confirm"), findsOneWidget);
-    expect(find.text("Are you sure you want to remove sensor sensor1?"), findsOneWidget);
+    expect(find.text("Are you sure you want to remove sensor sensor1?"),
+        findsOneWidget);
     expect(find.text("Yes"), findsOneWidget);
     expect(find.text("No"), findsOneWidget);
     await tester.tap(find.byKey(Key('yesButton')));
@@ -504,7 +534,8 @@ void main() {
   });
 
   /// tests eror message when api error, english
-  testWidgets('english api error, message to user', (WidgetTester tester) async {
+  testWidgets('english api error, message to user',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockApi.deactivateSensor(1))
@@ -559,8 +590,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(SnackBar));
-    await tester.tap(
-        find.text("Sensor removal failed. Try again."));
+    await tester.tap(find.text("Sensor removal failed. Try again."));
 
     verify(await mockApi.deactivateSensor(1)).called(1);
   });

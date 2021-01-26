@@ -166,7 +166,8 @@ class _ActionsListState extends State<ActionsList> {
           title: _isSearching ? _buildSearchField() : Text('Akcje'.i18n),
           leading: _isSearching
               ? IconButton(
-                  icon: Icon(Icons.arrow_back),
+              key: Key("arrowBack"),
+              icon: Icon(Icons.arrow_back),
                   onPressed: () {
                     setState(() {
                       _isSearching = false;
@@ -265,6 +266,7 @@ class _ActionsListState extends State<ActionsList> {
                       padding: const EdgeInsets.only(
                           left: 10.0, top: 10, right: 10.0, bottom: 0.0),
                       child: ListView.builder(
+                          key: Key("ActionsList"),
                           shrinkWrap: true,
                           itemCount: _actionList.length,
                           itemBuilder: (context, index) => Container(

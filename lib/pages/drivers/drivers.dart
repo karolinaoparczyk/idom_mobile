@@ -200,6 +200,7 @@ class _DriversState extends State<Drivers> {
         appBar: AppBar(
           leading: _isSearching
               ? IconButton(
+                  key: Key("arrowBack"),
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
                     setState(() {
@@ -315,6 +316,7 @@ class _DriversState extends State<Drivers> {
                           padding: const EdgeInsets.only(
                               left: 10.0, top: 10, right: 10.0, bottom: 0.0),
                           child: ListView.builder(
+                              key: Key("DriversList"),
                               shrinkWrap: true,
                               itemCount: _driverList.length,
                               itemBuilder: (context, index) => Container(

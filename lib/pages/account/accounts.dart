@@ -310,6 +310,7 @@ class _AccountsState extends State<Accounts> {
               /// menu icon when not searching to open drawer
               leading: _isSearching
                   ? IconButton(
+                      key: Key("arrowBack"),
                       icon: Icon(Icons.arrow_back),
                       onPressed: () {
                         setState(() {
@@ -444,6 +445,7 @@ class _AccountsState extends State<Accounts> {
                         padding: const EdgeInsets.only(
                             left: 10.0, top: 10, right: 10.0, bottom: 0.0),
                         child: ListView.builder(
+                          key: Key("AccountsList"),
                           shrinkWrap: true,
                           itemCount: _accountList.length,
                           itemBuilder: (context, index) => Container(

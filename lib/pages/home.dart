@@ -8,18 +8,27 @@ import 'package:idom/utils/secure_storage.dart';
 
 /// main widget displaying correct page according to user data
 class Home extends StatefulWidget {
+  Home({this.testStorage, this.testApi});
+
+  final SecureStorage testStorage;
+  final Api testApi;
+
   /// handles state of widgets
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final SecureStorage storage = SecureStorage();
-  final Api api = Api();
+  SecureStorage storage = SecureStorage();
+  Api api = Api();
   String isUserSignedIn;
 
   @override
   void initState() {
+    if (widget.testStorage != null) {
+      storage = widget.testStorage;
+      api = widget.testApi;
+    }
     checkIfUserIsSignedIn();
     super.initState();
   }
@@ -31,7 +40,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    checkIfUserIsSignedIn();
     return isUserSignedIn == "true"
         ? sensorWidget()
         : isUserSignedIn == null
@@ -48,7 +56,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget sensorWidget() {
-    return Sensors(storage: storage);
+    return Sensors(storage: storage, testApi: widget.testApi);
   }
 
   Future<Widget> frontWidget() async {

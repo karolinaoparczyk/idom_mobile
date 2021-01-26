@@ -255,6 +255,7 @@ class _CamerasState extends State<Cameras> {
         appBar: AppBar(
           leading: _isSearching
               ? IconButton(
+                  key: Key("arrowBack"),
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
                     setState(() {
@@ -370,6 +371,7 @@ class _CamerasState extends State<Cameras> {
                           padding: const EdgeInsets.only(
                               left: 10.0, top: 10, right: 10.0, bottom: 0.0),
                           child: ListView.builder(
+                              key: Key("CamerasList"),
                               shrinkWrap: true,
                               itemCount: _cameraList.length,
                               itemBuilder: (context, index) => Container(
