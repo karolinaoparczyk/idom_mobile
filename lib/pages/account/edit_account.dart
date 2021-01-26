@@ -302,21 +302,17 @@ class _EditAccountState extends State<EditAccount> {
       var telephoneInvalid = false;
 
       if (res['statusCode'] == "200") {
-        setState(() {
-          _load = false;
-          fieldsValidationMessage = null;
-        });
-        if (widget.account.username == currentUsername) {
-          widget.storage.setEmail(_emailController.text);
-          widget.storage.setTelephone(_telephoneController.text);
-          widget.storage.setLanguage(selectedLanguage);
-        }
-        Navigator.pop(context, true);
+        onEditAccountSuccess();
       }
 
       /// on invalid token log out
       else if (res['statusCode'] == "401") {
-        final message = await LoginProcedures.signInWithStoredData();
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
         if (message != null) {
           logOut();
         } else {
@@ -329,16 +325,7 @@ class _EditAccountState extends State<EditAccount> {
 
           /// on success fetching data
           if (res['statusCode'] == "200") {
-            setState(() {
-              _load = false;
-              fieldsValidationMessage = null;
-            });
-            if (widget.account.username == currentUsername) {
-              widget.storage.setEmail(_emailController.text);
-              widget.storage.setTelephone(_telephoneController.text);
-              widget.storage.setLanguage(selectedLanguage);
-            }
-            Navigator.pop(context, true);
+            onEditAccountSuccess();
           } else if (res != null && res['statusCode'] == "401") {
             logOut();
           }
@@ -397,6 +384,19 @@ class _EditAccountState extends State<EditAccount> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  onEditAccountSuccess() {
+    setState(() {
+      _load = false;
+      fieldsValidationMessage = null;
+    });
+    if (widget.account.username == currentUsername) {
+      widget.storage.setEmail(_emailController.text);
+      widget.storage.setTelephone(_telephoneController.text);
+      widget.storage.setLanguage(selectedLanguage);
+    }
+    Navigator.pop(context, true);
   }
 
   Future<void> logOut() async {

@@ -12,6 +12,7 @@ import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/drivers/driver_details.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
 import 'package:idom/widgets/idom_drawer.dart';
@@ -1247,47 +1248,40 @@ class _NewActionState extends State<NewAction> {
           _load = false;
         });
         if (res['statusCode'] == "201") {
-          if (endTime == null && setAlarm) {
-            await Alarmclock.setAlarm(
-              skipui: true,
-              hour: startTime.hour,
-              minute: startTime.minute,
-              message: "akcja".i18n + " " + _nameController.text,
-              monday: daysOfWeekSelected[0],
-              tuesday: daysOfWeekSelected[1],
-              wednesday: daysOfWeekSelected[2],
-              thursday: daysOfWeekSelected[3],
-              friday: daysOfWeekSelected[4],
-              saturday: daysOfWeekSelected[5],
-              sunday: daysOfWeekSelected[6],
-            );
-          }
-          fieldsValidationMessage = null;
-          setState(() {});
-          Navigator.pop(context, true);
+          await onAddActionSuccess();
         } else if (res['statusCode'] == "401") {
-          fieldsValidationMessage = null;
-          setState(() {});
-          displayProgressDialog(
-              context: _scaffoldKey.currentContext,
-              key: _keyLoader,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-          await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-          await widget.storage.resetUserData();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          var message;
+          if (widget.testApi != null) {
+            message = "error";
+          } else {
+            message = await LoginProcedures.signInWithStoredData();
+          }
+          if (message != null) {
+            logOut();
+          } else {
+            var res = await api.getAccounts();
+
+            if (res['statusCode'] == "201") {
+              await onAddActionSuccess();
+            } else if (res['statusCode'] == "401") {
+              logOut();
+            } else if (res['body']
+                .contains("Action with provided name already exists")) {
+              fieldsValidationMessage =
+                  "Akcja o podanej nazwie już istnieje.".i18n;
+              setState(() {});
+              return;
+            } else {
+              onAddActionError();
+            }
+          }
         } else if (res['body']
             .contains("Action with provided name already exists")) {
           fieldsValidationMessage = "Akcja o podanej nazwie już istnieje.".i18n;
           setState(() {});
           return;
         } else {
-          fieldsValidationMessage = null;
-          setState(() {});
-          final snackBar = new SnackBar(
-              content: new Text(
-                  "Dodawanie akcji nie powiodło się. Spróbuj ponownie.".i18n));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          onAddActionError();
         }
       } catch (e) {
         print(e.toString());
@@ -1310,5 +1304,46 @@ class _NewActionState extends State<NewAction> {
         }
       }
     }
+  }
+
+  onAddActionSuccess() async {
+    if (endTime == null && setAlarm) {
+      await Alarmclock.setAlarm(
+        skipui: true,
+        hour: startTime.hour,
+        minute: startTime.minute,
+        message: "akcja".i18n + " " + _nameController.text,
+        monday: daysOfWeekSelected[0],
+        tuesday: daysOfWeekSelected[1],
+        wednesday: daysOfWeekSelected[2],
+        thursday: daysOfWeekSelected[3],
+        friday: daysOfWeekSelected[4],
+        saturday: daysOfWeekSelected[5],
+        sunday: daysOfWeekSelected[6],
+      );
+    }
+    fieldsValidationMessage = null;
+    setState(() {});
+    Navigator.pop(context, true);
+  }
+
+  onAddActionError() {
+    fieldsValidationMessage = null;
+    setState(() {});
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Dodawanie akcji nie powiodło się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

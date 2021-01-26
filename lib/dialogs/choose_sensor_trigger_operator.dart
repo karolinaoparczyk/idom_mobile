@@ -81,6 +81,7 @@ class _SensorTriggerOperatorDialogState
                 children: [
                   /// cancel action
                   TextButton(
+                      key: Key('Cancel'),
                       child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {

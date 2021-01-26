@@ -166,14 +166,17 @@ class _NewCameraState extends State<NewCamera> {
           _load = false;
         });
         if (res['statusCode'] == "201") {
-          fieldsValidationMessage = null;
-          setState(() {});
-          Navigator.pop(context, true);
+          onAddCameraSuccess();
         }
 
         /// on invalid token log out
         else if (res['statusCode'] == "401") {
-          final message = await LoginProcedures.signInWithStoredData();
+          var message;
+          if (widget.testApi != null) {
+            message = "error";
+          } else {
+            message = await LoginProcedures.signInWithStoredData();
+          }
           if (message != null) {
             logOut();
           } else {
@@ -185,9 +188,7 @@ class _NewCameraState extends State<NewCamera> {
               _load = false;
             });
             if (res['statusCode'] == "201") {
-              fieldsValidationMessage = null;
-              setState(() {});
-              Navigator.pop(context, true);
+              onAddCameraSuccess();
             } else if (res['statusCode'] == "401") {
               logOut();
             } else if (res['body']
@@ -197,13 +198,7 @@ class _NewCameraState extends State<NewCamera> {
               setState(() {});
               return;
             } else {
-              fieldsValidationMessage = null;
-              setState(() {});
-              final snackBar = new SnackBar(
-                  content: new Text(
-                      "Dodawanie kamery nie powiodło się. Spróbuj ponownie."
-                          .i18n));
-              _scaffoldKey.currentState.showSnackBar((snackBar));
+              onAddCameraError();
             }
           }
         } else if (res['body']
@@ -213,12 +208,7 @@ class _NewCameraState extends State<NewCamera> {
           setState(() {});
           return;
         } else {
-          fieldsValidationMessage = null;
-          setState(() {});
-          final snackBar = new SnackBar(
-              content: new Text(
-                  "Dodawanie kamery nie powiodło się. Spróbuj ponownie.".i18n));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          onAddCameraError();
         }
       } catch (e) {
         print(e.toString());
@@ -241,6 +231,21 @@ class _NewCameraState extends State<NewCamera> {
         }
       }
     }
+  }
+
+  onAddCameraSuccess() {
+    fieldsValidationMessage = null;
+    setState(() {});
+    Navigator.pop(context, true);
+  }
+
+  onAddCameraError() {
+    fieldsValidationMessage = null;
+    setState(() {});
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Dodawanie kamery nie powiodło się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<void> logOut() async {

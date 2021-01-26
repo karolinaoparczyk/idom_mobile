@@ -20,6 +20,7 @@ class CategoryDialog extends StatefulWidget {
 class _CategoryDialogState extends State<CategoryDialog> {
   /// allowed categories to select
   List<Map<String, String>> categories;
+
   /// currently selected category
   Map<String, String> _selectedCategory;
 
@@ -88,6 +89,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                 children: [
                   /// cancel action
                   TextButton(
+                      key: Key('Cancel'),
                       child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
                       style: ButtonStyle(

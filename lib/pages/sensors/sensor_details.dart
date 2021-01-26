@@ -600,6 +600,7 @@ class _SensorDetailsState extends State<SensorDetails> {
   }
 
   _navigateToEditSensor() async {
+    _scaffoldKey.currentState.removeCurrentSnackBar();
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -623,29 +624,35 @@ class _SensorDetailsState extends State<SensorDetails> {
       });
       var res = await api.getSensorDetails(widget.sensor.id);
       if (res['statusCode'] == "200") {
-        dynamic body = jsonDecode(res['body']);
-        Sensor refreshedSensor = Sensor.fromJson(body);
-        getSensorData().then((value) => setState(() {
-              widget.sensor = refreshedSensor;
-              if (sensorDataList != null && sensorDataList.length > 0) {
-                getDataForChart();
-              }
-              chartWid = buildChartWidget();
-            }));
+        onRefreshSensorSuccess(res['body']);
       } else if (res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
+        if (message != null) {
+          logOut();
+        } else {
+          setState(() {
+            _load = true;
+          });
+          var res = await api.getSensorDetails(widget.sensor.id);
+          setState(() {
+            _load = false;
+          });
+
+          if (res['statusCode'] == "200") {
+            onRefreshSensorSuccess(res['body']);
+          } else if (res['statusCode'] == "401") {
+            logOut();
+          } else {
+            onRefreshSensorError();
+          }
+        }
       } else {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Odświeżenie danych czujnika nie powiodło się.".i18n));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        onRefreshSensorError();
       }
     } catch (e) {
       print(e.toString());
@@ -670,6 +677,25 @@ class _SensorDetailsState extends State<SensorDetails> {
     setState(() {
       _load = false;
     });
+  }
+
+  onRefreshSensorError() {
+    final snackBar = new SnackBar(
+        content:
+            new Text("Odświeżenie danych czujnika nie powiodło się.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  onRefreshSensorSuccess(String res) {
+    dynamic body = jsonDecode(res);
+    Sensor refreshedSensor = Sensor.fromJson(body);
+    getSensorData().then((value) => setState(() {
+          widget.sensor = refreshedSensor;
+          if (sensorDataList != null && sensorDataList.length > 0) {
+            getDataForChart();
+          }
+          chartWid = buildChartWidget();
+        }));
   }
 
   Widget buildChartWidget() {

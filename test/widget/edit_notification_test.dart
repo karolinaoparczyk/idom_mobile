@@ -76,6 +76,47 @@ void main() {
     verify(await mockApi.editNotifications(1, "true", "false"));
   });
 
+ /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.editNotifications(1, "true", "false")).thenAnswer(
+            (_) async => Future.value({"body": "", "statusCode": "401"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.setAppNotifications("true")).thenAnswer(
+            (_) async => Future.value());
+    when(mockSecureStorage.setSmsNotifications("false")).thenAnswer(
+            (_) async => Future.value());
+
+    var userJson = {"id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "false",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData()).thenAnswer(
+            (_) async => Future.value(userJson));
+
+    AccountDetail page = AccountDetail(
+        storage: mockSecureStorage, username: "user1", testApi: mockApi);
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key("smsNotifications")));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+
+    verify(await mockApi.editNotifications(1, "true", "false"));
+  });
+
   /// tests if changes app notifications with logged in user
   testWidgets('changes app notifications with logged in user', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

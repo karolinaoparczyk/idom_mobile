@@ -175,7 +175,12 @@ class _SensorsState extends State<Sensors> {
             getSensors();
           });
         } else if (statusCode == 401) {
-          final message = await LoginProcedures.signInWithStoredData();
+          var message;
+          if (widget.testApi != null) {
+            message = "error";
+          } else {
+            message = await LoginProcedures.signInWithStoredData();
+          }
           if (message != null) {
             logOut();
           } else {
@@ -190,31 +195,15 @@ class _SensorsState extends State<Sensors> {
             } else if (statusCode == 401) {
               logOut();
             } else if (statusCode == null) {
-              final snackBar = new SnackBar(
-                  content: new Text(
-                      "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
-                          .i18n));
-              _scaffoldKey.currentState.showSnackBar((snackBar));
+              onDeleteSensorNullResponse();
             } else {
-              final snackBar = new SnackBar(
-                  content: new Text(
-                      "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."
-                          .i18n));
-              _scaffoldKey.currentState.showSnackBar((snackBar));
+              onDeleteSensorError();
             }
           }
         } else if (statusCode == null) {
-          final snackBar = new SnackBar(
-              content: new Text(
-                  "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
-                      .i18n));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          onDeleteSensorNullResponse();
         } else {
-          final snackBar = new SnackBar(
-              content: new Text(
-                  "Usunięcie czujnika nie powiodło się. Spróbuj ponownie."
-                      .i18n));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          onDeleteSensorError();
         }
       } catch (e) {
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
@@ -235,6 +224,21 @@ class _SensorsState extends State<Sensors> {
         }
       }
     }
+  }
+
+  onDeleteSensorNullResponse() {
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Błąd usuwania czujnika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                .i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  onDeleteSensorError() {
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Usunięcie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<void> logOut() async {

@@ -109,7 +109,12 @@ class _AccountsState extends State<Accounts> {
 
       /// on invalid token log out
       else if (res != null && res['statusCode'] == "401") {
-        final message = await LoginProcedures.signInWithStoredData();
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
         if (message != null) {
           logOut();
         } else {
@@ -215,31 +220,45 @@ class _AccountsState extends State<Accounts> {
 
         /// on invalid token log out
         else if (statusCode == 401) {
-          displayProgressDialog(
-              context: _scaffoldKey.currentContext,
-              key: _keyLoaderInvalidToken,
-              text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-          await new Future.delayed(const Duration(seconds: 3));
-          Navigator.of(_keyLoaderInvalidToken.currentContext,
-                  rootNavigator: true)
-              .pop();
-          await widget.storage.resetUserData();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          var message;
+          if (widget.testApi != null) {
+            message = "error";
+          } else {
+            message = await LoginProcedures.signInWithStoredData();
+          }
+          if (message != null) {
+            logOut();
+          } else {
+            displayProgressDialog(
+                context: _scaffoldKey.currentContext,
+                key: _keyLoader,
+                text: "Trwa usuwanie użytkownika...".i18n);
+            statusCode = await api.deactivateAccount(account.id);
+            Navigator.of(_scaffoldKey.currentContext).pop();
+
+            if (statusCode == 200) {
+              setState(() {
+                /// refreshes accounts' list
+                getAccounts();
+              });
+            } else if (statusCode == 401) {
+              logOut();
+            }
+
+            /// on error display message
+            else if (statusCode == null) {
+              onDeleteUserNullResponse();
+            } else {
+              onDeleteUserError();
+            }
+          }
         }
 
         /// on error display message
         else if (statusCode == null) {
-          final snackBar = new SnackBar(
-              content: new Text(
-                  "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
-                      .i18n));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          onDeleteUserNullResponse();
         } else {
-          final snackBar = new SnackBar(
-              content: new Text(
-                  "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie."
-                      .i18n));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          onDeleteUserError();
         }
       } catch (e) {
         print(e.toString());
@@ -263,6 +282,21 @@ class _AccountsState extends State<Accounts> {
         }
       }
     }
+  }
+
+  onDeleteUserNullResponse() {
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Błąd usuwania użytkownika. Sprawdź połączenie z serwerem i spróbuj ponownie."
+                .i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  onDeleteUserError() {
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Usunięcie użytkownika nie powiodło się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   /// build search field when search icon is clicked

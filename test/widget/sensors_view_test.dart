@@ -113,6 +113,61 @@ void main() {
     expect(find.byType(SensorDetails), findsOneWidget);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "SENSOR2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 3,
+        "name": "sensor3",
+        "category": "humidity",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 4,
+        "name": "sensor4",
+        "category": "smoke",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 5,
+        "name": "sensor5",
+        "category": "air_humidity",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "401"}));
+
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+  });
+
   /// tests if deletes sensor after confirmation
   testWidgets('deletes sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

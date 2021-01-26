@@ -398,7 +398,12 @@ class _EditDriverState extends State<EditDriver> {
       } else if (res != null && res['statusCode'] == "401") {
         fieldsValidationMessage = null;
         setState(() {});
-        final message = await LoginProcedures.signInWithStoredData();
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
         if (message != null) {
           logOut();
         } else {

@@ -62,20 +62,17 @@ class _CamerasState extends State<Cameras> {
       var res = await api.getCameras();
 
       if (res != null && res['statusCode'] == "200") {
-        List<dynamic> body = jsonDecode(res['body']);
-        setState(() {
-          _cameraList =
-              body.map((dynamic item) => Camera.fromJson(item)).toList();
-        });
-        if (_cameraList.length == 0)
-          zeroFetchedItems = true;
-        else
-          zeroFetchedItems = false;
+        onGetCamerasSuccess(res['body']);
       }
 
       /// on invalid token log out
       else if (res != null && res['statusCode'] == "401") {
-        final message = await LoginProcedures.signInWithStoredData();
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
         if (message != null) {
           logOut();
         } else {
@@ -83,15 +80,7 @@ class _CamerasState extends State<Cameras> {
 
           /// on success fetching data
           if (res != null && res['statusCode'] == "200") {
-            List<dynamic> body = jsonDecode(res['body']);
-            setState(() {
-              _cameraList =
-                  body.map((dynamic item) => Camera.fromJson(item)).toList();
-            });
-            if (_cameraList.length == 0)
-              zeroFetchedItems = true;
-            else
-              zeroFetchedItems = false;
+            onGetCamerasSuccess(res['body']);
           } else if (res != null && res['statusCode'] == "401") {
             logOut();
           } else {
@@ -125,6 +114,17 @@ class _CamerasState extends State<Cameras> {
       _duplicateCameraList.clear();
       _duplicateCameraList.addAll(_cameraList);
     });
+  }
+
+  onGetCamerasSuccess(String res) {
+    List<dynamic> body = jsonDecode(res);
+    setState(() {
+      _cameraList = body.map((dynamic item) => Camera.fromJson(item)).toList();
+    });
+    if (_cameraList.length == 0)
+      zeroFetchedItems = true;
+    else
+      zeroFetchedItems = false;
   }
 
   Future<void> logOut() async {
@@ -427,8 +427,8 @@ class _CamerasState extends State<Cameras> {
 
   navigateToCameraStream(Camera camera) async {
     await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            CameraStream(storage: widget.storage, camera: camera)));
+        builder: (context) => CameraStream(
+            storage: widget.storage, camera: camera, testApi: widget.testApi)));
     await getCameras();
   }
 

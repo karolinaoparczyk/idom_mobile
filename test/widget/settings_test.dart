@@ -121,6 +121,18 @@ void main() {
         find.text(
             "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie."),
         findsNothing);
+
+    Finder nameField = find.byKey(Key('apiAddress'));
+    await tester.enterText(nameField, 'address');
+
+    await tester.tap(find.byKey(Key('save')));
+    await tester.pumpAndSettle();
+    expect(find.text("Potwierdź"), findsOneWidget);
+    expect(find.text("Czy na pewno zapisać zmiany?"), findsOneWidget);
+    expect(find.text("Tak"), findsOneWidget);
+    expect(find.text("Nie"), findsOneWidget);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pumpAndSettle();
   });
 
   /// tests if invalid file

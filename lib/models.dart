@@ -62,20 +62,6 @@ class Account extends Equatable {
         isStaff: json['is_staff'] as bool,
         isActive: json['is_active'] as bool);
   }
-
-  /// copies Account instance into another
-  Account copy() {
-    return new Account(
-        id: this.id,
-        username: this.username,
-        email: this.email,
-        language: this.language,
-        telephone: this.telephone,
-        smsNotifications: this.smsNotifications,
-        appNotifications: this.appNotifications,
-        isStaff: this.isStaff,
-        isActive: this.isActive);
-  }
 }
 
 /// sensor model
@@ -285,14 +271,6 @@ class SensorDriverAction extends Equatable {
 
   /// generates object form json format
   factory SensorDriverAction.fromJson(Map<String, dynamic> json) {
-    getJson(dynamic action) {
-      if (action is String) {
-        var jsonDecoded = jsonDecode(action.replaceAll("\"", ""));
-        return jsonDecoded;
-      } else {
-        return action;
-      }
-    }
 
     return SensorDriverAction(
       id: json['id'] as int,
@@ -304,7 +282,7 @@ class SensorDriverAction extends Equatable {
       days: json['days'] as String,
       startTime: json['start_event'] as String,
       endTime: json['end_event'] as String,
-      action: ActionAction.fromJson(getJson(json['action'])),
+      action: ActionAction.fromJson(json['action']),
       flag: json['flag'] as int,
     );
   }

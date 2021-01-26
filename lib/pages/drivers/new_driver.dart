@@ -259,24 +259,14 @@ class _NewDriverState extends State<NewDriver> {
           _load = false;
         });
         if (res['statusCode'] == "201") {
-          if (categoryValue == "bulb" && _ipAddressController.text.isNotEmpty) {
-            var driver = Driver.fromJson(jsonDecode(res['body']));
-            var resBulb =
-                await api.addIpAddress(driver.id, _ipAddressController.text);
-            if (resBulb != 200 && resBulb != 503) {
-              _navigateToEditDriver(driver);
-            } else {
-              fieldsValidationMessage = null;
-              setState(() {});
-              Navigator.pop(context, true);
-            }
-          } else {
-            fieldsValidationMessage = null;
-            setState(() {});
-            Navigator.pop(context, true);
-          }
+          onAddDriverSuccess(res['body']);
         } else if (res['statusCode'] == "401") {
-          final message = await LoginProcedures.signInWithStoredData();
+          var message;
+          if (widget.testApi != null) {
+            message = "error";
+          } else {
+            message = await LoginProcedures.signInWithStoredData();
+          }
           if (message != null) {
             logOut();
           } else {
@@ -290,23 +280,7 @@ class _NewDriverState extends State<NewDriver> {
 
             /// on success fetching data
             if (res['statusCode'] == "201") {
-              if (categoryValue == "bulb" &&
-                  _ipAddressController.text.isNotEmpty) {
-                var driver = Driver.fromJson(jsonDecode(res['body']));
-                var resBulb = await api.addIpAddress(
-                    driver.id, _ipAddressController.text);
-                if (resBulb != 200 && resBulb != 503) {
-                  _navigateToEditDriver(driver);
-                } else {
-                  fieldsValidationMessage = null;
-                  setState(() {});
-                  Navigator.pop(context, true);
-                }
-              } else {
-                fieldsValidationMessage = null;
-                setState(() {});
-                Navigator.pop(context, true);
-              }
+              onAddDriverSuccess(res['body']);
             } else if (res != null && res['statusCode'] == "401") {
               logOut();
             } else if (res['body']
@@ -321,13 +295,7 @@ class _NewDriverState extends State<NewDriver> {
               setState(() {});
               return;
             } else {
-              fieldsValidationMessage = null;
-              setState(() {});
-              final snackBar = new SnackBar(
-                  content: new Text(
-                      "Dodawanie sterownika nie powiodło się. Spróbuj ponownie."
-                          .i18n));
-              _scaffoldKey.currentState.showSnackBar((snackBar));
+              onAddDriverError();
             }
           }
         } else if (res['body']
@@ -341,13 +309,7 @@ class _NewDriverState extends State<NewDriver> {
           setState(() {});
           return;
         } else {
-          fieldsValidationMessage = null;
-          setState(() {});
-          final snackBar = new SnackBar(
-              content: new Text(
-                  "Dodawanie sterownika nie powiodło się. Spróbuj ponownie."
-                      .i18n));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          onAddDriverError();
         }
       } catch (e) {
         print(e.toString());
@@ -376,6 +338,34 @@ class _NewDriverState extends State<NewDriver> {
           _scaffoldKey.currentState.showSnackBar((snackBar));
         }
       }
+    }
+  }
+
+  onAddDriverError() {
+    fieldsValidationMessage = null;
+    setState(() {});
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Dodawanie sterownika nie powiodło się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  onAddDriverSuccess(String res) async {
+    if (categoryValue == "bulb" && _ipAddressController.text.isNotEmpty) {
+      var driver = Driver.fromJson(jsonDecode(res));
+      var resBulb =
+          await api.addIpAddress(driver.id, _ipAddressController.text);
+      if (resBulb != 200 && resBulb != 503) {
+        _navigateToEditDriver(driver);
+      } else {
+        fieldsValidationMessage = null;
+        setState(() {});
+        Navigator.pop(context, true);
+      }
+    } else {
+      fieldsValidationMessage = null;
+      setState(() {});
+      Navigator.pop(context, true);
     }
   }
 

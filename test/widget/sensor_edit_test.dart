@@ -1,6 +1,7 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
 import 'package:idom/pages/sensors/edit_sensor.dart';
+import 'package:idom/pages/sensors/sensor_details.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -44,7 +45,8 @@ void main() {
         name: "sensor1",
         category: "humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -81,7 +83,8 @@ void main() {
         name: "sensor1",
         category: "humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -112,7 +115,48 @@ void main() {
         name: "sensor1",
         category: "humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
+
+    EditSensor page = EditSensor(
+      storage: mockSecureStorage,
+      sensor: sensor,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('name'));
+    await tester.enterText(emailField, 'newname');
+
+    await tester.tap(find.byKey(Key('editSensorButton')));
+    await tester.pumpAndSettle();
+    expect(find.text("Potwierdź"), findsOneWidget);
+    expect(find.text("Czy na pewno zapisać zmiany?"), findsOneWidget);
+    expect(find.text("Tak"), findsOneWidget);
+    expect(find.text("Nie"), findsOneWidget);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+
+    verify(await mockApi.editSensor(1, 'newname', null, null)).called(1);
+  });
+
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockApi.editSensor(1, 'newname', null, null)).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "401"}));
+    Sensor sensor = Sensor(
+        id: 1,
+        name: "sensor1",
+        category: "humidity",
+        frequency: 300,
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -151,7 +195,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -193,7 +238,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -228,7 +274,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -273,7 +320,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -330,7 +378,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -387,7 +436,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -423,7 +473,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -470,7 +521,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -518,7 +570,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -581,7 +634,8 @@ void main() {
         name: "sensor1",
         category: "breathalyser",
         frequency: 30,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -644,7 +698,8 @@ void main() {
         name: "sensor1",
         category: "smoke",
         frequency: 30,
-        lastData: null);
+        lastData: null,
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -685,7 +740,8 @@ void main() {
         name: "sensor1",
         category: "atmo_pressure",
         frequency: 30,
-        lastData: null);
+        lastData: null,
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -729,7 +785,8 @@ void main() {
         name: "sensor1",
         category: "humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -766,7 +823,8 @@ void main() {
         name: "sensor1",
         category: "humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -797,7 +855,8 @@ void main() {
         name: "sensor1",
         category: "humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -837,7 +896,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,
@@ -881,7 +941,8 @@ void main() {
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     EditSensor page = EditSensor(
       storage: mockSecureStorage,

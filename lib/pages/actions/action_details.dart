@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:i18n_extension/i18n_widget.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:intl/intl.dart';
 
 import 'package:idom/api.dart';
 import 'package:idom/dialogs/progress_indicator_dialog.dart';
 import 'package:idom/models.dart';
 import 'package:idom/pages/actions/edit_action.dart';
-import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
@@ -35,7 +35,7 @@ class ActionDetails extends StatefulWidget {
 class _ActionDetailsState extends State<ActionDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final GlobalKey<State> _keyLoaderInvalidToken = new GlobalKey<State>();
   Api api = Api();
   bool _load;
   Driver driver;
@@ -47,6 +47,9 @@ class _ActionDetailsState extends State<ActionDetails> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     _load = false;
   }
 
@@ -388,8 +391,11 @@ class _ActionDetailsState extends State<ActionDetails> {
     var result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                EditAction(storage: widget.storage, action: widget.action),
+            builder: (context) => EditAction(
+                  storage: widget.storage,
+                  action: widget.action,
+                  testApi: widget.testApi,
+                ),
             fullscreenDialog: true));
     if (result == true) {
       final snackBar = new SnackBar(content: new Text("Zapisano akcję.".i18n));
@@ -405,24 +411,35 @@ class _ActionDetailsState extends State<ActionDetails> {
       });
       var res = await api.getActionDetails(widget.action.id);
       if (res['statusCode'] == "200") {
-        dynamic body = jsonDecode(res['body']);
-        setState(() {
-          widget.action = SensorDriverAction.fromJson(body);
-        });
+        onRefreshActionSuccess(res['body']);
       } else if (res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
+        if (message != null) {
+          logOut();
+        } else {
+          setState(() {
+            _load = true;
+          });
+          var res = await api.getActionDetails(widget.action.id);
+          setState(() {
+            _load = false;
+          });
+
+          if (res['statusCode'] == "200") {
+            onRefreshActionSuccess(res['body']);
+          } else if (res['statusCode'] == "401") {
+            logOut();
+          } else {
+            onRefreshActionError();
+          }
+        }
       } else {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Odświeżenie danych akcji nie powiodło się.".i18n));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        onRefreshActionError();
       }
     } catch (e) {
       print(e.toString());
@@ -447,5 +464,30 @@ class _ActionDetailsState extends State<ActionDetails> {
     setState(() {
       _load = false;
     });
+  }
+
+  onRefreshActionSuccess(String res) {
+    dynamic body = jsonDecode(res);
+    setState(() {
+      widget.action = SensorDriverAction.fromJson(body);
+    });
+  }
+
+  onRefreshActionError() {
+    final snackBar = new SnackBar(
+        content: new Text("Odświeżenie danych akcji nie powiodło się.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoaderInvalidToken,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
+        .pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

@@ -7,6 +7,7 @@ class ChooseDriverDialog extends StatefulWidget {
 
   /// allowed drivers to select
   final List<Driver> drivers;
+
   /// currently selected driver
   final Driver currentDriver;
 
@@ -26,6 +27,7 @@ class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
     super.initState();
     searchBarVisible = false;
     selectedDriver = widget.currentDriver;
+
     /// builds driver list based on searched word
     _searchBarController.addListener(() {
       setState(() {});
@@ -63,6 +65,7 @@ class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
 
                 /// on search icon tab
                 firstChild: TextField(
+                  key: Key("searchField"),
                   controller: _searchBarController,
                   decoration: InputDecoration(
                     hintText: "Wyszukaj...",
@@ -103,6 +106,7 @@ class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
 
                     /// show search bar
                     GestureDetector(
+                        key: Key("searchIcon"),
                         onTap: () {
                           setState(() {
                             searchBarVisible = true;
@@ -144,6 +148,7 @@ class _ChooseDriverDialogState extends State<ChooseDriverDialog> {
               children: [
                 /// cancel action
                 TextButton(
+                    key: Key('Cancel'),
                     child: Text("Anuluj",
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {

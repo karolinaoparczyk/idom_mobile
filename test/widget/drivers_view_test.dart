@@ -130,6 +130,45 @@ void main() {
     expect(find.byType(DriverDetails), findsOneWidget);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> drivers = [
+      {
+        "id": 1,
+        "name": "driver1",
+        "category": "clicker",
+        "ipAddress": "111.111.11.11",
+        "data": true
+      },
+      {
+        "id": 2,
+        "name": "driver2",
+        "category": "clicker",
+        "ipAddress": "113.113.13.13",
+        "data": true
+      }
+    ];
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "401"}));
+    when(mockApi.startDriver("driver1"))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getApiServerAddress())
+        .thenAnswer((_) async => Future.value("apiAddress"));
+
+    Drivers page = Drivers(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+  });
+
   /// tests if drivers on list, delete driver from context menu
   testWidgets('delete driver from context menu', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

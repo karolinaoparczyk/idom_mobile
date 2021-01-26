@@ -77,6 +77,7 @@ class _FrequencyUnitsDialogState extends State<FrequencyUnitsDialog> {
                 children: [
                   /// cancel action
                   TextButton(
+                      key: Key('Cancel'),
                       child: Text("Anuluj".i18n,
                           style: Theme.of(context).textTheme.headline5),
                       style: ButtonStyle(

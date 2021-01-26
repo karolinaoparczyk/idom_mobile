@@ -64,20 +64,17 @@ class _DriversState extends State<Drivers> {
       var res = await api.getDrivers();
 
       if (res != null && res['statusCode'] == "200") {
-        List<dynamic> body = jsonDecode(res['body']);
-        setState(() {
-          _driverList =
-              body.map((dynamic item) => Driver.fromJson(item)).toList();
-        });
-        if (_driverList.length == 0)
-          zeroFetchedItems = true;
-        else
-          zeroFetchedItems = false;
+        onGetDriversSuccess(res['body']);
       }
 
       /// on invalid token log out
       else if (res != null && res['statusCode'] == "401") {
-        final message = await LoginProcedures.signInWithStoredData();
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
         if (message != null) {
           logOut();
         } else {
@@ -85,15 +82,7 @@ class _DriversState extends State<Drivers> {
 
           /// on success fetching data
           if (res != null && res['statusCode'] == "200") {
-            List<dynamic> body = jsonDecode(res['body']);
-            setState(() {
-              _driverList =
-                  body.map((dynamic item) => Driver.fromJson(item)).toList();
-            });
-            if (_driverList.length == 0)
-              zeroFetchedItems = true;
-            else
-              zeroFetchedItems = false;
+            onGetDriversSuccess(res['body']);
           } else if (res != null && res['statusCode'] == "401") {
             logOut();
           } else {
@@ -128,6 +117,17 @@ class _DriversState extends State<Drivers> {
       _duplicateDriverList.clear();
       _duplicateDriverList.addAll(_driverList);
     });
+  }
+
+  onGetDriversSuccess(String res) {
+    List<dynamic> body = jsonDecode(res);
+    setState(() {
+      _driverList = body.map((dynamic item) => Driver.fromJson(item)).toList();
+    });
+    if (_driverList.length == 0)
+      zeroFetchedItems = true;
+    else
+      zeroFetchedItems = false;
   }
 
   Future<void> logOut() async {

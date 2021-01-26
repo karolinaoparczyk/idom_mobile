@@ -117,6 +117,63 @@ void main() {
     expect(find.byType(AccountDetail), findsOneWidget);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> accounts = [
+      {
+        "id": 1,
+        "username": "user1",
+        "email": "user@email.com",
+        "telephone": "",
+        "sms_notifications": true,
+        "app_notifications": true,
+        "is_staff": false,
+        "is_active": true
+      },
+      {
+        "id": 2,
+        "username": "USER2",
+        "email": "user@2email.com",
+        "telephone": "",
+        "sms_notifications": true,
+        "app_notifications": true,
+        "is_staff": false,
+        "is_active": true
+      }
+    ];
+    when(mockApi.getAccounts()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(accounts), "statusCode": "401"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("false"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "false",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+    Accounts page = Accounts(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+  });
+
   /// tests if can delete if is staff
   testWidgets('accounts on list, user is staff', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

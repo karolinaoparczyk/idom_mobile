@@ -479,13 +479,16 @@ class _NewSensorState extends State<NewSensor> {
         });
 
         if (res['statusCodeSen'] == "201") {
-          nameValidationMessage = null;
-          setState(() {});
-          Navigator.pop(context, true);
+          onAddSensorSuccess();
         } else if (res['statusCodeSen'] == "401") {
           nameValidationMessage = null;
           setState(() {});
-          final message = await LoginProcedures.signInWithStoredData();
+          var message;
+          if (widget.testApi != null) {
+            message = "error";
+          } else {
+            message = await LoginProcedures.signInWithStoredData();
+          }
           if (message != null) {
             logOut();
           } else {
@@ -500,9 +503,7 @@ class _NewSensorState extends State<NewSensor> {
 
             /// on success fetching data
             if (res['statusCodeSen'] == "201") {
-              nameValidationMessage = null;
-              setState(() {});
-              Navigator.pop(context, true);
+              onAddSensorSuccess();
             } else if (res != null && res['statusCode'] == "401") {
               nameValidationMessage = null;
               setState(() {});
@@ -514,13 +515,7 @@ class _NewSensorState extends State<NewSensor> {
               setState(() {});
               return;
             } else {
-              nameValidationMessage = null;
-              setState(() {});
-              final snackBar = new SnackBar(
-                  content: new Text(
-                      "Dodawanie czujnika nie powiodło się. Spróbuj ponownie."
-                          .i18n));
-              _scaffoldKey.currentState.showSnackBar((snackBar));
+              onAddSensorError();
             }
           }
         } else if (res['bodySen']
@@ -529,13 +524,7 @@ class _NewSensorState extends State<NewSensor> {
           setState(() {});
           return;
         } else {
-          nameValidationMessage = null;
-          setState(() {});
-          final snackBar = new SnackBar(
-              content: new Text(
-                  "Dodawanie czujnika nie powiodło się. Spróbuj ponownie."
-                      .i18n));
-          _scaffoldKey.currentState.showSnackBar((snackBar));
+          onAddSensorError();
         }
       } catch (e) {
         print(e);
@@ -559,6 +548,21 @@ class _NewSensorState extends State<NewSensor> {
         }
       }
     }
+  }
+
+  onAddSensorError() {
+    nameValidationMessage = null;
+    setState(() {});
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Dodawanie czujnika nie powiodło się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  onAddSensorSuccess() {
+    nameValidationMessage = null;
+    setState(() {});
+    Navigator.pop(context, true);
   }
 
   Future<void> logOut() async {
