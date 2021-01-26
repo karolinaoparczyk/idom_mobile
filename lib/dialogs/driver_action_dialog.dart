@@ -84,6 +84,7 @@ class _DriverActionDialogState extends State<DriverActionDialog> {
 
                   /// cancel action
                   TextButton(
+                      key: Key('Cancel'),
                       child: Text("Anuluj",
                           style: Theme
                               .of(context)

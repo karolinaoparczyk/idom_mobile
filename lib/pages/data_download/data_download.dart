@@ -66,16 +66,17 @@ class _DataDownloadState extends State<DataDownload> {
       var res = await api.getSensors();
 
       if (res != null && res['statusCodeSensors'] == "200") {
-        List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
-        setState(() {
-          sensors =
-              bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
-        });
+        onGetSensorsSuccess(res['bodySensors']);
       }
 
       /// on invalid token log out
       else if (res != null && res['statusCodeSensors'] == "401") {
-        final message = await LoginProcedures.signInWithStoredData();
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
         if (message != null) {
           logOut();
         } else {
@@ -83,12 +84,7 @@ class _DataDownloadState extends State<DataDownload> {
 
           /// on success fetching data
           if (res != null && res['statusCodeSensors'] == "200") {
-            List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
-            setState(() {
-              sensors = bodySensors
-                  .map((dynamic item) => Sensor.fromJson(item))
-                  .toList();
-            });
+            onGetSensorsSuccess(res['bodySensors']);
           } else if (res != null && res['statusCodeSensors'] == "401") {
             logOut();
           }
@@ -111,6 +107,14 @@ class _DataDownloadState extends State<DataDownload> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  onGetSensorsSuccess(String res) {
+    List<dynamic> bodySensors = jsonDecode(res);
+    setState(() {
+      sensors =
+          bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
+    });
   }
 
   Future<void> logOut() async {
@@ -543,19 +547,20 @@ class _DataDownloadState extends State<DataDownload> {
           } else if (result != null && result["statusCode"] == 401) {
             logOut();
           } else {
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
+            onGenerateDataError();
           }
         }
       } else {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        onGenerateDataError();
       }
     }
+  }
+
+  onGenerateDataError() {
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Nie udało się wygenerować pliku. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<void> onSuccess(String data) async {

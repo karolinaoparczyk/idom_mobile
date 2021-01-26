@@ -161,6 +161,70 @@ void main() {
     verify(await mockApi.editAccount(1, 'user@email.pl', null, null)).called(1);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.editAccount(1, 'user@email.pl', null, null)).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "401"}));
+    var userApi = {
+      "id": 1,
+      "username": "user1",
+      "email": "user@email.pl",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "sms_notifications": true,
+      "app_notifications": true,
+      "is_staff": false,
+      "is_active": true,
+    };
+    when(mockApi.getUser('user1'))
+        .thenAnswer((_) async => Future.value([jsonEncode(userApi), 200]));
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.setEmail("user@email.pl"))
+        .thenAnswer((_) async => Future.value());
+    when(mockSecureStorage.setTelephone(""))
+        .thenAnswer((_) async => Future.value());
+
+    var userStorage = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "false",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userStorage));
+
+    AccountDetail page = AccountDetail(
+        storage: mockSecureStorage, username: "user1", testApi: mockApi);
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("user@email.com"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('editAccount')));
+    await tester.pumpAndSettle();
+
+    Finder emailField = find.byKey(Key('email'));
+    await tester.enterText(emailField, 'user@email.pl');
+
+    await tester.tap(find.byKey(Key('saveAccountButton')));
+    await tester.pumpAndSettle();
+    expect(find.text("Potwierdź"), findsOneWidget);
+    expect(find.text("Czy na pewno zapisać zmiany?"), findsOneWidget);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.editAccount(1, 'user@email.pl', null, null)).called(1);
+  });
+
   /// tests if saves with language changed form superuser
   testWidgets('superuser, changed language, saves', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

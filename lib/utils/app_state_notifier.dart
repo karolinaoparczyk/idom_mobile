@@ -15,8 +15,8 @@ class DarkMode {
   static bool isDarkMode;
 
   /// init isDarkMode variable
-  static Future<void> init() async {
-    isDarkMode = await getStorageThemeMode();
+  static Future<void> init({SecureStorage testStorage}) async {
+    isDarkMode = await getStorageThemeMode(testStorage: testStorage);
   }
 
   /// get set theme mode

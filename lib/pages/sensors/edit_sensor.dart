@@ -425,13 +425,16 @@ class _EditSensorState extends State<EditSensor> {
         _load = false;
       });
       if (res['statusCode'] == "200") {
-        nameValidationMessage = null;
-        setState(() {});
-        Navigator.pop(context, true);
+        onEditSensorSuccess();
       } else if (res['statusCode'] == "401") {
         nameValidationMessage = null;
         setState(() {});
-        final message = await LoginProcedures.signInWithStoredData();
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
         if (message != null) {
           logOut();
         } else {
@@ -446,9 +449,7 @@ class _EditSensorState extends State<EditSensor> {
 
           /// on success fetching data
           if (res['statusCode'] == "200") {
-            nameValidationMessage = null;
-            setState(() {});
-            Navigator.pop(context, true);
+            onEditSensorSuccess();
           } else if (res != null && res['statusCode'] == "401") {
             nameValidationMessage = null;
             setState(() {});
@@ -460,13 +461,7 @@ class _EditSensorState extends State<EditSensor> {
             setState(() {});
             return;
           } else {
-            nameValidationMessage = null;
-            setState(() {});
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Edycja czujnika nie powiodła się. Spróbuj ponownie."
-                        .i18n));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
+            onEditSensorError();
           }
         }
       } else if (res['body']
@@ -475,12 +470,7 @@ class _EditSensorState extends State<EditSensor> {
         setState(() {});
         return;
       } else {
-        nameValidationMessage = null;
-        setState(() {});
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Edycja czujnika nie powiodła się. Spróbuj ponownie.".i18n));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        onEditSensorError();
       }
     } catch (e) {
       print(e.toString());
@@ -502,6 +492,21 @@ class _EditSensorState extends State<EditSensor> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  onEditSensorSuccess() {
+    nameValidationMessage = null;
+    setState(() {});
+    Navigator.pop(context, true);
+  }
+
+  onEditSensorError() {
+    nameValidationMessage = null;
+    setState(() {});
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Edycja czujnika nie powiodła się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<void> logOut() async {

@@ -13,6 +13,8 @@ import 'package:idom/api.dart';
 
 class MockApi extends Mock implements Api {}
 
+class RemoteControl extends Mock implements Api {}
+
 class MockSecureStorage extends Mock implements SecureStorage {}
 
 void main() {
@@ -116,7 +118,11 @@ void main() {
   testWidgets('displays remote controller driver details',
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    Driver driver = Driver(id: 1, name: "driver1", category: "remote_control");
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "remote_control",
+        ipAddress: "127.0.0.1");
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
@@ -126,6 +132,7 @@ void main() {
       storage: mockSecureStorage,
       driver: driver,
       testApi: mockApi,
+      remoteStatusCode: 200,
     );
 
     await tester.pumpWidget(makePolishTestableWidget(child: page));
@@ -171,9 +178,80 @@ void main() {
     await tester.tap(find.byKey(Key("3")));
     await tester.tap(find.byKey(Key("4")));
 
+    await tester.pumpAndSettle();
     expect(find.text("123"), findsOneWidget);
     await tester.tap(find.byKey(Key("assets/icons/left-arrow-long.svg")));
     expect(find.text("12"), findsOneWidget);
+  });
+
+  /// tests if displays remote controller driver's details, sends command
+  testWidgets('displays remote controller driver details, sends command',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1,
+        name: "driver1",
+        category: "remote_control",
+        ipAddress: "127.0.0.1");
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+      remoteStatusCode: 200,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("driver1"), findsNWidgets(2));
+    expect(find.byKey(Key("assets/icons/menu.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/turn-off.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/up-arrow.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/left-arrow.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/right-arrow.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/down-arrow.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/no-sound.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/return.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/volume-up.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/cubes.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/next_channel.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/volume-down.svg")), findsOneWidget);
+    expect(
+        find.byKey(Key("assets/icons/previous_channel.svg")), findsOneWidget);
+    expect(find.text("VOL"), findsOneWidget);
+    expect(find.text("CH"), findsOneWidget);
+    expect(find.text("OK"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key("Mute")));
+    await tester.pumpAndSettle();
+    expect(find.text("Komenda wysłana do pilota."), findsOneWidget);
+    await tester.pump(Duration(seconds: 5));
+
+    await tester.tap(find.byKey(Key("assets/icons/cubes.svg")));
+    await tester.pumpAndSettle();
+    expect(find.byKey(Key("1")), findsOneWidget);
+    expect(find.byKey(Key("2")), findsOneWidget);
+    expect(find.byKey(Key("3")), findsOneWidget);
+    expect(find.byKey(Key("4")), findsOneWidget);
+    expect(find.byKey(Key("5")), findsOneWidget);
+    expect(find.byKey(Key("6")), findsOneWidget);
+    expect(find.byKey(Key("7")), findsOneWidget);
+    expect(find.byKey(Key("8")), findsOneWidget);
+    expect(find.byKey(Key("9")), findsOneWidget);
+    expect(find.byKey(Key("0")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/left-arrow-long.svg")), findsOneWidget);
+    expect(find.byKey(Key("assets/icons/enter.svg")), findsOneWidget);
+    expect(find.text("WRÓĆ"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key("1")));
+    await tester.tap(find.byKey(Key("2")));
+    await tester.tap(find.byKey(Key("3")));
+    await tester.tap(find.byKey(Key("4")));
   });
 
   /// tests if displays bulb's details, change color
@@ -261,11 +339,7 @@ void main() {
       (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Driver driver = Driver(
-        id: 1,
-        name: "driver1",
-        category: "bulb",
-        ipAddress: null,
-        data: true);
+        id: 1, name: "driver1", category: "bulb", ipAddress: null, data: true);
 
     when(mockApi.changeBulbColor(1, 128, 128, 128))
         .thenAnswer((_) async => Future.value(200));
@@ -285,8 +359,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/enter.svg")).first);
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Żarówka nie posiada adresu IP."),
-        findsOneWidget);
+    expect(find.text("Żarówka nie posiada adresu IP."), findsOneWidget);
     verifyNever(await mockApi.changeBulbColor(1, 128, 128, 128));
   });
 
@@ -294,11 +367,7 @@ void main() {
   testWidgets('change bulb brightness, no ip', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Driver driver = Driver(
-        id: 1,
-        name: "driver1",
-        category: "bulb",
-        ipAddress: null,
-        data: false);
+        id: 1, name: "driver1", category: "bulb", ipAddress: null, data: false);
 
     when(mockApi.changeBulbBrightness(1, 50))
         .thenAnswer((_) async => Future.value(200));
@@ -319,8 +388,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/enter.svg")).last);
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Żarówka nie posiada adresu IP."),
-        findsOneWidget);
+    expect(find.text("Żarówka nie posiada adresu IP."), findsOneWidget);
     verifyNever(await mockApi.changeBulbBrightness(1, 50));
   });
 
@@ -419,11 +487,7 @@ void main() {
   testWidgets('turn bulb on, data false, no ip', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Driver driver = Driver(
-        id: 1,
-        name: "driver1",
-        category: "bulb",
-        ipAddress: null,
-        data: false);
+        id: 1, name: "driver1", category: "bulb", ipAddress: null, data: false);
 
     Map<String, dynamic> bulb = {
       "id": 1,
@@ -452,8 +516,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Żarówka nie posiada adresu IP."),
-        findsOneWidget);
+    expect(find.text("Żarówka nie posiada adresu IP."), findsOneWidget);
     expect(find.text("wyłączona"), findsOneWidget);
     verifyNever(await mockApi.switchBulb(1, "on"));
   });
@@ -867,47 +930,39 @@ void main() {
 
   /// tests if displays bulb's details, change color, no ip, english
   testWidgets('english displays bulbs details, change color, no ip',
-          (WidgetTester tester) async {
-        MockApi mockApi = MockApi();
-        Driver driver = Driver(
-            id: 1,
-            name: "driver1",
-            category: "bulb",
-            ipAddress: null,
-            data: true);
-
-        when(mockApi.changeBulbColor(1, 128, 128, 128))
-            .thenAnswer((_) async => Future.value(200));
-
-        MockSecureStorage mockSecureStorage = MockSecureStorage();
-        when(mockSecureStorage.getToken())
-            .thenAnswer((_) async => Future.value("token"));
-
-        DriverDetails page = DriverDetails(
-          storage: mockSecureStorage,
-          driver: driver,
-          testApi: mockApi,
-        );
-
-        await tester.pumpWidget(makeEnglishTestableWidget(child: page));
-        await tester.pumpAndSettle();
-        await tester.tap(find.byKey(Key("assets/icons/enter.svg")).first);
-        await tester.pump();
-        expect(find.byType(SnackBar), findsOneWidget);
-        expect(find.text("The bulb does not have an IP address."),
-            findsOneWidget);
-        verifyNever(await mockApi.changeBulbColor(1, 128, 128, 128));
-      });
-
-  /// tests if changes bulb's brightness, no ip, english
-  testWidgets('english change bulb brightness, no ip', (WidgetTester tester) async {
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Driver driver = Driver(
-        id: 1,
-        name: "driver1",
-        category: "bulb",
-        ipAddress: null,
-        data: false);
+        id: 1, name: "driver1", category: "bulb", ipAddress: null, data: true);
+
+    when(mockApi.changeBulbColor(1, 128, 128, 128))
+        .thenAnswer((_) async => Future.value(200));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DriverDetails page = DriverDetails(
+      storage: mockSecureStorage,
+      driver: driver,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(Key("assets/icons/enter.svg")).first);
+    await tester.pump();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("The bulb does not have an IP address."), findsOneWidget);
+    verifyNever(await mockApi.changeBulbColor(1, 128, 128, 128));
+  });
+
+  /// tests if changes bulb's brightness, no ip, english
+  testWidgets('english change bulb brightness, no ip',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Driver driver = Driver(
+        id: 1, name: "driver1", category: "bulb", ipAddress: null, data: false);
 
     when(mockApi.changeBulbBrightness(1, 50))
         .thenAnswer((_) async => Future.value(200));
@@ -928,20 +983,16 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/enter.svg")).last);
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("The bulb does not have an IP address."),
-        findsOneWidget);
+    expect(find.text("The bulb does not have an IP address."), findsOneWidget);
     verifyNever(await mockApi.changeBulbBrightness(1, 50));
   });
 
   /// tests if turns bulb on, data false, no ip, english
-  testWidgets('english urn bulb on, data false, no ip', (WidgetTester tester) async {
+  testWidgets('english urn bulb on, data false, no ip',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     Driver driver = Driver(
-        id: 1,
-        name: "driver1",
-        category: "bulb",
-        ipAddress: null,
-        data: false);
+        id: 1, name: "driver1", category: "bulb", ipAddress: null, data: false);
 
     Map<String, dynamic> bulb = {
       "id": 1,
@@ -970,8 +1021,7 @@ void main() {
     await tester.tap(find.byKey(Key("assets/icons/turn-off.svg")));
     await tester.pump();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("The bulb does not have an IP address."),
-        findsOneWidget);
+    expect(find.text("The bulb does not have an IP address."), findsOneWidget);
     expect(find.text("off"), findsOneWidget);
     verifyNever(await mockApi.switchBulb(1, "on"));
   });

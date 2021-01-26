@@ -71,6 +71,7 @@ class _ChooseMultipleSensorCategoriesDialogState
 
                 /// on search icon tab
                 firstChild: TextField(
+                  key: Key("searchField"),
                   style: Theme.of(context).textTheme.bodyText2,
                   controller: _searchBarController,
                   decoration: InputDecoration(
@@ -118,6 +119,7 @@ class _ChooseMultipleSensorCategoriesDialogState
 
                     /// show search bar
                     GestureDetector(
+                        key: Key("searchIcon"),
                         onTap: () {
                           setState(() {
                             searchBarVisible = true;
@@ -164,6 +166,7 @@ class _ChooseMultipleSensorCategoriesDialogState
               children: [
                 /// cancel action
                 TextButton(
+                    key: Key('Cancel'),
                     child: Text("Anuluj".i18n,
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {

@@ -74,6 +74,7 @@ class _LanguageDialogState extends State<LanguageDialog> {
                 children: [
                   /// cancel action
                   TextButton(
+                      key: Key('Cancel'),
                       child: Text("Anuluj",
                           style: Theme.of(context).textTheme.headline5),
                       onPressed: () {

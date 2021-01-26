@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:idom/dialogs/driver_action_dialog.dart';
 import 'package:idom/enums/driver_actions.dart';
 import 'package:idom/pages/drivers/driver_details.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -103,6 +104,9 @@ class _EditActionState extends State<EditAction> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     getSensors();
     getDrivers();
     _load = false;
@@ -1383,41 +1387,45 @@ class _EditActionState extends State<EditAction> {
         _load = false;
       });
       if (res['statusCode'] == "200") {
-        if (endTime == null && setAlarm) {
-          await Alarmclock.setAlarm(
-            skipui: true,
-            hour: startTime.hour,
-            minute: startTime.minute,
-            message: "akcja".i18n + " " + _nameController.text,
-            monday: daysOfWeekSelected[0],
-            tuesday: daysOfWeekSelected[1],
-            wednesday: daysOfWeekSelected[2],
-            thursday: daysOfWeekSelected[3],
-            friday: daysOfWeekSelected[4],
-            saturday: daysOfWeekSelected[5],
-            sunday: daysOfWeekSelected[6],
-          );
-        }
-        Navigator.pop(context, true);
+        await onEditActionSuccess();
       } else if (res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
+        if (message != null) {
+          logOut();
+        } else {
+          setState(() {
+            _load = true;
+          });
+          var res = await api.editAction(widget.action.id, body);
+          setState(() {
+            _load = false;
+          });
+          if (res['statusCode'] == "200") {
+            await onEditActionSuccess();
+          } else if (res['statusCode'] == "401") {
+            logOut();
+          } else if (res['body']
+              .contains("Action with provided name already exists")) {
+            fieldsValidationMessage =
+                "Akcja o podanej nazwie już istnieje.".i18n;
+            setState(() {});
+            return;
+          } else {
+            onEditActionError();
+          }
+        }
       } else if (res['body']
           .contains("Action with provided name already exists")) {
         fieldsValidationMessage = "Akcja o podanej nazwie już istnieje.".i18n;
         setState(() {});
         return;
       } else {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Edytowanie akcji nie powiodło się. Spróbuj ponownie.".i18n));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        onEditActionError();
       }
     } catch (e) {
       print(e.toString());
@@ -1438,6 +1446,43 @@ class _EditActionState extends State<EditAction> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  onEditActionSuccess() async {
+    if (endTime == null && setAlarm && widget.testApi == null) {
+      await Alarmclock.setAlarm(
+        skipui: true,
+        hour: startTime.hour,
+        minute: startTime.minute,
+        message: "akcja".i18n + " " + _nameController.text,
+        monday: daysOfWeekSelected[0],
+        tuesday: daysOfWeekSelected[1],
+        wednesday: daysOfWeekSelected[2],
+        thursday: daysOfWeekSelected[3],
+        friday: daysOfWeekSelected[4],
+        saturday: daysOfWeekSelected[5],
+        sunday: daysOfWeekSelected[6],
+      );
+    }
+    Navigator.pop(context, true);
+  }
+
+  onEditActionError() {
+    final snackBar = new SnackBar(
+        content: new Text(
+            "Edytowanie akcji nie powiodło się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// confirms saving account changes

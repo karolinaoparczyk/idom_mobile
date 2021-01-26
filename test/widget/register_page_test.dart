@@ -100,6 +100,43 @@ void main() {
     expect(find.byType(SignIn), findsOneWidget);
   });
 
+  /// tets if cancels language dialog
+  testWidgets('cancels language dialog', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    Map<String, String> res = {
+      "body": "ok",
+      "statusCode": "201",
+    };
+    when(mockApi.signUp("username", "password", "password", "email@email.com",
+            "pl", "+48765678789"))
+        .thenAnswer((_) async => Future.value(res));
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    SignUp page = SignUp(storage: mockSecureStorage, testApi: mockApi);
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+
+    Finder usernameField = find.byKey(Key('username'));
+    await tester.enterText(usernameField, 'username');
+
+    Finder password1Field = find.byKey(Key('password1'));
+    await tester.enterText(password1Field, 'password');
+
+    Finder password2Field = find.byKey(Key('password2'));
+    await tester.enterText(password2Field, 'password');
+
+    Finder emailField = find.byKey(Key('email'));
+    await tester.enterText(emailField, "email@email.com");
+
+    await tester.tap(find.byKey(Key('language')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text("polski").last);
+    await tester.tap(find.byKey(Key('Cancel')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("polski"), findsNothing);
+  });
+
   /// tests if not signed up with api error
   testWidgets('not signed up with api error', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

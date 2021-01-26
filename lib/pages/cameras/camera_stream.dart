@@ -155,11 +155,11 @@ class _CameraStreamState extends State<CameraStream> {
     if (result == true) {
       final snackBar = new SnackBar(content: new Text("Zapisano kamerę.".i18n));
       _scaffoldKey.currentState.showSnackBar((snackBar));
-      await _refreshSensorDetails();
+      await _refreshCameraDetails();
     }
   }
 
-  _refreshSensorDetails() async {
+  _refreshCameraDetails() async {
     try {
       setState(() {
         _load = true;
@@ -169,12 +169,9 @@ class _CameraStreamState extends State<CameraStream> {
         _load = false;
       });
       if (res['statusCode'] == "200") {
-        dynamic body = jsonDecode(res['body']);
-        Camera refreshedCamera = Camera.fromJson(body);
-        setState(() {
-          widget.camera = refreshedCamera;
-        });
+        onRefreshCameraSuccess(res['body']);
       }
+
       /// on invalid token log out
       else if (res['statusCode'] == "401") {
         final message = await LoginProcedures.signInWithStoredData();
@@ -189,25 +186,15 @@ class _CameraStreamState extends State<CameraStream> {
             _load = false;
           });
           if (res['statusCode'] == "200") {
-            dynamic body = jsonDecode(res['body']);
-            Camera refreshedCamera = Camera.fromJson(body);
-            setState(() {
-              widget.camera = refreshedCamera;
-            });
+            onRefreshCameraSuccess(res['body']);
           } else if (res['statusCode'] == "401") {
             logOut();
           } else {
-            final snackBar = new SnackBar(
-                content:
-                new Text("Odświeżenie danych kamery nie powiodło się.".i18n));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
+            onRefreshCameraError();
           }
         }
       } else {
-        final snackBar = new SnackBar(
-            content:
-                new Text("Odświeżenie danych kamery nie powiodło się.".i18n));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        onRefreshCameraError();
       }
     } catch (e) {
       print(e.toString());
@@ -232,6 +219,20 @@ class _CameraStreamState extends State<CameraStream> {
     setState(() {
       _load = false;
     });
+  }
+
+  onRefreshCameraSuccess(String res) {
+    dynamic body = jsonDecode(res);
+    Camera refreshedCamera = Camera.fromJson(body);
+    setState(() {
+      widget.camera = refreshedCamera;
+    });
+  }
+
+  onRefreshCameraError() {
+    final snackBar = new SnackBar(
+        content: new Text("Odświeżenie danych kamery nie powiodło się.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<void> logOut() async {

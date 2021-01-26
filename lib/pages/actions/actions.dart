@@ -9,6 +9,7 @@ import 'package:idom/models.dart';
 import 'package:idom/pages/actions/action_details.dart';
 import 'package:idom/pages/actions/new_action.dart';
 import 'package:idom/utils/idom_colors.dart';
+import 'package:idom/utils/login_procedures.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/localization/actions/actions.i18n.dart';
@@ -46,6 +47,9 @@ class _ActionsListState extends State<ActionsList> {
     if (widget.testApi != null) {
       api = widget.testApi;
     }
+
+    LoginProcedures.init(widget.storage, api);
+
     getActions();
     _searchController.addListener(() {
       filterSearchResults(_searchController.text);
@@ -83,26 +87,30 @@ class _ActionsListState extends State<ActionsList> {
       var res = await api.getActions();
 
       if (res != null && res['statusCode'] == "200") {
-        List<dynamic> body = jsonDecode(res['body']);
-        setState(() {
-          _actionList = body
-              .map((dynamic item) => SensorDriverAction.fromJson(item))
-              .toList();
-        });
-        if (_actionList.length == 0)
-          zeroFetchedItems = true;
-        else
-          zeroFetchedItems = false;
+        onSuccessGetActions(res['body']);
       } else if (res != null && res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoaderInvalidToken,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoaderInvalidToken.currentContext, rootNavigator: true)
-            .pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
+        if (message != null) {
+          logOut();
+        } else {
+          var res = await api.getAccounts();
+
+          /// on success fetching data
+          if (res != null && res['statusCode'] == "200") {
+            onSuccessGetActions(res['body']);
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          } else {
+            _connectionEstablished = false;
+            setState(() {});
+            return null;
+          }
+        }
       }
       if (res == null) {
         _connectionEstablished = false;
@@ -129,6 +137,30 @@ class _ActionsListState extends State<ActionsList> {
       _duplicateActionList.clear();
       _duplicateActionList.addAll(_actionList);
     });
+  }
+
+  onSuccessGetActions(String res){
+    List<dynamic> body = jsonDecode(res);
+    setState(() {
+      _actionList = body
+          .map((dynamic item) => SensorDriverAction.fromJson(item))
+          .toList();
+    });
+    if (_actionList.length == 0)
+      zeroFetchedItems = true;
+    else
+      zeroFetchedItems = false;
+  }
+
+  Future<void> logOut() async {
+    displayProgressDialog(
+        context: _scaffoldKey.currentContext,
+        key: _keyLoader,
+        text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
+    await new Future.delayed(const Duration(seconds: 3));
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    await widget.storage.resetUserData();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   Future<bool> _onBackButton() async {
@@ -166,8 +198,8 @@ class _ActionsListState extends State<ActionsList> {
           title: _isSearching ? _buildSearchField() : Text('Akcje'.i18n),
           leading: _isSearching
               ? IconButton(
-              key: Key("arrowBack"),
-              icon: Icon(Icons.arrow_back),
+                  key: Key("arrowBack"),
+                  icon: Icon(Icons.arrow_back),
                   onPressed: () {
                     setState(() {
                       _isSearching = false;
@@ -237,7 +269,7 @@ class _ActionsListState extends State<ActionsList> {
     }
     if (_connectionEstablished != null &&
         _connectionEstablished == false &&
-         _actionList.isEmpty) {
+        _actionList.isEmpty) {
       return Padding(
           padding:
               EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
@@ -251,7 +283,7 @@ class _ActionsListState extends State<ActionsList> {
         _actionList.isEmpty) {
       return Padding(
           padding:
-          EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
+              EdgeInsets.only(left: 30.0, top: 33.5, right: 30.0, bottom: 0.0),
           child: Align(
               alignment: Alignment.topCenter,
               child: Text("Brak wyników wyszukiwania.".i18n,

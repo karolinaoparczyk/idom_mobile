@@ -172,14 +172,17 @@ class _EditCameraState extends State<EditCamera> {
         _load = false;
       });
       if (res['statusCode'] == "200") {
-        fieldsValidationMessage = null;
-        setState(() {});
-        Navigator.pop(context, true);
+        onEditCameraSuccess();
       }
 
       /// on invalid token log out
       else if (res['statusCode'] == "401") {
-        final message = await LoginProcedures.signInWithStoredData();
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
         if (message != null) {
           logOut();
         } else {
@@ -193,9 +196,7 @@ class _EditCameraState extends State<EditCamera> {
 
           /// on success fetching data
           if (res['statusCode'] == "200") {
-            fieldsValidationMessage = null;
-            setState(() {});
-            Navigator.pop(context, true);
+            onEditCameraSuccess();
           } else if (res != null && res['statusCode'] == "401") {
             logOut();
           } else if (res['body']
@@ -205,12 +206,7 @@ class _EditCameraState extends State<EditCamera> {
             setState(() {});
             return;
           } else {
-            fieldsValidationMessage = null;
-            setState(() {});
-            final snackBar = new SnackBar(
-                content: new Text(
-                    "Edycja kamery nie powiodła się. Spróbuj ponownie.".i18n));
-            _scaffoldKey.currentState.showSnackBar((snackBar));
+            onEditCameraError();
           }
         }
       } else if (res['body']
@@ -219,12 +215,7 @@ class _EditCameraState extends State<EditCamera> {
         setState(() {});
         return;
       } else {
-        fieldsValidationMessage = null;
-        setState(() {});
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Edycja kamery nie powiodła się. Spróbuj ponownie.".i18n));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        onEditCameraError();
       }
     } catch (e) {
       print(e.toString());
@@ -246,6 +237,21 @@ class _EditCameraState extends State<EditCamera> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  onEditCameraSuccess() {
+    fieldsValidationMessage = null;
+    setState(() {});
+    Navigator.pop(context, true);
+  }
+
+  onEditCameraError() {
+    fieldsValidationMessage = null;
+    setState(() {});
+    final snackBar = new SnackBar(
+        content:
+            new Text("Edycja kamery nie powiodła się. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   Future<void> logOut() async {

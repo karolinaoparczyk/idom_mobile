@@ -115,6 +115,38 @@ void main() {
     expect(find.byType(CameraStream), findsOneWidget);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> cameras = [
+      {
+        "id": 1,
+        "name": "camera1",
+        "ipAddress": "111.111.11.11"
+      },
+      {
+        "id": 2,
+        "name": "camera2",
+        "ipAddress": "113.113.13.13"
+      }
+    ];
+    when(mockApi.getCameras()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(cameras), "statusCode": "401"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getApiServerAddress()).thenAnswer((_) async =>
+        Future.value("apiAddress"));
+    Cameras page = Cameras(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+  });
+
   /// tests if deletes camera
   testWidgets('deletes camera', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

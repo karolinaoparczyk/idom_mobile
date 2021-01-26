@@ -83,6 +83,50 @@ void main() {
     verify(await mockApi.addDriver('name', 'clicker')).called(1);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addDriver('name', 'clicker')).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "401"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewDriver page = NewDriver(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+    expect(find.text("Dodaj sterownik"), findsOneWidget);
+    expect(find.text("Ogólne"), findsOneWidget);
+    expect(find.text("Nazwa"), findsOneWidget);
+    expect(find.text("Kategoria"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('categoriesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text("Wybierz kategorię"), findsOneWidget);
+    expect(find.text("Anuluj"), findsOneWidget);
+    expect(find.text("przycisk"), findsOneWidget);
+    expect(find.text("pilot"), findsOneWidget);
+    expect(find.text("żarówka"), findsOneWidget);
+    await tester.tap(find.text("przycisk").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(Key('saveDriverButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.addDriver('name', 'clicker')).called(1);
+  });
+
   /// tests if adds bulb
   testWidgets('adds bulb', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

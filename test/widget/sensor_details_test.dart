@@ -42,15 +42,22 @@ void main() {
   /// tests if displays air temperature sensor
   testWidgets('displays air temperature sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
+    Map<String, dynamic> sensorDataJson = {
+      "id": 1,
+      "sensor": "sensor1",
+      "sensor_data": "27.0",
+      "delivery_time": "12-04-2020T19:23:45"
+    };
     when(mockApi.getSensorData(1)).thenAnswer(
-        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": jsonEncode(sensorDataJson), "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: null);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -99,7 +106,8 @@ void main() {
         name: "sensor1",
         category: "water_temp",
         frequency: 30,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -138,7 +146,8 @@ void main() {
         name: "sensor1",
         category: "rain_sensor",
         frequency: 30,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -177,7 +186,8 @@ void main() {
         name: "sensor1",
         category: "humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -216,7 +226,8 @@ void main() {
         name: "sensor1",
         category: "air_humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -255,7 +266,8 @@ void main() {
         name: "sensor1",
         category: "breathalyser",
         frequency: 30,
-        lastData: "1.0");
+        lastData: "1.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -286,8 +298,8 @@ void main() {
   /// tests if displays smoke correctly
   testWidgets('displays smoke correctly', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
+    when(mockApi.getSensorData(1)).thenAnswer((_) async =>
+        Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
@@ -300,7 +312,8 @@ void main() {
         name: "sensor1",
         category: "smoke",
         frequency: 30,
-        lastData: "1.0");
+        lastData: "1.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -320,10 +333,11 @@ void main() {
   });
 
   /// tests if displays atmospheric pressure sensor correctly
-  testWidgets('displays atmospheric pressure sensor correctly', (WidgetTester tester) async {
+  testWidgets('displays atmospheric pressure sensor correctly',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
+    when(mockApi.getSensorData(1)).thenAnswer((_) async =>
+        Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
         .thenAnswer((_) async => Future.value("token"));
@@ -335,7 +349,8 @@ void main() {
         name: "sensor1",
         category: "atmo_pressure",
         frequency: 300,
-        lastData: "1.0");
+        lastData: "1.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -355,17 +370,19 @@ void main() {
   });
 
   /// tests if displays air temperature sensor, english
-  testWidgets('english displays air temperature sensor', (WidgetTester tester) async {
+  testWidgets('english displays air temperature sensor',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
         name: "sensor1",
         category: "temperature",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: null);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -404,17 +421,19 @@ void main() {
   });
 
   /// tests if displays water temperature sensor, english
-  testWidgets('english displays water temperature sensor', (WidgetTester tester) async {
+  testWidgets('english displays water temperature sensor',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
         name: "sensor1",
         category: "water_temp",
         frequency: 30,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -446,14 +465,15 @@ void main() {
   testWidgets('english displays rain sensor', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
         name: "sensor1",
         category: "rain_sensor",
         frequency: 30,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -482,17 +502,19 @@ void main() {
   });
 
   /// tests if displays pot humidity sensor, english
-  testWidgets('english, displays pot humidity sensor', (WidgetTester tester) async {
+  testWidgets('english, displays pot humidity sensor',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
         name: "sensor1",
         category: "humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -521,17 +543,19 @@ void main() {
   });
 
   /// tests if displays air humidity sensor, english
-  testWidgets('english, displays air humidity sensor', (WidgetTester tester) async {
+  testWidgets('english, displays air humidity sensor',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
         name: "sensor1",
         category: "air_humidity",
         frequency: 300,
-        lastData: "27.0");
+        lastData: "27.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -560,17 +584,19 @@ void main() {
   });
 
   /// tests if displays breathalyser sensor, english
-  testWidgets('english displays breathalyser sensor', (WidgetTester tester) async {
+  testWidgets('english displays breathalyser sensor',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
     when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"body": "[]", "statusCode": "200"}));
+        (_) async => Future.value({"body": "[]", "statusCode": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     Sensor sensor = Sensor(
         id: 1,
         name: "sensor1",
         category: "breathalyser",
         frequency: 30,
-        lastData: "1.0");
+        lastData: "1.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -601,8 +627,8 @@ void main() {
   /// tests if displays smoke correctly, english
   testWidgets('english displays smoke correctly', (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
+    when(mockApi.getSensorData(1)).thenAnswer((_) async =>
+        Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
 
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
@@ -615,7 +641,8 @@ void main() {
         name: "sensor1",
         category: "smoke",
         frequency: 30,
-        lastData: "1.0");
+        lastData: "1.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,
@@ -635,10 +662,11 @@ void main() {
   });
 
   /// tests if displays atmospheric pressure sensor correctly, english
-  testWidgets('english displays atmospheric pressure sensor correctly', (WidgetTester tester) async {
+  testWidgets('english displays atmospheric pressure sensor correctly',
+      (WidgetTester tester) async {
     MockApi mockApi = MockApi();
-    when(mockApi.getSensorData(1)).thenAnswer(
-            (_) async => Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
+    when(mockApi.getSensorData(1)).thenAnswer((_) async =>
+        Future.value({"bodySensorData": "[]", "statusSensorData": "200"}));
     MockSecureStorage mockSecureStorage = MockSecureStorage();
     when(mockSecureStorage.getToken())
         .thenAnswer((_) async => Future.value("token"));
@@ -650,7 +678,8 @@ void main() {
         name: "sensor1",
         category: "atmo_pressure",
         frequency: 300,
-        lastData: "1.0");
+        lastData: "1.0",
+        batteryLevel: 50);
 
     SensorDetails page = SensorDetails(
       storage: mockSecureStorage,

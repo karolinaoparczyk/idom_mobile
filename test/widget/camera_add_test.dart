@@ -65,6 +65,35 @@ void main() {
     verify(await mockApi.addCamera('name')).called(1);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    when(mockApi.addCamera('name')).thenAnswer(
+        (_) async => Future.value({"body": "", "statusCode": "401"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    NewCamera page = NewCamera(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    Finder nameField = find.byKey(Key('name'));
+    await tester.enterText(nameField, 'name');
+    expect(find.text("Nazwa"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('saveCameraButton')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.addCamera('name')).called(1);
+  });
+
   /// tests if does not add camera if name exists
   testWidgets('does not add camera if name exists',
       (WidgetTester tester) async {

@@ -46,6 +46,198 @@ void main() {
     List<Map<String, dynamic>> sensors = [
       {
         "id": 1,
+        "name": "sensor12",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor3",
+        "category": "humidity",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor4",
+        "category": "smoke",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    when(mockApi.generateFile(["1", "2"], null, 20))
+        .thenAnswer((_) async => Future.value({"body": "", "statusCode": 200}));
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DataDownload page = DataDownload(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Uzupełnij filtry, aby wygenerować plik .csv z danymi"),
+        findsOneWidget);
+    expect(find.text("Czujniki"), findsOneWidget);
+    expect(find.text("Kategorie"), findsOneWidget);
+    expect(find.text("Liczba ostatnich dni"), findsOneWidget);
+    expect(find.text("Pobierz dane"), findsOneWidget);
+    expect(find.text("Generuj plik"), findsOneWidget);
+    expect(find.text("Dodaj"), findsNWidgets(2));
+
+    await tester.tap(find.byKey(Key("addSensors")));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.byKey(Key("searchIcon")));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, '2');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+
+    await tester.tap(find.text("sensor12").last);
+    await tester.tap(find.text("sensor2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text("sensor12"), findsOneWidget);
+    expect(find.text("sensor2"), findsOneWidget);
+    expect(find.text("sensor3"), findsNothing);
+    expect(find.text("sensor4"), findsNothing);
+
+    await tester.tap(find.byKey(Key("Generuj plik")));
+    await tester.pump();
+    expect(find.text("Pole wymagane"), findsOneWidget);
+    verifyNever(await mockApi.generateFile(["1", "2"], null, null));
+
+    Finder emailField = find.byKey(Key('lastDaysAmountButton'));
+    await tester.enterText(emailField, '20');
+    await tester.tap(find.byKey(Key("Generuj plik")));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.generateFile(["1", "2"], null, 20)).called(1);
+  });
+
+  /// tests if logs out when no token
+  testWidgets(
+      'logs out when no token',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor12",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor3",
+        "category": "humidity",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor4",
+        "category": "smoke",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    when(mockApi.generateFile(["1", "2"], null, 20))
+        .thenAnswer((_) async => Future.value({"body": "", "statusCode": 401}));
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DataDownload page = DataDownload(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Uzupełnij filtry, aby wygenerować plik .csv z danymi"),
+        findsOneWidget);
+    expect(find.text("Czujniki"), findsOneWidget);
+    expect(find.text("Kategorie"), findsOneWidget);
+    expect(find.text("Liczba ostatnich dni"), findsOneWidget);
+    expect(find.text("Pobierz dane"), findsOneWidget);
+    expect(find.text("Generuj plik"), findsOneWidget);
+    expect(find.text("Dodaj"), findsNWidgets(2));
+
+    await tester.tap(find.byKey(Key("addSensors")));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.byKey(Key("searchIcon")));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, '2');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+
+    await tester.tap(find.text("sensor12").last);
+    await tester.tap(find.text("sensor2").last);
+    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text("sensor12"), findsOneWidget);
+    expect(find.text("sensor2"), findsOneWidget);
+    expect(find.text("sensor3"), findsNothing);
+    expect(find.text("sensor4"), findsNothing);
+
+    await tester.tap(find.byKey(Key("Generuj plik")));
+    await tester.pump();
+    expect(find.text("Pole wymagane"), findsOneWidget);
+    verifyNever(await mockApi.generateFile(["1", "2"], null, null));
+
+    Finder emailField = find.byKey(Key('lastDaysAmountButton'));
+    await tester.enterText(emailField, '20');
+    await tester.tap(find.byKey(Key("Generuj plik")));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    verify(await mockApi.generateFile(["1", "2"], null, 20)).called(1);
+  });
+
+  /// tests if cancels sensors dialog
+  testWidgets(
+      'cancels sensors dialog',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
         "name": "sensor1",
         "category": "temperature",
         "frequency": 300,
@@ -103,27 +295,14 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.text("sensor1").last);
     await tester.tap(find.text("sensor2").last);
-    await tester.tap(find.byKey(Key('yesButton')));
+    await tester.tap(find.byKey(Key('Cancel')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text("sensor1"), findsOneWidget);
-    expect(find.text("sensor2"), findsOneWidget);
+    expect(find.text("sensor1"), findsNothing);
+    expect(find.text("sensor2"), findsNothing);
     expect(find.text("sensor3"), findsNothing);
     expect(find.text("sensor4"), findsNothing);
-
-    await tester.tap(find.byKey(Key("Generuj plik")));
-    await tester.pump();
-    expect(find.text("Pole wymagane"), findsOneWidget);
-    verifyNever(await mockApi.generateFile(["1", "2"], null, null));
-
-    Finder emailField = find.byKey(Key('lastDaysAmountButton'));
-    await tester.enterText(emailField, '20');
-    await tester.tap(find.byKey(Key("Generuj plik")));
-    await tester.pump();
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 5));
-    verify(await mockApi.generateFile(["1", "2"], null, 20)).called(1);
   });
 
   /// tests if chooses data filter with categories
@@ -180,6 +359,14 @@ void main() {
     await tester.tap(find.byKey(Key("addCategories")));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.byKey(Key("searchIcon")));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, 'temperatura');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+
     await tester.tap(find.text("temperatura powietrza").last);
     await tester.tap(find.text("temperatura wody").last);
     await tester.tap(find.byKey(Key('yesButton')));
@@ -188,6 +375,80 @@ void main() {
 
     expect(find.text("temperatura powietrza"), findsOneWidget);
     expect(find.text("temperatura wody"), findsOneWidget);
+    expect(find.text("opady atmosferyczne"), findsNothing);
+    expect(find.text("wilgotność gleby"), findsNothing);
+  });
+
+  /// tests if cancels sensor categories dialog
+  testWidgets('cancels sensor categories dialog',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> sensors = [
+      {
+        "id": 1,
+        "name": "sensor1",
+        "category": "temperature",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor2",
+        "category": "rain_sensor",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor3",
+        "category": "humidity",
+        "frequency": 300,
+        "last_data": "27.0"
+      },
+      {
+        "id": 2,
+        "name": "sensor4",
+        "category": "smoke",
+        "frequency": 300,
+        "last_data": "27.0"
+      }
+    ];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+    when(mockSecureStorage.getToken())
+        .thenAnswer((_) async => Future.value("token"));
+
+    DataDownload page = DataDownload(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Uzupełnij filtry, aby wygenerować plik .csv z danymi"),
+        findsOneWidget);
+
+    await tester.tap(find.byKey(Key("addCategories")));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.byKey(Key("searchIcon")));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, 'temperatura');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+
+    await tester.tap(find.text("temperatura powietrza").last);
+    await tester.tap(find.text("temperatura wody").last);
+    await tester.tap(find.byKey(Key('Cancel')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text("temperatura powietrza"), findsNothing);
+    expect(find.text("temperatura wody"), findsNothing);
     expect(find.text("opady atmosferyczne"), findsNothing);
     expect(find.text("wilgotność gleby"), findsNothing);
   });

@@ -191,6 +191,48 @@ void main() {
     expect(finderSms, findsOneWidget);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token',
+      (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+
+    var user1Json = {"id": 1,
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "sms_notifications": true,
+      "app_notifications": true,
+      "is_staff": false,
+      "is_active": true};
+    when(mockApi.getUser("user1")).thenAnswer(
+            (_) async => Future.value([jsonEncode(user1Json), 401]));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    var user2Json = {"id": "2",
+      "username": "user2",
+      "email": "user@other.com",
+      "language": "pl",
+      "telephone": "",
+      "smsNotifications": "false",
+      "appNotifications": "false",
+      "isStaff": "false",
+      "isActive": "true",
+      "token": "token"
+    };
+    when(mockSecureStorage.getCurrentUserData()).thenAnswer(
+            (_) async => Future.value(user2Json));
+
+    AccountDetail page = AccountDetail(
+        storage: mockSecureStorage, username: "user1", testApi: mockApi);
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+  });
+
   /// tests if user details displayed correctly for other user, no telephone, notifications off
   testWidgets('user details displayed correctly for other user, no telephone, notifications off',
       (WidgetTester tester) async {

@@ -64,6 +64,7 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
 
                 /// on search icon tab
                 firstChild: TextField(
+                  key: Key("searchField"),
                   controller: _searchBarController,
                   decoration: InputDecoration(
                     hintText: "Wyszukaj...",
@@ -104,6 +105,7 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
 
                     /// show search bar
                     GestureDetector(
+                        key: Key("searchIcon"),
                         onTap: () {
                           setState(() {
                             searchBarVisible = true;
@@ -147,6 +149,7 @@ class _ChooseSensorDialogState extends State<ChooseSensorDialog> {
               children: [
                 /// cancel action
                 TextButton(
+                    key: Key('Cancel'),
                     child: Text("Anuluj",
                         style: Theme.of(context).textTheme.headline5),
                     onPressed: () {

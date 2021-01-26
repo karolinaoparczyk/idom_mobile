@@ -140,6 +140,53 @@ void main() {
     expect(find.byType(ActionDetails), findsOneWidget);
   });
 
+  /// tests if logs out when no token
+  testWidgets('logs out when no token', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    List<Map<String, dynamic>> actions = [
+      {
+        "id": 1,
+        "name": "action1",
+        "sensor": "sensor1",
+        "trigger": "25",
+        "operator": "=",
+        "driver": "driver1",
+        "days": "1,2,3",
+        "start_event": "17:30",
+        "end_event": "19:30",
+        "action": {"status": "on"},
+        "flag": 4
+      },
+      {
+        "id": 2,
+        "name": "action2",
+        "sensor": null,
+        "trigger": null,
+        "operator": null,
+        "driver": "driver2",
+        "days": "4,5,6",
+        "start_event": "11:30",
+        "end_event": "15:50",
+        "action": {"status": "off"},
+        "flag": 2
+      }
+    ];
+    when(mockApi.getActions()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(actions), "statusCode": "401"}));
+
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    ActionsList page = ActionsList(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+  });
+
   /// tests if actions not on list if api error
   testWidgets('actions not on list if api error', (WidgetTester tester) async {
     MockApi mockApi = MockApi();

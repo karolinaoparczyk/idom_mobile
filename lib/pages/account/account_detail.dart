@@ -124,7 +124,12 @@ class _AccountDetailState extends State<AccountDetail> {
 
     /// on invalid token log out
     else if (userResult[1] == 401) {
-      final message = await LoginProcedures.signInWithStoredData();
+      var message;
+      if (widget.testApi != null) {
+        message = "error";
+      } else {
+        message = await LoginProcedures.signInWithStoredData();
+      }
       if (message != null) {
         logOut();
       } else {
@@ -451,9 +456,9 @@ class _AccountDetailState extends State<AccountDetail> {
                                   vertical: 10.0, horizontal: 62.0),
                               child: AnimatedCrossFade(
                                 crossFadeState:
-                                    fieldsValidationMessage != null &&(
-                                            account.telephone == null ||
-                                            account.telephone == "")
+                                    fieldsValidationMessage != null &&
+                                            (account.telephone == null ||
+                                                account.telephone == "")
                                         ? CrossFadeState.showFirst
                                         : CrossFadeState.showSecond,
                                 duration: Duration(milliseconds: 300),
@@ -478,16 +483,44 @@ class _AccountDetailState extends State<AccountDetail> {
     if (result != null &&
         result['statusCode'] == "200" &&
         currentUserData['username'] == widget.username) {
-      widget.storage.setAppNotifications(appNotificationsOn.toString());
-      widget.storage.setSmsNotifications(smsNotificationsOn.toString());
-    }
+      onNotificationsEditSuccess();
+    } else if (result != null && result['statusCode'] == "401") {
+      var message;
+      if (widget.testApi != null) {
+        message = "error";
+      } else {
+        message = await LoginProcedures.signInWithStoredData();
+      }
+      if (message != null) {
+        logOut();
+      } else {
+        result = await api.editNotifications(account.id,
+            appNotificationsOn.toString(), smsNotificationsOn.toString());
 
-    /// on error display message
-    if (result != null && result['statusCode'] != "200") {
-      final snackBar = new SnackBar(
-          content: new Text("Błąd edycji powiadomień. Spróbuj ponownie.".i18n));
-      _scaffoldKey.currentState.showSnackBar((snackBar));
+        if (result != null &&
+            result['statusCode'] == "200" &&
+            currentUserData['username'] == widget.username) {
+          onNotificationsEditSuccess();
+        } else if (result != null && result['statusCode'] == "401") {
+          logOut();
+        } else {
+          onNotificationsEditError();
+        }
+      }
+    } else {
+      onNotificationsEditError();
     }
+  }
+
+  onNotificationsEditSuccess() {
+    widget.storage.setAppNotifications(appNotificationsOn.toString());
+    widget.storage.setSmsNotifications(smsNotificationsOn.toString());
+  }
+
+  onNotificationsEditError() {
+    final snackBar = new SnackBar(
+        content: new Text("Błąd edycji powiadomień. Spróbuj ponownie.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 
   /// go to edit account
@@ -520,28 +553,42 @@ class _AccountDetailState extends State<AccountDetail> {
 
       /// on success set fetched user
       if (res[1] == 200) {
-        dynamic body = jsonDecode(res[0]);
-        account = Account.fromJson(body);
-        setState(() {});
+        onAccountRefreshSuccess(res[0]);
 
         /// on invalid token log out
       } else if (res[1] == 401) {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
+        if (message != null) {
+          logOut();
+        } else {
+          setState(() {
+            _load = true;
+          });
+          res = await api.getUser(widget.username);
+          setState(() {
+            _load = false;
+          });
+
+          if (res[1] == 200) {
+            onAccountRefreshSuccess(res[0]);
+
+            /// on invalid token log out
+          } else if (res[1] == 401) {
+            logOut();
+          } else {
+            onAccountRefreshError();
+          }
+        }
       }
 
       /// on error display message
       else {
-        final snackBar = new SnackBar(
-            content: new Text(
-                "Odświeżenie danych użytkownika nie powiodło się.".i18n));
-        _scaffoldKey.currentState.showSnackBar((snackBar));
+        onAccountRefreshError();
       }
     } catch (e) {
       print(e.toString());
@@ -570,5 +617,18 @@ class _AccountDetailState extends State<AccountDetail> {
     setState(() {
       _load = false;
     });
+  }
+
+  onAccountRefreshSuccess(String res) {
+    dynamic body = jsonDecode(res);
+    account = Account.fromJson(body);
+    setState(() {});
+  }
+
+  onAccountRefreshError() {
+    final snackBar = new SnackBar(
+        content:
+            new Text("Odświeżenie danych użytkownika nie powiodło się.".i18n));
+    _scaffoldKey.currentState.showSnackBar((snackBar));
   }
 }
