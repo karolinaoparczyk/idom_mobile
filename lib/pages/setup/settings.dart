@@ -446,13 +446,13 @@ class _SettingsState extends State<Settings> {
                                     alignment: Alignment.center,
                                     height: 30,
                                     child: FlatButton(
+                                        key: Key("deleteData"),
                                         child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text("Jak mogę usunąć dane?".i18n,
-                                                  key: Key("deleteData"),
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .headline5),
@@ -475,7 +475,7 @@ class _SettingsState extends State<Settings> {
     await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => HardReset(),
+            builder: (context) => HardReset(storage: widget.storage),
             fullscreenDialog: true));
   }
 

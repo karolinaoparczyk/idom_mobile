@@ -77,7 +77,6 @@ class _EditActionState extends State<EditAction> {
   String fieldsValidationMessage;
   String selectedOperator;
   List<bool> daysOfWeekSelected = List<bool>();
-  String selectDriverMessage;
   Color _currentColor;
   Color _shadedColor;
   double _colorSliderPosition = 255;
@@ -193,22 +192,25 @@ class _EditActionState extends State<EditAction> {
       var res = await api.getSensors();
 
       if (res != null && res['statusCodeSensors'] == "200") {
-        List<dynamic> bodySensors = jsonDecode(res['bodySensors']);
-        setState(() {
-          sensors =
-              bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
-          selectedSensor = sensors
-              .firstWhere((element) => element.name == widget.action.sensor);
-        });
+        onGetSensorsSuccess(res['bodySensors']);
       } else if (res != null && res['statusCodeSensors'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
+        if (message != null) {
+          logOut();
+        } else {
+          var res = await api.getSensors();
+
+          if (res != null && res['statusCodeSensors'] == "200") {
+            onGetSensorsSuccess(res['bodySensors']);
+          } else if (res != null && res['statusCodeSensors'] == "401") {
+            logOut();
+          }
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -236,22 +238,25 @@ class _EditActionState extends State<EditAction> {
       var res = await api.getDrivers();
 
       if (res != null && res['statusCode'] == "200") {
-        List<dynamic> body = jsonDecode(res['body']);
-        setState(() {
-          drivers = body.map((dynamic item) => Driver.fromJson(item)).toList();
-          selectedDriver = drivers
-              .firstWhere((element) => element.name == widget.action.driver);
-          getAction();
-        });
+        onGetDriversSuccess(res['body']);
       } else if (res != null && res['statusCode'] == "401") {
-        displayProgressDialog(
-            context: _scaffoldKey.currentContext,
-            key: _keyLoader,
-            text: "Sesja użytkownika wygasła. \nTrwa wylogowywanie...".i18n);
-        await new Future.delayed(const Duration(seconds: 3));
-        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        await widget.storage.resetUserData();
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        var message;
+        if (widget.testApi != null) {
+          message = "error";
+        } else {
+          message = await LoginProcedures.signInWithStoredData();
+        }
+        if (message != null) {
+          logOut();
+        } else {
+          var res = await api.getDrivers();
+
+          if (res != null && res['statusCode'] == "200") {
+            onGetDriversSuccess(res['body']);
+          } else if (res != null && res['statusCode'] == "401") {
+            logOut();
+          }
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -270,6 +275,26 @@ class _EditActionState extends State<EditAction> {
         _scaffoldKey.currentState.showSnackBar((snackBar));
       }
     }
+  }
+
+  onGetSensorsSuccess(String res) {
+    List<dynamic> bodySensors = jsonDecode(res);
+    setState(() {
+      sensors =
+          bodySensors.map((dynamic item) => Sensor.fromJson(item)).toList();
+      selectedSensor =
+          sensors.firstWhere((element) => element.name == widget.action.sensor);
+    });
+  }
+
+  onGetDriversSuccess(String res) {
+    List<dynamic> body = jsonDecode(res);
+    setState(() {
+      drivers = body.map((dynamic item) => Driver.fromJson(item)).toList();
+      selectedDriver =
+          drivers.firstWhere((element) => element.name == widget.action.driver);
+      getAction();
+    });
   }
 
   /// builds action name form field
@@ -311,6 +336,7 @@ class _EditActionState extends State<EditAction> {
         suffixIcon: selectedSensor == null
             ? Icon(Icons.arrow_drop_down, color: IdomColors.additionalColor)
             : InkWell(
+                key: Key("removeSensor"),
                 onTap: () {
                   setState(() {
                     _sensorFocusNode.unfocus();
@@ -472,12 +498,6 @@ class _EditActionState extends State<EditAction> {
         ),
       ),
       onTap: () async {
-        if (selectedDriver == null) {
-          setState(() {
-            selectDriverMessage = "Wybierz sterownik";
-          });
-          return;
-        }
         final Map<String, String> action = await showDialog(
             context: context,
             builder: (context) {
@@ -549,7 +569,6 @@ class _EditActionState extends State<EditAction> {
             selectedDriver = driver;
             selectedDriverAction = null;
             _driverActionController.text = "";
-            selectDriverMessage = null;
             setState(() {});
           }
         },
@@ -712,7 +731,7 @@ class _EditActionState extends State<EditAction> {
             body: SingleChildScrollView(
               child: Form(
                   key: _formKey,
-                  child: Column(children: <Widget>[
+                  child: Column(key: Key("actionEditForm"), children: <Widget>[
                     Align(
                       child: loadingIndicator(_load),
                       alignment: FractionalOffset.center,
@@ -829,21 +848,6 @@ class _EditActionState extends State<EditAction> {
                                 key: Key("assets/icons/light_bulb_filled.svg")),
                           ),
                       ],
-                    ),
-                    AnimatedCrossFade(
-                      crossFadeState: selectDriverMessage != null
-                          ? CrossFadeState.showFirst
-                          : CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 300),
-                      firstChild: selectDriverMessage != null
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 62.0),
-                              child: Text(selectDriverMessage,
-                                  style: Theme.of(context).textTheme.subtitle1),
-                            )
-                          : SizedBox(),
-                      secondChild: SizedBox(),
                     ),
                     Padding(
                         padding: EdgeInsets.symmetric(
@@ -1016,6 +1020,7 @@ class _EditActionState extends State<EditAction> {
                           child: Row(
                             children: [
                               Checkbox(
+                                key: Key("setAlarm"),
                                 activeColor: IdomColors.additionalColor,
                                 value: setAlarm,
                                 onChanged: (bool value) {
