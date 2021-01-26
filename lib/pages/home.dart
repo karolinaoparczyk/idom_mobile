@@ -40,6 +40,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    checkIfUserIsSignedIn();
     return isUserSignedIn == "true"
         ? sensorWidget()
         : isUserSignedIn == null

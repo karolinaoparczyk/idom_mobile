@@ -52,7 +52,9 @@ void main() {
     Home page = Home(testStorage: mockSecureStorage);
 
     await tester.pumpWidget(makePolishTestableWidget(child: page));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
 
     expect(find.text("IDOM"), findsOneWidget);
     expect(
@@ -72,7 +74,9 @@ void main() {
     Home page = Home(testStorage: mockSecureStorage);
 
     await tester.pumpWidget(makePolishTestableWidget(child: page));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
 
     expect(find.text("IDOM"), findsOneWidget);
     expect(
@@ -99,7 +103,9 @@ void main() {
     Home page = Home(testStorage: mockSecureStorage, testApi: mockApi);
 
     await tester.pumpWidget(makePolishTestableWidget(child: page));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
 
     expect(find.byType(Sensors), findsOneWidget);
   });
@@ -116,7 +122,9 @@ void main() {
         Home page = Home(testStorage: mockSecureStorage);
 
         await tester.pumpWidget(makeEnglishTestableWidget(child: page));
-        await tester.pumpAndSettle();
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 5));
 
         expect(find.text("IDOM"), findsOneWidget);
         expect(
@@ -136,7 +144,9 @@ void main() {
         Home page = Home(testStorage: mockSecureStorage);
 
         await tester.pumpWidget(makeEnglishTestableWidget(child: page));
-        await tester.pumpAndSettle();
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 5));
 
         expect(find.text("IDOM"), findsOneWidget);
         expect(
