@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
-import 'package:idom/pages/home.dart';
-import 'package:idom/pages/logotype_widget.dart';
-import 'package:idom/pages/setup/front.dart';
 import 'package:idom/pages/setup/settings.dart';
 import 'package:idom/utils/app_state_notifier.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:idom/widgets/hard_reset.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:idom/api.dart';
@@ -26,23 +22,6 @@ void main() {
         child: MaterialApp(
           home: child,
         ));
-  }
-
-  Widget makeEnglishTestableWidget({Widget child}) {
-    return MaterialApp(
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: [
-          Locale('en', "UK"),
-          Locale('pl', "PL"),
-        ],
-        localeListResolutionCallback: (locales, supportedLocales) {
-          return Locale('en', "UK");
-        },
-        home: I18n(child: child));
   }
 
   /// tests if sets dark mode
@@ -80,6 +59,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(Key('deleteData')));
+    await tester.pumpAndSettle();
+    expect(find.byType(HardReset), findsOneWidget);
   });
 
   /// tests if sets light mode
@@ -133,6 +114,10 @@ void main() {
     expect(find.text("Nie"), findsOneWidget);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('deleteData')));
+    await tester.pumpAndSettle();
+    expect(find.byType(HardReset), findsOneWidget);
   });
 
   /// tests if invalid file
@@ -170,9 +155,7 @@ void main() {
     when(mockSecureStorage.getThemeMode())
         .thenAnswer((_) async => Future.value("dark"));
 
-    Settings page = Settings(
-        storage: mockSecureStorage,
-        inTestMode: true);
+    Settings page = Settings(storage: mockSecureStorage, inTestMode: true);
 
     await tester.pumpWidget(makePolishTestableWidget(child: page));
     await tester.pumpAndSettle();
@@ -188,6 +171,5 @@ void main() {
     expect(find.text("Nie"), findsOneWidget);
     await tester.tap(find.byKey(Key('yesButton')));
     await tester.pumpAndSettle();
-
   });
 }

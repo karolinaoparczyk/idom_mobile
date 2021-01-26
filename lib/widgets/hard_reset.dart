@@ -30,7 +30,7 @@ class _HardResetState extends State<HardReset> {
   }
 
   Future<void> _initHardReset() async {
-    bool isDarkMode = await DarkMode.getStorageThemeMode();
+    bool isDarkMode = await DarkMode.getStorageThemeMode(testStorage: widget.storage);
     String hardReset;
     if (isDarkMode) {
       hardReset = await rootBundle.loadString('assets/hard-reset-dark.html');
