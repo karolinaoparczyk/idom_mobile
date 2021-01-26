@@ -8,7 +8,6 @@ import 'package:idom/pages/actions/actions.dart';
 import 'package:idom/pages/cameras/cameras.dart';
 import 'package:idom/pages/data_download/data_download.dart';
 import 'package:idom/pages/drivers/drivers.dart';
-import 'package:idom/pages/setup/front.dart';
 import 'package:idom/pages/setup/settings.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
@@ -500,5 +499,557 @@ void main() {
     await tester.tap(find.text('Wyloguj'));
     await tester.pumpAndSettle();
     verify(await mockApi.logOut()).called(1);
+  });
+
+  /// tests if goes to about project
+  testWidgets('goes to about project', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    when(mockApi.logOut()).thenAnswer((_) async => Future.value(null));
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makePolishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.drag(find.byKey(Key('drawerList')), const Offset(0.0, -300));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('O projekcie'));
+    await tester.pumpAndSettle();
+  });
+
+  /// tests if goes to my account, english
+  testWidgets('english goes to my account', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("IDOM"), findsOneWidget);
+    expect(find.text("YOUR SMART HOUSE IN ONE PLACE"), findsOneWidget);
+    expect(find.text("user1"), findsOneWidget);
+    expect(find.text("My account"), findsOneWidget);
+    expect(find.text("All accounts"), findsOneWidget);
+    expect(find.text("Sensors"), findsNWidgets(2));
+    expect(find.text("Cameras"), findsOneWidget);
+    expect(find.text("Drivers"), findsOneWidget);
+    expect(find.text("Actions"), findsOneWidget);
+    expect(find.text("Settings"), findsOneWidget);
+    await tester.drag(find.byKey(Key('drawerList')), const Offset(0.0, -300));
+    expect(find.text("Download data"), findsOneWidget);
+    expect(find.text("Log out"), findsOneWidget);
+    expect(find.text("About project"), findsOneWidget);
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('My account'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AccountDetail), findsOneWidget);
+  });
+
+  /// tests if goes to all accounts, english
+  testWidgets('english goes to all accounts', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    List<Map<String, dynamic>> accounts = [];
+    when(mockApi.getAccounts()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
+
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('All accounts'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Accounts), findsOneWidget);
+  });
+
+  /// tests if goes to sensors, english
+  testWidgets('english goes to sensors', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    List<Map<String, dynamic>> accounts = [];
+    when(mockApi.getAccounts()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(accounts), "statusCode": "200"}));
+
+    Accounts page = Accounts(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sensors'));
+  });
+
+  /// tests if goes to cameras, english
+  testWidgets('english goes to cameras', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    List<Map<String, dynamic>> cameras = [];
+    when(mockApi.getCameras()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(cameras), "statusCode": "200"}));
+
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cameras'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Cameras), findsOneWidget);
+  });
+
+  /// tests if goes to drivers, english
+  testWidgets('english goes to drivers', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    List<Map<String, dynamic>> drivers = [];
+    when(mockApi.getDrivers()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(drivers), "statusCode": "200"}));
+
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Drivers'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Drivers), findsOneWidget);
+  });
+
+  /// tests if goes to actions, english
+  testWidgets('english goes to actions', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    List<Map<String, dynamic>> actions = [];
+    when(mockApi.getActions()).thenAnswer((_) async =>
+        Future.value({"body": jsonEncode(actions), "statusCode": "200"}));
+
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Actions'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ActionsList), findsOneWidget);
+  });
+
+  /// tests if goes to settings, english
+  testWidgets('english goes to settings', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Settings), findsOneWidget);
+  });
+
+  /// tests if goes to download data, english
+  testWidgets('english goes to download data', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.drag(find.byKey(Key('drawerList')), const Offset(0.0, -300));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Download data'));
+    await tester.pumpAndSettle();
+    expect(find.byType(DataDownload), findsOneWidget);
+  });
+
+  /// tests if goes to log out, english
+  testWidgets('english goes to log out', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    when(mockApi.logOut()).thenAnswer((_) async => Future.value(null));
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.drag(find.byKey(Key('drawerList')), const Offset(0.0, -300));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Log out'));
+    await tester.pumpAndSettle();
+    verify(await mockApi.logOut()).called(1);
+  });
+
+  /// tests if goes to about project, english
+  testWidgets('english goes to about project', (WidgetTester tester) async {
+    MockApi mockApi = MockApi();
+    MockSecureStorage mockSecureStorage = MockSecureStorage();
+
+    when(mockSecureStorage.getIsUserStaff())
+        .thenAnswer((_) async => Future.value("true"));
+    when(mockSecureStorage.getUserId())
+        .thenAnswer((_) async => Future.value("1"));
+    when(mockSecureStorage.getUsername())
+        .thenAnswer((_) async => Future.value("user1"));
+    var userJson = {
+      "id": "1",
+      "username": "user1",
+      "email": "user@email.com",
+      "language": "pl",
+      "telephone": "+48765677655",
+      "smsNotifications": "true",
+      "appNotifications": "true",
+      "isStaff": "true",
+      "isActive": "true",
+      "token": "token"
+    };
+
+    when(mockSecureStorage.getCurrentUserData())
+        .thenAnswer((_) async => Future.value(userJson));
+
+    List<Map<String, dynamic>> sensors = [];
+    when(mockApi.getSensors()).thenAnswer((_) async => Future.value(
+        {"bodySensors": jsonEncode(sensors), "statusCodeSensors": "200"}));
+    when(mockApi.logOut()).thenAnswer((_) async => Future.value(null));
+    Sensors page = Sensors(
+      storage: mockSecureStorage,
+      testApi: mockApi,
+    );
+
+    await tester.pumpWidget(makeEnglishTestableWidget(child: page));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(Key('drawer')));
+
+    await tester.pumpAndSettle();
+    await tester.drag(find.byKey(Key('drawerList')), const Offset(0.0, -300));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('About project'));
+    await tester.pumpAndSettle();
   });
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
+import 'package:idom/pages/actions/action_details.dart';
 import 'package:idom/pages/actions/actions.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,19 @@ class MockSecureStorage extends Mock implements SecureStorage {}
 void main() {
   Widget makePolishTestableWidget({Widget child}) {
     return MaterialApp(
-      home: child,
-    );
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('en', "UK"),
+          Locale('pl', "PL"),
+        ],
+        localeListResolutionCallback: (locales, supportedLocales) {
+          return Locale('pl', "PL");
+        },
+        home: I18n(child: child));
   }
 
   Widget makeEnglishTestableWidget({Widget child}) {
@@ -90,6 +102,42 @@ void main() {
     expect(find.text("action1"), findsOneWidget);
     expect(find.text("action2"), findsOneWidget);
     expect(find.byKey(Key("assets/icons/hammer.svg")), findsNWidgets(2));
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    Finder searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, 'action');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 2);
+    expect(find.text("action1"), findsOneWidget);
+    expect(find.text("action2"), findsOneWidget);
+
+    await tester.enterText(searchField, '1');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile).evaluate().length, 1);
+    expect(find.text("action1"), findsOneWidget);
+    expect(find.text("action2"), findsNothing);
+    await tester.tap(find.byKey(Key('arrowBack')));
+    await tester.pumpAndSettle();
+    expect(find.text("action1"), findsOneWidget);
+    expect(find.text("action2"), findsOneWidget);
+
+    await tester.tap(find.byKey(Key('searchButton')));
+    await tester.pumpAndSettle();
+    searchField = find.byKey(Key('searchField'));
+    await tester.enterText(searchField, '2');
+    await tester.pumpAndSettle();
+    expect(find.text("action1"), findsNothing);
+    expect(find.text("action2"), findsOneWidget);
+    expect(find.byType(ListTile).evaluate().length, 1);
+    await tester.tap(find.byKey(Key('clearSearchingBox')));
+    await tester.pumpAndSettle();
+    expect(find.text("action1"), findsOneWidget);
+    expect(find.text("action2"), findsOneWidget);
+
+    await tester.tap(find.text("action1"));
+    await tester.pumpAndSettle();
+    expect(find.byType(ActionDetails), findsOneWidget);
   });
 
   /// tests if actions not on list if api error
@@ -185,6 +233,10 @@ void main() {
     expect(find.text("action1"), findsNothing);
     expect(find.text("action2"), findsOneWidget);
     expect(find.byKey(Key("assets/icons/hammer.svg")), findsOneWidget);
+
+    await tester.drag(find.byKey(Key('ActionsList')), const Offset(0.0, 300));
+    await tester.pumpAndSettle();
+    verify(await mockApi.getActions()).called(3);
   });
 
   /// tests if actions not on list if api error, english

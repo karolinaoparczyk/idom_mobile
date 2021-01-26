@@ -23,8 +23,11 @@ class DarkMode {
   ///
   /// if not set or set light mode, set isDarkMode to false
   /// if set dark mode, set isDarkMode to true
-  static Future<bool> getStorageThemeMode() async {
+  static Future<bool> getStorageThemeMode({SecureStorage testStorage}) async {
     SecureStorage storage = SecureStorage();
+    if (testStorage != null){
+      storage = testStorage;
+    }
     var themeMode = await storage.getThemeMode();
     if (themeMode != null && themeMode == "dark") {
       return true;

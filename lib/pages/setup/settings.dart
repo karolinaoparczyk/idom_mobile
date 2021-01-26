@@ -16,17 +16,22 @@ import 'package:idom/utils/app_state_notifier.dart';
 import 'package:idom/utils/idom_colors.dart';
 import 'package:idom/utils/secure_storage.dart';
 import 'package:idom/utils/validators.dart';
+import 'package:idom/widgets/hard_reset.dart';
 import 'package:idom/widgets/idom_drawer.dart';
 import 'package:idom/widgets/loading_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// displays settings and allows editing them
 class Settings extends StatefulWidget {
-  Settings({@required this.storage});
+  Settings(
+      {@required this.storage,
+      this.inTestMode = false,
+      this.googleServicesJson});
 
   /// internal storage
   final SecureStorage storage;
+  final bool inTestMode;
+  final Map<String, dynamic> googleServicesJson;
 
   /// handles state of widgets
   @override
@@ -69,7 +74,13 @@ class _SettingsState extends State<Settings> {
   }
 
   Future<void> getThemeMode() async {
-    bool isDarkMode = await DarkMode.getStorageThemeMode();
+    bool isDarkMode;
+    if (widget.inTestMode) {
+      isDarkMode =
+          await DarkMode.getStorageThemeMode(testStorage: widget.storage);
+    } else {
+      isDarkMode = await DarkMode.getStorageThemeMode();
+    }
     selectedMode.add(!isDarkMode ? true : false);
     selectedMode.add(isDarkMode ? true : false);
   }
@@ -137,12 +148,14 @@ class _SettingsState extends State<Settings> {
         child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(title: Text('Ustawienia'.i18n), actions: [
-            IconButton(icon: Icon(Icons.save), onPressed: _verifyChanges)
+            IconButton(
+                key: Key("save"),
+                icon: Icon(Icons.save),
+                onPressed: _verifyChanges)
           ]),
           drawer: _isUserLoggedIn == "true"
               ? IdomDrawer(
-                  storage: widget.storage,
-                  parentWidgetType: "Settings")
+                  storage: widget.storage, parentWidgetType: "Settings")
               : null,
           body: _load
               ? loadingIndicator(true)
@@ -242,8 +255,7 @@ class _SettingsState extends State<Settings> {
                                                         width: 21,
                                                         height: 21,
                                                         color: IdomColors.error,
-                                                        key: Key(
-                                                            "deleteSensor")),
+                                                        key: Key("deleteFile")),
                                                     onTap: () {
                                                       setState(() {
                                                         file = null;
@@ -277,6 +289,7 @@ class _SettingsState extends State<Settings> {
                                               color: Theme.of(context)
                                                   .backgroundColor,
                                               child: InkWell(
+                                                key: Key("pickFile"),
                                                 child: Icon(
                                                     Icons
                                                         .add_circle_outline_rounded,
@@ -353,6 +366,7 @@ class _SettingsState extends State<Settings> {
                                     selectedColor: IdomColors.blackTextLight,
                                     children: [
                                       Container(
+                                        key: Key("lightMode"),
                                         width: 60,
                                         child: Text("jasny".i18n,
                                             textAlign: TextAlign.center,
@@ -369,6 +383,7 @@ class _SettingsState extends State<Settings> {
                                                             .color)),
                                       ),
                                       Container(
+                                        key: Key("darkMode"),
                                         width: 60,
                                         child: Text("ciemny".i18n,
                                             textAlign: TextAlign.center,
@@ -457,32 +472,44 @@ class _SettingsState extends State<Settings> {
   }
 
   _navigateToProjectWebPage() async {
-    try {
-      await launch("https://adriannajmrocki.github.io/idom-website/");
-    } catch (e) {
-      throw 'Could not launch page';
-    }
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HardReset(),
+            fullscreenDialog: true));
   }
 
   _pickFile() async {
-    FilePickerResult result =
-        await FilePicker.platform.pickFiles(type: FileType.custom);
-    if (result != null) {
-      file = File(result.files.first.path);
-      try {
-        final Map<String, dynamic> googleServicesJson =
-            jsonDecode(file.readAsStringSync());
-        firebaseUrl = googleServicesJson['project_info']['firebase_url'];
-        storageBucket = googleServicesJson['project_info']['storage_bucket'];
-        mobileAppId =
-            googleServicesJson['client'][0]['client_info']['mobilesdk_app_id'];
-        apiKey = googleServicesJson['client'][0]['api_key'][0]['current_key'];
-        fieldsValidationMessage = null;
-      } catch (e) {
-        fieldsValidationMessage =
-            "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie."
-                .i18n;
+    Map<String, dynamic> googleServicesJson;
+    if (widget.inTestMode) {
+      googleServicesJson = widget.googleServicesJson;
+    } else {
+      FilePickerResult result =
+          await FilePicker.platform.pickFiles(type: FileType.custom);
+      if (result != null) {
+        file = File(result.files.first.path);
+        try {
+          googleServicesJson = jsonDecode(file.readAsStringSync());
+        } catch (e) {
+          fieldsValidationMessage =
+              "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie."
+                  .i18n;
+          setState(() {});
+          return;
+        }
       }
+    }
+    try {
+      firebaseUrl = googleServicesJson['project_info']['firebase_url'];
+      storageBucket = googleServicesJson['project_info']['storage_bucket'];
+      mobileAppId =
+          googleServicesJson['client'][0]['client_info']['mobilesdk_app_id'];
+      apiKey = googleServicesJson['client'][0]['api_key'][0]['current_key'];
+      fieldsValidationMessage = null;
+    } catch (e) {
+      fieldsValidationMessage =
+          "Plik jest niepoprawny. Pobierz go z serwisu Firebase i spróbuj ponownie."
+              .i18n;
     }
     setState(() {});
   }
@@ -496,7 +523,7 @@ class _SettingsState extends State<Settings> {
     var changedGoogleServicesFile = false;
 
     final formState = _formKey.currentState;
-    if (formState.validate()) {
+    if (formState.validate() && fieldsValidationMessage == null) {
       /// sends request only if data has changed
       if (address != currentAddress) {
         changedAddress = true;
