@@ -9,4 +9,4 @@ https://play.google.com/store/apps/details?id=com.project.idom
 
 # Project status
 
-Project is still in development, full product will be available around January 2021
+Project fully released
